@@ -28,7 +28,8 @@ MONTH_MAP = {
 def gen_calendar(year=datetime.datetime.today().year,
                  month=datetime.datetime.today().month,
                  day=datetime.datetime.today().day,
-                 user=None):
+                 user=None,
+                 generate_select=False):
 
     """
     Returns a HTML calendar, calling a database user to get their day-by-day
@@ -39,17 +40,19 @@ def gen_calendar(year=datetime.datetime.today().year,
     should be pretty readable.
     """
 
-
+    # django passes us Unicode strings
     year, month, day = int(year), int(month), int(day)
     
     if month-1 not in MONTH_MAP.keys():
         raise Http404
 
+    # if we've generated December, link to the next year
     if month + 1 == 13:
         next_url = '"/calendar/%s/%s"' % (year + 1, 1)
     else:
         next_url = '"/calendar/%s/%s"' % (year, month + 1)
 
+    # if we've generated January, link to the previous year
     if month - 1 == 0:
         previous_url = '"/calendar/%s/%s"' % (year - 1, 12)
     else:
@@ -60,16 +63,13 @@ def gen_calendar(year=datetime.datetime.today().year,
     # for testing we'll just grab the same db object
     database = Tbluser.objects.get(user_id__exact=user)
 
-    # create a URL object to get these filters, with the base
-    # case being this month
-
+    # pull out the entries for the given month
     try:
         database = TrackingEntry.objects.filter(
             user=database.id,
             entry_date__year=year,
             entry_date__month=month
             )
-        
     except TrackingEntry.DoesNotExist:
         # it seems Django still follows through with the assignment
         # when it raises an error, this is actually quite good because
@@ -118,12 +118,9 @@ def gen_calendar(year=datetime.datetime.today().year,
                 <td class=day-names>Sat</td>
                 <td class=day-names>Sun</td>
               </tr>\n""")
-                
-                  
     
     # each row in the calendar_array is a week
     # in the calendar, so create a new row
-
     for week_ in calendar_array:
         to_cal("""\n\t\t\t<tr>\n""")
         
@@ -150,6 +147,28 @@ def gen_calendar(year=datetime.datetime.today().year,
 
     # close up the table
     to_cal("""\n</table>""")
-    
+
+
+    if generate_select:
+        # if we opted to generated the select box we might as well use
+        # the same database call, right?
+        
+        if len(database) == 0:
+            return '', ''.join(cal_html)
+        # give ourselves something to append to, like
+        select = []
+        to_sel = select.append
+        to_sel("""<select id="entry-selector"  name="month-entries">""")
+
+        # each row in the database needs to be a select entry
+        # we need a way to sort these entries 
+        for item in database:
+            to_sel("""\n\t<option value="%s">%s</option>""" % (item.id,
+                                                           item.entry_date)
+                   )
+
+        to_sel("""\n</select>\n""")
+        return ''.join(select), ''.join(cal_html)
+
     # join up the html and push it back
     return ''.join(cal_html)

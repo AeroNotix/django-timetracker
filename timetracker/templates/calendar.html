@@ -3,8 +3,17 @@
 {% block header %}
     <link href="{{ STATIC_URL }}calendar.css" type="text/css"
           rel="stylesheet" />
-{% endblock header %}
 
+<style type="text/css">
+  #calendar {
+  position: absolute;
+  right: 1%;
+  top: 1%;
+  }
+</style>
+{% endblock header %}
 {% block content %}
+
+{{ select|safe }}
 {{ calendar|safe }}
 {% endblock %}
