@@ -1,9 +1,16 @@
+"""
+Module for collecting the utility functions dealing with mostly calendar
+tasks, processing dates and creating time-based code.
+"""
+
 import datetime
 import calendar as cdr
 
+from django.http import Http404
+
 from timetracker.tracker.models import TrackingEntry, Tbluser
 
-month_map = {
+MONTH_MAP = {
     0: ('JAN', 'January'),
     1: ('FEB', 'February'),
     2: ('MAR', 'March'),
@@ -23,25 +30,42 @@ def gen_calendar(year=datetime.datetime.today().year,
                  day=datetime.datetime.today().day,
                  user=None):
 
-    if int(month)-1 not in month_map.keys():
+    """
+    Returns a HTML calendar, calling a database user to get their day-by-day
+    entries and gives each day a special CSS class so that days can be styled
+    individually.
+
+    The generated HTML should be 'pretty printed' as well, so the output code
+    should be pretty readable.
+    """
+
+
+    year, month, day = int(year), int(month), int(day)
+    
+    if month-1 not in MONTH_MAP.keys():
         raise Http404
+
+    if month + 1 == 13:
+        next_url = '"/calendar/%s/%s"' % (year + 1, 1)
+    else:
+        next_url = '"/calendar/%s/%s"' % (year, month + 1)
+
+    if month - 1 == 0:
+        previous_url = '"/calendar/%s/%s"' % (year - 1, 12)
+    else:
+        previous_url = '"/calendar/%s/%s"' % (year, month - 1)
     
-    next_url = '"http://localhost:8000/calendar/%s/%s"' % (year,
-                                                           int(month)+1)
-    
-    previous_url = '"http://localhost:8000/calendar/%s/%s"' % (year,
-                                                               int(month)-1)
             
     # need to use authorisation and sessions to get this
     # for testing we'll just grab the same db object
-    db = Tbluser.objects.get(user_id__exact=user)
+    database = Tbluser.objects.get(user_id__exact=user)
 
     # create a URL object to get these filters, with the base
     # case being this month
 
     try:
-        db = TrackingEntry.objects.filter(
-            user=db.id,
+        database = TrackingEntry.objects.filter(
+            user=database.id,
             entry_date__year=year,
             entry_date__month=month
             )
@@ -80,7 +104,7 @@ def gen_calendar(year=datetime.datetime.today().year,
                 </td>
               </tr>\n""".format(previous_url,
                                 next_url,
-                                month_map[int(month)-1][1]
+                                MONTH_MAP[int(month)-1][1]
                         )
            )
 
@@ -116,7 +140,7 @@ def gen_calendar(year=datetime.datetime.today().year,
             # we've got the month in the query set,
             # so just query that set for individual days
             try:
-                entry = db.get(entry_date__day=day).daytype
+                entry = database.get(entry_date__day=day).daytype
                 to_cal("""\t\t\t\t<td class="%s">%s</td>\n""" % (entry, day))
             except TrackingEntry.DoesNotExist:
                 to_cal("""\t\t\t\t<td class="%s">%s</td>\n""" % (emptyclass,
