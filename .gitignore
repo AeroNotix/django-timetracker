@@ -1,4 +1,5 @@
-/admin/*
+.ropeproject/*
+admin/*
 *.pyc
 *.js
 *.png
