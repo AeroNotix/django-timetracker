@@ -1,0 +1,58 @@
+* {
+   background: #336699;
+   font-family: "Sans Serif";
+}
+
+.day-names {
+   background: black;
+   color: white;
+   width: 50px;
+}
+
+.table-header {
+   text-align: center;
+   background: #FF6600;
+}
+
+.empty {
+   background: white;
+   color: white;
+}
+
+.empty-day {
+   background: white;
+}
+
+.WKDAY {
+   background: red;
+}
+
+.SICKD {
+   background: green;
+}
+
+.HOLIS {
+   background: silver;
+}
+
+.SPECI {
+   background: yellow;
+}
+
+.OTHER {
+   background: pink;
+}
+
+#calendar {
+   margin-left: auto;
+   margin-right: auto;
+   text-align: center;
+   background: #1d1d1d;
+   height: 350px;
+}
+
+.table-links {
+   background: inherit;
+   color: #1d1d1d;
+   text-decoration: none;
+}

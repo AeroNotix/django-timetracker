@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block header %}
+    <link href="{{ STATIC_URL }}calendar.css" type="text/css"
+          rel="stylesheet" />
+{% endblock header %}
+
+{% block content %}
+{{ calendar|safe }}
+{% endblock %}

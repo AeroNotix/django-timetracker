@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{% block title %}{% endblock %}</title>
+    <link href="{{ STATIC_URL }}stylesheet.css" type="text/css"
+          rel="stylesheet" />
+    {% block header %}
+    {% endblock header %}
+  </head>
+
+
+{% block content %}
+{% endblock %}

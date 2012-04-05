@@ -1,0 +1,7 @@
+*.pyc
+*.js
+*.png
+*.jpg
+*.jpeg
+*.gif
+settings.py
