@@ -70,6 +70,7 @@ def gen_calendar(year=datetime.datetime.today().year,
             entry_date__year=year,
             entry_date__month=month
             )
+        
     except TrackingEntry.DoesNotExist:
         # it seems Django still follows through with the assignment
         # when it raises an error, this is actually quite good because
@@ -82,7 +83,7 @@ def gen_calendar(year=datetime.datetime.today().year,
         int(year),
         int(month)
     )
-
+    
     # creating a list holder for the strings
     # this is faster than concatenating the
     # strings as we go.
@@ -137,8 +138,13 @@ def gen_calendar(year=datetime.datetime.today().year,
             # we've got the month in the query set,
             # so just query that set for individual days
             try:
-                entry = database.get(entry_date__day=day).daytype
-                to_cal("""\t\t\t\t<td class="%s">%s</td>\n""" % (entry, day))
+                data = database.get(entry_date__day=day)
+                
+                to_cal("""\t\t\t\t
+                           <td onclick="$('#comments').html('%s')"
+                               class="%s">%s</td>\n""" % (data.comments,
+                                                          data.daytype,
+                                                          day))
             except TrackingEntry.DoesNotExist:
                 to_cal("""\t\t\t\t<td class="%s">%s</td>\n""" % (emptyclass,
                                                                  day))
