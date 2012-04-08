@@ -1,7 +1,6 @@
 .ropeproject/*
 admin/*
 *.pyc
-*.js
 *.png
 *.jpg
 *.jpeg
