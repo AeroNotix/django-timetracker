@@ -1,5 +1,5 @@
 * {
-   background: #004a9b;
+   background: white;
    font-family: "Trebuchet MS", sans-serif 
 }
 
@@ -111,14 +111,16 @@
 
 .entry-form {
    width: 300px;
+   border: 5px solid black;
+   border-radius: 15px;
 }
 
 #add-entry-fs {
-   position: absolute;
-   top: 160px;
 }
 
 
 #change-entry-fs {
+   position: absolute;
+   top: 22%;
 
 }
