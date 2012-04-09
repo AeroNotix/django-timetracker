@@ -1,5 +1,5 @@
 * {
-   background: #336699;
+   background: #004a9b;
    font-family: "Trebuchet MS", sans-serif 
 }
 
@@ -64,4 +64,61 @@
    background: inherit;
    color: #1d1d1d;
    text-decoration: none;
+}
+
+#calendar {
+   position: absolute;
+   left: 50%;
+   top: 1%;
+}
+
+#comments {
+   left: 10px;
+   top: 1%;
+}
+
+.ui-widget {
+   font-size: 12px; 
+}
+
+.ui-timepicker-div .ui-widget-header {
+   margin-bottom: 8px; 
+}
+
+.ui-timepicker-div dl { 
+   text-align: left; 
+}
+
+.ui-timepicker-div dl dt { 
+   height: 25px; 
+   margin-bottom: -25px; 
+}
+
+.ui-timepicker-div dl dd { 
+   argin: 0 10px 10px 65px; 
+}
+
+.ui-tpicker-grid-label {
+   background: none; 
+   border: none;
+   margin: 0;
+   padding: 0; 
+}
+
+.change-el {
+   background: white;
+}
+
+.entry-form {
+   width: 300px;
+}
+
+#add-entry-fs {
+   position: absolute;
+   top: 160px;
+}
+
+
+#change-entry-fs {
+
 }
