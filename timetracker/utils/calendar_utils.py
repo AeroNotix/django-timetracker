@@ -28,8 +28,7 @@ MONTH_MAP = {
 def gen_calendar(year=datetime.datetime.today().year,
                  month=datetime.datetime.today().month,
                  day=datetime.datetime.today().day,
-                 user=None,
-                 generate_select=False):
+                 user=None):
 
     """
     Returns a HTML calendar, calling a database user to get their day-by-day
@@ -42,7 +41,7 @@ def gen_calendar(year=datetime.datetime.today().year,
 
     # django passes us Unicode strings
     year, month, day = int(year), int(month), int(day)
-    
+
     if month-1 not in MONTH_MAP.keys():
         raise Http404
 
@@ -57,8 +56,8 @@ def gen_calendar(year=datetime.datetime.today().year,
         previous_url = '"/calendar/%s/%s"' % (year - 1, 12)
     else:
         previous_url = '"/calendar/%s/%s"' % (year, month - 1)
-    
-            
+
+
     # need to use authorisation and sessions to get this
     # for testing we'll just grab the same db object
     database = Tbluser.objects.get(user_id__exact=user)
@@ -70,20 +69,20 @@ def gen_calendar(year=datetime.datetime.today().year,
             entry_date__year=year,
             entry_date__month=month
             )
-        
+
     except TrackingEntry.DoesNotExist:
         # it seems Django still follows through with the assignment
         # when it raises an error, this is actually quite good because
         # we can treat the query set like normal
         pass
-    
+
     # create a semi-sparsely populated n-dimensional
     # array with the month's days per week
     calendar_array = cdr.monthcalendar(
         int(year),
         int(month)
     )
-    
+
     # creating a list holder for the strings
     # this is faster than concatenating the
     # strings as we go.
@@ -110,17 +109,17 @@ def gen_calendar(year=datetime.datetime.today().year,
 
            </script>
            """)
-    
+
     # create the table header
     to_cal("""<table id="calendar" border="1">\n\t\t\t""")
-    
+
     to_cal("""<tr>
                 <td class="table-header" colspan="2">
                   <a class="table-links" href={0}>&lt;</a>
                 </td>
-                
+
                 <td class="table-header" colspan="3">{2}</td>
-                
+
                 <td class="table-header" colspan="2">
                   <a class="table-links" href={1}>&gt;</a>
                 </td>
@@ -140,14 +139,14 @@ def gen_calendar(year=datetime.datetime.today().year,
                 <td class=day-names>Sat</td>
                 <td class=day-names>Sun</td>
               </tr>\n""")
-    
+
     # each row in the calendar_array is a week
     # in the calendar, so create a new row
     for week_ in calendar_array:
         to_cal("""\n\t\t\t<tr>\n""")
-        
+
         for _day in week_:
-            
+
             # the calendar_array fills extraneous days
             # with 0's, we can catch that and treat either
             # end of the calendar differently in the CSS
@@ -164,15 +163,19 @@ def gen_calendar(year=datetime.datetime.today().year,
                 print str(data.start_time)
                 # Use jQuery to change a #comment element to contain the
                 # comments for that day.
-                to_cal("""\t\t\t\t<td onclick="toggleChangeEntries({0}, {1}, '{2}')"
-                              class="{3} day-class">{4}</td>\n""".format(data.start_time.hour,
-                                                                         data.start_time.minute,
-                                                                         str(data.start_time)[0:5],
-                                                                         data.daytype,
-                                                                         _day))
-                                                      
+                to_cal("""\t\t\t\t
+                       <td onclick="toggleChangeEntries({0}, {1}, '{2}')"
+                           class="{3} day-class">{4}</td>\n""".format(
+                                                      data.start_time.hour,
+                                                      data.start_time.minute,
+                                                      str(data.start_time)[0:5],
+                                                      data.daytype,
+                                                      _day
+                                                     )
+                           )
+
             except TrackingEntry.DoesNotExist:
-                
+
                 to_cal("""\t\t\t\t<td onclick="hideEntries()"
                               class="{0}">{1}</td>\n""".format(emptyclass,
                                                                _day))
