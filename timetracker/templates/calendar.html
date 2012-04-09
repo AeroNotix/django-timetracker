@@ -11,12 +11,19 @@
 
 {% block content %}
 
+
 <form action="#" method="POST" id="add-form">
   {% csrf_token %}
   <fieldset class="entry-form" id="add-entry-fs">
     <legend>Add Entry</legend>
     <table>
       {{ addform.as_table }}
+      <tr>
+        <td></td>
+        <td align="right">
+          <button>Submit</button>
+        </td>
+      </tr>
     </table>
   </fieldset>
 </form>
@@ -27,19 +34,50 @@
     <legend>Change Entry</legend>
     <table>
       {{ changeform.as_table }}
+      <tr>
+        <td></td>
+        <td align="right">
+          <button>Submit</button>
+        </td>
+      </tr>
     </table>
   </fieldset>
 </form>
 
+
 <script type="text/javascript">
 
-   $("#line_starttime").timepicker({});
-   $("#line_starttime").val('');
-   $("#line_starttime").timepicker("disable");
-   $("#line_endtime").timepicker({});
-   $("#add_starttime").timepicker({});
+   function addTimePicker(element, state) {
+       $(element).timepicker({});
+       $(element).val('');
+       
+       if (!state) {
+          $(element).timepicker("disable");
+       }
+   };
+
+   function addDatePicker(element, state) {
+       $(element).datepicker();
+       $(element).val('');
+       $(element).datepicker("option", "dateFormat", 'yy-mm-dd');
+       
+       if (!state) {
+          $(element).datepicker("disable");
+       }
+   };
+
+
+   addTimePicker("#line_starttime", false);
+   addTimePicker("#line_endtime", false);
+   addTimePicker("#add_starttime", true);
+   addTimePicker("#add_endtime", true);
+   
+   addDatePicker("#line_entrydate", false);
+   addDatePicker("#add_entrydate", true);
+
+
 </script>
 
 {{ calendar|safe }}
 
-{% endblock %}
+{% endblock content %}
