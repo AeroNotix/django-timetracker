@@ -1,6 +1,6 @@
 * {
    background: #336699;
-   font-family: "Sans Serif";
+   font-family: "Trebuchet MS", sans-serif 
 }
 
 .day-names {
@@ -27,6 +27,10 @@
    background: red;
 }
 
+.WKDAY:hover {
+    background: white;
+}
+
 .SICKD {
    background: green;
 }
@@ -49,6 +53,11 @@
    text-align: center;
    background: #1d1d1d;
    height: 350px;
+}
+
+.day-class:hover {
+    background: orange;
+    border: 1px solid white;
 }
 
 .table-links {
