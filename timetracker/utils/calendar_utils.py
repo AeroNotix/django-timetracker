@@ -104,6 +104,10 @@ def gen_calendar(year=datetime.datetime.today().year,
                   $("#starttime").show();
               };
 
+              function hideEntries() {
+                  $("#starttime").val('');
+              }
+
            </script>
            """)
     
@@ -169,7 +173,7 @@ def gen_calendar(year=datetime.datetime.today().year,
                                                       
             except TrackingEntry.DoesNotExist:
                 
-                to_cal("""\t\t\t\t<td onclick="$('#starttime').hide()"
+                to_cal("""\t\t\t\t<td onclick="hideEntries()"
                               class="{0}">{1}</td>\n""".format(emptyclass,
                                                                _day))
         # close up that row
