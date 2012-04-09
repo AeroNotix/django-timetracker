@@ -98,6 +98,7 @@ def gen_calendar(year=datetime.datetime.today().year,
                                            entry_date, daytype) {
 
                   $("#line_starttime").timepicker("enable");
+                  $("#line_endtime").timepicker("enable");
                   $("#line_entrydate").val(entry_date);
                   $("#line_daytype").val(daytype);
 
