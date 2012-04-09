@@ -6,40 +6,40 @@
 
     <script type="text/javascript" src="{{ STATIC_URL }}jquery/js/timepicker.js">
     </script>
-
-    <style type="text/css">
-       #calendar {
-            position: absolute;
-            left: 50%;
-            top: 1%;
-       }
-       
-       #js-option {
-            position: absolute;
-            left: 420px;
-            top: 1%;
-       }
-
-       #comments {
-       left: 10px;
-       top: 1%;
-       }
-       .ui-widget { font-size: 12px; }
-	   .ui-timepicker-div .ui-widget-header { margin-bottom: 8px; }
-	   .ui-timepicker-div dl { text-align: left; }
-	   .ui-timepicker-div dl dt { height: 25px; margin-bottom: -25px; }
-	   .ui-timepicker-div dl dd { margin: 0 10px 10px 65px; }
-	   .ui-tpicker-grid-label { background: none; border: none; margin: 0; padding: 0; }
-    </style>
 {% endblock header %}
+
+
 {% block content %}
-<form action="#">
-<label>Start Time
-  <input id="starttime" />
-</label>
+
+<form action="#" method="POST" id="add-form">
+  {% csrf_token %}
+  <fieldset class="entry-form" id="add-entry-fs">
+    <legend>Add Entry</legend>
+    <table>
+      {{ addform.as_table }}
+    </table>
+  </fieldset>
+</form>
+
+<form action="#" method="POST" id="change-form">
+  {% csrf_token %}
+  <fieldset class="entry-form" id="change-entry-fs">
+    <legend>Change Entry</legend>
+    <table>
+      {{ changeform.as_table }}
+    </table>
+  </fieldset>
+</form>
+
 <script type="text/javascript">
-   $("starttime").timepicker({});
-   $("starttime").hide();
+
+   $("#line_starttime").timepicker({});
+   $("#line_starttime").val('');
+   $("#line_starttime").timepicker("disable");
+   $("#line_endtime").timepicker({});
+   $("#add_starttime").timepicker({});
 </script>
+
 {{ calendar|safe }}
+
 {% endblock %}
