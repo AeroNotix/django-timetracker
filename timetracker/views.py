@@ -28,15 +28,13 @@ def view_calendar(request,
     Even the generated HTML is aligned and pretty printed.
     """
     
-    select, calendar_table = gen_calendar(year, month, day,
-                                          user='aaron.france@hp.com',
-                                          generate_select=True)
+    calendar_table = gen_calendar(year, month, day,
+                                  user='aaron.france@hp.com')
     
     return render_to_response(
         'calendar.html',
         {
          'calendar': calendar_table,
-         'select': select,
         },
         RequestContext(request)
         )
