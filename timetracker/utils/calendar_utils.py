@@ -89,6 +89,23 @@ def gen_calendar(year=datetime.datetime.today().year,
     # strings as we go.
     cal_html = list()
     to_cal = cal_html.append
+
+    # add our javascript functions
+    to_cal("""
+           <script type="text/javascript">
+
+              function toggleChangeEntries(st_hour, st_minute, full_st) {
+                  $("#starttime").val(full_st);
+                  $("#starttime").timepicker("destroy");
+                  $("#starttime").timepicker({
+                                     hour: st_hour,
+                                     minute: st_minute
+                                  });
+                  $("#starttime").show();
+              };
+
+           </script>
+           """)
     
     # create the table header
     to_cal("""<table id="calendar" border="1">\n\t\t\t""")
@@ -125,56 +142,41 @@ def gen_calendar(year=datetime.datetime.today().year,
     for week_ in calendar_array:
         to_cal("""\n\t\t\t<tr>\n""")
         
-        for day in week_:
+        for _day in week_:
             
             # the calendar_array fills extraneous days
             # with 0's, we can catch that and treat either
             # end of the calendar differently in the CSS
-            if day != 0:
-                emptyclass = 'empty-day'
+            if _day != 0:
+                emptyclass = 'empty-day day-class'
             else:
                 emptyclass = 'empty'
 
             # we've got the month in the query set,
             # so just query that set for individual days
             try:
-                data = database.get(entry_date__day=day)
-                
-                to_cal("""\t\t\t\t
-                           <td onclick="$('#comments').html('%s')"
-                               class="%s">%s</td>\n""" % (data.comments,
-                                                          data.daytype,
-                                                          day))
+                # get all the data from our in-memory query-set.
+                data = database.get(entry_date__day=_day)
+                print str(data.start_time)
+                # Use jQuery to change a #comment element to contain the
+                # comments for that day.
+                to_cal("""\t\t\t\t<td onclick="toggleChangeEntries({0}, {1}, '{2}')"
+                              class="{3} day-class">{4}</td>\n""".format(data.start_time.hour,
+                                                                         data.start_time.minute,
+                                                                         str(data.start_time)[0:5],
+                                                                         data.daytype,
+                                                                         _day))
+                                                      
             except TrackingEntry.DoesNotExist:
-                to_cal("""\t\t\t\t<td class="%s">%s</td>\n""" % (emptyclass,
-                                                                 day))
+                
+                to_cal("""\t\t\t\t<td onclick="$('#starttime').hide()"
+                              class="{0}">{1}</td>\n""".format(emptyclass,
+                                                               _day))
         # close up that row
         to_cal("""\t\t\t</tr>\n""")
 
     # close up the table
     to_cal("""\n</table>""")
-
-
-    if generate_select:
-        # if we opted to generated the select box we might as well use
-        # the same database call, right?
-        
-        if len(database) == 0:
-            return '', ''.join(cal_html)
-        # give ourselves something to append to, like
-        select = []
-        to_sel = select.append
-        to_sel("""<select id="entry-selector"  name="month-entries">""")
-
-        # each row in the database needs to be a select entry
-        # we need a way to sort these entries 
-        for item in database:
-            to_sel("""\n\t<option value="%s">%s</option>""" % (item.id,
-                                                           item.entry_date)
-                   )
-
-        to_sel("""\n</select>\n""")
-        return ''.join(select), ''.join(cal_html)
 
     # join up the html and push it back
     return ''.join(cal_html)
