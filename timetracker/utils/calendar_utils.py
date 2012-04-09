@@ -93,18 +93,38 @@ def gen_calendar(year=datetime.datetime.today().year,
     to_cal("""
            <script type="text/javascript">
 
-              function toggleChangeEntries(st_hour, st_minute, full_st) {
-                  $("#starttime").val(full_st);
-                  $("#starttime").timepicker("destroy");
-                  $("#starttime").timepicker({
+              function toggleChangeEntries(st_hour, st_min, full_st,
+                                           fi_hour, fi_min, full_fi,
+                                           entry_date, daytype) {
+
+                  $("#line_starttime").timepicker("enable");
+                  $("#line_entrydate").val(entry_date);
+                  $("#line_daytype").val(daytype);
+
+                  $("#line_starttime").val(full_st);
+                  $("#line_endtime").val(full_fi);
+
+                  $("#line_starttime").timepicker("destroy");
+                  $("#line_endtime").timepicker("destroy");
+
+                  $("#line_starttime").timepicker({
                                      hour: st_hour,
-                                     minute: st_minute
+                                     minute: st_min
                                   });
-                  $("#starttime").show();
+
+                  $("#line_endtime").timepicker({
+                                     hour: fi_hour,
+                                     minute: fi_min
+                                  });
+
+
+                  $("#line_starttime").show();
               };
 
               function hideEntries() {
-                  $("#starttime").val('');
+                  $("#line_starttime").val('');
+                  $("#line_entrydate").val('');
+                  $("#line_endtime").val('');
               }
 
            </script>
@@ -160,25 +180,39 @@ def gen_calendar(year=datetime.datetime.today().year,
             try:
                 # get all the data from our in-memory query-set.
                 data = database.get(entry_date__day=_day)
-                print str(data.start_time)
+                
                 # Use jQuery to change a #comment element to contain the
                 # comments for that day.
+                vals = [
+                    data.start_time.hour,
+                    data.start_time.minute,
+                    str(data.start_time)[0:5],
+                    data.end_time.hour,
+                    data.end_time.minute,
+                    str(data.end_time)[0:5],
+                    data.entry_date,
+                    data.daytype,
+                    _day
+                    ]
+                
                 to_cal("""\t\t\t\t
-                       <td onclick="toggleChangeEntries({0}, {1}, '{2}')"
-                           class="{3} day-class">{4}</td>\n""".format(
-                                                      data.start_time.hour,
-                                                      data.start_time.minute,
-                                                      str(data.start_time)[0:5],
-                                                      data.daytype,
-                                                      _day
-                                                     )
-                           )
-
+                       <td onclick="toggleChangeEntries({0}, {1}, '{2}',
+                                                        {3}, {4}, '{5}',
+                                                        '{6}', '{7}')"
+                           class="{7} day-class">{8}</td>\n""".format(*vals)
+                       )
+                
             except TrackingEntry.DoesNotExist:
 
+                # we don't want to write a 0 in the box
+                _day = '&nbsp' if _day == 0 else _day
+
+                # write in the box and give the empty boxes a way to clear
+                # the form
                 to_cal("""\t\t\t\t<td onclick="hideEntries()"
                               class="{0}">{1}</td>\n""".format(emptyclass,
                                                                _day))
+                
         # close up that row
         to_cal("""\t\t\t</tr>\n""")
 
