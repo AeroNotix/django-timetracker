@@ -6,3 +6,5 @@ admin/*
 *.jpeg
 *.gif
 settings.py
+.#*
+*.py#
