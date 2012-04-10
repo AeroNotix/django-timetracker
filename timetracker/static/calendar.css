@@ -1,7 +1,5 @@
-* {
-   background: white;
-   font-family: "Trebuchet MS", sans-serif 
-}
+
+/* calendar days */
 
 .day-names {
    background: black;
@@ -48,8 +46,6 @@
 }
 
 #calendar {
-   margin-left: auto;
-   margin-right: auto;
    text-align: center;
    background: #1d1d1d;
    height: 350px;
@@ -66,19 +62,25 @@
    text-decoration: none;
 }
 
-#calendar {
-   position: absolute;
-   left: 50%;
-   top: 1%;
-}
-
 #comments {
    left: 10px;
    top: 1%;
 }
 
+/*
+
+TimePicker widget CSS
+
+this is a jQuery add-on
+
+*/
+
 .ui-widget {
    font-size: 12px; 
+}
+
+.ui-widget-header {
+    font-weight: bold;
 }
 
 .ui-timepicker-div .ui-widget-header {
@@ -95,32 +97,44 @@
 }
 
 .ui-timepicker-div dl dd { 
-   argin: 0 10px 10px 65px; 
+   margin: 0 10px 10px 65px; 
 }
 
 .ui-tpicker-grid-label {
-   background: none; 
    border: none;
    margin: 0;
    padding: 0; 
 }
+
+#ui-datepicker-div {
+   color: white;
+}
+
+/* table */
+
+#calendar-table {
+   background: #3299CC;
+   position: absolute;
+   left: 20%;
+   border: 5px solid black;
+   border-radius: 15px;
+}
+
+/* Forms */
 
 .change-el {
    background: white;
 }
 
 .entry-form {
+   background: white;
    width: 300px;
    border: 5px solid black;
    border-radius: 15px;
 }
 
-#add-entry-fs {
-}
-
-
-#change-entry-fs {
-   position: absolute;
-   top: 22%;
-
+.fs-title {
+   border: 2px solid black;
+   border-radius: 5px;
+   background: orange;
 }
