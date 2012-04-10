@@ -25,7 +25,7 @@ def view_calendar(request,
     site.com/calendar/2012/02/, also takes a day
     just in case you want to add a particular view for a day, for example.
 
-    Even the generated HTML is aligned and pretty printed.
+    The generated HTML is pretty printed
     """
     
     calendar_table = gen_calendar(year, month, day,
