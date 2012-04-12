@@ -2,7 +2,10 @@ import datetime
 
 from django.http import HttpResponse, Http404
 from django.shortcuts import render_to_response
+from django.core.context_processors import csrf
 from django.template import RequestContext
+
+import simplejson
 
 from tracker.models import TrackingEntry, Tbluser
 from utils.calendar_utils import gen_calendar
@@ -51,4 +54,27 @@ def process_change_request(request):
     pass
 
 
+def ajax(request):
 
+    if not request.is_ajax():
+        raise Http404
+
+    form = {
+        'entry_date': None,
+        'start_time': None,
+        'end_time': None,
+        'daytype': None,
+    }
+
+    for key in form:
+        form[key] = request.POST.get(key, None)
+
+    # need to use sessions
+    form['user_id'] = 1
+    form['breaks'] = "00:15:00"
+
+    # lol
+    entry = TrackingEntry(**form)
+    entry.save()
+
+    return HttpResponse(e)
