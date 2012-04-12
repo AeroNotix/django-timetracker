@@ -2,14 +2,14 @@
 /* calendar days */
 
 .day-names {
-   background: black;
+   background-image: url('images/tableheader_flip.gif');
    color: white;
    width: 50px;
 }
 
 .table-header {
-   text-align: center;
-   background: #FF6600;
+   background-image: url('images/tableheader_flip.gif');
+   color: white;
 }
 
 .empty {
@@ -26,7 +26,7 @@
 }
 
 .WKDAY:hover {
-    background: white;
+   background: white;
 }
 
 .SICKD {
@@ -57,14 +57,9 @@
 }
 
 .table-links {
-   background: inherit;
-   color: #1d1d1d;
+   background: transparent;
+   color: white;
    text-decoration: none;
-}
-
-#comments {
-   left: 10px;
-   top: 1%;
 }
 
 /*
@@ -113,11 +108,12 @@ this is a jQuery add-on
 /* table */
 
 #calendar-table {
-   background: #3299CC;
-   position: absolute;
-   left: 20%;
-   border: 5px solid black;
-   border-radius: 15px;
+   background: blue;
+}
+
+#table-wrapper {
+   background: blue;
+
 }
 
 /* Forms */
@@ -129,12 +125,10 @@ this is a jQuery add-on
 .entry-form {
    background: white;
    width: 300px;
-   border: 5px solid black;
-   border-radius: 15px;
+   border: 2px solid black;
 }
 
 .fs-title {
    border: 2px solid black;
-   border-radius: 5px;
-   background: orange;
+   background: silver;
 }
