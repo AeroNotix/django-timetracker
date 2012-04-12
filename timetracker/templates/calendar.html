@@ -5,6 +5,62 @@
           rel="stylesheet" />
 
     <script type="text/javascript" src="{{ STATIC_URL }}jquery/js/timepicker.js"></script>
+    
+    <script type="text/javascript">
+      function addTimePicker(element, state) {
+          $(element).timepicker({});
+          $(element).val('');
+      
+          if (!state) {
+              $(element).timepicker("disable");
+          }
+       };
+
+       function addDatePicker(element, state) {
+           $(element).datepicker().val('');
+           $(element).datepicker("option", "dateFormat", 'yy-mm-dd');
+       
+           if (!state) {
+              $(element).datepicker("disable");
+           }
+       };
+
+        $(function () {
+            addTimePicker("#line_starttime", false);
+            addTimePicker("#line_endtime", false);
+            addTimePicker("#add_starttime", true);
+            addTimePicker("#add_endtime", true);
+            addDatePicker("#line_entrydate", false);
+            addDatePicker("#add_entrydate", true);
+
+
+        });
+   
+        function ajaxCall(form) {
+            $.ajaxSetup({type: 'POST'});
+            var pre = "#" + form + "_";
+
+            var formData = {
+                "form_type"  : form,
+                "entry_date" : $(pre + 'entrydate').val(),
+                "start_time" : $(pre + 'starttime').val(),
+                "end_time"   : $(pre + 'endtime').val(), 
+                "daytype"    : $(pre + 'daytype').val(),
+            };
+            
+            $.ajax({
+                url: "/ajax/",
+                data: formData,
+                success: function(data) {
+                         alert(data);
+                         }
+                }
+            );
+
+            return false;
+         }
+    </script>
+
 {% endblock header %}
 
 {% block content %}
@@ -12,13 +68,13 @@
 <table id="calendar-table" >
   <tr>
     <td>
-      <form action="#" method="POST" id="add-form">
+      <form action="" id="add-form">
         {% csrf_token %}
         <fieldset class="entry-form" id="add-entry-fs">
           <legend class="fs-title">Add Entry</legend>
           <table>
             <tr>
-              <th>
+               <th>
                 <label for="add_entrydate">
                   Entry Date:
                 </label>
@@ -29,7 +85,7 @@
             </tr>
             <tr>
               <th>
-                <label for="add_start_time">
+                <label for="add_starttime">
                   Start Time:
                 </label>
               </th>
@@ -60,7 +116,10 @@
             <tr>
               <td></td>
               <td align="right">
-                <button>Submit</button>
+                <input type="button"
+                       onclick="ajaxCall('add')"
+                       id="add_button"
+                       value="Add"/>
               </td>
             </tr>
           </table>
@@ -73,7 +132,7 @@
     </td>
     
   </tr>
-  
+
   <tr>
     <td>
       <form action="#" method="POST" id="change-form">
@@ -93,7 +152,7 @@
             </tr>
             <tr>
               <th>
-                <label for="line_start_time">
+                <label for="line_starttime">
                   Start Time:
                 </label>
               </th>
@@ -133,36 +192,6 @@
     </td>
   </tr>
 </table>
-
-  <script type="text/javascript">
-    function addTimePicker(element, state) {
-       $(element).timepicker({});
-       $(element).val('');
-       
-       if (!state) {
-          $(element).timepicker("disable");
-       }
-   };
-
-   function addDatePicker(element, state) {
-       $(element).datepicker();
-       $(element).val('');
-       $(element).datepicker("option", "dateFormat", 'yy-mm-dd');
-       
-       if (!state) {
-          $(element).datepicker("disable");
-       }
-   };
-
-   addTimePicker("#line_starttime", false);
-   addTimePicker("#line_endtime", false);
-   addTimePicker("#add_starttime", true);
-   addTimePicker("#add_endtime", true);
-   
-   addDatePicker("#line_entrydate", false);
-   addDatePicker("#add_entrydate", true);
-
-
-</script>
 {% endblock content %}
+
 </body>
