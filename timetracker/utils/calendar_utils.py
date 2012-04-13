@@ -142,6 +142,8 @@ def gen_calendar(year=datetime.datetime.today().year,
                   $("#line_starttime").val('');
                   $("#line_entrydate").val('');
                   $("#line_endtime").val('');
+                  $("#add_starttime").val('');
+                  $("#add_endtime").val('');
               }
 
            </script>
@@ -247,22 +249,34 @@ def gen_calendar(year=datetime.datetime.today().year,
     # join up the html and push it back
     return ''.join(cal_html)
 
-def ajax_add_entry(form):
+def ajax_add_entry(request):
 
     '''
     Adds a calendar entry asynchronously
     '''
 
     # create objects to put our data into
-    _form = form.copy()
     json_data = dict()
 
+    # object to dump form data into
+    form = {
+        'entry_date': None,
+        'start_time': None,
+        'end_time': None,
+        'daytype': None,
+    }
+
+    # get our form data
+    for key in form:
+        form[key] = request.POST.get(key, None)
+
+    
     # This should be on the page
     shour, sminute = map(int,
-                         _form['start_time'].split(":")
+                         form['start_time'].split(":")
                      )
     ehour, eminute = map(int,
-                         _form['end_time'].split(":")
+                         form['end_time'].split(":")
                      )
 
     if (datetime.time(shour, sminute) > datetime.time(ehour, eminute)):
@@ -271,18 +285,18 @@ def ajax_add_entry(form):
                             mimetype="application/javascript")
 
     # need to use sessions
-    _form['user_id'] = 1
-    # need to add a breaks section to the _form
-    _form['breaks'] = "00:15:00"
+    form['user_id'] = 1
+    # need to add a breaks section to the form
+    form['breaks'] = "00:15:00"
 
     try:
         # this will be ok as soon as I put client side validation
         # and server side validation working.
-        entry = TrackingEntry(**_form)
+        entry = TrackingEntry(**form)
         entry.save()
 
         year, month, day = map(int,
-                               _form['entry_date'].split("-")
+                               form['entry_date'].split("-")
                            )
         # again, sessions
         calendar = gen_calendar(year, month, day,
