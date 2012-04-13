@@ -51,8 +51,13 @@
             $.ajax({
                 url: "/ajax/",
                 data: formData,
+                dataType: "json",
                 success: function(data) {
-                         alert(data);
+                            if (data['success'] == true) {
+                                   $("#calendar-entry").html(data['calendar']);
+                             } else {
+                                   alert(data['error']);
+                             }
                          }
                 }
             );
@@ -127,7 +132,7 @@
       </form>
     </td>
     
-    <td rowspan="2">
+    <td id="calendar-entry" rowspan="2">
       {{ calendar|safe }}
     </td>
     
@@ -183,7 +188,9 @@
             <tr>
               <td></td>
               <td align="right">
-                <button>Submit</button>
+                <input type="button"
+                       onclick="alert('not implemented')"
+                       value="Change" />
               </td>
             </tr>
           </table>
