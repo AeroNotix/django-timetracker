@@ -1,20 +1,27 @@
+'''
+Views which are mapped from the URL objects in urls.py
+'''
+
 import datetime
 
 from django.http import HttpResponse, Http404
 from django.shortcuts import render_to_response
-from django.core.context_processors import csrf
 from django.template import RequestContext
 from django.db import IntegrityError
 
 import simplejson
 
-from tracker.models import TrackingEntry, Tbluser
+from tracker.models import TrackingEntry #, Tbluser
 from utils.calendar_utils import gen_calendar
 from tracker.forms import entry_form, add_form
 
+# database error codes
 DUPLICATE_ENTRY = 1062
 
 def index(request):
+    """
+    Serve the root page, there's nothing there at the moment
+    """
     return render_to_response('base.html',
                               {},
                               RequestContext(request))
@@ -59,8 +66,15 @@ def process_change_request(request):
 
 def ajax(request):
 
+    """
+    Ajax request handler, eventually this will dispatch to the
+    specific ajax functions depending on what json gets sent.
+    """
+
     error = ''
 
+    # if the page is accessed via the browser (or other means)
+    # we don't serve requests
     if not request.is_ajax():
         raise Http404
 
@@ -71,16 +85,18 @@ def ajax(request):
         'daytype': None,
     }
 
+    # get our form data
     for key in form:
         form[key] = request.POST.get(key, None)
 
-
+    # create our JSON object
     json_data = {
         "success": False,
         "error": "",
         "calendar": ""
         }
-        
+
+    # This should be on the page
     shour, sminute = map(int,
                          form['start_time'].split(":")
                      )
@@ -93,23 +109,22 @@ def ajax(request):
         json_data['error'] = "Start time after end time"
         return HttpResponse(simplejson.dumps(json_data),
                             mimetype="application/javascript")
-
-        
         
     # need to use sessions
     form['user_id'] = 1
     # need to add a breaks section to the form
     form['breaks'] = "00:15:00"
       
-    # lol
     try:
+        # this will be ok as soon as I put client side validation
+        # and server side validation working.
         entry = TrackingEntry(**form)
         entry.save()
         
         year, month, day = map(int,
                                form['entry_date'].split("-")
                            )
-
+        # again, sessions
         calendar = gen_calendar(year, month, day,
                                 user='aaron.france@hp.com')
         
@@ -117,7 +132,6 @@ def ajax(request):
         if error[0] == DUPLICATE_ENTRY:
 
             json_data['error'] = "There is a duplicate entry for this value"
-            
             return HttpResponse(simplejson.dumps(json_data),
                                 mimetype="application/javascript")
         else:
