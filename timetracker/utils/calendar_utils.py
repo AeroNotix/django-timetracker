@@ -7,8 +7,10 @@ import datetime
 import calendar as cdr
 
 from django.http import Http404
+from django.db import IntegrityError
 
 from timetracker.tracker.models import TrackingEntry, Tbluser
+from timetracker.utils.database_errors import *
 
 MONTH_MAP = {
     0: ('JAN', 'January'),
@@ -30,11 +32,11 @@ def pad(string, pad='0', amount=2):
     Pads a string
     """
     string = str(string)
-    
+
     if len(str(string)) < amount:
         pre =  pad * (amount - len(string))
         return pre+string
-    
+
     return string
 
 def gen_calendar(year=datetime.datetime.today().year,
@@ -195,7 +197,7 @@ def gen_calendar(year=datetime.datetime.today().year,
             try:
                 # get all the data from our in-memory query-set.
                 data = database.get(entry_date__day=_day)
-                
+
                 # Pass these to the page so that the jQuery functions
                 # get the function arguments to edit those elements
                 vals = [
@@ -209,14 +211,14 @@ def gen_calendar(year=datetime.datetime.today().year,
                     data.daytype,
                     _day
                     ]
-                
+
                 to_cal("""\t\t\t\t
                        <td onclick="toggleChangeEntries({0}, {1}, '{2}',
                                                         {3}, {4}, '{5}',
                                                         '{6}', '{7}')"
                            class="{7} day-class">{8}</td>\n""".format(*vals)
                        )
-                
+
             except TrackingEntry.DoesNotExist:
 
                 # For clicking blank days to input the day quickly into the
@@ -225,7 +227,7 @@ def gen_calendar(year=datetime.datetime.today().year,
                     entry_date_string = '-'.join(map(pad, [year, month, _day]))
                 else:
                     entry_date_string = ''
-                
+
                 # we don't want to write a 0 in the box
                 _day = '&nbsp' if _day == 0 else _day
 
@@ -235,7 +237,7 @@ def gen_calendar(year=datetime.datetime.today().year,
                               class="{1}">{2}</td>\n""".format(entry_date_string,
                                                                emptyclass,
                                                                _day))
-                
+
         # close up that row
         to_cal("""\t\t\t</tr>\n""")
 
@@ -244,3 +246,58 @@ def gen_calendar(year=datetime.datetime.today().year,
 
     # join up the html and push it back
     return ''.join(cal_html)
+
+def ajax_add_entry(form):
+
+    '''
+    Adds a calendar entry asynchronously
+    '''
+
+    # create objects to put our data into
+    _form = form.copy()
+    json_data = dict()
+
+    # This should be on the page
+    shour, sminute = map(int,
+                         _form['start_time'].split(":")
+                     )
+    ehour, eminute = map(int,
+                         _form['end_time'].split(":")
+                     )
+
+    if (datetime.time(shour, sminute) > datetime.time(ehour, eminute)):
+        json_data['error'] = "Start time after end time"
+        return HttpResponse(simplejson.dumps(json_data),
+                            mimetype="application/javascript")
+
+    # need to use sessions
+    _form['user_id'] = 1
+    # need to add a breaks section to the _form
+    _form['breaks'] = "00:15:00"
+
+    try:
+        # this will be ok as soon as I put client side validation
+        # and server side validation working.
+        entry = TrackingEntry(**_form)
+        entry.save()
+
+        year, month, day = map(int,
+                               _form['entry_date'].split("-")
+                           )
+        # again, sessions
+        calendar = gen_calendar(year, month, day,
+                                user='aaron.france@hp.com')
+
+    except IntegrityError as error:
+        if error[0] == DUPLICATE_ENTRY:
+            json_data['error'] = "There is a duplicate entry for this value"
+        else:
+            json_data['error'] = str(error)
+        return json_data
+        
+    # if all went well
+    json_data['success'] = True
+    json_data['calendar'] = calendar
+    return json_data
+    
+    
