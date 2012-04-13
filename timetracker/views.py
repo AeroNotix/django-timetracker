@@ -7,16 +7,13 @@ import datetime
 from django.http import HttpResponse, Http404
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from django.db import IntegrityError
 
 import simplejson
 
 from tracker.models import TrackingEntry #, Tbluser
-from utils.calendar_utils import gen_calendar
+from utils.calendar_utils import gen_calendar, ajax_add_entry
+from utils.database_errors import *
 from tracker.forms import entry_form, add_form
-
-# database error codes
-DUPLICATE_ENTRY = 1062
 
 def index(request):
     """
@@ -78,6 +75,7 @@ def ajax(request):
     if not request.is_ajax():
         raise Http404
 
+    # object to dump form data into
     form = {
         'entry_date': None,
         'start_time': None,
@@ -96,52 +94,11 @@ def ajax(request):
         "calendar": ""
         }
 
-    # This should be on the page
-    shour, sminute = map(int,
-                         form['start_time'].split(":")
-                     )
+    if request.POST.get('form_type') == 'add':
+        json_data.update(ajax_add_entry(form))
+    if request.POST.get('form_type') == 'change':
+        json_data.update({"error": "Not implemented"})
 
-    ehour, eminute = map(int,
-                         form['end_time'].split(":")
-                     )
-
-    if (datetime.time(shour, sminute) > datetime.time(ehour, eminute)):
-        json_data['error'] = "Start time after end time"
-        return HttpResponse(simplejson.dumps(json_data),
-                            mimetype="application/javascript")
-        
-    # need to use sessions
-    form['user_id'] = 1
-    # need to add a breaks section to the form
-    form['breaks'] = "00:15:00"
-      
-    try:
-        # this will be ok as soon as I put client side validation
-        # and server side validation working.
-        entry = TrackingEntry(**form)
-        entry.save()
-        
-        year, month, day = map(int,
-                               form['entry_date'].split("-")
-                           )
-        # again, sessions
-        calendar = gen_calendar(year, month, day,
-                                user='aaron.france@hp.com')
-        
-    except IntegrityError as error:
-        if error[0] == DUPLICATE_ENTRY:
-
-            json_data['error'] = "There is a duplicate entry for this value"
-            return HttpResponse(simplejson.dumps(json_data),
-                                mimetype="application/javascript")
-        else:
-            json_data['error'] = str(error)
-            return HttpResponse(simplejson.dumps(json_data),
-                                mimetype="application/javascript")
-        
-    # if all went well
-    json_data['success'] = True
-    json_data['calendar'] = calendar
     return HttpResponse(simplejson.dumps(json_data),
                         mimetype="application/javascript")
-    
+
