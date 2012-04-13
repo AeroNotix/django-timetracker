@@ -25,6 +25,18 @@ MONTH_MAP = {
     11:('DEC', 'December')
 }
 
+def pad(string, pad='0', amount=2):
+    """
+    Pads a string
+    """
+    string = str(string)
+    
+    if len(str(string)) < amount:
+        pre =  pad * (amount - len(string))
+        return pre+string
+    
+    return string
+
 def gen_calendar(year=datetime.datetime.today().year,
                  month=datetime.datetime.today().month,
                  day=datetime.datetime.today().day,
@@ -97,6 +109,7 @@ def gen_calendar(year=datetime.datetime.today().year,
                                            fi_hour, fi_min, full_fi,
                                            entry_date, daytype) {
 
+                  $("#add_entrydate").val('');
                   $("#line_starttime").timepicker("enable");
                   $("#line_endtime").timepicker("enable");
                   $("#line_entrydate").val(entry_date);
@@ -122,7 +135,8 @@ def gen_calendar(year=datetime.datetime.today().year,
                   $("#line_starttime").show();
               };
 
-              function hideEntries() {
+              function hideEntries(date) {
+                  $("#add_entrydate").val(date);
                   $("#line_starttime").val('');
                   $("#line_entrydate").val('');
                   $("#line_endtime").val('');
@@ -182,8 +196,8 @@ def gen_calendar(year=datetime.datetime.today().year,
                 # get all the data from our in-memory query-set.
                 data = database.get(entry_date__day=_day)
                 
-                # Use jQuery to change a #comment element to contain the
-                # comments for that day.
+                # Pass these to the page so that the jQuery functions
+                # get the function arguments to edit those elements
                 vals = [
                     data.start_time.hour,
                     data.start_time.minute,
@@ -205,13 +219,21 @@ def gen_calendar(year=datetime.datetime.today().year,
                 
             except TrackingEntry.DoesNotExist:
 
+                # For clicking blank days to input the day quickly into the
+                # box. An alternative to the datepicker
+                if _day != 0:
+                    entry_date_string = '-'.join(map(pad, [year, month, _day]))
+                else:
+                    entry_date_string = ''
+                
                 # we don't want to write a 0 in the box
                 _day = '&nbsp' if _day == 0 else _day
 
                 # write in the box and give the empty boxes a way to clear
                 # the form
-                to_cal("""\t\t\t\t<td onclick="hideEntries()"
-                              class="{0}">{1}</td>\n""".format(emptyclass,
+                to_cal("""\t\t\t\t<td onclick="hideEntries('{0}')"
+                              class="{1}">{2}</td>\n""".format(entry_date_string,
+                                                               emptyclass,
                                                                _day))
                 
         # close up that row
