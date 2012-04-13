@@ -68,24 +68,10 @@ def ajax(request):
     specific ajax functions depending on what json gets sent.
     """
 
-    error = ''
-
     # if the page is accessed via the browser (or other means)
     # we don't serve requests
     if not request.is_ajax():
         raise Http404
-
-    # object to dump form data into
-    form = {
-        'entry_date': None,
-        'start_time': None,
-        'end_time': None,
-        'daytype': None,
-    }
-
-    # get our form data
-    for key in form:
-        form[key] = request.POST.get(key, None)
 
     # create our JSON object
     json_data = {
@@ -95,7 +81,7 @@ def ajax(request):
         }
 
     if request.POST.get('form_type') == 'add':
-        json_data.update(ajax_add_entry(form))
+        json_data.update(ajax_add_entry(request))
     if request.POST.get('form_type') == 'change':
         json_data.update({"error": "Not implemented"})
 
