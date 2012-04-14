@@ -11,7 +11,9 @@ from django.template import RequestContext
 import simplejson
 
 from tracker.models import TrackingEntry #, Tbluser
-from utils.calendar_utils import gen_calendar, ajax_add_entry
+from utils.calendar_utils import (gen_calendar, ajax_add_entry,
+                                  ajax_change_entry, ajax_delete_entry,
+                                  ajax_error)
 from utils.database_errors import *
 from tracker.forms import entry_form, add_form
 
@@ -64,8 +66,8 @@ def process_change_request(request):
 def ajax(request):
 
     """
-    Ajax request handler, eventually this will dispatch to the
-    specific ajax functions depending on what json gets sent.
+    Ajax request handler, dispatches to specific ajax functions
+    depending on what json gets sent.
     """
 
     # if the page is accessed via the browser (or other means)
@@ -73,18 +75,36 @@ def ajax(request):
     if not request.is_ajax():
         raise Http404
 
-    # create our JSON object
+    # create our JSON object, do we need to do this?
+    # all the functions return a Dict *and* serialize
+    # it. We could just leave it to the delegated fun-
+    # ction to deal with the json.
     json_data = {
         "success": False,
         "error": "",
         "calendar": ""
         }
 
-    if request.POST.get('form_type') == 'add':
-        json_data.update(ajax_add_entry(request))
-    if request.POST.get('form_type') == 'change':
-        json_data.update({"error": "Not implemented"})
+    # see which form we're dealing with
+    form_type = request.POST.get('form_type', None)
+    
+    #if there isn't one, we'll send an error back
+    if not form_type:
+        return ajax_error("Missing Form")
+        
+    try:
+        # this could be mutated with a @register_ajax
+        # decorator or something
+        ajax_funcs = {
+            'add': ajax_add_entry,
+            'change': ajax_change_entry,
+            'delete': ajax_delete_entry
+            }
+        
+        return ajax_funcs.get(form_type,
+                              ajax_error("Form not found")
+            )(request)
 
-    return HttpResponse(simplejson.dumps(json_data),
-                        mimetype="application/javascript")
-
+    # if any errors are sent, let the page deal with it
+    except Exception as e:
+        return ajax_error(str(e))
