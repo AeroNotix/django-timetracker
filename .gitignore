@@ -1,10 +1,8 @@
+timetracker/static/jquery/css/ui-darkness/images/*
 .ropeproject/*
 admin/*
 *.pyc
-*.png
-*.jpg
-*.jpeg
-*.gif
+*.xcf
 settings.py
 .#*
 *.py#
