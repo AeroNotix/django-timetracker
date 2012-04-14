@@ -33,8 +33,16 @@
             addDatePicker("#line_entrydate", false);
             addDatePicker("#add_entrydate", true);
 
-
         });
+
+        function deleteEntry() {
+            var answer = confirm("Are you sure?");
+            if (answer) {
+                return ajaxCall("delete");
+            } else {
+            return false;
+            }
+        }
    
         function ajaxCall(form) {
             $.ajaxSetup({type: 'POST'});
@@ -54,7 +62,7 @@
                 dataType: "json",
                 success: function(data) {
                             if (data['success'] == true) {
-                                   $("#calendar-entry").html(data['calendar']);
+                                $("#calendar-entry").html(data['calendar']);
                              } else {
                                    alert(data['error']);
                              }
@@ -141,6 +149,7 @@
   <tr>
     <td>
       <form action="#" method="POST" id="change-form">
+        <input type="hidden" id="hidden_id"/>
         {% csrf_token %}
         <fieldset class="entry-form" id="change-entry-fs">
           <legend class="fs-title">Change Entry</legend>
@@ -189,7 +198,7 @@
               <td></td>
               <td align="right">
                 <input type="button"
-                       onclick="alert('not implemented')"
+                       onclick="deleteEntry()"
                        value="Delete" />
 
                 <input type="button"
