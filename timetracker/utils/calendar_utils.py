@@ -6,8 +6,10 @@ tasks, processing dates and creating time-based code.
 import datetime
 import calendar as cdr
 
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.db import IntegrityError
+
+import simplejson
 
 from timetracker.tracker.models import TrackingEntry, Tbluser
 from timetracker.utils.database_errors import *
@@ -38,6 +40,16 @@ def pad(string, pad='0', amount=2):
         return pre+string
 
     return string
+
+def parse_time(timestring, type=int):
+
+    """
+    Given a time string will return a tuple of ints,
+    i.e. "09:44" returns (9, 44) with the default args,
+    you can pass any function to the type argument.
+    """
+    
+    return map(type, timestring.split(":"))
 
 def gen_calendar(year=datetime.datetime.today().year,
                  month=datetime.datetime.today().month,
@@ -109,17 +121,22 @@ def gen_calendar(year=datetime.datetime.today().year,
 
               function toggleChangeEntries(st_hour, st_min, full_st,
                                            fi_hour, fi_min, full_fi,
-                                           entry_date, daytype) {
+                                           entry_date, daytype,
+                                           change_id) {
+                  // change the ID field
+                  $("#hidden_id").val(change_id);
 
+                  // if we've previously clicked an empty cell
+                  // the add_entry date will have a date in it
                   $("#add_entrydate").val('');
+
+                  // re-enable the form and enter the times
                   $("#line_starttime").timepicker("enable");
                   $("#line_endtime").timepicker("enable");
                   $("#line_entrydate").val(entry_date);
-                  $("#line_daytype").val(daytype);
-
+                  $("#cmb_daytype").val(daytype);
                   $("#line_starttime").val(full_st);
                   $("#line_endtime").val(full_fi);
-
                   $("#line_starttime").timepicker("destroy");
                   $("#line_endtime").timepicker("destroy");
 
@@ -134,7 +151,6 @@ def gen_calendar(year=datetime.datetime.today().year,
                                   });
 
 
-                  $("#line_starttime").show();
               };
 
               function hideEntries(date) {
@@ -190,7 +206,7 @@ def gen_calendar(year=datetime.datetime.today().year,
             # with 0's, we can catch that and treat either
             # end of the calendar differently in the CSS
             if _day != 0:
-                emptyclass = 'empty-day day-class'
+                emptyclass = 'day-class empty-day'
             else:
                 emptyclass = 'empty'
 
@@ -211,14 +227,15 @@ def gen_calendar(year=datetime.datetime.today().year,
                     str(data.end_time)[0:5],
                     data.entry_date,
                     data.daytype,
-                    _day
+                    _day,
+                    data.id
                     ]
 
                 to_cal("""\t\t\t\t
                        <td onclick="toggleChangeEntries({0}, {1}, '{2}',
                                                         {3}, {4}, '{5}',
-                                                        '{6}', '{7}')"
-                           class="{7} day-class">{8}</td>\n""".format(*vals)
+                                                        '{6}', '{7}', {9})"
+                           class="day-class {7}">{8}</td>\n""".format(*vals)
                        )
 
             except TrackingEntry.DoesNotExist:
@@ -249,6 +266,23 @@ def gen_calendar(year=datetime.datetime.today().year,
     # join up the html and push it back
     return ''.join(cal_html)
 
+def json_response(f):
+
+    """
+    Decorator function that when applied to a function which
+    returns some json data will be turned into a HttpResponse
+
+    This is useful because the call site can literally just
+    call the function as it is without needed to make a http-
+    response.
+    """
+    
+    def inner(args):
+        return HttpResponse(simplejson.dumps(f(args)),
+                            mimetype="application/javscript")
+    return inner    
+    
+@json_response
 def ajax_add_entry(request):
 
     '''
@@ -272,18 +306,13 @@ def ajax_add_entry(request):
 
     
     # This should be on the page
-    shour, sminute = map(int,
-                         form['start_time'].split(":")
-                     )
-    ehour, eminute = map(int,
-                         form['end_time'].split(":")
-                     )
-
+    shour, sminute = parse_time(form['start_time'])
+    ehour, eminute = parse_time(form['end_time'])
+                     
     if (datetime.time(shour, sminute) > datetime.time(ehour, eminute)):
         json_data['error'] = "Start time after end time"
-        return HttpResponse(simplejson.dumps(json_data),
-                            mimetype="application/javascript")
-
+        return json_data
+    
     # need to use sessions
     form['user_id'] = 1
     # need to add a breaks section to the form
@@ -313,5 +342,21 @@ def ajax_add_entry(request):
     json_data['success'] = True
     json_data['calendar'] = calendar
     return json_data
-    
-    
+
+@json_response
+def ajax_change_entry(request):
+    """
+    Asynchronously changes an entry
+    """
+    raise NotImplemented
+
+@json_response
+def ajax_delete_entry(request):
+    raise NotImplemented
+
+@json_response
+def ajax_error(error):
+    return {
+        'success': False,
+        'error': error
+        }
