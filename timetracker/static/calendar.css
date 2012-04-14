@@ -1,4 +1,3 @@
-
 /* calendar days */
 
 .day-names {
@@ -8,37 +7,33 @@
 }
 
 .table-header {
-   background-image: url('images/tableheader_flip.gif');
+   background: black;
    color: white;
 }
 
 .empty {
-   background: white;
-   color: white;
+   background-image: url('images/blank.gif');
 }
 
 .empty-day {
-   background: white;
+   background-image: url('images/blank_days.gif');
 }
 
 .WKDAY {
-   background: red;
-}
-
-.WKDAY:hover {
-   background: white;
+   background-image: url('images/work_day.gif');
 }
 
 .SICKD {
-   background: green;
+   background-image: url('images/sick.gif');
 }
 
 .HOLIS {
-   background: silver;
+   background-image: url('images/holiday.gif');
 }
 
 .SPECI {
-   background: yellow;
+   background-image: url('images/special.gif');
+
 }
 
 .OTHER {
@@ -52,8 +47,7 @@
 }
 
 .day-class:hover {
-    background: orange;
-    border: 1px solid white;
+   background-image: url('images/calendar_selected.gif');
 }
 
 .table-links {
@@ -108,12 +102,12 @@ this is a jQuery add-on
 /* table */
 
 #calendar-table {
-   background: blue;
+   background: black;
+
 }
 
 #table-wrapper {
-   background: blue;
-
+   margin: 0px 20px 0px 20px;
 }
 
 /* Forms */
