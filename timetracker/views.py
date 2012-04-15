@@ -4,27 +4,66 @@ Views which are mapped from the URL objects in urls.py
 
 import datetime
 
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 
 import simplejson
 
-from tracker.models import TrackingEntry #, Tbluser
+from tracker.models import TrackingEntry, Tbluser
 from utils.calendar_utils import (gen_calendar, ajax_add_entry,
                                   ajax_change_entry, ajax_delete_entry,
                                   ajax_error)
-from utils.database_errors import *
-from tracker.forms import entry_form, add_form
+from tracker.forms import EntryForm, AddForm, Login
 
 def index(request):
     """
     Serve the root page, there's nothing there at the moment
     """
-    return render_to_response('base.html',
-                              {},
+    return render_to_response('index.html',
+                              {'login': Login()},
                               RequestContext(request))
 
+def login(request):
+
+    """
+    Basic login function.
+
+    Will upgrade to show admin view if the user is an
+    admin, for now will always show the user view.
+    """
+    
+    if request.is_ajax():
+        raise Http404
+
+    if not request.POST.get('csrfmiddlewaretoken', None):
+        raise Http404
+    
+    try:
+        usr = Tbluser.objects.get(user_id__exact=request.POST['user_name'])
+        if usr.password == request.POST['password']:
+
+            request.session['user_id'] = usr.id            
+            return HttpResponseRedirect("/calendar/")
+        
+        else:
+            return HttpResponse("Login failed!")
+        
+    except Tbluser.DoesNotExist:
+        return HttpResponse("Username and Password don't match")
+
+def logout(request):
+
+    """
+    Simple logout function
+    """
+
+    try:
+        del request.session['user_id']
+    except KeyError:
+        pass
+
+    return HttpResponseRedirect("/")
 
 def view_calendar(request,
              year=datetime.date.today().year,
@@ -40,28 +79,21 @@ def view_calendar(request,
     The generated HTML is pretty printed
     """
 
+    if not request.session.get('user_id', None):
+        raise Http404
+
     calendar_table = gen_calendar(year, month, day,
                                   user='aaron.france@hp.com')
-
 
     return render_to_response(
         'calendar.html',
         {
          'calendar': calendar_table,
-         'changeform': entry_form(),
-         'addform' : add_form()
+         'changeform': EntryForm(),
+         'addform' : AddForm()
         },
         RequestContext(request)
         )
-
-
-def process_change_request(request):
-
-    """
-    Processes a change into the database from the calendar page
-    """
-    pass
-
 
 def ajax(request):
 
