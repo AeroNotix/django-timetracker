@@ -115,56 +115,6 @@ def gen_calendar(year=datetime.datetime.today().year,
     cal_html = list()
     to_cal = cal_html.append
 
-    # add our javascript functions
-    to_cal("""
-           <script type="text/javascript">
-
-              function toggleChangeEntries(st_hour, st_min, full_st,
-                                           fi_hour, fi_min, full_fi,
-                                           entry_date, daytype,
-                                           change_id) {
-                  // change the ID field
-                  $("#hidden_id").val(change_id);
-
-                  // if we've previously clicked an empty cell
-                  // the add_entry date will have a date in it
-                  $("#add_entrydate").val('');
-
-                  // re-enable the form and enter the times
-                  $("#line_starttime").timepicker("enable");
-                  $("#line_endtime").timepicker("enable");
-                  $("#line_entrydate").val(entry_date);
-                  $("#cmb_daytype").val(daytype);
-                  $("#line_starttime").val(full_st);
-                  $("#line_endtime").val(full_fi);
-                  $("#line_starttime").timepicker("destroy");
-                  $("#line_endtime").timepicker("destroy");
-
-                  $("#line_starttime").timepicker({
-                                     hour: st_hour,
-                                     minute: st_min
-                                  });
-
-                  $("#line_endtime").timepicker({
-                                     hour: fi_hour,
-                                     minute: fi_min
-                                  });
-
-
-              };
-
-              function hideEntries(date) {
-                  $("#add_entrydate").val(date);
-                  $("#line_starttime").val('');
-                  $("#line_entrydate").val('');
-                  $("#line_endtime").val('');
-                  $("#add_starttime").val('');
-                  $("#add_endtime").val('');
-              }
-
-           </script>
-           """)
-
     # create the table header
     to_cal("""<table id="calendar" border="1">\n\t\t\t""")
 
@@ -306,14 +256,18 @@ def ajax_add_entry(request):
 
     
     # This should be on the page
-    shour, sminute = parse_time(form['start_time'])
-    ehour, eminute = parse_time(form['end_time'])
-                     
+    try:
+        shour, sminute = parse_time(form['start_time'])
+        ehour, eminute = parse_time(form['end_time'])
+    except ValueError:
+        json_data['error'] = 'Date Error'
+        return json_data
+        
     if (datetime.time(shour, sminute) > datetime.time(ehour, eminute)):
         json_data['error'] = "Start time after end time"
         return json_data
-    
-    # need to use sessions
+
+    # SESSIONS
     form['user_id'] = 1
     # need to add a breaks section to the form
     form['breaks'] = "00:15:00"
@@ -352,8 +306,49 @@ def ajax_change_entry(request):
 
 @json_response
 def ajax_delete_entry(request):
-    raise NotImplemented
+    """
+    Asynchronously deletes an entry
+    """
 
+    if not request.is_ajax():
+        raise Http404
+
+    form = {
+        'hidden-id': None,
+        'entry_date': None
+    }
+
+    json_data = {
+        'success': False,
+        'error': '',
+        'calendar': ''
+    }
+    
+    # get our form data
+    for key in form:
+        form[key] = request.POST.get(key, None)
+
+    year, month, day = map(int,
+                           form['entry_date'].split("-")
+                           )
+
+    if form['hidden-id']:
+        try:
+            entry = TrackingEntry(id=form['hidden-id'])
+            entry.delete()
+        except Exception as e:
+            json_data['error'] = str(e)
+            return json_data
+
+    # again, sessions
+    calendar = gen_calendar(year, month, day,
+                            user='aaron.france@hp.com')
+    
+    # if all went well
+    json_data['success'] = True
+    json_data['calendar'] = calendar
+    return json_data    
+    
 @json_response
 def ajax_error(error):
     return {
