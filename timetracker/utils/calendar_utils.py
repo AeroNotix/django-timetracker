@@ -46,7 +46,7 @@ def request_check(func):
     """
     Decorator to check an incoming request against a few rules
     """
-    
+
     def inner(request):
         if not request.is_ajax():
             raise Http404
@@ -60,8 +60,6 @@ def request_check(func):
 
     return inner
 
-    
-        
 def parse_time(timestring, type=int):
 
     """
@@ -69,7 +67,7 @@ def parse_time(timestring, type=int):
     i.e. "09:44" returns (9, 44) with the default args,
     you can pass any function to the type argument.
     """
-    
+
     return map(type, timestring.split(":"))
 
 def gen_calendar(year=datetime.datetime.today().year,
@@ -252,7 +250,7 @@ def json_response(f):
     call the function as it is without needed to make a http-
     response.
     """
-    
+
     def inner(request):
         return HttpResponse(simplejson.dumps(f(request)),
                             mimetype="application/javscript")
@@ -265,51 +263,37 @@ def ajax_add_entry(request):
     '''
     Adds a calendar entry asynchronously
     '''
-    
+
     # object to dump form data into
     form = {
         'entry_date': None,
         'start_time': None,
         'end_time': None,
         'daytype': None,
+        'breaks': None
     }
-    
-    # get our form data
-    for key in form:
-        form[key] = request.POST.get(key, None)
 
-    form['user_id'] = request.session['user_id']
-    
+    # get the form data from the request object
+    form.update(get_request_data(form, request))
+
     # create objects to put our data into
     json_data = dict()
-    
-    # This should be on the page
+
     try:
-        shour, sminute = parse_time(form['start_time'])
-        ehour, eminute = parse_time(form['end_time'])
+        # server-side time validation
+        if not validate_time(form['start_time'], form['end_time']):
+            json_data['error'] = "Start time after end time"
+            return json_data
     except ValueError:
-        json_data['error'] = 'Date Error'
-        return json_data
-        
-    if (datetime.time(shour, sminute) > datetime.time(ehour, eminute)):
-        json_data['error'] = "Start time after end time"
+        json_data['error'] = "Date Error"
         return json_data
 
     # need to add a breaks section to the form
     form['breaks'] = "00:15:00"
 
     try:
-        # this will be ok as soon as I put client side validation
-        # and server side validation working.
         entry = TrackingEntry(**form)
         entry.save()
-
-        year, month, day = map(int,
-                               form['entry_date'].split("-")
-                           )
-        # again, sessions
-        calendar = gen_calendar(year, month, day,
-                                form['user_id'])
 
     except IntegrityError as error:
         if error[0] == DUPLICATE_ENTRY:
@@ -317,7 +301,14 @@ def ajax_add_entry(request):
         else:
             json_data['error'] = str(error)
         return json_data
-        
+
+    year, month, day = map(int,
+                           form['entry_date'].split("-")
+                           )
+
+    calendar = gen_calendar(year, month, day,
+                            form['user_id'])
+
     # if all went well
     json_data['success'] = True
     json_data['calendar'] = calendar
@@ -335,18 +326,11 @@ def ajax_delete_entry(request):
         'entry_date': None
     }
 
-    # get our form data
-    for key in form:
-        form[key] = request.POST.get(key, None)
-    # get the user id from the session
-    form['user_id'] = request.session['user_id']
+    # get the form data from the request object
+    form.update(get_request_data(form, request))
 
     # create our json structure
-    json_data = {
-        'success': False,
-        'error': '',
-        'calendar': ''
-    }
+    json_data = dict()
 
     if form['hidden-id']:
         try:
@@ -364,17 +348,14 @@ def ajax_delete_entry(request):
     year, month, day = map(int,
                            form['entry_date'].split("-")
                            )
-    
+
     calendar = gen_calendar(year, month, day,
                             user=form['user_id'])
-    
+
     # if all went well
     json_data['success'] = True
     json_data['calendar'] = calendar
-    return json_data    
-
-def ajax_change_entry():
-    pass
+    return json_data
 
 @json_response
 def ajax_error(error):
@@ -383,4 +364,111 @@ def ajax_error(error):
         'error': error
         }
 
-        
+def get_request_data(form, request):
+
+    """
+    Given a form and a request object we pull out
+    from the request what the form defines.
+
+    i.e.
+
+    form = {
+        'data1': None
+    }
+
+    get_request_data(form, request) will then fill
+    that data with what's in the request object.
+    """
+
+    data = dict()
+
+    # get our form data
+    for key in form:
+        data[key] = request.POST.get(key, None)
+
+    # get the user id from the session
+    data['user_id'] = request.session['user_id']
+
+    return data
+
+def validate_time(start, end):
+
+    """
+    Validates the times given
+    """
+
+    shour, sminute = parse_time(start)
+    ehour, eminute = parse_time(end)
+
+    return (datetime.time(shour, sminute)
+            < datetime.time(ehour, eminute))
+
+@request_check
+@json_response
+def ajax_change_entry(request):
+
+    '''
+    Changes a calendar entry asynchronously
+    '''
+
+    # object to dump form data into
+    form = {
+        'entry_date': None,
+        'start_time': None,
+        'end_time': None,
+        'daytype': None,
+        'breaks': None,
+        'hidden-id': None
+    }
+
+    # get the form data from the request object
+    form.update(get_request_data(form, request))
+
+    # create objects to put our data into
+    json_data = dict()
+
+    try:
+        # server-side time validation
+        if not validate_time(form['start_time'], form['end_time']):
+            json_data['error'] = "Start time after end time"
+            return json_data
+    except ValueError:
+        json_data['error'] = "Date Error"
+        return json_data
+
+    # need to add a breaks section to the form
+    form['breaks'] = "00:15:00"
+
+    if form['hidden-id']:
+        try:
+            # get the user and make sure that the user
+            # assigned to the TrackingEntry is the same
+            # as what's requesting the change
+            user = Tbluser.objects.get(id__exact=form['user_id'])
+            entry = TrackingEntry(id=form['hidden-id'],
+                                  user=user)
+
+            # change the fields on the retrieved entry
+            entry.entry_date = form['entry_date']
+            entry.start_time = form['start_time']
+            entry.end_time = form['end_time']
+            entry.daytype = form['daytype']
+            entry.breaks = form['breaks']
+
+            entry.save()
+
+        except Exception as e:
+            json_data['error'] = str(e)
+            return json_data
+
+    year, month, day = map(int,
+                           form['entry_date'].split("-")
+                           )
+
+    calendar = gen_calendar(year, month, day,
+                            form['user_id'])
+
+    # if all went well
+    json_data['success'] = True
+    json_data['calendar'] = calendar
+    return json_data
