@@ -41,6 +41,27 @@ def pad(string, pad='0', amount=2):
 
     return string
 
+def request_check(func):
+
+    """
+    Decorator to check an incoming request against a few rules
+    """
+    
+    def inner(request):
+        if not request.is_ajax():
+            raise Http404
+
+        if not request.session.get('user_id', None):
+            # if there is no user id in the session
+            # something weird is going on
+            raise Http404
+
+        return func(request)
+
+    return inner
+
+    
+        
 def parse_time(timestring, type=int):
 
     """
@@ -232,37 +253,32 @@ def json_response(f):
     response.
     """
     
-    def inner(args):
-        return HttpResponse(simplejson.dumps(f(args)),
+    def inner(request):
+        return HttpResponse(simplejson.dumps(f(request)),
                             mimetype="application/javscript")
-    return inner    
-    
+    return inner
+
+@request_check
 @json_response
 def ajax_add_entry(request):
 
     '''
     Adds a calendar entry asynchronously
     '''
+    
+    # object to dump form data into
+    form = {
+        'entry_date': None,
+        'start_time': None,
+        'end_time': None,
+        'daytype': None,
+    }
+    
+    # get our form data
+    for key in form:
+        form[key] = request.POST.get(key, None)
 
-    if not request.session.get('user_id', None):
-        raise Http404
-    else:
-        # object to dump form data into
-        form = {
-            'entry_date': None,
-            'start_time': None,
-            'end_time': None,
-            'daytype': None,
-        }
-
-        # get our form data
-        for key in form:
-            form[key] = request.POST.get(key, None)
-
-        form['user_id'] = request.session['user_id']
-
-        
-        
+    form['user_id'] = request.session['user_id']
     
     # create objects to put our data into
     json_data = dict()
@@ -307,37 +323,23 @@ def ajax_add_entry(request):
     json_data['calendar'] = calendar
     return json_data
 
-@json_response
-def ajax_change_entry(request):
-    """
-    Asynchronously changes an entry
-    """
-    raise NotImplemented
-
+@request_check
 @json_response
 def ajax_delete_entry(request):
     """
     Asynchronously deletes an entry
     """
 
-    if not request.is_ajax():
-        raise Http404
-
     form = {
         'hidden-id': None,
         'entry_date': None
     }
 
-    if not request.session.get('user_id', None):
-        # if there is no user id in the session
-        # something weird is going on
-        raise Http404
-    else:
-        # get our form data
-        for key in form:
-            form[key] = request.POST.get(key, None)
-        # get the user id from the session
-        form['user_id'] = request.session['user_id']
+    # get our form data
+    for key in form:
+        form[key] = request.POST.get(key, None)
+    # get the user id from the session
+    form['user_id'] = request.session['user_id']
 
     # create our json structure
     json_data = {
@@ -370,10 +372,15 @@ def ajax_delete_entry(request):
     json_data['success'] = True
     json_data['calendar'] = calendar
     return json_data    
-    
+
+def ajax_change_entry():
+    pass
+
 @json_response
 def ajax_error(error):
     return {
         'success': False,
         'error': error
         }
+
+        
