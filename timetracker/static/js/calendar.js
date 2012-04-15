@@ -4,8 +4,6 @@
    automatically created server-side.
          
 */
- 
-
 
 function addTimePicker(element, state) {
     
@@ -24,7 +22,7 @@ function addTimePicker(element, state) {
         $(element).timepicker("disable");
     }
 
-};
+}
 
 function addDatePicker(element, state) {
     
@@ -43,7 +41,7 @@ function addDatePicker(element, state) {
         $(element).datepicker("disable");
     }
 
-};
+}
 
 $(function () {
 
@@ -62,6 +60,9 @@ $(function () {
     
     $("#add_daytype").attr("onchange", "onOptionChange('add')");
     $("#change_daytype").attr("onchange", "onOptionChange('change')");
+    
+    onOptionChange('add');
+    onOptionChange('change');
     
 });
 
@@ -114,7 +115,7 @@ function ajaxCall(form) {
         "start_time" : $(pre + 'starttime').val(),
         "end_time"   : $(pre + 'endtime').val(), 
         "daytype"    : $(pre + 'daytype').val(),
-        "hidden-id"  : $('#hidden_id').val(),
+        "hidden-id"  : $('#hidden_id').val()
     };
     
     $.ajax({
@@ -122,7 +123,7 @@ function ajaxCall(form) {
         data: formData,
         dataType: "json",
         success: function(data) {
-            if (data['success'] == true) {
+            if (data['success'] === true) {
                 $("#calendar-entry").html(data['calendar']);
             } else {
                 alert(data['error']);
@@ -151,9 +152,20 @@ function onOptionChange(element) {
 
         $(pre + "starttime").val('00:00');
         $(pre + "endtime").val('00:01');
+        
+        // disable the boxes because there's no need to
+        // use them since we've put the values in for them
+        $(pre + "starttime").attr("disabled", "disabled");
+        $(pre + "endtime").attr("disabled", "disabled");
     } else {
+        // otherwise, we clear the box in case the values
+        // were filled previously
         $(pre + "starttime").val('');
         $(pre + "endtime").val('');
+
+        // and remove the disabled attribute
+        $(pre + "starttime").removeAttr("disabled");
+        $(pre + "endtime").removeAttr("disabled");
     }
 
 }
@@ -197,8 +209,11 @@ function toggleChangeEntries(st_hour, st_min, full_st,
         minute: fi_min
     });
     
-    
-};
+    // it seems programmatically changing the option box
+    // doesn't fire the signal, so we just fire it ourselves
+    onOptionChange("change");
+       
+}
 
 function hideEntries(date) {
     $("#add_entrydate").val(date);
