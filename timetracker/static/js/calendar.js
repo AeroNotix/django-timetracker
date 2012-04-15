@@ -117,7 +117,14 @@ function ajaxCall(form) {
         "daytype"    : $(pre + 'daytype').val(),
         "hidden-id"  : $('#hidden_id').val()
     };
-    
+
+    // no point in making invalid ajax requests
+    if (!formData['entry_date'] ||
+        !formData['start_time'] ||
+        !formData['end_time']) {
+        return false;
+    }
+
     $.ajax({
         url: "/ajax/",
         data: formData,
@@ -177,6 +184,7 @@ function toggleChangeEntries(st_hour, st_min, full_st,
                              change_id) {
 
     /* 
+
        When an entry is clicked, it will fill out the
        change form so that the user can enter a new
        set of information instead.
@@ -194,8 +202,6 @@ function toggleChangeEntries(st_hour, st_min, full_st,
     $("#change_endtime").timepicker("enable");
     $("#change_entrydate").val(entry_date);
     $("#change_daytype").val(daytype);
-    $("#change_starttime").val(full_st);
-    $("#change_endtime").val(full_fi);
     $("#change_starttime").timepicker("destroy");
     $("#change_endtime").timepicker("destroy");
     
@@ -216,6 +222,11 @@ function toggleChangeEntries(st_hour, st_min, full_st,
     // zero out the add form
     $("#add_starttime").val('');
     $("#add_endtime").val('');
+    
+    // put the dates into the change boxes
+    $("#change_starttime").val(full_st);
+    $("#change_endtime").val(full_fi);
+
 }
 
 function hideEntries(date) {
