@@ -65,7 +65,7 @@ this is a jQuery add-on
 */
 
 .ui-widget {
-   font-size: 12px; 
+   font-size: 12px;
 }
 
 .ui-widget-header {
@@ -73,26 +73,26 @@ this is a jQuery add-on
 }
 
 .ui-timepicker-div .ui-widget-header {
-   margin-bottom: 8px; 
+   margin-bottom: 8px;
 }
 
-.ui-timepicker-div dl { 
-   text-align: left; 
+.ui-timepicker-div dl {
+   text-align: left;
 }
 
-.ui-timepicker-div dl dt { 
-   height: 25px; 
-   margin-bottom: -25px; 
+.ui-timepicker-div dl dt {
+   height: 25px;
+   margin-bottom: -25px;
 }
 
-.ui-timepicker-div dl dd { 
-   margin: 0 10px 10px 65px; 
+.ui-timepicker-div dl dd {
+   margin: 0 10px 10px 65px;
 }
 
 .ui-tpicker-grid-label {
    border: none;
    margin: 0;
-   padding: 0; 
+   padding: 0;
 }
 
 #ui-datepicker-div {
@@ -118,7 +118,7 @@ this is a jQuery add-on
 
 .entry-form {
    background: white;
-   width: 300px;
+   width: 320px;
    border: 2px solid black;
 }
 
