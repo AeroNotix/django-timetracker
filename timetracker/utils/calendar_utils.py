@@ -12,7 +12,7 @@ from django.db import IntegrityError
 import simplejson
 
 from timetracker.tracker.models import TrackingEntry, Tbluser
-from timetracker.utils.database_errors import *
+from timetracker.utils.database_errors import DUPLICATE_ENTRY
 
 MONTH_MAP = {
     0: ('JAN', 'January'),
@@ -193,7 +193,10 @@ def gen_calendar(year=datetime.datetime.today().year,
                 # For clicking blank days to input the day quickly into the
                 # box. An alternative to the datepicker
                 if _day != 0:
-                    entry_date_string = '-'.join(map(pad, [year, month, _day]))
+                    entry_date_string = '-'.join(map(pad,
+                                                     [year, month, _day]
+                                                     )
+                                                )
                 else:
                     entry_date_string = ''
 
@@ -203,9 +206,11 @@ def gen_calendar(year=datetime.datetime.today().year,
                 # write in the box and give the empty boxes a way to clear
                 # the form
                 to_cal("""\t\t\t\t<td onclick="hideEntries('{0}')"
-                              class="{1}">{2}</td>\n""".format(entry_date_string,
-                                                               emptyclass,
-                                                               _day))
+                    class="{1}">{2}</td>\n""".format(
+                                                  entry_date_string,
+                                                  emptyclass,
+                                                  _day)
+                                              )
 
         # close up that row
         to_cal("""\t\t\t</tr>\n""")
@@ -253,7 +258,6 @@ def ajax_add_entry(request):
     # get our form data
     for key in form:
         form[key] = request.POST.get(key, None)
-
     
     # This should be on the page
     try:
