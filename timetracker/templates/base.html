@@ -8,11 +8,11 @@
 	<script type="text/javascript" src="{{ STATIC_URL }}jquery/js/jquery-1.7.1.min.js"></script>
 	<script type="text/javascript" src="{{ STATIC_URL }}jquery/js/jquery-ui-1.8.18.custom.min.js"></script>
 	<script type="text/javascript" src="{{ STATIC_URL }}jquery/js/csrf_protection.js"></script>
-    <script type="text/javascript">
-    </script>
     {% block header %}
     {% endblock header %}
   </head>
-
-    {% block content %}
-    {% endblock %}
+  <div>
+    <a href="/logout/">Logout</a>
+  </div>
+  {% block content %}
+  {% endblock %}
