@@ -184,7 +184,7 @@ function toggleChangeEntries(st_hour, st_min, full_st,
     
     // change the ID field
     $("#hidden_id").val(change_id);
-    
+  
     // if we've previously clicked an empty cell
     // the add_entry date will have a date in it
     $("#add_entrydate").val('');
@@ -212,7 +212,10 @@ function toggleChangeEntries(st_hour, st_min, full_st,
     // it seems programmatically changing the option box
     // doesn't fire the signal, so we just fire it ourselves
     onOptionChange("change");
-       
+
+    // zero out the add form
+    $("#add_starttime").val('');
+    $("#add_endtime").val('');
 }
 
 function hideEntries(date) {
