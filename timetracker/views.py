@@ -32,23 +32,28 @@ def login(request):
     Will upgrade to show admin view if the user is an
     admin, for now will always show the user view.
     """
-    
+
+    # if this somehow gets requested via Ajax, then
+    # send back a 404. 
     if request.is_ajax():
         raise Http404
 
+    # if the csrf token is missing, that's a 404
     if not request.POST.get('csrfmiddlewaretoken', None):
         raise Http404
     
     try:
+        # pull out the user from the POST and
+        # match it against our db
         usr = Tbluser.objects.get(user_id__exact=request.POST['user_name'])
         if usr.password == request.POST['password']:
 
+            # if all goes well, send to the tracker
             request.session['user_id'] = usr.id            
             return HttpResponseRedirect("/calendar/")
-        
         else:
             return HttpResponse("Login failed!")
-        
+    # if the user doesn't match anything, notify
     except Tbluser.DoesNotExist:
         return HttpResponse("Username and Password don't match")
 
@@ -74,16 +79,18 @@ def view_calendar(request,
     """
     Generates a calendar based on the URL it receives.
     site.com/calendar/2012/02/, also takes a day
-    just in case you want to add a particular view for a day, for example.
-
+    just in case you want to add a particular view for a day,
+    for example.
+    
     The generated HTML is pretty printed
     """
 
     if not request.session.get('user_id', None):
         raise Http404
 
+    
     calendar_table = gen_calendar(year, month, day,
-                                  user='aaron.france@hp.com')
+                                  user=request.session['user_id'])
 
     return render_to_response(
         'calendar.html',
