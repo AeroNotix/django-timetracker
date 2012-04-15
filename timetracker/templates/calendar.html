@@ -4,78 +4,12 @@
     <link href="{{ STATIC_URL }}calendar.css" type="text/css"
           rel="stylesheet" />
 
-    <script type="text/javascript" src="{{ STATIC_URL }}jquery/js/timepicker.js"></script>
-    
-    <script type="text/javascript">
-      function addTimePicker(element, state) {
-          $(element).timepicker({});
-          $(element).val('');
-      
-          if (!state) {
-              $(element).timepicker("disable");
-          }
-       };
-
-       function addDatePicker(element, state) {
-           $(element).datepicker().val('');
-           $(element).datepicker("option", "dateFormat", 'yy-mm-dd');
-       
-           if (!state) {
-              $(element).datepicker("disable");
-           }
-       };
-
-        $(function () {
-            addTimePicker("#line_starttime", false);
-            addTimePicker("#line_endtime", false);
-            addTimePicker("#add_starttime", true);
-            addTimePicker("#add_endtime", true);
-            addDatePicker("#line_entrydate", false);
-            addDatePicker("#add_entrydate", true);
-
-        });
-
-        function deleteEntry() {
-            var answer = confirm("Are you sure?");
-            if (answer) {
-                return ajaxCall("delete");
-            } else {
-            return false;
-            }
-        }
-   
-        function ajaxCall(form) {
-            $.ajaxSetup({type: 'POST'});
-            var pre = "#" + form + "_";
-
-            var formData = {
-                "form_type"  : form,
-                "entry_date" : $(pre + 'entrydate').val(),
-                "start_time" : $(pre + 'starttime').val(),
-                "end_time"   : $(pre + 'endtime').val(), 
-                "daytype"    : $(pre + 'daytype').val(),
-            };
-            
-            $.ajax({
-                url: "/ajax/",
-                data: formData,
-                dataType: "json",
-                success: function(data) {
-                            if (data['success'] == true) {
-                                $("#calendar-entry").html(data['calendar']);
-                             } else {
-                                   alert(data['error']);
-                             }
-                         }
-                }
-            );
-
-            return false;
-         }
+    <script type="text/javascript" src="{{ STATIC_URL }}jquery/js/timepicker.js">
+    </script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/calendar.js">
     </script>
 
 {% endblock header %}
-
 {% block content %}
 <body>
 <table id="calendar-table">
@@ -118,7 +52,7 @@
             </tr>
             <tr>
               <th>
-                <label for="cmd_daytype">
+                <label for="add_daytype">
                   Day Type:
                 </label>
               </th>
@@ -156,7 +90,7 @@
           <table>
             <tr>
               <th>
-                <label for="line_entrydate">
+                <label for="change_entrydate">
                   Entry Date:
                 </label>
               </th>
@@ -166,7 +100,7 @@
             </tr>
             <tr>
               <th>
-                <label for="line_starttime">
+                <label for="change_starttime">
                   Start Time:
                 </label>
               </th>
@@ -176,7 +110,7 @@
             </tr>
             <tr>
               <th>
-                <label for="line_endtime">
+                <label for="change_endtime">
                   End Time:
                 </label>
               </th>
@@ -186,7 +120,7 @@
             </tr>
             <tr>
               <th>
-                <label for="cmd_daytype">
+                <label for="change_daytype">
                   Day Type:
                 </label>
               </th>
