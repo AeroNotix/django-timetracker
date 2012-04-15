@@ -86,7 +86,7 @@ def gen_calendar(year=datetime.datetime.today().year,
 
     # need to use authorisation and sessions to get this
     # for testing we'll just grab the same db object
-    database = Tbluser.objects.get(user_id__exact=user)
+    database = Tbluser.objects.get(id__exact=user)
 
     # pull out the entries for the given month
     try:
@@ -244,20 +244,28 @@ def ajax_add_entry(request):
     Adds a calendar entry asynchronously
     '''
 
+    if not request.session.get('user_id', None):
+        raise Http404
+    else:
+        # object to dump form data into
+        form = {
+            'entry_date': None,
+            'start_time': None,
+            'end_time': None,
+            'daytype': None,
+        }
+
+        # get our form data
+        for key in form:
+            form[key] = request.POST.get(key, None)
+
+        form['user_id'] = request.session['user_id']
+
+        
+        
+    
     # create objects to put our data into
     json_data = dict()
-
-    # object to dump form data into
-    form = {
-        'entry_date': None,
-        'start_time': None,
-        'end_time': None,
-        'daytype': None,
-    }
-
-    # get our form data
-    for key in form:
-        form[key] = request.POST.get(key, None)
     
     # This should be on the page
     try:
@@ -271,8 +279,6 @@ def ajax_add_entry(request):
         json_data['error'] = "Start time after end time"
         return json_data
 
-    # SESSIONS
-    form['user_id'] = 1
     # need to add a breaks section to the form
     form['breaks'] = "00:15:00"
 
@@ -287,7 +293,7 @@ def ajax_add_entry(request):
                            )
         # again, sessions
         calendar = gen_calendar(year, month, day,
-                                user='aaron.france@hp.com')
+                                form['user_id'])
 
     except IntegrityError as error:
         if error[0] == DUPLICATE_ENTRY:
@@ -322,31 +328,43 @@ def ajax_delete_entry(request):
         'entry_date': None
     }
 
+    if not request.session.get('user_id', None):
+        # if there is no user id in the session
+        # something weird is going on
+        raise Http404
+    else:
+        # get our form data
+        for key in form:
+            form[key] = request.POST.get(key, None)
+        # get the user id from the session
+        form['user_id'] = request.session['user_id']
+
+    # create our json structure
     json_data = {
         'success': False,
         'error': '',
         'calendar': ''
     }
-    
-    # get our form data
-    for key in form:
-        form[key] = request.POST.get(key, None)
-
-    year, month, day = map(int,
-                           form['entry_date'].split("-")
-                           )
 
     if form['hidden-id']:
         try:
-            entry = TrackingEntry(id=form['hidden-id'])
+            # get the user and make sure that the user
+            # assigned to the TrackingEntry is the same
+            # as what's requesting the deletion
+            user = Tbluser.objects.get(id__exact=form['user_id'])
+            entry = TrackingEntry(id=form['hidden-id'],
+                                  user=user)
             entry.delete()
         except Exception as e:
             json_data['error'] = str(e)
             return json_data
 
-    # again, sessions
+    year, month, day = map(int,
+                           form['entry_date'].split("-")
+                           )
+    
     calendar = gen_calendar(year, month, day,
-                            user='aaron.france@hp.com')
+                            user=form['user_id'])
     
     # if all went well
     json_data['success'] = True
