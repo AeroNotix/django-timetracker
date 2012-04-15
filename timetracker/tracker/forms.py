@@ -8,7 +8,7 @@ DAYTYPE_CHOICES = (
     ('OTHER', 'Other'),
 )
 
-class entry_form(forms.Form):
+class EntryForm(forms.Form):
     """
     Change entry form
     """
@@ -31,7 +31,7 @@ class entry_form(forms.Form):
                                     'id': 'change_daytype'})
     
     
-class add_form(forms.Form):
+class AddForm(forms.Form):
     """
     Add entry form
     """
@@ -52,3 +52,26 @@ class add_form(forms.Form):
     daytype = forms.ChoiceField(label="Day Type:", choices=DAYTYPE_CHOICES)
     daytype.widget.attrs.update({'class': 'change-el',
                                     'id': 'add_daytype'})
+
+
+class Login(forms.Form):
+
+    """
+    Basic login form
+    """
+    
+    user_name = forms.CharField(
+        label="Username:"
+    )
+    
+    user_name.widget.attrs.update({'class': 'login-form',
+                                   'id': 'login-user'})
+    
+    password = forms.CharField(
+        label="Password:",
+        widget=forms.PasswordInput()
+    )
+    
+    password.widget.attrs.update({'class': 'login-form',
+                                  'id': 'login-password'})
+
