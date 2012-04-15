@@ -75,16 +75,6 @@ def ajax(request):
     if not request.is_ajax():
         raise Http404
 
-    # create our JSON object, do we need to do this?
-    # all the functions return a Dict *and* serialize
-    # it. We could just leave it to the delegated fun-
-    # ction to deal with the json.
-    json_data = {
-        "success": False,
-        "error": "",
-        "calendar": ""
-        }
-
     # see which form we're dealing with
     form_type = request.POST.get('form_type', None)
     
@@ -103,7 +93,7 @@ def ajax(request):
         
         return ajax_funcs.get(form_type,
                               ajax_error("Form not found")
-            )(request)
+                              )(request)
 
     # if any errors are sent, let the page deal with it
     except Exception as e:
