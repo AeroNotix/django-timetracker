@@ -1,5 +1,8 @@
-from django.db import models
+'''
+Definition of the models used in the timetracker app
+'''
 
+from django.db import models
 
 class Tbluser(models.Model):
 
@@ -60,6 +63,11 @@ class Tbluser(models.Model):
                                    verbose_name=("Shift Length"))
 
     def display_user_type(self):
+
+        """
+        Fucntion for displaying the user in admin
+        """
+
         return self.user_type
 
     def __unicode__(self):
@@ -71,8 +79,12 @@ class Tbluser(models.Model):
         return '%s - %s %s ' % (self.user_id,
                                 self.firstname,
                                 self.lastname)
-    
+
     class Meta:
+        """
+        Metaclass allows for additional options to be set on the model
+        """
+
         db_table = u'tbluser'
         verbose_name = "User"
         verbose_name_plural = "Users"
@@ -102,6 +114,10 @@ class Tblauthorization(models.Model):
 
     def display_users(self):
 
+        """
+        Method which generates the HTML for the admin views
+        """
+
         table_header = """
                        <table>
                          <tr>
@@ -130,9 +146,19 @@ class Tblauthorization(models.Model):
     display_users.short_discription = "Subordinate Users"
 
     def __unicode__(self):
+
+        """
+        Adming view uses this to display the entry
+        """
+
         return str(self.admin)
 
     class Meta:
+
+        """
+        Metaclass gives access to additional options
+        """
+
         db_table = u'tblauthorization'
         verbose_name = "Authorization Link"
         verbose_name_plural = "Authorization Links"
@@ -153,18 +179,22 @@ class TrackingEntry(models.Model):
     )
 
     user = models.ForeignKey(Tbluser, related_name="user_tracking")
-    
+
     entry_date = models.DateField(unique=True)
     start_time = models.TimeField(blank=False)
     end_time = models.TimeField(blank=False)
     breaks = models.TimeField(blank=False)
     daytype = models.CharField(choices=DAYTYPE_CHOICES,
-                               max_length=5)    
+                               max_length=5)
     comments = models.TextField(blank=True)
-    
-        
+
+
     def __unicode__(self):
-        
+
+        """
+        Method to display entry in admin
+        """
+
         date = '/'.join(
             map(str,
                 [self.entry_date.year,
@@ -172,10 +202,15 @@ class TrackingEntry(models.Model):
                  self.entry_date.day
                  ])
             )
-        
+
         return str(self.user) + ' - ' + date
 
     class Meta:
+
+        """
+        Metaclass gives access to additional options
+        """
+
         verbose_name = 'Daily Tracking Log'
         verbose_name_plural = 'Daily Tracking Logs'
         unique_together = ('user', 'entry_date')
