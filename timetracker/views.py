@@ -8,7 +8,7 @@ from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 
-from tracker.models import TrackingEntry, Tbluser
+from tracker.models import Tbluser
 from tracker.models import Tblauthorization as tblauth
 from tracker.forms import EntryForm, AddForm, Login
 from utils.calendar_utils import (gen_calendar, ajax_add_entry,
@@ -45,10 +45,10 @@ def login(request):
         # pull out the user from the POST and
         # match it against our db
         usr = Tbluser.objects.get(user_id__exact=request.POST['user_name'])
-        
     # if the user doesn't match anything, notify
     except Tbluser.DoesNotExist:
         return HttpResponse("Username and Password don't match")
+    
     if usr.password == request.POST['password']:
         
         # if all goes well, send to the tracker
@@ -81,7 +81,16 @@ def admin_view(request):
     view based on their team
     """
     
-    return HttpResponse("Admin view")
+    admin_id = request.session.get("user_id", None)
+    if admin_id:
+        try:
+            employees = tblauth.objects.filter(admin=admin_id)
+        except tblauth.DoesNotExist:
+            return HttpResponseRedirect("/calendar/")
+
+    return render_to_response("admin_view.html",
+                              {"employees": employees},
+                               RequestContext(request))
 
 def user_view(request,
              year=datetime.date.today().year,
