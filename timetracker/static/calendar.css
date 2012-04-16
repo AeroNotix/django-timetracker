@@ -12,27 +12,27 @@
 }
 
 .empty {
-   background-image: url('images/blank.gif');
+   background-image: url('images/calendar/blank.gif');
 }
 
 .empty-day {
-   background-image: url('images/blank_days.gif');
+   background-image: url('images/calendar/blank_days.gif');
 }
 
 .WKDAY {
-   background-image: url('images/work_day.gif');
+   background-image: url('images/calendar/work_day.gif');
 }
 
 .SICKD {
-   background-image: url('images/sick.gif');
+   background-image: url('images/calendar/sick.gif');
 }
 
 .HOLIS {
-   background-image: url('images/holiday.gif');
+   background-image: url('images/calendar/holiday.gif');
 }
 
 .SPECI {
-   background-image: url('images/special.gif');
+   background-image: url('images/calendar/special.gif');
 
 }
 
@@ -47,7 +47,7 @@
 }
 
 .day-class:hover {
-   background-image: url('images/calendar_selected.gif');
+   background-image: url('images/calendar/calendar_selected.gif');
 }
 
 .table-links {
