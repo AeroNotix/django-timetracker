@@ -45,18 +45,12 @@ def login(request):
         # pull out the user from the POST and
         # match it against our db
         usr = Tbluser.objects.get(user_id__exact=request.POST['user_name'])
-        if usr.password == request.POST['password']:
-
-            # if all goes well, send to the tracker
-            request.session['user_id'] = usr.id
-            return HttpResponseRedirect("/calendar/")
-        else:
-            return HttpResponse("Login failed!")
+        
     # if the user doesn't match anything, notify
     except Tbluser.DoesNotExist:
         return HttpResponse("Username and Password don't match")
-
     if usr.password == request.POST['password']:
+        
         # if all goes well, send to the tracker
         request.session['user_id'] = usr.id
         if usr.user_type == "ADMIN":
@@ -86,8 +80,6 @@ def admin_view(request):
     The user logged in is an admin, we show them a
     view based on their team
     """
-
-    
     
     return HttpResponse("Admin view")
 
