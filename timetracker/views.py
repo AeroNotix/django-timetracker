@@ -149,7 +149,7 @@ def ajax(request):
             'change': ajax_change_entry,
             'delete': ajax_delete_entry
             }
-        
+
         return ajax_funcs.get(form_type,
                               ajax_error("Form not found")
                               )(request)
