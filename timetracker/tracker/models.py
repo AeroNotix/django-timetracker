@@ -142,6 +142,24 @@ class Tblauthorization(models.Model):
             '</table>']
         )
 
+    def as_option_list(self):
+
+        """
+        Outputs an option
+        """
+
+        str_output = []
+        to_out = str_output.append
+
+        to_out("""<select id="user_select">""")
+
+        for user in self.users.all():
+            to_out("""<option value=%s>%s</option>""" % (user.id,
+                                                         user.firstname))
+
+        return ''.join(str_output)
+        
+        
     display_users.allow_tags = True
     display_users.short_discription = "Subordinate Users"
 
