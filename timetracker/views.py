@@ -11,10 +11,11 @@ from django.template import RequestContext
 import simplejson
 
 from tracker.models import TrackingEntry, Tbluser
+from tracker.models import Tblauthorization as tblauth
+from tracker.forms import EntryForm, AddForm, Login
 from utils.calendar_utils import (gen_calendar, ajax_add_entry,
                                   ajax_change_entry, ajax_delete_entry,
                                   ajax_error)
-from tracker.forms import EntryForm, AddForm, Login
 
 def index(request):
     """
@@ -34,29 +35,34 @@ def login(request):
     """
 
     # if this somehow gets requested via Ajax, then
-    # send back a 404. 
+    # send back a 404
     if request.is_ajax():
         raise Http404
 
     # if the csrf token is missing, that's a 404
     if not request.POST.get('csrfmiddlewaretoken', None):
         raise Http404
-    
+
     try:
         # pull out the user from the POST and
         # match it against our db
         usr = Tbluser.objects.get(user_id__exact=request.POST['user_name'])
-        if usr.password == request.POST['password']:
-
-            # if all goes well, send to the tracker
-            request.session['user_id'] = usr.id            
-            return HttpResponseRedirect("/calendar/")
-        else:
-            return HttpResponse("Login failed!")
+        
     # if the user doesn't match anything, notify
     except Tbluser.DoesNotExist:
         return HttpResponse("Username and Password don't match")
 
+    if usr.password == request.POST['password']:
+        # if all goes well, send to the tracker
+        request.session['user_id'] = usr.id
+        if usr.user_type == "ADMIN":
+            return HttpResponseRedirect("/admin_view/")
+        else:
+            return HttpResponseRedirect("/calendar/")
+    else:
+        return HttpResponse("Login failed!")
+
+    
 def logout(request):
 
     """
@@ -70,7 +76,18 @@ def logout(request):
 
     return HttpResponseRedirect("/")
 
-def view_calendar(request,
+def admin_view(request):
+
+    """
+    The user logged in is an admin, we show them a
+    view based on their team
+    """
+
+    
+    
+    return HttpResponse("Admin view")
+
+def user_view(request,
              year=datetime.date.today().year,
              month=datetime.date.today().month,
              day=datetime.date.today().day,
@@ -81,14 +98,13 @@ def view_calendar(request,
     site.com/calendar/2012/02/, also takes a day
     just in case you want to add a particular view for a day,
     for example.
-    
+
     The generated HTML is pretty printed
     """
 
     if not request.session.get('user_id', None):
         raise Http404
 
-    
     calendar_table = gen_calendar(year, month, day,
                                   user=request.session['user_id'])
 
@@ -116,11 +132,11 @@ def ajax(request):
 
     # see which form we're dealing with
     form_type = request.POST.get('form_type', None)
-    
+
     #if there isn't one, we'll send an error back
     if not form_type:
         return ajax_error("Missing Form")
-        
+
     try:
         # this could be mutated with a @register_ajax
         # decorator or something
@@ -129,7 +145,6 @@ def ajax(request):
             'change': ajax_change_entry,
             'delete': ajax_delete_entry
             }
-        
         return ajax_funcs.get(form_type,
                               ajax_error("Form not found")
                               )(request)
