@@ -18,11 +18,11 @@ DAY = '(?P<day>\d{1,2})'
 #       just point to that.
 urlpatterns = patterns('',
     url(r'^$', views.index),
-    url(r'^calendar$', views.user_view),
-    url(r'^calendar/$', views.user_view),
+    url(r'^calendar/?$', views.user_view),
     url(r'^calendar/%s/?$' % YEAR, views.user_view),
     url(r'^calendar/%s/%s/?$' % (YEAR, MONTH), views.user_view),
     url(r'^calendar/%s/%s/%s/?$' % (YEAR, MONTH, DAY), views.user_view),
+    url(r'^admin_view/?$', views.admin_view),
     url(r'^ajax/?$', views.ajax),
     url(r'^login/?$', views.login),
     url(r'^logout/?$', views.logout),
