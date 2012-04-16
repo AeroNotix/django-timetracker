@@ -1,3 +1,7 @@
+'''
+Forms used for user input for the tracker app
+'''
+
 from django import forms
 
 DAYTYPE_CHOICES = (
@@ -29,8 +33,8 @@ class EntryForm(forms.Form):
     daytype = forms.ChoiceField(label="Day Type:", choices=DAYTYPE_CHOICES)
     daytype.widget.attrs.update({'class': 'change-el',
                                     'id': 'change_daytype'})
-    
-    
+
+
 class AddForm(forms.Form):
     """
     Add entry form
@@ -59,19 +63,19 @@ class Login(forms.Form):
     """
     Basic login form
     """
-    
+
     user_name = forms.CharField(
         label="Username:"
     )
-    
+
     user_name.widget.attrs.update({'class': 'login-form',
                                    'id': 'login-user'})
-    
+
     password = forms.CharField(
         label="Password:",
         widget=forms.PasswordInput()
     )
-    
+
     password.widget.attrs.update({'class': 'login-form',
                                   'id': 'login-password'})
 

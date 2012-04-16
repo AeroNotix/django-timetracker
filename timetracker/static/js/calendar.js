@@ -5,83 +5,8 @@
          
 */
 
-function addTimePicker(element, state) {
-    
-    /* 
-       adds a jQuery TimePicker to `element` 
-       with an initial state of `state`.
-       
-       this is an impure function and returns
-       undefined.
-     */
-
-    $(element).timepicker({});
-    $(element).val('');
-    
-    if (!state) {
-        $(element).timepicker("disable");
-    }
-
-}
-
-function addDatePicker(element, state) {
-    
-    /*
-      adds a jQuery datePicker to `element`
-      with an initial state of `state`.
-      
-      this is an impoure function and returns
-      undefined.
-    */
-
-    $(element).datepicker().val('');
-    $(element).datepicker("option", "dateFormat", 'yy-mm-dd');
-    
-    if (!state) {
-        $(element).datepicker("disable");
-    }
-
-}
-
-$(function () {
-
-    /* 
-       jQuery onload function which adds a
-       few widgets to the page along with 
-       their initial state.
-    */
-
-    addTimePicker("#change_starttime", false);
-    addTimePicker("#change_endtime", false);
-    addTimePicker("#add_starttime", true);
-    addTimePicker("#add_endtime", true);
-    addDatePicker("#change_entrydate", false);
-    addDatePicker("#add_entrydate", true);
-    
-    $("#add_daytype").attr("onchange", "onOptionChange('add')");
-    $("#change_daytype").attr("onchange", "onOptionChange('change')");
-    
-    onOptionChange('add');
-    onOptionChange('change');
-    
-});
-
-function deleteEntry() {
-    
-    /* 
-       Delets a calendar entry
-    */
-
-    var answer = confirm("Are you sure?");
-    if (answer) {
-        return ajaxCall("delete");
-    } else {
-        return false;
-    }
-}
 
 function ajaxCall(form) {
-
     /* 
        Creates an ajax call depending on what
        called the function.
@@ -100,15 +25,18 @@ function ajaxCall(form) {
        we're pulling out form data depending on 
        what form calls the ajaxCall
     */
+    "use strict";
 
     $.ajaxSetup({type: 'POST'});
     
-    if (form == "delete") {
-        var pre = "#change_";
+    var pre = '';
+
+    if (form === "delete") {
+        pre = "#change_";
     } else {
-        var pre = "#" + form + "_";
+        pre = "#" + form + "_";
     }
-    
+
     var formData = {
         "form_type"  : form,
         "entry_date" : $(pre + 'entrydate').val(),
@@ -119,9 +47,7 @@ function ajaxCall(form) {
     };
 
     // no point in making invalid ajax requests
-    if (!formData['entry_date'] ||
-        !formData['start_time'] ||
-        !formData['end_time']) {
+    if (!formData.entry_date || !formData.start_time || !formData.end_time) {
         return false;
     }
 
@@ -129,11 +55,11 @@ function ajaxCall(form) {
         url: "/ajax/",
         data: formData,
         dataType: "json",
-        success: function(data) {
-            if (data['success'] === true) {
-                $("#calendar-entry").html(data['calendar']);
+        success: function (data) {
+            if (data.success === true) {
+                $("#calendar-entry").html(data.calendar);
             } else {
-                alert(data['error']);
+                alert(data.error);
             }
         }
     }
@@ -150,12 +76,14 @@ function onOptionChange(element) {
        considering that the person wasn't at 
        work
     */
-    
+
+    "use strict";    
+
     var pre = "#" + element + "_";
     var optionBox = pre + "daytype";
    
-    if ($(optionBox).val() == "SICKD" || 
-        $(optionBox).val() == "HOLIS") {
+    if ($(optionBox).val() === "SICKD" || 
+        $(optionBox).val() === "HOLIS") {
 
         $(pre + "starttime").val('00:00');
         $(pre + "endtime").val('00:01');
@@ -178,17 +106,98 @@ function onOptionChange(element) {
 }
 
 
+function addTimePicker(element, state) {
+    
+    /* 
+       adds a jQuery TimePicker to `element` 
+       with an initial state of `state`.
+       
+       this is an impure function and returns
+       undefined.
+     */
+
+    "use strict";
+    
+    $(element).timepicker({});
+    $(element).val('');
+    
+    if (!state) {
+        $(element).timepicker("disable");
+    }
+
+}
+
+function addDatePicker(element, state) {
+    
+    /*
+      adds a jQuery datePicker to `element`
+      with an initial state of `state`.
+      
+      this is an impoure function and returns
+      undefined.
+    */
+
+    "use strict";
+
+    $(element).datepicker().val('');
+    $(element).datepicker("option", "dateFormat", 'yy-mm-dd');
+    
+    if (!state) {
+        $(element).datepicker("disable");
+    }
+
+}
+
+$(function () {
+
+    /* 
+       jQuery onload function which adds a
+       few widgets to the page along with 
+       their initial state.
+    */
+
+    "use strict";
+
+    addTimePicker("#change_starttime", false);
+    addTimePicker("#change_endtime", false);
+    addTimePicker("#add_starttime", true);
+    addTimePicker("#add_endtime", true);
+    addDatePicker("#change_entrydate", false);
+    addDatePicker("#add_entrydate", true);
+    $("#add_daytype").attr("onchange", "onOptionChange('add')");
+    $("#change_daytype").attr("onchange", "onOptionChange('change')");
+    onOptionChange('add');
+    onOptionChange('change');
+});
+
+function deleteEntry() {
+    
+    /* 
+       Delets a calendar entry
+    */
+
+    "use strict";
+
+    var answer = confirm("Are you sure?");
+    if (answer) {
+        return ajaxCall("delete");
+    } else {
+        return false;
+    }
+}
+
 function toggleChangeEntries(st_hour, st_min, full_st,
                              fi_hour, fi_min, full_fi,
                              entry_date, daytype,
                              change_id) {
 
     /* 
-
        When an entry is clicked, it will fill out the
        change form so that the user can enter a new
        set of information instead.
     */
+    
+    "use strict";
     
     // change the ID field
     $("#hidden_id").val(change_id);
@@ -209,7 +218,7 @@ function toggleChangeEntries(st_hour, st_min, full_st,
         hour: st_hour,
         minute: st_min
     });
-    
+
     $("#change_endtime").timepicker({
         hour: fi_hour,
         minute: fi_min
@@ -236,5 +245,19 @@ function hideEntries(date) {
     $("#change_endtime").val('');
     $("#add_starttime").val('');
     $("#add_endtime").val('');
+    
+    $("#add_starttime").timepicker("destroy");
+    $("#add_endtime").timepicker("destroy");
+
+    $("#add_starttime").timepicker({
+        hour: 0,
+        minute: 0 
+    });
+
+    $("#add_endtime").timepicker({
+        hour: 0,
+        minute: 0
+    });
+
 }
 

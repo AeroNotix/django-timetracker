@@ -29,38 +29,58 @@ MONTH_MAP = {
     11:('DEC', 'December')
 }
 
-def pad(string, pad='0', amount=2):
+def pad(string, padchr='0', amount=2):
     """
     Pads a string
     """
     string = str(string)
 
     if len(str(string)) < amount:
-        pre =  pad * (amount - len(string))
+        pre = padchr * (amount - len(string))
         return pre+string
 
     return string
 
-def request_check(func):
+def get_request_data(form, request):
 
     """
-    Decorator to check an incoming request against a few rules
+    Given a form and a request object we pull out
+    from the request what the form defines.
+
+    i.e.
+
+    form = {
+        'data1': None
+    }
+
+    get_request_data(form, request) will then fill
+    that data with what's in the request object.
     """
 
-    def inner(request):
-        if not request.is_ajax():
-            raise Http404
+    data = dict()
 
-        if not request.session.get('user_id', None):
-            # if there is no user id in the session
-            # something weird is going on
-            raise Http404
+    # get our form data
+    for key in form:
+        data[key] = request.POST.get(key, None)
 
-        return func(request)
+    # get the user id from the session
+    data['user_id'] = request.session['user_id']
 
-    return inner
+    return data
 
-def parse_time(timestring, type=int):
+def validate_time(start, end):
+
+    """
+    Validates the times given
+    """
+
+    shour, sminute = parse_time(start)
+    ehour, eminute = parse_time(end)
+
+    return (datetime.time(shour, sminute)
+            < datetime.time(ehour, eminute))
+
+def parse_time(timestring, type_of=int):
 
     """
     Given a time string will return a tuple of ints,
@@ -68,7 +88,7 @@ def parse_time(timestring, type=int):
     you can pass any function to the type argument.
     """
 
-    return map(type, timestring.split(":"))
+    return map(type_of, timestring.split(":"))
 
 def gen_calendar(year=datetime.datetime.today().year,
                  month=datetime.datetime.today().month,
@@ -240,7 +260,7 @@ def gen_calendar(year=datetime.datetime.today().year,
     # join up the html and push it back
     return ''.join(cal_html)
 
-def json_response(f):
+def json_response(func):
 
     """
     Decorator function that when applied to a function which
@@ -252,9 +272,40 @@ def json_response(f):
     """
 
     def inner(request):
-        return HttpResponse(simplejson.dumps(f(request)),
+
+        """
+        Grabs the request object on the decorated and calls
+        it
+        """
+
+        return HttpResponse(simplejson.dumps(func(request)),
                             mimetype="application/javscript")
     return inner
+
+def request_check(func):
+
+    """
+    Decorator to check an incoming request against a few rules
+    """
+
+    def inner(request):
+
+        """
+        Pulls the request object off the decorated function
+        """
+
+        if not request.is_ajax():
+            raise Http404
+
+        if not request.session.get('user_id', None):
+            # if there is no user id in the session
+            # something weird is going on
+            raise Http404
+
+        return func(request)
+
+    return inner
+
 
 @request_check
 @json_response
@@ -294,7 +345,6 @@ def ajax_add_entry(request):
     try:
         entry = TrackingEntry(**form)
         entry.save()
-
     except IntegrityError as error:
         if error[0] == DUPLICATE_ENTRY:
             json_data['error'] = "There is a duplicate entry for this value"
@@ -341,8 +391,8 @@ def ajax_delete_entry(request):
             entry = TrackingEntry(id=form['hidden-id'],
                                   user=user)
             entry.delete()
-        except Exception as e:
-            json_data['error'] = str(e)
+        except Exception as error:
+            json_data['error'] = str(error)
             return json_data
 
     year, month, day = map(int,
@@ -359,49 +409,16 @@ def ajax_delete_entry(request):
 
 @json_response
 def ajax_error(error):
+
+    """
+    Returns a HttpResponse with JSON as a payload with the error
+    code as the string that the function is called with
+    """
+
     return {
         'success': False,
         'error': error
         }
-
-def get_request_data(form, request):
-
-    """
-    Given a form and a request object we pull out
-    from the request what the form defines.
-
-    i.e.
-
-    form = {
-        'data1': None
-    }
-
-    get_request_data(form, request) will then fill
-    that data with what's in the request object.
-    """
-
-    data = dict()
-
-    # get our form data
-    for key in form:
-        data[key] = request.POST.get(key, None)
-
-    # get the user id from the session
-    data['user_id'] = request.session['user_id']
-
-    return data
-
-def validate_time(start, end):
-
-    """
-    Validates the times given
-    """
-
-    shour, sminute = parse_time(start)
-    ehour, eminute = parse_time(end)
-
-    return (datetime.time(shour, sminute)
-            < datetime.time(ehour, eminute))
 
 @request_check
 @json_response
@@ -457,8 +474,8 @@ def ajax_change_entry(request):
 
             entry.save()
 
-        except Exception as e:
-            json_data['error'] = str(e)
+        except Exception as error:
+            json_data['error'] = str(error)
             return json_data
 
     year, month, day = map(int,

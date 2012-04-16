@@ -8,8 +8,6 @@ from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 
-import simplejson
-
 from tracker.models import TrackingEntry, Tbluser
 from tracker.models import Tblauthorization as tblauth
 from tracker.forms import EntryForm, AddForm, Login
@@ -35,7 +33,7 @@ def login(request):
     """
 
     # if this somehow gets requested via Ajax, then
-    # send back a 404
+    # send back a 404.
     if request.is_ajax():
         raise Http404
 
@@ -47,7 +45,13 @@ def login(request):
         # pull out the user from the POST and
         # match it against our db
         usr = Tbluser.objects.get(user_id__exact=request.POST['user_name'])
-        
+        if usr.password == request.POST['password']:
+
+            # if all goes well, send to the tracker
+            request.session['user_id'] = usr.id
+            return HttpResponseRedirect("/calendar/")
+        else:
+            return HttpResponse("Login failed!")
     # if the user doesn't match anything, notify
     except Tbluser.DoesNotExist:
         return HttpResponse("Username and Password don't match")
@@ -145,10 +149,11 @@ def ajax(request):
             'change': ajax_change_entry,
             'delete': ajax_delete_entry
             }
+        
         return ajax_funcs.get(form_type,
                               ajax_error("Form not found")
                               )(request)
 
     # if any errors are sent, let the page deal with it
-    except Exception as e:
-        return ajax_error(str(e))
+    except Exception as error:
+        return ajax_error(str(error))
