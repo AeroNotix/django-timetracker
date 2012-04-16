@@ -9,6 +9,9 @@ year = '(?P<year>\d{4})'
 month = '(?P<month>\d{1,2})'
 day = '(?P<day>\d{1,2})'
 
+# todo: tracker app needs to be made into it's own
+#       app and then the main views in here will
+#       just point to that.
 urlpatterns = patterns('',
     url(r'^$', views.index),
     url(r'^calendar$', views.user_view),
@@ -16,6 +19,7 @@ urlpatterns = patterns('',
     url(r'^calendar/%s/?$' % year, views.user_view),
     url(r'^calendar/%s/%s/?$' % (year, month), views.user_view),
     url(r'^calendar/%s/%s/%s/?$' % (year, month, day), views.user_view),
+    url(r'^admin_view/?', views.admin_view),
     url(r'^ajax/?$', views.ajax),
     url(r'^login/?$', views.login),
     url(r'^logout/?$', views.logout),
