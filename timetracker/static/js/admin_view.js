@@ -4,19 +4,27 @@
 */
 
 function onOptionChange(date) {
+
+    /*
+      Function triggers the change in the
+      calendar on the template to show the
+      calendar body
+    */
+
     $.ajaxSetup({type: 'POST'});
 
     var eeid = $("#user_select").val();
 
     $.ajax({
         url: "/ajax/",
+        dataType: 'json',
         data: {
             'form_type': 'admin_get',
             'eeid': eeid
         },
         dataType: "json",
         success: function (data) {
-            alert(data);
+            $("#calendar_div").html(data.calendar);
         }
     });
 }
