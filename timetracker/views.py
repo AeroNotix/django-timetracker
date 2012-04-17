@@ -150,7 +150,6 @@ def ajax(request):
             'delete': ajax_delete_entry,
             'admin_get': gen_calendar
             }
-
         return ajax_funcs.get(form_type,
                               ajax_error("Form not found")
                               )(request)
