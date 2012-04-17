@@ -147,7 +147,8 @@ def ajax(request):
         ajax_funcs = {
             'add': ajax_add_entry,
             'change': ajax_change_entry,
-            'delete': ajax_delete_entry
+            'delete': ajax_delete_entry,
+            'admin_get': gen_calendar
             }
 
         return ajax_funcs.get(form_type,
