@@ -2,8 +2,8 @@
 
 {% block content %}
 
-  {% for item in employees %}
-    {{ item.as_option_list|safe }}
-  {% endfor %}
+{% for item in employees %}
+{{ item.as_option_list|safe }}
+{% endfor %}
  
 {% endblock content %}
