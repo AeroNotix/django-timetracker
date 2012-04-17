@@ -1,9 +1,16 @@
 {% extends "base.html" %}
 
-{% block content %}
+{% block header %}
+<script type="text/javascript" src="{{ STATIC_URL }}js/admin_view.js"></script>
+<script type="text/javascript">
+  $( function () {
+            $("#user_select").attr("onchange", "onOptionChange('123123')");
+  });
+</script>
 
-{% for item in employees %}
-{{ item.as_option_list|safe }}
-{% endfor %}
- 
+{% endblock header %}
+{% block content %}
+  {% for item in employees %}
+    {{ item.as_option_list|safe }}
+  {% endfor %}
 {% endblock content %}
