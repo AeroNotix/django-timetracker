@@ -110,11 +110,18 @@ def calendar_wrapper(function):
             request = args[0]
             try:
                 eeid = request.POST.get('eeid', None)
-                return HttpResponse(function(user=eeid))
+                json_dict = {
+                    'success': True,
+                    'calendar': function(user=eeid)
+                }
+                return HttpResponse(simplejson.dumps(json_dict))
+
             except Exception as e:
                 return HttpResponse(str(e))
-            
+
         else:
+            # if the function was called from a view
+            # let it just do it's thing
             return function(*args, **kwargs)
 
     return inner
