@@ -6,6 +6,7 @@ tasks, processing dates and creating time-based code.
 import datetime
 import calendar as cdr
 
+from django.core.handlers.wsgi import WSGIRequest
 from django.http import Http404, HttpResponse
 from django.db import IntegrityError
 
@@ -92,7 +93,6 @@ def parse_time(timestring, type_of=int):
 
 
 def calendar_wrapper(function):
-    
     """
     Decorator which checks if the calendar function was
     called as an ajax request or not, if so, then the
@@ -105,7 +105,21 @@ def calendar_wrapper(function):
         Checks argument length and constructs the call
         based on that.
         """
-    
+
+        if isinstance(args[0], WSGIRequest):
+            request = args[0]
+            try:
+                eeid = request.POST.get('eeid', None)
+                return HttpResponse(function(user=eeid))
+            except Exception as e:
+                return HttpResponse(str(e))
+            
+        else:
+            return function(*args, **kwargs)
+
+    return inner
+        
+@calendar_wrapper
 def gen_calendar(year=datetime.datetime.today().year,
                  month=datetime.datetime.today().month,
                  day=datetime.datetime.today().day,
