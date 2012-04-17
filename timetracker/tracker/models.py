@@ -70,6 +70,14 @@ class Tbluser(models.Model):
 
         return self.user_type
 
+    def name(self):
+
+        """
+        Utility method for returning users full name
+        """
+
+        return self.firstname + ' ' + self.lastname
+        
     def __unicode__(self):
 
         """
@@ -151,11 +159,12 @@ class Tblauthorization(models.Model):
         str_output = []
         to_out = str_output.append
 
-        to_out("""<select id="user_select">""")
+        to_out("""<select id="user_select">\n""")
 
         for user in self.users.all():
-            to_out("""<option value=%s>%s</option>""" % (user.id,
-                                                         user.firstname))
+            to_out("""\t<option value=%s>%s</option>\n""" % (user.id,
+                                                             user.name()))
+        to_out("""</select>""")
 
         return ''.join(str_output)
         
