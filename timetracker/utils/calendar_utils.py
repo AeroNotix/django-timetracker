@@ -90,6 +90,22 @@ def parse_time(timestring, type_of=int):
 
     return map(type_of, timestring.split(":"))
 
+
+def calendar_wrapper(function):
+    
+    """
+    Decorator which checks if the calendar function was
+    called as an ajax request or not, if so, then the
+    the wrapper constructs the arguments for the call
+    from the POST items
+    """
+
+    def inner(*args, **kwargs):
+        """
+        Checks argument length and constructs the call
+        based on that.
+        """
+    
 def gen_calendar(year=datetime.datetime.today().year,
                  month=datetime.datetime.today().month,
                  day=datetime.datetime.today().day,
