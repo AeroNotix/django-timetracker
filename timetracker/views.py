@@ -28,8 +28,7 @@ def login(request):
     """
     Basic login function.
 
-    Will upgrade to show admin view if the user is an
-    admin, for now will always show the user view.
+    Dispatches to admin/user depending on usertype
     """
 
     # if this somehow gets requested via Ajax, then
