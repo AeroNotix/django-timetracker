@@ -207,7 +207,7 @@ class TrackingEntry(models.Model):
 
     user = models.ForeignKey(Tbluser, related_name="user_tracking")
 
-    entry_date = models.DateField(unique=True)
+    entry_date = models.DateField()
     start_time = models.TimeField(blank=False)
     end_time = models.TimeField(blank=False)
     breaks = models.TimeField(blank=False)
