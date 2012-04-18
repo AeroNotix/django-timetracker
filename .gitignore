@@ -6,3 +6,4 @@ admin/*
 settings.py
 .#*
 *.py#
+tt.wsgi
