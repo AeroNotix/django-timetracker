@@ -25,6 +25,8 @@ function onOptionChange(date) {
         dataType: "json",
         success: function (data) {
             $("#calendar_div").html(data.calendar);
+            $("#calendar tr td a").attr("href", "#");
+            $("#calendar tr td a").css({'color':'black'});
         }
     });
 }
