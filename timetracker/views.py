@@ -47,9 +47,9 @@ def login(request):
     # if the user doesn't match anything, notify
     except Tbluser.DoesNotExist:
         return HttpResponse("Username and Password don't match")
-    
+
     if usr.password == request.POST['password']:
-        
+
         # if all goes well, send to the tracker
         request.session['user_id'] = usr.id
         if usr.user_type == "ADMIN":
@@ -59,7 +59,7 @@ def login(request):
     else:
         return HttpResponse("Login failed!")
 
-    
+
 def logout(request):
 
     """
@@ -79,7 +79,7 @@ def admin_view(request):
     The user logged in is an admin, we show them a
     view based on their team
     """
-    
+
     admin_id = request.session.get("user_id", None)
     if admin_id:
         try:
