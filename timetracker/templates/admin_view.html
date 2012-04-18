@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block header %}
+<link href="{{ STATIC_URL }}calendar.css" type="text/css" rel="stylesheet" />
 <script type="text/javascript" src="{{ STATIC_URL }}js/admin_view.js"></script>
 <script type="text/javascript">
   $( function () {
@@ -8,13 +9,19 @@
       onOptionChange();
   });
 </script>
-
 {% endblock header %}
 {% block content %}
-  {% for item in employees %}
-    {{ item.as_option_list|safe }}
-  {% endfor %}
-
-<div id="calendar_div"></div>
+<table id="user_table" border="1">
+  <tr>
+    <td valign="top">
+      {% for item in employees %}
+        {{ item.as_option_list|safe }}
+      {% endfor %}
+    </td>
+    <td>
+      <div id="calendar_div"></div>
+    </td>
+  </tr>
+</table>
 
 {% endblock content %}
