@@ -103,6 +103,9 @@ this is a jQuery add-on
 
 #calendar-table {
    background: black;
+    margin-top: 100px;
+    margin-left: auto;
+    margin-right: auto;
 
 }
 
