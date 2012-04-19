@@ -111,6 +111,7 @@ class Tbluser(models.Model):
                               -  (total + (total_mins / 60.0)               )
 
         tracker_class_map = {
+            # create a map of values which map to the classes
             frozenset(range(1)) : 'class=tracker-val-ok',
             frozenset(range(-3, 0)) : 'class=tracker-val-warning',
             frozenset(range(1, 4)) : 'class=tracker-val-warning',
@@ -118,6 +119,8 @@ class Tbluser(models.Model):
 
         tracking_class = "class=tracking-val-danger"
         for key in tracker_class_map:
+            # look in the map for the balance value to
+            # retrieve the class
             if int(trackingnumber) in key:
                 tracking_class = tracker_class_map[key]
 
