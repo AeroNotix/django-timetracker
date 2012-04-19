@@ -21,7 +21,12 @@
       <div id="calendar_div"></div>
     </td>
     <td valign="top">
-      <table border="1" id="admin-inner-cal"> 
+      <table id="admin-inner-cal">
+        <tr>
+          <td colspan="2">
+            <p>Your team's status:</p>
+          </td>
+        </tr>
         {% for employee in employees.users.all %}
         <tr>
           <td>
