@@ -10,11 +10,6 @@
 	<script type="text/javascript" src="{{ STATIC_URL }}jquery/js/csrf_protection.js"></script>
     {% block header %}
     {% endblock header %}
-  </head>
-  <div>
-    <a href="/logout/">
-      <img src="{{ STATIC_URL }}images/base/logout.gif" />
-    </a>
-  </div>
-  {% block content %}
-  {% endblock %}
+       <a id="menu-bar"><img src="{{ STATIC_URL }}images/base/logout.gif" /></a>
+    {% block content %}
+    {% endblock %}

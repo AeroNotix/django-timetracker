@@ -67,7 +67,7 @@ class Tbluser(models.Model):
     def display_user_type(self):
 
         """
-        Fucntion for displaying the user in admin
+        Function for displaying the user in admin
         """
 
         return self.user_type
@@ -79,7 +79,7 @@ class Tbluser(models.Model):
         """
 
         return self.firstname + ' ' + self.lastname
-        
+
     def __unicode__(self):
 
         """
@@ -89,21 +89,39 @@ class Tbluser(models.Model):
         return '%s - %s %s ' % (self.user_id,
                                 self.firstname,
                                 self.lastname)
-
+    
     def get_total_balance(self):
 
         """
-        Calculates the total balance for the user
+        Calculates the total balance for the user.
         """
 
         total, total_mins = 0, 0
         tracking_days = TrackingEntry.objects.filter(user_id=self.id)
+        
         for item in tracking_days:
 
-            total += item.end_time.hour - item.start_time.hour
-            total_mins += item.end_time.minute - item.start_time.minute
+            total += (      item.end_time.hour
+                        - item.start_time.hour )
 
-        return (len(tracking_days) * self.shiftlength.hour) - (total + (total_mins / 60.0))
+            total_mins += (     item.end_time.minute
+                            - item.start_time.minute )
+
+        trackingnumber =    (     len(tracking_days) * self.shiftlength.hour) \
+                              -  (total + (total_mins / 60.0)               )
+
+        tracker_class_map = {
+            frozenset(range(1)) : 'class=tracker-val-ok',
+            frozenset(range(-3, 0)) : 'class=tracker-val-warning',
+            frozenset(range(1, 4)) : 'class=tracker-val-warning',
+            }
+
+        tracking_class = "class=tracking-val-danger"
+        for key in tracker_class_map:
+            if int(trackingnumber) in key:
+                tracking_class = tracker_class_map[key]
+
+        return "<p %s> %s </p>" % (tracking_class, trackingnumber)
 
     class Meta:
 
@@ -185,8 +203,8 @@ class Tblauthorization(models.Model):
         to_out("""</select>""")
 
         return ''.join(str_output)
-        
-        
+
+
     display_users.allow_tags = True
     display_users.short_discription = "Subordinate Users"
 
@@ -231,6 +249,7 @@ class TrackingEntry(models.Model):
     breaks = models.TimeField(blank=False)
     daytype = models.CharField(choices=DAYTYPE_CHOICES,
                                max_length=5)
+
     comments = models.TextField(blank=True)
 
 
