@@ -1,30 +1,29 @@
-/* 
-  
-   all functions dealing with the calendar that aren't
-   automatically created server-side.
-         
+/*
+  all functions dealing with the calendar that aren't
+  automatically created server-side.
 */
 
 
 function ajaxCall(form) {
-    /* 
-       Creates an ajax call depending on what
-       called the function.
-
-       Server-side there is a view at domain/ajax/
-       which is designed to intercept all ajax
-       calls.
-
-       The idea is that you define a function, 
-       add it to the ajax view's dict of functions
-       along with a tag denoting it's name, and
-       then pass the string to the 'form_type'
-       json you sent to that view. 
-
-       In this particular ajax request function
-       we're pulling out form data depending on 
-       what form calls the ajaxCall
+    /*
+      Creates an ajax call depending on what
+      called the function.
+      
+      Server-side there is a view at domain/ajax/
+      which is designed to intercept all ajax
+      calls.
+      
+      The idea is that you define a function,
+      add it to the ajax view's dict of functions
+      along with a tag denoting it's name, and
+      then pass the string to the 'form_type'
+      json you sent to that view.
+      
+      In this particular ajax request function
+      we're pulling out form data depending on
+      what form calls the ajaxCall
     */
+
     "use strict";
 
     $.ajaxSetup({type: 'POST'});
@@ -38,12 +37,12 @@ function ajaxCall(form) {
     }
 
     var formData = {
-        "form_type"  : form,
+        "form_type" : form,
         "entry_date" : $(pre + 'entrydate').val(),
         "start_time" : $(pre + 'starttime').val(),
-        "end_time"   : $(pre + 'endtime').val(), 
-        "daytype"    : $(pre + 'daytype').val(),
-        "hidden-id"  : $('#hidden_id').val()
+        "end_time" : $(pre + 'endtime').val(),
+        "daytype" : $(pre + 'daytype').val(),
+        "hidden-id" : $('#hidden_id').val()
     };
 
     // no point in making invalid ajax requests
@@ -70,19 +69,19 @@ function ajaxCall(form) {
 
 function onOptionChange(element) {
 
-    /* 
-       When specific options are selected
-       there is no need to give working times
-       considering that the person wasn't at 
-       work
-    */
+    /*
+When specific options are selected
+there is no need to give working times
+considering that the person wasn't at
+work
+*/
 
-    "use strict";    
+    "use strict";
 
     var pre = "#" + element + "_";
     var optionBox = pre + "daytype";
    
-    if ($(optionBox).val() === "SICKD" || 
+    if ($(optionBox).val() === "SICKD" ||
         $(optionBox).val() === "HOLIS") {
 
         $(pre + "starttime").val('00:00');
@@ -108,13 +107,12 @@ function onOptionChange(element) {
 
 function addTimePicker(element, state) {
     
-    /* 
-       adds a jQuery TimePicker to `element` 
-       with an initial state of `state`.
-       
-       this is an impure function and returns
-       undefined.
-     */
+    /*
+adds a jQuery TimePicker to `element`
+with an initial state of `state`.
+this is an impure function and returns
+undefined.
+*/
 
     "use strict";
     
@@ -130,12 +128,11 @@ function addTimePicker(element, state) {
 function addDatePicker(element, state) {
     
     /*
-      adds a jQuery datePicker to `element`
-      with an initial state of `state`.
-      
-      this is an impoure function and returns
-      undefined.
-    */
+adds a jQuery datePicker to `element`
+with an initial state of `state`.
+this is an impoure function and returns
+undefined.
+*/
 
     "use strict";
 
@@ -150,10 +147,10 @@ function addDatePicker(element, state) {
 
 $(function () {
 
-    /* 
-       jQuery onload function which adds a
-       few widgets to the page along with 
-       their initial state.
+    /*
+      jQuery onload function which adds a
+      few widgets to the page along with
+      their initial state.
     */
 
     "use strict";
@@ -172,8 +169,8 @@ $(function () {
 
 function deleteEntry() {
     
-    /* 
-       Delets a calendar entry
+    /*
+      Deletes a calendar entry
     */
 
     "use strict";
@@ -191,10 +188,10 @@ function toggleChangeEntries(st_hour, st_min, full_st,
                              entry_date, daytype,
                              change_id) {
 
-    /* 
-       When an entry is clicked, it will fill out the
-       change form so that the user can enter a new
-       set of information instead.
+    /*
+      When an entry is clicked, it will fill out the
+      change form so that the user can enter a new
+      set of information instead.
     */
     
     "use strict";
@@ -251,7 +248,7 @@ function hideEntries(date) {
 
     $("#add_starttime").timepicker({
         hour: 0,
-        minute: 0 
+        minute: 0
     });
 
     $("#add_endtime").timepicker({
