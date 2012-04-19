@@ -163,7 +163,7 @@ def gen_calendar(year=datetime.datetime.today().year,
     # need to use authorisation and sessions to get this
     # for testing we'll just grab the same db object
     database = Tbluser.objects.get(id__exact=user)
-
+    
     # pull out the entries for the given month
     try:
         database = TrackingEntry.objects.filter(
@@ -518,9 +518,6 @@ def ajax_change_entry(request):
     year, month, day = map(int,
                            form['entry_date'].split("-")
                            )
-
-    calendar = gen_calendar(year, month, day,
-                            form['user_id'])
 
     # if all went well
     json_data['success'] = True
