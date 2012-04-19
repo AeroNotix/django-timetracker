@@ -4,6 +4,7 @@ body {
 
 #menu-bar {
     position: absolute;
+    height: 35px;
     top: 0%;
     left: 0%;
     width: 100%;
