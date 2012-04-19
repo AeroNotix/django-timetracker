@@ -44,6 +44,7 @@ def login(request):
         # pull out the user from the POST and
         # match it against our db
         usr = Tbluser.objects.get(user_id__exact=request.POST['user_name'])
+
     # if the user doesn't match anything, notify
     except Tbluser.DoesNotExist:
         return HttpResponse("Username and Password don't match")
@@ -52,6 +53,7 @@ def login(request):
 
         # if all goes well, send to the tracker
         request.session['user_id'] = usr.id
+
         if usr.user_type == "ADMIN":
             return HttpResponseRedirect("/admin_view/")
         else:
@@ -83,7 +85,7 @@ def admin_view(request):
     admin_id = request.session.get("user_id", None)
     if admin_id:
         try:
-            employees = tblauth.objects.filter(admin=admin_id)
+            employees = tblauth.objects.get(admin=admin_id)
         except tblauth.DoesNotExist:
             return HttpResponseRedirect("/calendar/")
 
