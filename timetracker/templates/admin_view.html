@@ -15,14 +15,14 @@
 <table id="user_table" border="1">
   <tr>
     <td valign="top">
-      {% for item in employees %}
-        {{ item.as_option_list|safe }}
-      {% endfor %}
+      {{ employees.as_option_list|safe }}
     </td>
     <td>
       <div id="calendar_div"></div>
     </td>
   </tr>
 </table>
-
+{% for employee in employees.users.all %}
+   <p>{{ employee.get_total_balance }}</p>
+{% endfor %}
 {% endblock content %}
