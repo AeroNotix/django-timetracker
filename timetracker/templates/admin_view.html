@@ -5,14 +5,14 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/admin_view.js"></script>
 <script type="text/javascript">
   $( function () {
-      $("#user_select").attr("onchange", "onOptionChange('123123')");
+      $("#user_select").attr("onchange", "onOptionChange()");
       onOptionChange();
   });
 </script>
 {% endblock header %}
 {% block content %}
 
-<table id="user_table" border="1">
+<table id="user_table">
   <tr>
     <td valign="top">
       {{ employees.as_option_list|safe }}
@@ -20,9 +20,23 @@
     <td>
       <div id="calendar_div"></div>
     </td>
+    <td valign="top">
+      <table border="1" id="admin-inner-cal"> 
+        {% for employee in employees.users.all %}
+        <tr>
+          <td>
+            <p>{{ employee.name }}</p>
+          </td>
+          <td>
+            {{ employee.get_total_balance|safe }}
+          </td>
+        </tr>
+        {% endfor %}
+      </table>
+    </td>
   </tr>
+  
+
 </table>
-{% for employee in employees.users.all %}
-   <p>{{ employee.get_total_balance }}</p>
-{% endfor %}
+
 {% endblock content %}
