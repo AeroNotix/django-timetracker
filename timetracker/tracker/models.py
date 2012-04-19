@@ -2,6 +2,8 @@
 Definition of the models used in the timetracker app
 '''
 
+import datetime
+
 from django.db import models
 
 class Tbluser(models.Model):
@@ -88,7 +90,23 @@ class Tbluser(models.Model):
                                 self.firstname,
                                 self.lastname)
 
+    def get_total_balance(self):
+
+        """
+        Calculates the total balance for the user
+        """
+
+        total, total_mins = 0, 0
+        tracking_days = TrackingEntry.objects.filter(user_id=self.id)
+        for item in tracking_days:
+
+            total += item.end_time.hour - item.start_time.hour
+            total_mins += item.end_time.minute - item.start_time.minute
+
+        return (len(tracking_days) * self.shiftlength.hour) - (total + (total_mins / 60.0))
+
     class Meta:
+
         """
         Metaclass allows for additional options to be set on the model
         """
