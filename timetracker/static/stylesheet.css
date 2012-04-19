@@ -2,6 +2,15 @@ body {
    background: black;
 }
 
+#menu-bar {
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    width: 100%;
+    padding: 0;
+    background: white;
+}
+
 #login {
    position: absolute;
    left: 10%;
@@ -23,6 +32,21 @@ body {
     position: absolute;
     top: 10%;
     left: 3%;
+}
+
+.tracker-val-ok {
+    background: green;
+    color: black;
+}
+
+.tracker-val-warning {
+    background: yellow;
+    color: black;
+}
+
+.tracker-val-danger {
+    background: red
+    color: black;
 }
 
 * {
