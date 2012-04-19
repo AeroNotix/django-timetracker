@@ -519,6 +519,9 @@ def ajax_change_entry(request):
                            form['entry_date'].split("-")
                            )
 
+    calendar = gen_calendar(year, month, day,
+                            form['user_id'])
+
     # if all went well
     json_data['success'] = True
     json_data['calendar'] = calendar
