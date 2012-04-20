@@ -160,8 +160,8 @@ def gen_calendar(year=datetime.datetime.today().year,
         previous_url = '"/calendar/%s/%s"' % (year, month - 1)
 
 
-    # need to use authorisation and sessions to get this
-    # for testing we'll just grab the same db object
+    # user_id came from sessions or the ajax call
+    # so this is pretty safe
     database = Tbluser.objects.get(id__exact=user)
     
     # pull out the entries for the given month

@@ -10,8 +10,37 @@
   });
 </script>
 {% endblock header %}
-{% block content %}
 
+{% block menubar %}
+<div id="menu-bar">
+  <a  href="/holiday_planning/">
+    <img class="menu-button"
+         src="{{ STATIC_URL }}images/base/menu_item.gif" />
+  </a>
+  <a  href="/csvout/">
+    <img class="menu-button"
+         src="{{ STATIC_URL }}images/base/export_to_csv.gif" />
+  </a>
+  <a  href="/placeholder/">
+    <img class="menu-button"
+         src="{{ STATIC_URL }}images/base/placeholder.gif" />
+  </a>
+  <a  href="/add/">
+    <img class="menu-button"
+         src="{{ STATIC_URL }}images/base/add.gif" />
+  </a>
+
+  <img id="logo-btn"
+       src="{{ STATIC_URL }}images/base/hp.gif" />
+
+  <a id="logout" href="/logout/">
+    <img class="menu-button"
+         src="{{ STATIC_URL }}images/base/logout.gif" />
+  </a>
+
+</div>
+{% endblock menubar %}
+{% block content %}
 <table id="user_table">
   <tr>
     <td valign="top">

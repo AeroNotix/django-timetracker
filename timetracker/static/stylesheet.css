@@ -4,7 +4,7 @@ body {
 
 #menu-bar {
     position: absolute;
-    height: 35px;
+    height: 50px;
     top: 0%;
     left: 0%;
     width: 100%;
@@ -12,6 +12,13 @@ body {
     background: #1d1d1d;
     color: white;
     box-shadow: 0px 0px 50px white;
+}
+
+.menu-button {
+   height: 50px;
+   width: 200px;
+   border-right: 7px solid #1d1d1d;
+   text-align: center;
 }
 
 #login {
@@ -24,6 +31,14 @@ body {
     background-image: url('images/calendar/HP_login_box.gif');
     box-shadow: 0px 50px 300px white;
     border-radius: 30px;
+}
+
+#logout {
+   float: right;
+}
+
+#logo-btn {
+   float: right;
 }
 
 #login-fs {
@@ -53,9 +68,25 @@ body {
 }
 
 * {
-   font-family: "Futura BK";
+   font-family: "Century Gothic";
 }
 
 #admin-inner-cal {
     color: white;
+}
+
+a {
+   text-decoration: none;
+}
+
+a:hover {
+   color: none;
+}
+
+a:visited {
+   color: blue;
+}
+
+.menu-bar:hover {
+   background-image: url('images/base/transparency.png');
 }

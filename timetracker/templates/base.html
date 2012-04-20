@@ -9,8 +9,13 @@
 	<script type="text/javascript" src="{{ STATIC_URL }}jquery/js/csrf_protection.js"></script>
     {% block header %}
     {% endblock header %}
-       <div id="menu-bar" href="/logout/">
-         <a href="/logout/">&nbspLogout</a>
-       </div>
+    {% block menubar %}
+    <div id="menu-bar">
+      <a id="logout" href="/logout/">
+        <img class="menu-button"
+             src="{{ STATIC_URL }}images/base/logout.gif" />
+      </a>
+    </div>
+    {% endblock menubar %}
     {% block content %}
     {% endblock %}
