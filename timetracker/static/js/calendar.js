@@ -56,7 +56,9 @@ function ajaxCall(form) {
         dataType: "json",
         success: function (data) {
             if (data.success === true) {
+                $("#calendar-entry").hide("slow");
                 $("#calendar-entry").html(data.calendar);
+                $("#calendar-entry").show("slow");                
             } else {
                 alert(data.error);
             }
@@ -70,11 +72,11 @@ function ajaxCall(form) {
 function onOptionChange(element) {
 
     /*
-When specific options are selected
-there is no need to give working times
-considering that the person wasn't at
-work
-*/
+      When specific options are selected
+      there is no need to give working times
+      considering that the person wasn't at
+      work
+    */
 
     "use strict";
 
@@ -128,11 +130,11 @@ undefined.
 function addDatePicker(element, state) {
     
     /*
-adds a jQuery datePicker to `element`
-with an initial state of `state`.
-this is an impoure function and returns
-undefined.
-*/
+      adds a jQuery datePicker to `element`
+      with an initial state of `state`.
+      this is an impoure function and returns
+      undefined.
+    */
 
     "use strict";
 
