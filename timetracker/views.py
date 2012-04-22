@@ -185,6 +185,10 @@ def add_change_user(request):
     admin_id = request.session.get('user_id', None)
 
     try:
-        authlinks = tblauth.objects.get(admin_id=admin_id)
-    except:
+        employees = tblauth.objects.get(admin_id=admin_id)
+    except tblauth.DoesNotExist:
         pass
+
+    return render_to_response("useredit.html",
+                              {"employees": employees},
+                              RequestContext(request))
