@@ -2,8 +2,6 @@
 Definition of the models used in the timetracker app
 '''
 
-import datetime
-
 from django.db import models
 
 class Tbluser(models.Model):
