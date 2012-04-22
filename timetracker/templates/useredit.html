@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block menubar %}
+ {% include 'includes/nav.html' %}
+{% endblock menubar %}
+
+{% block content %}
+<table id="edit-user-table" border="1">
+  <tr>
+    <td>
+      {{ employees.as_option_list|safe }}
+    </td>
+    <td>
+      <input />
+    </td>
+        
+  </tr>
+</table>
+{% endblock %}
