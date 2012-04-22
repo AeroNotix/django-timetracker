@@ -8,7 +8,7 @@ from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 
-from tracker.models import Tbluser
+from tracker.models import Tbluser, UserForm
 from tracker.models import Tblauthorization as tblauth
 from tracker.forms import EntryForm, AddForm, Login
 from utils.calendar_utils import (gen_calendar, ajax_add_entry,
@@ -189,6 +189,13 @@ def add_change_user(request):
     except tblauth.DoesNotExist:
         pass
 
-    return render_to_response("useredit.html",
-                              {"employees": employees},
-                              RequestContext(request))
+    form = UserForm()
+    
+    return render_to_response(
+        "useredit.html",
+        {
+        "employees": employees,
+        "user_form": form
+        },
+        RequestContext(request)
+    )

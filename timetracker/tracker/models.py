@@ -3,6 +3,7 @@ Definition of the models used in the timetracker app
 '''
 
 from django.db import models
+from django.forms import ModelForm
 
 class Tbluser(models.Model):
 
@@ -135,6 +136,11 @@ class Tbluser(models.Model):
         verbose_name_plural = "Users"
         unique_together = ("user_id", "firstname", "lastname")
 
+class UserForm(ModelForm):
+
+    class Meta:
+        model = Tbluser
+        
 class Tblauthorization(models.Model):
 
     """

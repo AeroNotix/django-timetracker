@@ -5,37 +5,27 @@
 {% endblock menubar %}
 
 {% block content %}
-<table id="edit-user-table" border="1">
+<table id="edit-user-table">
   <tr>
     <td valign="top"1>
       {{ employees.as_option_list|safe }}
     </td>
     <td>
       <table>
-        <tr>
-          <td>
-            <label>Name:
-            <input />
-            </label>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <label>Name:
-            <input />
-            </label>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <label>Naasdasdme:
-            <input />
-            </label>
-          </td>
-        </tr>
+       {{ user_form.as_table }}
       </table>
     </td>
-        
   </tr>
+  <tr>
+    <td>
+    </td>
+    <td align="right">
+      <input type="button" name="submit" value="Clear"/>
+      <input type="button" name="submit" value="Delete"/>
+      <input type="button" name="submit" value="Change"/>
+    </td>
+    
 </table>
+
+
 {% endblock %}
