@@ -13,7 +13,7 @@ from tracker.models import Tblauthorization as tblauth
 from tracker.forms import EntryForm, AddForm, Login
 from utils.calendar_utils import (gen_calendar, ajax_add_entry,
                                   ajax_change_entry, ajax_delete_entry,
-                                  ajax_error)
+                                  ajax_error, get_user_data, admin_check)
 
 def index(request):
     """
@@ -132,7 +132,8 @@ def ajax(request):
             'add': ajax_add_entry,
             'change': ajax_change_entry,
             'delete': ajax_delete_entry,
-            'admin_get': gen_calendar
+            'admin_get': gen_calendar,
+            'get_user_data': get_user_data,
             }
         return ajax_funcs.get(form_type,
                               ajax_error("Form not found")
@@ -141,21 +142,6 @@ def ajax(request):
     # if any errors are sent, let the page deal with it
     except Exception as error:
         return ajax_error(str(error))
-
-def admin_check(func):
-
-    """
-    Wrapper to see if the view is being called as an admin
-    """
-
-    def inner(request):
-        admin_id = request.session.get('user_id', None)
-        if not admin_id:
-            raise Http404
-
-        return func(request)
-
-    return inner
 
 @admin_check
 def admin_view(request):

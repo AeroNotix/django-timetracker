@@ -526,3 +526,51 @@ def ajax_change_entry(request):
     json_data['success'] = True
     json_data['calendar'] = calendar
     return json_data
+
+def admin_check(func):
+
+    """
+    Wrapper to see if the view is being called as an admin
+    """
+
+    def inner(request):
+        admin_id = request.session.get('user_id', None)
+
+        if not admin_id:
+            raise Http404
+
+        return func(request)
+
+    return inner
+
+@request_check
+@admin_check
+@json_response
+def get_user_data(request):
+    """
+    Returns a user as a json object
+    """
+
+    user = Tbluser.objects.get(
+        id__exact=request.POST.get('user_id', None)
+    )
+
+    json_data = {
+        'success': False
+    }
+
+    if user:
+
+        json_data = {
+            'success': True,
+            'username': user.user_id,
+            'firstname': user.firstname,
+            'lastname': user.lastname,
+            'market': user.market,
+            'process': user.process,
+            'start_date': str(user.start_date),
+            'breaklength': str(user.breaklength),
+            'shiftlength': str(user.shiftlength)
+        }
+
+    return json_data

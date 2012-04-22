@@ -7,12 +7,37 @@ function onOptionChange() {
 
        Returns undefined and takes no parameters
     */
-    
+    "use strict";
+
+    $.ajaxSetup({type: 'POST'});
+
     var user_id = $("#user_select").val();
-    alert(user_id);
+    $.ajax({
+        url: '/ajax/',
+        dataType: "json",
+        data: {
+            'user_id': user_id,
+            'form_type': 'get_user_data'
+        },
+
+        success: function (data) {
+            $("#id_user_id").val(data.username);
+            $("#id_firstname").val(data.firstname);
+            $("#id_lastname").val(data.lastname);
+            $("#id_market").val(data.market);
+            $("#id_process").val(data.process);
+            $("#id_start_date").val(data.start_date);
+            $("#id_breaklength").val(data.breaklength);
+            $("#id_shiftlength").val(data.shiftlength);
+
+        }
+    }
+          );
 }
 
 $(function () {
+    "use strict";
+
     $("#user_select").attr("onchange", "onOptionChange()");
     onOptionChange();
 });
