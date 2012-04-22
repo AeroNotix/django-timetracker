@@ -75,24 +75,6 @@ def logout(request):
 
     return HttpResponseRedirect("/")
 
-def admin_view(request):
-
-    """
-    The user logged in is an admin, we show them a
-    view based on their team
-    """
-
-    admin_id = request.session.get("user_id", None)
-    if admin_id:
-        try:
-            employees = tblauth.objects.get(admin=admin_id)
-        except tblauth.DoesNotExist:
-            return HttpResponseRedirect("/calendar/")
-
-    return render_to_response("admin_view.html",
-                              {"employees": employees},
-                               RequestContext(request))
-
 def user_view(request,
              year=datetime.date.today().year,
              month=datetime.date.today().month,
@@ -159,3 +141,50 @@ def ajax(request):
     # if any errors are sent, let the page deal with it
     except Exception as error:
         return ajax_error(str(error))
+
+def admin_check(func):
+
+    """
+    Wrapper to see if the view is being called as an admin
+    """
+
+    def inner(request):
+        admin_id = request.session.get('user_id', None)
+        if not admin_id:
+            raise Http404
+
+        return func(request)
+
+    return inner
+
+@admin_check
+def admin_view(request):
+
+    """
+    The user logged in is an admin, we show them a
+    view based on their team
+    """
+
+    admin_id = request.session.get("user_id", None)
+
+    try:
+        employees = tblauth.objects.get(admin=admin_id)
+    except tblauth.DoesNotExist:
+        return HttpResponseRedirect("/calendar/")
+
+    return render_to_response("admin_view.html",
+                              {"employees": employees},
+                               RequestContext(request))
+@admin_check
+def add_change_user(request):
+
+    """
+    Creates the view for changing/adding users
+    """
+
+    admin_id = request.session.get('user_id', None)
+
+    try:
+        authlinks = tblauth.objects.get(admin_id=admin_id)
+    except:
+        pass
