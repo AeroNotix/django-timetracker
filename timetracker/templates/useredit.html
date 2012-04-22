@@ -8,27 +8,28 @@
 {% endblock menubar %}
 
 {% block content %}
-<table id="edit-user-table">
-  <tr>
-    <td valign="top"1>
-      {{ employees.as_option_list|safe }}
-    </td>
-    <td>
-      <table>
-       {{ user_form.as_table }}
-      </table>
-    </td>
-  </tr>
-  <tr>
-    <td>
-    </td>
-    <td align="right">
-      <input type="button" name="submit" value="Clear"/>
-      <input type="button" name="submit" value="Delete"/>
-      <input type="button" name="submit" value="Change"/>
-    </td>
-    
-</table>
-
-
+<div id="edit-user-wrapper">
+  <table id="edit-user-table">
+    <tr>
+      <td valign="top"1>
+        {{ employees.as_option_list|safe }}
+      </td>
+      <td>
+        <form id="user-edit-form">
+          <table>
+            {{ user_form.as_table }}
+          </table>
+        </form>
+      </td>
+    </tr>
+    <tr>
+      <td>
+      </td>
+      <td align="right">
+        <input type="button" onclick="clearForm()" value="Clear"/>
+        <input type="button" onclick="deleteEntry()" value="Delete"/>
+        <input type="button" onclick="addEntry()" value="Add"/>
+      </td>
+  </table>
+</div>
 {% endblock %}

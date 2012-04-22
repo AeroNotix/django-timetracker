@@ -13,6 +13,7 @@ from django.db import IntegrityError
 import simplejson
 
 from timetracker.tracker.models import TrackingEntry, Tbluser
+from timetracker.tracker.models import Tblauthorization as Tblauth
 from timetracker.utils.database_errors import DUPLICATE_ENTRY
 
 MONTH_MAP = {
@@ -125,7 +126,7 @@ def calendar_wrapper(function):
             return function(*args, **kwargs)
 
     return inner
-        
+
 @calendar_wrapper
 def gen_calendar(year=datetime.datetime.today().year,
                  month=datetime.datetime.today().month,
@@ -163,7 +164,7 @@ def gen_calendar(year=datetime.datetime.today().year,
     # user_id came from sessions or the ajax call
     # so this is pretty safe
     database = Tbluser.objects.get(id__exact=user)
-    
+
     # pull out the entries for the given month
     try:
         database = TrackingEntry.objects.filter(
@@ -568,9 +569,69 @@ def get_user_data(request):
             'lastname': user.lastname,
             'market': user.market,
             'process': user.process,
+            'user_type': user.user_type,
             'start_date': str(user.start_date),
             'breaklength': str(user.breaklength),
             'shiftlength': str(user.shiftlength)
         }
 
+    return json_data
+
+@request_check
+@admin_check
+@json_response
+def delete_user(request):
+    """
+    Asynchronously deletes a user
+    """
+
+    user_id = request.POST.get('user_id', None)
+
+    json_data = {
+        'success': False,
+        'error': '',
+    }
+
+    if user_id:
+        try:
+            user = Tbluser.objects.get(id=user_id)
+            user.delete()
+        except Tbluser.DoesNotExist:
+            json_data['error'] = "User does not exist"
+            return json_data
+
+        json_data['success'] = True
+        return json_data
+
+    return json_data
+
+
+@request_check
+@admin_check
+@json_response
+def add_user(request):
+
+    data = {}
+    for item in request.POST:
+        if item != "form_type":
+            data[item] = request.POST[item]
+
+    json_data = {
+        'success': False,
+        'error': ''
+    }
+
+    try:
+        user = Tbluser(**data)
+        user.save()
+
+        admin = Tblauth.objects.get(id=request.session.get('user_id'))
+        admin.users.add(user)
+        admin.save()
+
+    except Exception as e:
+        json_data['error'] = str(e) + str(data)
+        return json_data
+
+    json_data['success'] = True
     return json_data

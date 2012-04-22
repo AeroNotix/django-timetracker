@@ -13,7 +13,8 @@ from tracker.models import Tblauthorization as tblauth
 from tracker.forms import EntryForm, AddForm, Login
 from utils.calendar_utils import (gen_calendar, ajax_add_entry,
                                   ajax_change_entry, ajax_delete_entry,
-                                  ajax_error, get_user_data, admin_check)
+                                  ajax_error, get_user_data, admin_check,
+                                  delete_user, add_user)
 
 def index(request):
     """
@@ -134,6 +135,8 @@ def ajax(request):
             'delete': ajax_delete_entry,
             'admin_get': gen_calendar,
             'get_user_data': get_user_data,
+            'add_user': add_user,
+            'delete_user': delete_user
             }
         return ajax_funcs.get(form_type,
                               ajax_error("Form not found")

@@ -140,7 +140,7 @@ class UserForm(ModelForm):
 
     class Meta:
         model = Tbluser
-        
+
 class Tblauthorization(models.Model):
 
     """
