@@ -75,6 +75,11 @@ body {
     color: white;
 }
 
+#edit-user-table {
+   position: absolute;
+   top: 20%;
+}
+
 a {
    text-decoration: none;
 }
