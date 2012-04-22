@@ -56,9 +56,10 @@ function ajaxCall(form) {
         dataType: "json",
         success: function (data) {
             if (data.success === true) {
-                $("#calendar-entry").hide("slow");
-                $("#calendar-entry").html(data.calendar);
-                $("#calendar-entry").show("slow");                
+                $("#calendar-entry").fadeToggle("slow", function() {
+                          $("#calendar-entry").html(data.calendar);
+                });
+                $("#calendar-entry").fadeToggle("slow");
             } else {
                 alert(data.error);
             }
