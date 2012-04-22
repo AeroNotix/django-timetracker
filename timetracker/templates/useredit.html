@@ -1,5 +1,8 @@
 {% extends "base.html" %}
 
+{% block header %}
+<script type="text/javascript" src="{{ STATIC_URL }}js/useredit.js"></script>
+{% endblock header %}
 {% block menubar %}
  {% include 'includes/nav.html' %}
 {% endblock menubar %}
