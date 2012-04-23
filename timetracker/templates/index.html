@@ -1,5 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
+<!--[if IE]> 
+   <div id="IEroot"> 
+<![endif]-->
 <fieldset id="login">
   <form method="POST" action="/login/">
     {% csrf_token %}
@@ -15,4 +18,7 @@
         </td>
     </table>
   </form>
+<!--[if IE]> 
+   </div> 
+<![endif]-->
 {% endblock content %}
