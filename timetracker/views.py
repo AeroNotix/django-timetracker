@@ -183,3 +183,9 @@ def add_change_user(request):
         },
         RequestContext(request)
     )
+
+@admin_check
+def holiday_planning(request):
+
+    
+    return HttpResponse("SUP")
