@@ -3,18 +3,10 @@
 {% block header %}
 <link href="{{ STATIC_URL }}calendar.css" type="text/css" rel="stylesheet" />
 <script type="text/javascript" src="{{ STATIC_URL }}js/admin_view.js"></script>
-<script type="text/javascript">
-  $( function () {
-      $("#user_select").attr("onchange", "onOptionChange()");
-      onOptionChange();
-  });
-</script>
 {% endblock header %}
-
 {% block menubar %}
 {% include 'includes/nav.html' %}
 {% endblock menubar %}
-
 {% block content %}
 <table id="user_table">
   <tr>
@@ -44,8 +36,5 @@
       </table>
     </td>
   </tr>
-  
-
 </table>
-
 {% endblock content %}

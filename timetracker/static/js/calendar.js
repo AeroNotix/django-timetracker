@@ -164,8 +164,12 @@ $(function () {
     addTimePicker("#add_endtime", true);
     addDatePicker("#change_entrydate", false);
     addDatePicker("#add_entrydate", true);
-    $("#add_daytype").attr("onchange", "onOptionChange('add')");
-    $("#change_daytype").attr("onchange", "onOptionChange('change')");
+    $("#add_daytype").change(function () {
+        onOptionChange('add')
+    });
+    $("#change_daytype").change(function () {
+        onOptionChange('change')
+    });
     onOptionChange('add');
     onOptionChange('change');
 });

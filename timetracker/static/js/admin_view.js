@@ -30,3 +30,10 @@ function onOptionChange(date) {
         }
     });
 }
+
+$(function () {
+    $("#user_select").change(function () {
+        onOptionChange();
+    });
+    onOptionChange();
+});
