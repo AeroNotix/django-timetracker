@@ -8,9 +8,7 @@ function onOptionChange() {
        Returns undefined and takes no parameters
     */
     "use strict";
-
     $.ajaxSetup({type: 'POST'});
-
     var user_id = $("#user_select").val();
     $.ajax({
         url: '/ajax/',
@@ -119,5 +117,7 @@ function addEntry() {
 $(function () {
     "use strict";
 
-    $("#user_select").attr("onchange", "onOptionChange()");
+    $("#user_select").change(function() {
+        onOptionChange();
+    });
 });
