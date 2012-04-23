@@ -126,25 +126,20 @@ def ajax(request):
     if not form_type:
         return ajax_error("Missing Form")
 
-    try:
-        # this could be mutated with a @register_ajax
-        # decorator or something
-        ajax_funcs = {
-            'add': ajax_add_entry,
-            'change': ajax_change_entry,
-            'delete': ajax_delete_entry,
-            'admin_get': gen_calendar,
-            'get_user_data': get_user_data,
-            'add_user': add_user,
-            'delete_user': delete_user
-            }
-        return ajax_funcs.get(form_type,
-                              ajax_error("Form not found")
-                              )(request)
-
-    # if any errors are sent, let the page deal with it
-    except Exception as error:
-        return ajax_error(str(error))
+    # this could be mutated with a @register_ajax
+    # decorator or something
+    ajax_funcs = {
+        'add': ajax_add_entry,
+        'change': ajax_change_entry,
+        'delete': ajax_delete_entry,
+        'admin_get': gen_calendar,
+        'get_user_data': get_user_data,
+        'add_user': add_user,
+        'delete_user': delete_user
+        }
+    return ajax_funcs.get(form_type,
+                          ajax_error("Form not found")
+                          )(request)
 
 @admin_check
 def admin_view(request):
