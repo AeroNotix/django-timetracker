@@ -3,6 +3,7 @@ Module for collecting the utility functions dealing with mostly calendar
 tasks, processing dates and creating time-based code.
 """
 
+import random
 import datetime
 import calendar as cdr
 
@@ -611,7 +612,15 @@ def delete_user(request):
 @json_response
 def add_user(request):
 
-    data = {}
+    """
+    Adds a user to the database asynchronously
+    """
+
+    # create a random enough password
+    password = ''.join([chr(random.randint(33, 90)) for x in range(12)])
+    data = {'password': password}
+
+    # get the data off the request object
     for item in request.POST:
         if item != "form_type":
             data[item] = request.POST[item]
@@ -622,9 +631,10 @@ def add_user(request):
     }
 
     try:
+        # create the user
         user = Tbluser(**data)
         user.save()
-
+        # link the user to the admin
         admin = Tblauth.objects.get(id=request.session.get('user_id'))
         admin.users.add(user)
         admin.save()

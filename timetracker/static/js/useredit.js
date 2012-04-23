@@ -44,14 +44,26 @@ function onOptionChange() {
 }
 
 function clearForm() {
-    $("#user-edit-form").find(":input").not(":button").each(
-        function () {
+
+    /*
+       Clears the entire form
+
+       Takes no parameters and gives no fucks
+    */
+
+    "use strict";
+
+    $("#user-edit-form")
+        .find(":input")
+        .not(":button")
+        .each( function () {
             $(this).val('');
         }
     );
 }
 
 function deleteEntry() {
+
     /* 
        Asynchrously deletes an entry
        
@@ -115,7 +127,6 @@ function addEntry() {
         'user_id',
         'firstname',
         'lastname',
-        'password',
         'user_type',
         'market',
         'process',
@@ -169,12 +180,28 @@ function ajaxSuccess() {
        Lazy method for ajaxSuccess
     */
     
+    "use strict";
+
     setupUI();
     clearForm();
     $("#user_select").val("null");
     $("#user_select").change(function() {
         onOptionChange();
     });
+
+
+    // The form is automatically generated from the
+    // model, this means that it's got some fields
+    // that we don't want to show. We remove the
+    // password field and the label associated with it.
+    $("#user-edit-form")
+        .find("label")
+        .each( function () {
+            if ($(this).attr("for") === "id_password") {
+                $(this).remove();
+                $("#id_password").remove();
+            }
+        });
 }
 
 $(function () {
