@@ -58,8 +58,6 @@ function deleteEntry() {
        Takes no parameters and returns undefined
     */
 
-
-
     var user_id = $("#user_select").val();
     if (user_id === 'null') {
         return 
@@ -143,13 +141,14 @@ function addEntry() {
         data: form_data,
         success: function (data) {
             if (data.success === true) {
-                $("#edit-user-wrapper").load("/user_edit/ #edit-user-table",
-                                             function() {
-                                                 $("#user_select").change(function() {
-                                                     onOptionChange();
-                                                 });
-                                                 ajaxSuccess();
-                                             });
+                $("#edit-user-wrapper")
+                    .load("/user_edit/ #edit-user-table",
+                          function() {
+                              $("#user_select").change(function() {
+                                  onOptionChange();
+                              });
+                              ajaxSuccess();
+                          });
             } else {
                 alert(data.error);
             }
