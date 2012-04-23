@@ -9,7 +9,7 @@ import calendar as cdr
 from django.core.handlers.wsgi import WSGIRequest
 from django.http import Http404, HttpResponse
 from django.db import IntegrityError
-
+from django.forms import ValidationError
 import simplejson
 
 from timetracker.tracker.models import TrackingEntry, Tbluser
@@ -589,7 +589,7 @@ def delete_user(request):
 
     json_data = {
         'success': False,
-        'error': '',
+        'error': 'Missing user',
     }
 
     if user_id:
@@ -628,10 +628,11 @@ def add_user(request):
         admin = Tblauth.objects.get(id=request.session.get('user_id'))
         admin.users.add(user)
         admin.save()
-
-    except Exception as e:
-        json_data['error'] = str(e) + str(data)
+    except ValidationError:
+        json_data['error'] = "Invalid Data."
         return json_data
+    except Tbluser.DoesNotExist:
+        json_data['error'] = "User doesn't exist. Already deleted?"
 
     json_data['success'] = True
     return json_data

@@ -207,10 +207,10 @@ class Tblauthorization(models.Model):
         for user in self.users.all():
             to_out("""\t<option value=%s>%s</option>\n""" % (user.id,
                                                              user.name()))
+        to_out("""<option value=null>---</option>""")
         to_out("""</select>""")
 
         return ''.join(str_output)
-
 
     display_users.allow_tags = True
     display_users.short_discription = "Subordinate Users"

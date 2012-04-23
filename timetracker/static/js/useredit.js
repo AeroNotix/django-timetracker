@@ -9,8 +9,14 @@ function onOptionChange() {
     */
     "use strict";
 
-    $.ajaxSetup({type: 'POST'});
     var user_id = $("#user_select").val();
+    if (user_id === 'null') {
+        clearForm()
+        return
+    }
+
+    $.ajaxSetup({type: 'POST'});
+
     $.ajax({
         url: '/ajax/',
         dataType: "json",
@@ -52,6 +58,13 @@ function deleteEntry() {
        Takes no parameters and returns undefined
     */
 
+
+
+    var user_id = $("#user_select").val();
+    if (user_id === 'null') {
+        return 
+    }
+
     if (!confirm("Are you sure?")) {
         return false;
     }
@@ -61,8 +74,6 @@ function deleteEntry() {
         dataType: "json"
     });
 
-    var user_id = $("#user_select").val();
-
     $.ajax({
         url: '/ajax/',
         data: {
@@ -70,11 +81,12 @@ function deleteEntry() {
             'form_type': 'delete_user'
         },
         success: function(data) {
-            alert(data);
             if (data.success === true) {
                 $("#edit-user-wrapper").load(
                     "/user_edit/ #edit-user-table",
-                    ajaxSuccess()
+                    function () {
+                        ajaxSuccess();
+                    }
                 );
             } else {
                 alert(data.error);
@@ -158,16 +170,15 @@ function ajaxSuccess() {
        Lazy method for ajaxSuccess
     */
     
-    onOptionChange();
     setupUI();
     clearForm();
+    $("#user_select").val("null");
+    $("#user_select").change(function() {
+        onOptionChange();
+    });
 }
 
 $(function () {
     "use strict";
-    setupUI();
-    clearForm();
-    $("#user_select").change(function() {
-        onOptionChange();
-   });
+    ajaxSuccess();
 });
