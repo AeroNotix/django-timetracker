@@ -2,8 +2,13 @@
 Definition of the models used in the timetracker app
 '''
 
+import datetime as dt
+import calendar as cdr
+
 from django.db import models
 from django.forms import ModelForm
+
+from timetracker.utils.datemaps import MONTH_MAP
 
 class Tbluser(models.Model):
 
@@ -88,7 +93,15 @@ class Tbluser(models.Model):
         return '%s - %s %s ' % (self.user_id,
                                 self.firstname,
                                 self.lastname)
-    
+
+    def tracking_entries(self):
+        """
+        Returns all the tracking entries associated with
+        this user
+        """
+
+        return TrackingEntry.objects.filter(user_id=self.id)
+
     def get_total_balance(self):
 
         """
@@ -97,7 +110,7 @@ class Tbluser(models.Model):
 
         total, total_mins = 0, 0
         tracking_days = TrackingEntry.objects.filter(user_id=self.id)
-        
+
         for item in tracking_days:
 
             total += (      item.end_time.hour
@@ -207,8 +220,51 @@ class Tblauthorization(models.Model):
         for user in self.users.all():
             to_out("""\t<option value=%s>%s</option>\n""" % (user.id,
                                                              user.name()))
-        to_out("""<option value=null>---</option>""")
+        to_out("""<option value=null>----------</option>""")
         to_out("""</select>""")
+
+        return ''.join(str_output)
+
+    def gen_holiday_list(self,
+                         year=dt.datetime.today().year,
+                         month=dt.datetime.today().month):
+
+        """
+        Outputs a holiday calendar for that month
+        """
+
+        str_output = []
+        to_out = str_output.append
+        to_out("""<table border="1" id="holiday-table">""")
+        to_out("""<tr>
+                    <td colspan="999" align="center">%s</td>
+                  </tr>""" % MONTH_MAP[month-1][1])
+
+        # generate the calendar, flatten it and
+        # get rid of the zeros
+        calendar_array = list()
+        for week in cdr.monthcalendar(year, month):
+            calendar_array.extend(week)
+        calendar_array = filter((lambda x: x > 0), calendar_array)
+
+        # for each user we get their tracking entries,
+        # then iterate over each of their entries
+        # checking if it is a holiday or not, if it is
+        # then we change the class entry for that number
+        # in the day classes dict
+        for user in self.users.all():
+            day_classes = {
+                num: 'empty' for num in calendar_array
+                }
+
+            for entry in user.tracking_entries():
+                if entry.daytype == 'HOLIS':
+                    day_classes[entry.entry_date.day] = entry.daytype
+
+            to_out('<tr><td>%s' % user.name())
+            for klass, day in day_classes.items():
+                to_out('<td class=%s>%s\n' % (day, klass))
+            to_out('</tr>')
 
         return ''.join(str_output)
 

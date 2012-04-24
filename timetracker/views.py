@@ -174,7 +174,7 @@ def add_change_user(request):
         pass
 
     form = UserForm()
-    
+
     return render_to_response(
         "useredit.html",
         {
@@ -187,5 +187,6 @@ def add_change_user(request):
 @admin_check
 def holiday_planning(request):
 
-    
-    return HttpResponse("SUP")
+    auth = tblauth.objects.get(admin_id=request.session.get('user_id'))
+
+    return HttpResponse(auth.gen_holiday_list())
