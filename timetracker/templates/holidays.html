@@ -3,37 +3,7 @@
 {% block header %}
 <link href="{{ STATIC_URL }}holidays.css" type="text/css"
       rel="stylesheet" />
-
-<script type="text/javascript">
-  $(function () {
-      $("#holiday-table")
-          .attr("border", "1")
-          .find("td")
-          .attr("width", "30")
-          .attr("height", "30");
-      
-      $("#holiday-table")
-          .find("td")
-          .click(function() {
-              if ($(this).css('backgroundColor') === 'rgb(255, 255, 0)') {
-                  $(this).css({
-                      'background': 'red',
-                  })
-              } else {
-                  $(this).css({
-                      'background': 'yellow',
-                      'color': 'black'
-                  });
-              }
-          });
-      $("#holiday-table")
-          .find(".user-td")
-          .attr("width", "200")
-
-  });
-
-</script>
-
+<script type="text/javascript" src="{{ STATIC_URL }}js/holiday_page.js"></script>
 {% endblock header %}
 
 {% block menubar %}

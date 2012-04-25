@@ -632,3 +632,60 @@ def add_user(request):
 
     json_data['success'] = True
     return json_data
+
+
+@request_check
+@admin_check
+@json_response
+def mass_holidays(request):
+    """
+    Adds a holidays for a specific user en masse
+    """
+
+    json_data = {
+        'success': False,
+        'error': ''
+    }
+
+    form_data = {
+        'days': None,
+        'year': None,
+        'month': None,
+        'user_id': None
+    }
+
+    for key in form_data:
+        form_data[key] = request.POST.get(key, None)
+
+    for day in form_data['days'].split(','):
+
+        _day = day.rstrip()
+        year = form_data['year']
+        month = form_data['month']
+        date = '-'.join([year, month, _day])
+
+        try:
+
+            time_str = "00:00:00"
+            new_entry = TrackingEntry(
+                user_id=form_data['user_id'],
+                entry_date=date,
+                start_time=time_str,
+                end_time=time_str,
+                breaks=time_str,
+                daytype='HOLIS'
+            )
+            new_entry.save()
+
+        except IntegrityError as error:
+            # if the error code is 'duplicate'
+            if error[0] == DUPLICATE_ENTRY:
+                pass
+            else:
+                raise Exception(error)
+        except Exception as error:
+            json_data['error'] = str(error)
+            return json_data
+
+    json_data['success'] = True
+    return json_data

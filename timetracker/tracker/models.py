@@ -237,13 +237,16 @@ class Tblauthorization(models.Model):
         checking if it is a holiday or not, if it is
         then we change the class entry for that number
         in the day class' dict.
+
+        Adds a submit button along with passing the
+        user_id to it.
         """
 
         str_output = []
         to_out = str_output.append
-        to_out('<table id="holiday-table">')
+        to_out('<table year=%s month=%s id="holiday-table">' % (year, month))
         to_out("""<tr>
-                     <td colspan="32" align="center">{0}</td>
+                     <th colspan="32" align="center">{0}</th>
                    </tr>""".format(MONTH_MAP[month-1][1]))
 
         # generate the calendar, flatten it and
@@ -262,9 +265,13 @@ class Tblauthorization(models.Model):
                 if entry.daytype == 'HOLIS':
                     day_classes[entry.entry_date.day] = entry.daytype
 
-            to_out('<tr><td class="user-td">%s' % user.name())
+            to_out('<tr><th class="user-td">%s</th>' % user.name())
             for klass, day in day_classes.items():
-                to_out('<td class=%s>%s\n' % (day, klass))
+                to_out('<td usrid=%s class=%s>%s\n' % (user.id, day, klass))
+            to_out("""<td>
+                        <input value="submit" type="button" id="user_{0}"
+                               onclick="submit_holidays({0})" />
+                      </td>""".format(user.id))
             to_out('</tr>')
 
         return ''.join(str_output)

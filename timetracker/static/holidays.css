@@ -8,9 +8,11 @@
 
 
 .HOLIS {
-    background: url('images/calendar/holiday_sprite.gif') 0px -35px;
+   background: #551a7b;
+   background-image: url('images/calendar/button-overlay.png');
 }
 
 .empty {
-    background: url('images/calendar/holiday_sprite.gif') 0px 0px;
+   background: black;
+   background-image: url('images/calendar/button-overlay.png');
 }
