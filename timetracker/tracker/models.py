@@ -68,6 +68,27 @@ class Tbluser(models.Model):
     shiftlength = models.TimeField(db_column='shiftLength',
                                    verbose_name=("Shift Length"))
 
+    class Meta:
+
+        """
+        Metaclass allows for additional options to be set on the model
+        """
+
+        db_table = u'tbluser'
+        verbose_name = "User"
+        verbose_name_plural = "Users"
+        unique_together = ("user_id", "firstname", "lastname")
+
+    def __unicode__(self):
+
+        """
+        How the row is represented in admin
+        """
+
+        return '%s - %s %s ' % (self.user_id,
+                                self.firstname,
+                                self.lastname)
+
     def display_user_type(self):
 
         """
@@ -83,16 +104,6 @@ class Tbluser(models.Model):
         """
 
         return self.firstname + ' ' + self.lastname
-
-    def __unicode__(self):
-
-        """
-        How the row is represented in admin
-        """
-
-        return '%s - %s %s ' % (self.user_id,
-                                self.firstname,
-                                self.lastname)
 
     def tracking_entries(self):
         """
@@ -138,17 +149,6 @@ class Tbluser(models.Model):
 
         return "<p %s> %s </p>" % (tracking_class, trackingnumber)
 
-    class Meta:
-
-        """
-        Metaclass allows for additional options to be set on the model
-        """
-
-        db_table = u'tbluser'
-        verbose_name = "User"
-        verbose_name_plural = "Users"
-        unique_together = ("user_id", "firstname", "lastname")
-
 class UserForm(ModelForm):
 
     class Meta:
@@ -176,6 +176,26 @@ class Tblauthorization(models.Model):
                                    verbose_name = ("Additional Users")
                    )
 
+    class Meta:
+
+        """
+        Metaclass gives access to additional options
+        """
+
+        db_table = u'tblauthorization'
+        verbose_name = "Authorization Link"
+        verbose_name_plural = "Authorization Links"
+
+
+    def __unicode__(self):
+
+        """
+        Admin view uses this to display the entry
+        """
+        
+        return str(self.admin)
+
+    
     def display_users(self):
 
         """
@@ -224,6 +244,7 @@ class Tblauthorization(models.Model):
         to_out("""</select>""")
 
         return ''.join(str_output)
+
 
     def gen_holiday_list(self,
                          year=dt.datetime.today().year,
@@ -279,25 +300,6 @@ class Tblauthorization(models.Model):
     display_users.allow_tags = True
     display_users.short_discription = "Subordinate Users"
 
-    def __unicode__(self):
-
-        """
-        Admin view uses this to display the entry
-        """
-
-        return str(self.admin)
-
-    class Meta:
-
-        """
-        Metaclass gives access to additional options
-        """
-
-        db_table = u'tblauthorization'
-        verbose_name = "Authorization Link"
-        verbose_name_plural = "Authorization Links"
-
-
 class TrackingEntry(models.Model):
 
     """
@@ -315,14 +317,23 @@ class TrackingEntry(models.Model):
     user = models.ForeignKey(Tbluser, related_name="user_tracking")
 
     entry_date = models.DateField()
-    start_time = models.TimeField(blank=False)
-    end_time = models.TimeField(blank=False)
-    breaks = models.TimeField(blank=False)
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+    breaks = models.TimeField()
     daytype = models.CharField(choices=DAYTYPE_CHOICES,
                                max_length=5)
 
     comments = models.TextField(blank=True)
 
+    class Meta:
+
+        """
+        Metaclass gives access to additional options
+        """
+
+        verbose_name = 'Daily Tracking Log'
+        verbose_name_plural = 'Daily Tracking Logs'
+        unique_together = ('user', 'entry_date')
 
     def __unicode__(self):
 
@@ -339,13 +350,3 @@ class TrackingEntry(models.Model):
             )
 
         return str(self.user) + ' - ' + date
-
-    class Meta:
-
-        """
-        Metaclass gives access to additional options
-        """
-
-        verbose_name = 'Daily Tracking Log'
-        verbose_name_plural = 'Daily Tracking Logs'
-        unique_together = ('user', 'entry_date')

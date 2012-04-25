@@ -603,7 +603,7 @@ def add_user(request):
     """
 
     # create a random enough password
-    password = ''.join([chr(random.randint(33, 90)) for x in range(12)])
+    password = ''.join([chr(random.randint(33, 90)) for _ in range(12)])
     data = {'password': password}
 
     # get the data off the request object

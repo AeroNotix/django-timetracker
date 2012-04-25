@@ -187,6 +187,9 @@ def add_change_user(request):
 
 @admin_check
 def holiday_planning(request):
+    """
+    Generates the full holiday table for all employees under a manager
+    """
 
     auth = tblauth.objects.get(admin_id=request.session.get('user_id'))
 

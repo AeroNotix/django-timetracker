@@ -1,3 +1,9 @@
+'''
+Maps of useful data
+
+Django has this built-in but it's annoying to use
+'''
+
 MONTH_MAP = {
     0: ('JAN', 'January'),
     1: ('FEB', 'February'),
