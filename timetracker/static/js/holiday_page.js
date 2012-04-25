@@ -27,7 +27,6 @@ function submit_holidays(user_id) {
         return
     }
 
-    alert(additional_holidays);
     // setup our ajax properties
     $.ajaxSetup({
         type: 'POST',
@@ -88,7 +87,8 @@ $(function () {
                 'rgb(85, 26, 123)': 'rgb(0, 0, 0)',
                 'rgb(0, 0, 0)': 'rgb(85, 26, 123)'
             }
-
+            
+            // set it to the colour we found
             $(this).css({
                 'backgroundColor': colour_map[current_colour]
             });
