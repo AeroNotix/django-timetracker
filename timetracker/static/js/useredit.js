@@ -27,6 +27,11 @@ function onOptionChange() {
 
         success: function (data) {
             if (data.success == true) {
+                $("#id_breaklength").timepicker("destroy");
+                $("#id_shiftlength").timepicker("destroy");
+                
+                setupUI();
+
                 $("#id_user_id").val(data.username);
                 $("#id_firstname").val(data.firstname);
                 $("#id_lastname").val(data.lastname);
@@ -172,6 +177,13 @@ function setupUI() {
 
     $("#id_start_date").datepicker().val('');
     $("#id_start_date").datepicker("option", "dateFormat", 'yy-mm-dd');
+    $("#id_breaklength").timepicker({
+        showHour: false,
+        timeFormat: 'hh:mm:ss'
+    });
+    $("#id_shiftlength").timepicker({
+        timeFormat: 'hh:mm:ss'
+    });
 }
 
 function ajaxSuccess() {
