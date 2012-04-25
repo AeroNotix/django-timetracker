@@ -1,7 +1,7 @@
 /* calendar days */
 
 .day-names {
-   background-image: url('images/tableheader_flip.gif');
+   background: black;
    color: white;
    width: 50px;
 }
@@ -12,27 +12,27 @@
 }
 
 .empty {
-   background-image: url('images/calendar/blank.gif');
+   background: url('images/calendar/days_sprite.gif') 0 0;
 }
 
 .empty-day {
-   background-image: url('images/calendar/blank_days.gif');
+   background: url('images/calendar/days_sprite.gif') 0 -215px;
 }
 
 .WKDAY {
-   background-image: url('images/calendar/work_day.gif');
+   background: url('images/calendar/days_sprite.gif') 0 -129px;
 }
 
 .SICKD {
-   background-image: url('images/calendar/sick.gif');
+   background: url('images/calendar/days_sprite.gif') 0 -172px;
 }
 
 .HOLIS {
-   background-image: url('images/calendar/holiday.gif');
+   background: url('images/calendar/days_sprite.gif') 0 -43px;
 }
 
 .SPECI {
-   background-image: url('images/calendar/special.gif');
+   background: url('images/calendar/days_sprite.gif') 0 -86px;
 
 }
 
@@ -47,7 +47,7 @@
 }
 
 .day-class:hover {
-   background-image: url('images/calendar/calendar_selected.gif');
+   background: url('images/calendar/days_sprite.gif') 0 -258px ;
 }
 
 .table-links {
