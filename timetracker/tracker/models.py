@@ -230,7 +230,13 @@ class Tblauthorization(models.Model):
                          month=dt.datetime.today().month):
 
         """
-        Outputs a holiday calendar for that month
+        Outputs a holiday calendar for that month.
+
+        For each user we get their tracking entries,
+        then iterate over each of their entries
+        checking if it is a holiday or not, if it is
+        then we change the class entry for that number
+        in the day class' dict.
         """
 
         str_output = []
@@ -247,11 +253,6 @@ class Tblauthorization(models.Model):
             calendar_array.extend(week)
         calendar_array = filter((lambda x: x > 0), calendar_array)
 
-        # for each user we get their tracking entries,
-        # then iterate over each of their entries
-        # checking if it is a holiday or not, if it is
-        # then we change the class entry for that number
-        # in the day classes dict
         for user in self.users.all():
             day_classes = {
                 num: 'empty' for num in calendar_array
