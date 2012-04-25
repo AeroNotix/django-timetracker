@@ -26,7 +26,7 @@ function onOptionChange() {
         },
 
         success: function (data) {
-            if (data.success == true) {
+            if (data.success === true) {
                 $("#id_breaklength").timepicker("destroy");
                 $("#id_shiftlength").timepicker("destroy");
                 
