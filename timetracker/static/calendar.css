@@ -102,11 +102,10 @@ this is a jQuery add-on
 /* table */
 
 #calendar-table {
-   background: black;
+    background: black;
     margin-top: 100px;
     margin-left: auto;
     margin-right: auto;
-
 }
 
 #table-wrapper {
@@ -128,4 +127,12 @@ this is a jQuery add-on
 .fs-title {
    border: 2px solid black;
    background: silver;
+}
+
+#holiday-table {
+    background: black;
+    margin-top: 100px;
+    margin-left: auto;
+    margin-right: auto;
+    color: white;
 }
