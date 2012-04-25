@@ -241,7 +241,7 @@ class Tblauthorization(models.Model):
 
         str_output = []
         to_out = str_output.append
-        to_out('<table border="1" id="holiday-table">')
+        to_out('<table id="holiday-table">')
         to_out("""<tr>
                      <td colspan="32" align="center">{0}</td>
                    </tr>""".format(MONTH_MAP[month-1][1]))

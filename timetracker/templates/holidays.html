@@ -1,19 +1,20 @@
 {% extends "base.html" %}
 
 {% block header %}
-<link href="{{ STATIC_URL }}calendar.css" type="text/css"
+<link href="{{ STATIC_URL }}holidays.css" type="text/css"
       rel="stylesheet" />
 
 <script type="text/javascript">
   $(function () {
       $("#holiday-table")
+              .attr("border", "1")
               .find("td")
-              .attr("width", "20")
-              .attr("height", "20")
+              .attr("width", "30")
+              .attr("height", "30");
 
       $("#holiday-table")
               .find(".user-td")
-              .attr("width", "100");
+              .attr("width", "200");
   });
 </script>
 
