@@ -241,10 +241,10 @@ class Tblauthorization(models.Model):
 
         str_output = []
         to_out = str_output.append
-        to_out("""<table border="1" id="holiday-table">""")
+        to_out('<table border="1" id="holiday-table">')
         to_out("""<tr>
-                    <td colspan="999" align="center">%s</td>
-                  </tr>""" % MONTH_MAP[month-1][1])
+                     <td colspan="32" align="center">{0}</td>
+                   </tr>""".format(MONTH_MAP[month-1][1]))
 
         # generate the calendar, flatten it and
         # get rid of the zeros
@@ -256,13 +256,13 @@ class Tblauthorization(models.Model):
         for user in self.users.all():
             day_classes = {
                 num: 'empty' for num in calendar_array
-                }
+            }
 
             for entry in user.tracking_entries():
                 if entry.daytype == 'HOLIS':
                     day_classes[entry.entry_date.day] = entry.daytype
 
-            to_out('<tr><td>%s' % user.name())
+            to_out('<tr><td class="user-td">%s' % user.name())
             for klass, day in day_classes.items():
                 to_out('<td class=%s>%s\n' % (day, klass))
             to_out('</tr>')
@@ -275,7 +275,7 @@ class Tblauthorization(models.Model):
     def __unicode__(self):
 
         """
-        Adming view uses this to display the entry
+        Admin view uses this to display the entry
         """
 
         return str(self.admin)
