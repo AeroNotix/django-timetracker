@@ -189,4 +189,6 @@ def holiday_planning(request):
 
     auth = tblauth.objects.get(admin_id=request.session.get('user_id'))
 
-    return HttpResponse(auth.gen_holiday_list())
+    return render_to_response("holidays.html",
+                              {"holiday_table": auth.gen_holiday_list()},
+                              RequestContext(request))

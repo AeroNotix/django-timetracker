@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block header %}
+<link href="{{ STATIC_URL }}calendar.css" type="text/css"
+      rel="stylesheet" />
+
+<script type="text/javascript">
+  $(function () {
+      $("#holiday-table")
+              .find("td")
+              .attr("width", "20")
+              .attr("height", "20")
+
+      $("#holiday-table")
+              .find(".user-td")
+              .attr("width", "100");
+  });
+</script>
+
+{% endblock header %}
+
+{% block menubar %}
+{% include "includes/nav.html" %}
+{% endblock menubar %}
+
+{% block content %}
+{{ holiday_table|safe }}
+{% endblock content %}
