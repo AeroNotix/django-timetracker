@@ -315,7 +315,7 @@ class Tblauthorization(models.Model):
                              onclick="submit_all()" />
                     </td>
                   </tr>""")
-
+        
         return ''.join(str_output)
 
     display_users.allow_tags = True

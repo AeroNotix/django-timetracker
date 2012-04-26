@@ -18,6 +18,16 @@ document.onmouseup = function(e){
 
 }
 
+function applyClass(klass) {
+    $("#holiday-table")
+        .find("td")
+        .each(function () {
+            if ($(this).hasClass("selected")) {
+                $(this).removeClass();
+                $(this).addClass(klass);
+            }
+        });
+}
 
 function submit_all() {
     
@@ -47,7 +57,9 @@ function submit_holidays(user_id) {
         .each(function () {
             // get the bg colour of the td
             var current_class = $(this).attr('class');
-            holiday_map[$(this).text()] = current_class;
+            if (current_class !== "selected") {
+                holiday_map[$(this).text()] = current_class;
+            }
         });
 
     // setup our ajax properties
@@ -55,6 +67,8 @@ function submit_holidays(user_id) {
         type: 'POST',
         dataType: 'json'
     });
+
+    console.log(JSON.stringify(holiday_map));
     
     // make the ajax call
     $.ajax({
@@ -80,12 +94,11 @@ function submit_holidays(user_id) {
 
 }
 
-$(function () {
+function addFunctions () {
 
     "use strict";
 
     $("#holiday-table")
-        .attr("border", "1")
         .find("td")
         .attr("width", "18")
         .attr("height", "18");
@@ -103,6 +116,7 @@ $(function () {
                 if ($(this).hasClass("selected")) {
                     $(this).removeClass("selected");
                 } else {
+                    $(this).removeClass();
                     $(this).addClass("selected");
                 }
                 e.preventDefault();
@@ -110,10 +124,10 @@ $(function () {
             }
         })
         .mousedown(function (e) {
-            console.log("mouse down");
             if ($(this).hasClass("selected")) {
                 $(this).removeClass("selected");
             } else {
+                $(this).removeClass();
                 $(this).addClass("selected");
             }
         });
@@ -122,6 +136,9 @@ $(function () {
         .find(".user-td")
         .attr("width", "200")
 
-});
+}
 
+$(function () {
+    addFunctions();
+});
 

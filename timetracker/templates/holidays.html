@@ -13,6 +13,45 @@
 {% endblock menubar %}
 
 {% block content %}
+<div id="holiday-buttons">
+  
+  <table>
+  <tr>
+    <td onclick="applyClass('empty')" class="empty holiday-button"></td><td>Empty</td>
+  </tr>
+  <tr>
+    <td onclick="applyClass('WKDAY')" class="WKDAY holiday-button"></td><td>Work Day</td>
+  </tr>
+  <tr>
+    <td onclick="applyClass('SICKD')" class="SICKD holiday-button"></td><td>Sick Day</td>
+  </tr>
+  <tr>
+    <td onclick="applyClass('HOLIS')" class="HOLIS holiday-button"></td><td>Holidays</td>
+  </tr>
+  <tr>
+    <td onclick="applyClass('SPECI')" class="SPECI holiday-button"></td><td>Special</td>
+  </tr>
+  <tr>
+    <td onclick="applyClass('PUABS')" class="PUABS holiday-button"></td><td>Pub Hol</td>
+  </tr>
+  <tr>
+    <td onclick="applyClass('PUWRK')" class="PUWRK holiday-button"></td><td>Hol Work</td>
+  </tr>
+  <tr>
+    <td onclick="applyClass('SATUR')" class="SATUR holiday-button"></td><td>Saturday</td>
+  </tr>
+  <tr>
+    <td onclick="applyClass('RETRN')" class="RETRN holiday-button"></td><td>Returned</td>
+  </tr>
+  <tr>
+    <td onclick="applyClass('WKHOM')" class="WKHOM holiday-button"></td><td>Home</td>
+  </tr>
+  <tr>
+    <td onclick="applyClass('OTHER')" class="OTHER holiday-button"></td><td>Other</td>
+  </tr> 
+  </table>
+</div>
+
 <!--[IF IE]>
 <div id="IEroot">
   <![endif]-->
