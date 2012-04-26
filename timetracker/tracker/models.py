@@ -34,6 +34,16 @@ class Tbluser(models.Model):
         ('AO', 'Accounting Operations')
     )
 
+    JOB_CODES = (
+        ('00F20A', '00F20A'),
+        ('00F20B', '00F20B'),
+        ('00F20C', '00F20C'),
+        ('00F20D', '00F20D'),
+        ('00F20E', '00F20E'),
+        ('00F20F', '00F20F'),
+        ('00F20G', '00F20G')
+    )
+
     user_id = models.EmailField(max_length=105,
                                 verbose_name=("UserID / HP Email"))
 
@@ -68,6 +78,10 @@ class Tbluser(models.Model):
     shiftlength = models.TimeField(db_column='shiftLength',
                                    verbose_name=("Shift Length"))
 
+    job_code = models.CharField(max_length=6,
+                                choices=JOB_CODES,
+                                db_column='Job_Code',
+                                verbose_name=('Job Code'))
     class Meta:
 
         """
@@ -192,10 +206,10 @@ class Tblauthorization(models.Model):
         """
         Admin view uses this to display the entry
         """
-        
+
         return str(self.admin)
 
-    
+
     def display_users(self):
 
         """
@@ -267,7 +281,7 @@ class Tblauthorization(models.Model):
         to_out = str_output.append
         to_out('<table year=%s month=%s id="holiday-table">' % (year, month))
         to_out("""<tr>
-                     <th colspan="32" align="center">{0}</th>
+                     <th colspan="33" align="center">{0}</th>
                    </tr>""".format(MONTH_MAP[month-1][1]))
 
         # generate the calendar, flatten it and
@@ -285,7 +299,7 @@ class Tblauthorization(models.Model):
             for entry in user.tracking_entries():
                 day_classes[entry.entry_date.day] = entry.daytype
 
-            to_out('<tr><th class="user-td">%s</th>' % user.name())
+            to_out('<tr><th class="user-td">%s</th><td>%s</td>' % (user.name(), user.job_code))
             for klass, day in day_classes.items():
                 to_out('<td usrid=%s class=%s>%s\n' % (user.id, day, klass))
             to_out("""<td>
@@ -304,7 +318,7 @@ class TrackingEntry(models.Model):
     """
     Entry for a specific day
     """
-    
+
     user = models.ForeignKey(Tbluser, related_name="user_tracking")
 
     entry_date = models.DateField()

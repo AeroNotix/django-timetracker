@@ -41,6 +41,8 @@ function onOptionChange() {
                 $("#id_start_date").val(data.start_date);
                 $("#id_breaklength").val(data.breaklength);
                 $("#id_shiftlength").val(data.shiftlength);
+                $("#id_job_code").val(data.job_code);
+
             } else {
                 alert(data.error);
             }
@@ -138,6 +140,7 @@ function addEntry() {
         'start_date',
         'breaklength',
         'shiftlength',
+        'job_code'
     ]
 
     var form_data = {'form_type': 'add_user'};

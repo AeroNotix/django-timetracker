@@ -559,7 +559,8 @@ def get_user_data(request):
             'user_type': user.user_type,
             'start_date': str(user.start_date),
             'breaklength': str(user.breaklength),
-            'shiftlength': str(user.shiftlength)
+            'shiftlength': str(user.shiftlength),
+            'job_code': user.job_code
         }
 
     return json_data
