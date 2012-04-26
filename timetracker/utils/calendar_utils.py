@@ -668,7 +668,10 @@ def mass_holidays(request):
 
         if entry[1] == "empty":
             try:
-                removal_entry = TrackingEntry.objects.get(entry_date=date)
+                removal_entry = TrackingEntry.objects.get(
+                    entry_date=date,
+                    user_id=form_data['user_id']
+                    )
                 removal_entry.delete()
             except TrackingEntry.DoesNotExist:
                 pass
