@@ -20,20 +20,43 @@
 }
 
 .WKDAY {
-   background: url('images/calendar/days_sprite.gif') 0 -129px;
+    background-color: #ff0000;
 }
 
 .SICKD {
-   background: url('images/calendar/days_sprite.gif') 0 -172px;
+    background: url('images/calendar/days_sprite.gif') 0 -172px;
 }
 
 .HOLIS {
-   background: url('images/calendar/days_sprite.gif') 0 -43px;
+    background-color: #ffff80;
 }
 
 .SPECI {
-   background: url('images/calendar/days_sprite.gif') 0 -86px;
+    background-color: #00c000;
+}
 
+.MEDIC {
+    background-color: #ffc0c0;
+}
+
+.PUABS {
+    background-color: #8080ff;
+}
+
+.PUWRK {
+    background-color: #ff8000;
+}
+
+.SATUR {
+    background-color: #c04000;
+}
+
+.RETRN {
+    background-color: #ffc080;
+}
+
+.WKHOM {
+    background-color: #004000;
 }
 
 .OTHER {
