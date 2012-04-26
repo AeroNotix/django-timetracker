@@ -3,14 +3,7 @@ Forms used for user input for the tracker app
 '''
 
 from django import forms
-
-DAYTYPE_CHOICES = (
-    ('WKDAY', 'Work Day'),
-    ('SICKD', 'Sickness Absence'),
-    ('HOLIS', 'Scheduled Holiday'),
-    ('SPECI', 'Special Circumstances'),
-    ('OTHER', 'Other'),
-)
+from timetracker.utils.datemaps import DAYTYPE_CHOICES
 
 class EntryForm(forms.Form):
     """

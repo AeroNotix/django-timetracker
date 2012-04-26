@@ -18,3 +18,16 @@ MONTH_MAP = {
     10:('NOV', 'November'),
     11:('DEC', 'December')
 }
+
+DAYTYPE_CHOICES = (
+    ('WKDAY', 'Work Day'),
+    ('SICKD', 'Sickness Absence'),
+    ('MEDIC', 'Medical Leave'),
+    ('SPECI', 'Special Leave'),
+    ('SATUR', 'Work on Saturday'),
+    ('HOLIS', 'Vacation'),
+    ('PUWRK', 'Work on Public Holiday'),
+    ('PUABS', 'Vacation on Public Holiday'),
+    ('RETRN', 'Return for Public Holiday'),
+    ('WKHOM', 'Work at home'),
+)

@@ -8,7 +8,7 @@ import calendar as cdr
 from django.db import models
 from django.forms import ModelForm
 
-from timetracker.utils.datemaps import MONTH_MAP
+from timetracker.utils.datemaps import MONTH_MAP, DAYTYPE_CHOICES
 
 class Tbluser(models.Model):
 
@@ -305,15 +305,7 @@ class TrackingEntry(models.Model):
     """
     Entry for a specific day
     """
-
-    DAYTYPE_CHOICES = (
-        ('WKDAY', 'Work Day'),
-        ('SICKD', 'Sickness Absence'),
-        ('HOLIS', 'Scheduled Holiday'),
-        ('SPECI', 'Special Circumstances'),
-        ('OTHER', 'Other'),
-    )
-
+    
     user = models.ForeignKey(Tbluser, related_name="user_tracking")
 
     entry_date = models.DateField()

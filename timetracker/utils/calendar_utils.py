@@ -656,7 +656,7 @@ def mass_holidays(request):
 
     for key in form_data:
         form_data[key] = request.POST.get(key, None)
-
+       
     for day in form_data['days'].split(','):
 
         _day = day.rstrip()
@@ -665,7 +665,6 @@ def mass_holidays(request):
         date = '-'.join([year, month, _day])
 
         try:
-
             time_str = "00:00:00"
             new_entry = TrackingEntry(
                 user_id=form_data['user_id'],
