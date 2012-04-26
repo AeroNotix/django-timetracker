@@ -4,35 +4,23 @@ function submit_holidays(user_id) {
        takes a user_id as a parameter and returns
        undefined.
     */
-
-    // create an array to hold the holidays
-    var additional_holidays = new Array();
+    
+    // create a map to hold the holidays
+    var holiday_map = JSON;
     $("#holiday-table")
         .find("td[usrid='"+user_id+"']")
         .each(function () {
             // get the bg colour of the td
-            var current_colour = $(this).css('backgroundColor');
-
-            // if the cell is purple, it means it's highlighted,
-            // that means we need to assign the holiday in the
-            // database
-            if (current_colour === 'rgb(85, 26, 123)') {
-                additional_holidays.push($(this).text());
-            }
+            var current_class = $(this).attr('class');
+            holiday_map[$(this).text()] = current_class;
         });
-
-    // no point making an ajax call if we've got
-    // no data
-    if (!additional_holidays.length > 0) {
-        return
-    }
 
     // setup our ajax properties
     $.ajaxSetup({
         type: 'POST',
-        dataType: 'json',
+        dataType: 'json'
     });
-
+    
     // make the ajax call
     $.ajax({
         url: '/ajax/',
@@ -40,18 +28,18 @@ function submit_holidays(user_id) {
             'form_type': 'mass_holidays',
             'year': $("#holiday-table").attr("year"), // from the table header
             'month': $("#holiday-table").attr("month"),
-            'days': String(additional_holidays),
+            'holiday_data': JSON.stringify(holiday_map),
             'user_id': user_id
         },
         success: function(data) {
             if (data.success === true) {
                 alert("Holidays updated successfully");
             } else {
-                alert(data.error)
+                alert(data.error);
             }
         },
         error: function(ajaxObj, textStatus, error) {
-            alert(error);
+            console.log(error);
         }
     });
 
@@ -67,31 +55,36 @@ $(function () {
         .attr("width", "18")
         .attr("height", "18");
 
-
     // all 'holis' and 'empty' classes
     // are assigned a click handler which
     // swaps the colour depending on what
     // it currently is.
     $("#holiday-table")
-        .find(".HOLIS, .empty")
+        .find('.empty, .WKDAY, .SICKD, .HOLIS, .SPECI, .MEDIC, .PUABS, .PUWRK, .SATUR, .RETRN, .WKHOM, .OTHER')
         .not(":button")
         .click(function() {
-
             // get the current colours
-            var current_colour = $(this).css('backgroundColor');
-
+            var current_class = $(this).attr('class');
             // make a map of what the current colour
             // changes to when the table data is
             // clicked.
-            var colour_map = {
-                'rgb(85, 26, 123)': 'rgb(0, 0, 0)',
-                'rgb(0, 0, 0)': 'rgb(85, 26, 123)'
+            var colour_class_map = {
+                'empty': 'WKDAY',
+                'WKDAY': 'SICKD',
+                'SICKD': 'HOLIS',
+                'HOLIS': 'SPECI',
+                'SPECI': 'MEDIC',
+                'MEDIC': 'PUABS',
+                'PUABS': 'PUWRK',
+                'PUWRK': 'SATUR',
+                'SATUR': 'RETRN',
+                'RETRN': 'WKHOM',
+                'WKHOM': 'OTHER',
+                'OTHER': 'empty'
             }
             
             // set it to the colour we found
-            $(this).css({
-                'backgroundColor': colour_map[current_colour]
-            });
+            $(this).attr("class", colour_class_map[current_class]);
 
         });
 
@@ -100,3 +93,10 @@ $(function () {
         .attr("width", "200")
 
 });
+
+
+
+
+
+
+

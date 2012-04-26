@@ -283,8 +283,7 @@ class Tblauthorization(models.Model):
             }
 
             for entry in user.tracking_entries():
-                if entry.daytype == 'HOLIS':
-                    day_classes[entry.entry_date.day] = entry.daytype
+                day_classes[entry.entry_date.day] = entry.daytype
 
             to_out('<tr><th class="user-td">%s</th>' % user.name())
             for klass, day in day_classes.items():

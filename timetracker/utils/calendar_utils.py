@@ -648,7 +648,6 @@ def mass_holidays(request):
     }
 
     form_data = {
-        'days': None,
         'year': None,
         'month': None,
         'user_id': None
@@ -656,35 +655,42 @@ def mass_holidays(request):
 
     for key in form_data:
         form_data[key] = request.POST.get(key, None)
-       
-    for day in form_data['days'].split(','):
 
-        _day = day.rstrip()
+    holiday_data = simplejson.loads(request.POST.get('holiday_data'))
+
+    for entry in holiday_data.items():
+
+        day = str(int(entry[0])) # conversion to int->str removes newlines easier
         year = form_data['year']
         month = form_data['month']
-        date = '-'.join([year, month, _day])
+        date = '-'.join([year, month, day])
 
-        try:
-            time_str = "00:00:00"
-            new_entry = TrackingEntry(
-                user_id=form_data['user_id'],
-                entry_date=date,
-                start_time=time_str,
-                end_time=time_str,
-                breaks=time_str,
-                daytype='HOLIS'
-            )
-            new_entry.save()
-
-        except IntegrityError as error:
-            # if the error code is 'duplicate'
-            if error[0] == DUPLICATE_ENTRY:
+        if entry[1] == "empty":
+            try:
+                removal_entry = TrackingEntry.objects.get(entry_date=date)
+                removal_entry.delete()
+            except TrackingEntry.DoesNotExist:
                 pass
-            else:
-                raise Exception(error)
-        except Exception as error:
-            json_data['error'] = str(error)
-            return json_data
+        else:
+            try:
+                time_str = "00:00:00"
+                new_entry = TrackingEntry(
+                    user_id=form_data['user_id'],
+                    entry_date=date,
+                    start_time=time_str,
+                    end_time=time_str,
+                    breaks=time_str,
+                    daytype=entry[1]
+                    )
+                new_entry.save()
+            except IntegrityError as error:
+                if error[0] == DUPLICATE_ENTRY:
+                    pass
+                else:
+                    raise Exception(error)
+            except Exception as error:
+                json_data['error'] = str(error)
+                return json_data
 
     json_data['success'] = True
     return json_data

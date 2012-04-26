@@ -27,7 +27,8 @@ DAYTYPE_CHOICES = (
     ('SATUR', 'Work on Saturday'),
     ('HOLIS', 'Vacation'),
     ('PUWRK', 'Work on Public Holiday'),
-    ('PUABS', 'Vacation on Public Holiday'),
+    ('PUABS', 'Public Holiday'),
     ('RETRN', 'Return for Public Holiday'),
     ('WKHOM', 'Work at home'),
+    ('TRAIN', 'Training'),
 )
