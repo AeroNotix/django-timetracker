@@ -5,14 +5,3 @@
     margin-right: auto;
     color: white;
 }
-
-
-.HOLIS {
-   background: #551a7b;
-   background-image: url('images/calendar/button-overlay.png');
-}
-
-.empty {
-   background: black;
-   background-image: url('images/calendar/button-overlay.png');
-}
