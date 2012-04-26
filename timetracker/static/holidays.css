@@ -5,3 +5,8 @@
     margin-right: auto;
     color: white;
 }
+
+#IEroot {
+    position: absolute;
+    top: 20%;
+}

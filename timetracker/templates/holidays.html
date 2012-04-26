@@ -13,5 +13,11 @@
 {% endblock menubar %}
 
 {% block content %}
+<!--[IF IE]>
+<div id="IEroot">
+  <![endif]-->
 {{ holiday_table|safe }}
+<!--[IF IE]>
+</div>
+<![endif]-->
 {% endblock content %}
