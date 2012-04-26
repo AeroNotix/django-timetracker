@@ -685,7 +685,12 @@ def mass_holidays(request):
                 new_entry.save()
             except IntegrityError as error:
                 if error[0] == DUPLICATE_ENTRY:
-                    pass
+                    change_entry = TrackingEntry.objects.get(
+                        user_id=form_data['user_id'],
+                        entry_date=date
+                        )
+                    change_entry.daytype = entry[1]
+                    change_entry.save()
                 else:
                     raise Exception(error)
             except Exception as error:
