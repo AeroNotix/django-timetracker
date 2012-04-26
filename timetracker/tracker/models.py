@@ -308,6 +308,14 @@ class Tblauthorization(models.Model):
                       </td>""".format(user.id))
             to_out('</tr>')
 
+            # generate submit all button
+        to_out("""<tr>
+                    <td colspan="100" align="right">
+                      <input id="submit_all" value="Submit All" type="button"
+                             onclick="submit_all()" />
+                    </td>
+                  </tr>""")
+
         return ''.join(str_output)
 
     display_users.allow_tags = True

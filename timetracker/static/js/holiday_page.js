@@ -1,3 +1,17 @@
+function submit_all() {
+    
+    /* 
+       Submits all entries on the form
+    */
+
+    $("#holiday-table")
+        .find(":button")
+        .not("#submit_all")
+        .each(function () {
+            $(this).trigger("click");
+        });
+}
+
 function submit_holidays(user_id) {
     /*
        En masse changes a set of holidays and
