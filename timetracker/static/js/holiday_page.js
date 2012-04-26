@@ -1,3 +1,24 @@
+
+var mouseState = false;
+document.onmousedown = function(e){
+    mouseState = true;
+}
+document.onmouseup = function(e){
+    mouseState = false;
+
+    // In IE obviously we use a different function
+    //
+    // this will deselect the text after dragging
+    // has finished.
+    if (document.selection) {
+        document.selection.empty()
+    } else {
+        window.getSelection().removeAllRanges()
+    }
+
+}
+
+
 function submit_all() {
     
     /* 
@@ -69,37 +90,32 @@ $(function () {
         .attr("width", "18")
         .attr("height", "18");
 
-    // all 'holis' and 'empty' classes
+    // all the daytype classes
     // are assigned a click handler which
     // swaps the colour depending on what
     // it currently is.
     $("#holiday-table")
         .find('.empty, .WKDAY, .SICKD, .HOLIS, .SPECI, .MEDIC, .PUABS, .PUWRK, .SATUR, .RETRN, .WKHOM, .OTHER')
         .not(":button")
-        .click(function() {
-            // get the current colours
-            var current_class = $(this).attr('class');
-            // make a map of what the current colour
-            // changes to when the table data is
-            // clicked.
-            var colour_class_map = {
-                'empty': 'WKDAY',
-                'WKDAY': 'SICKD',
-                'SICKD': 'HOLIS',
-                'HOLIS': 'SPECI',
-                'SPECI': 'MEDIC',
-                'MEDIC': 'PUABS',
-                'PUABS': 'PUWRK',
-                'PUWRK': 'SATUR',
-                'SATUR': 'RETRN',
-                'RETRN': 'WKHOM',
-                'WKHOM': 'OTHER',
-                'OTHER': 'empty'
-            }
-            
-            // set it to the colour we found
-            $(this).attr("class", colour_class_map[current_class]);
+        .mouseover(function (e) {
+            if (mouseState) {
 
+                if ($(this).hasClass("selected")) {
+                    $(this).removeClass("selected");
+                } else {
+                    $(this).addClass("selected");
+                }
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        })
+        .mousedown(function (e) {
+            console.log("mouse down");
+            if ($(this).hasClass("selected")) {
+                $(this).removeClass("selected");
+            } else {
+                $(this).addClass("selected");
+            }
         });
 
     $("#holiday-table")
@@ -107,10 +123,5 @@ $(function () {
         .attr("width", "200")
 
 });
-
-
-
-
-
 
 

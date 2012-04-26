@@ -12,7 +12,7 @@
 }
 
 .empty {
-   background: url('images/calendar/days_sprite.gif') 0 0;
+   background-color: #1d1d1d;
 }
 
 .empty-day {
@@ -57,6 +57,10 @@
 
 .WKHOM {
     background-color: #004000;
+}
+
+.selected {
+   background-color: #00ff00;
 }
 
 .OTHER {
@@ -152,3 +156,6 @@ this is a jQuery add-on
    background: silver;
 }
 
+::-moz-selection {
+   background: transparent;
+}
