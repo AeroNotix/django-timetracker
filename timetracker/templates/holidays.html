@@ -5,7 +5,6 @@
       rel="stylesheet" />
 <link href="{{ STATIC_URL }}holidays.css" type="text/css"
       rel="stylesheet" />
-<script type="text/javascript" src="{{ STATIC_URL }}js/holiday_page.js"></script>
 {% endblock header %}
 
 {% block menubar %}
@@ -13,6 +12,9 @@
 {% endblock menubar %}
 
 {% block content %}
+<!--[IF IE]>
+<div class="IEfix_nav">
+  <![endif]-->
 <div id="holiday-buttons">
   
   <table>
@@ -51,12 +53,18 @@
   </tr> 
   </table>
 </div>
+<!--[IF IE]>
+</div>
+<![endif]-->
 
 <!--[IF IE]>
-<div id="IEroot">
+<div class="IEfix">
   <![endif]-->
 {{ holiday_table|safe }}
 <!--[IF IE]>
 </div>
 <![endif]-->
 {% endblock content %}
+{% block additional_javascript %}
+<script type="text/javascript" src="{{ STATIC_URL }}js/holiday_page.js"></script>
+{% endblock additional_javascript %}

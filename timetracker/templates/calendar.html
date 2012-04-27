@@ -3,12 +3,6 @@
 {% block header %}
     <link href="{{ STATIC_URL }}calendar.css" type="text/css"
           rel="stylesheet" />
-
-    <script type="text/javascript" src="{{ STATIC_URL }}jquery/js/timepicker.js">
-    </script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/calendar.js">
-    </script>
-
 {% endblock header %}
 {% block content %}
 <table id="calendar-table">
@@ -148,3 +142,9 @@
 {% endblock content %}
 
 </body>
+{% block additional_javascript %}
+    <script type="text/javascript" src="{{ STATIC_URL }}jquery/js/timepicker.js">
+    </script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/calendar.js">
+    </script>
+{% endblock additional_javascript %}

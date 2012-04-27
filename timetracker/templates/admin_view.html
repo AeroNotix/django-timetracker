@@ -2,7 +2,6 @@
 
 {% block header %}
 <link href="{{ STATIC_URL }}calendar.css" type="text/css" rel="stylesheet" />
-<script type="text/javascript" src="{{ STATIC_URL }}js/admin_view.js"></script>
 {% endblock header %}
 {% block menubar %}
 {% include 'includes/nav.html' %}
@@ -38,3 +37,7 @@
   </tr>
 </table>
 {% endblock content %}
+{% block additional_javascript %}
+<script type="text/javascript" src="{{ STATIC_URL }}js/admin_view.js"></script>
+{% endblock additional_javascript %}
+
