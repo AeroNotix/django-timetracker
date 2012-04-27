@@ -42,6 +42,7 @@ function onOptionChange() {
                 $("#id_breaklength").val(data.breaklength);
                 $("#id_shiftlength").val(data.shiftlength);
                 $("#id_job_code").val(data.job_code);
+                $("#id_holiday_balance").val(data.holiday_balance);
 
             } else {
                 alert(data.error);
@@ -140,7 +141,8 @@ function addEntry() {
         'start_date',
         'breaklength',
         'shiftlength',
-        'job_code'
+        'job_code',
+        'holiday_balance'
     ]
 
     var form_data = {'form_type': 'add_user'};

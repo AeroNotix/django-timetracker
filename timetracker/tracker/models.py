@@ -82,6 +82,10 @@ class Tbluser(models.Model):
                                 choices=JOB_CODES,
                                 db_column='Job_Code',
                                 verbose_name=('Job Code'))
+
+    holiday_balance = models.IntegerField(db_column='Holiday_Balance',
+                                          verbose_name=('Holiday Balance'))
+
     class Meta:
 
         """
@@ -126,6 +130,26 @@ class Tbluser(models.Model):
         """
 
         return TrackingEntry.objects.filter(user_id=self.id)
+    
+    def get_holiday_balance(self, year):
+        """
+        Calculates the holiday balance for the employee
+        """
+
+        tracking_days = TrackingEntry.objects.filter(user_id=self.id,
+                                                     entry_date__year=year)
+
+        holiday_value_map = {
+            'HOLIS': -1,
+            'PUWRK': 2,
+            'RETRN': -1
+            }
+
+        holiday_balance = self.holiday_balance
+        for entry in tracking_days:
+            holiday_balance += holiday_value_map.get(entry.daytype, 0)
+
+        return holiday_balance
 
     def get_total_balance(self):
 
@@ -299,11 +323,17 @@ class Tblauthorization(models.Model):
             for entry in user.tracking_entries():
                 day_classes[entry.entry_date.day] = entry.daytype
 
-            to_out('<tr><th class="user-td">%s</th><td>%s</td>' % (user.name(), user.job_code))
+            to_out('<tr><th class="user-td">%s</th><td>%s</td><td>%s</td>' % (user.name(),
+                                                                              user.get_holiday_balance(year),
+                                                                              user.job_code
+                                                                              )
+                   )
             for klass, day in day_classes.items():
                 to_out('<td usrid=%s class=%s>%s\n' % (user.id, day, klass))
+
+            # user_id is added as attr to make mass calls
             to_out("""<td>
-                        <input value="submit" type="button" id="user_{0}"
+                        <input value="submit" type="button" user_id="{0}"
                                onclick="submit_holidays({0})" />
                       </td>""".format(user.id))
             to_out('</tr>')

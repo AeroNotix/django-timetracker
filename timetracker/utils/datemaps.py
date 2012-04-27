@@ -31,4 +31,5 @@ DAYTYPE_CHOICES = (
     ('RETRN', 'Return for Public Holiday'),
     ('WKHOM', 'Work at home'),
     ('TRAIN', 'Training'),
+    ('DAYOD', 'Day on demand'),
 )

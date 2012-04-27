@@ -59,12 +59,20 @@
     background-color: #004000;
 }
 
-.selected {
-   background-color: #FF6F00;
+.DAYOD { 
+    background-color: #660066;
+}
+
+.TRAIN {
+    background-color: #3366ff;
 }
 
 .OTHER {
    background: pink;
+}
+
+.selected {
+   background-color: #FF6F00;
 }
 
 #calendar {

@@ -33,29 +33,50 @@ function applyClass(klass) {
             if ($(this).hasClass("selected")) {
                 $(this).removeClass();
                 $(this).addClass(klass);
+
             }
         });
 }
 
 function submit_all() {
-    
-    /* 
+
+    /*
        Submits all entries on the form
+
+       Takes no parameters and returns true/false
+       depending on success.
     */
 
+    var successfully_completed = false;
     $("#holiday-table")
         .find(":button")
         .not("#submit_all")
         .each(function () {
-            $(this).trigger("click");
+            var call = submit_holidays($(this).attr("user_id"), true)
+            if (call === true) {
+                successfully_completed = true;
+                console.log("completed");
+            } else {
+                successfully_completed = false;
+                console.log("Error adding holidays");
+            }
         });
+    if (successfully_completed) {
+        alert("Holidays change successfully!");
+    } else {
+        alert("There was an error adding holidays");
+    }
+    return successfully_completed;
 }
 
-function submit_holidays(user_id) {
+function submit_holidays(user_id, mass) {
     /*
        En masse changes a set of holidays and
-       takes a user_id as a parameter and returns
-       undefined.
+       takes a user_id as a parameter.
+
+       Mass is true/false, if true it
+
+       Returns true for success, false for error
     */
     
     // create a map to hold the holidays
@@ -79,8 +100,7 @@ function submit_holidays(user_id) {
         type: 'POST',
         dataType: 'json'
     });
-    
-    // make the ajax call
+
     $.ajax({
         url: '/ajax/',
         data: {
@@ -92,7 +112,9 @@ function submit_holidays(user_id) {
         },
         success: function(data) {
             if (data.success === true) {
-                alert("Holidays updated successfully");
+                if (!mass) {
+                    alert("Holidays updated successfully");
+                }
             } else {
                 alert(data.error);
             }
@@ -102,6 +124,9 @@ function submit_holidays(user_id) {
         }
     });
 
+    // return true so programmatic callers can 
+    // see we've completed
+    return true;
 }
 
 function addFunctions () {
@@ -113,7 +138,7 @@ function addFunctions () {
     // swaps the colour depending on what
     // it currently is.
     $("#holiday-table")
-        .find('.empty, .WKDAY, .SICKD, .HOLIS, .SPECI, .MEDIC, .PUABS, .PUWRK, .SATUR, .RETRN, .WKHOM, .OTHER')
+        .find('.empty, .DAYOD, .TRAIN, .WKDAY, .SICKD, .HOLIS, .SPECI, .MEDIC, .PUABS, .PUWRK, .SATUR, .RETRN, .WKHOM, .OTHER')
         .not(":button")
         .mouseover(function (e) {
             if (mouseState) {
@@ -123,6 +148,7 @@ function addFunctions () {
                 } else {
                     $(this).removeClass();
                     $(this).addClass("selected");
+                    $(this).addClass("empty");
                 }
                 e.preventDefault();
                 e.stopPropagation();
@@ -131,6 +157,7 @@ function addFunctions () {
         .mousedown(function (e) {
             if ($(this).hasClass("selected")) {
                 $(this).removeClass("selected");
+                $(this).addClass("empty");
             } else {
                 $(this).removeClass();
                 $(this).addClass("selected");
@@ -146,4 +173,3 @@ function addFunctions () {
 $(function () {
     addFunctions();
 });
-
