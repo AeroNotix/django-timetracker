@@ -164,12 +164,11 @@ function addFunctions () {
             }
         });
 
-    $("#holiday-table")
-        .find(".user-td")
-        .attr("width", "200")
-
 }
 
 $(function () {
     addFunctions();
+    $("#holiday-table")
+        .find(".user-td")
+        .attr("width", "200")
 });
