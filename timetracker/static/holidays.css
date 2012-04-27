@@ -6,9 +6,15 @@
    color: white;
 }
 
-#IEroot {
+.IEfix_nav {
     position: absolute;
     top: 20%;
+    z-index: 99;
+}
+.IEfix {
+    position: absolute;
+    top: 20%;
+    z-index: -99;
 }
 
 #holiday-buttons {
@@ -21,4 +27,9 @@
 .holiday-button {
    width: 30px;
    height: 30px;
+}
+
+#holiday-table td {
+    width: 18px;
+    height: 18px
 }
