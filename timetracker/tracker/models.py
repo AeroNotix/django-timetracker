@@ -158,7 +158,8 @@ class Tbluser(models.Model):
         """
 
         total, total_mins = 0, 0
-        tracking_days = TrackingEntry.objects.filter(user_id=self.id)
+        tracking_days = TrackingEntry.objects.filter(user_id=self.id,
+                                                     daytype="WKDAY")
 
         for item in tracking_days:
 
