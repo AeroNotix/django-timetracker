@@ -666,7 +666,7 @@ def mass_holidays(request):
         month = form_data['month']
         date = '-'.join([year, month, day])
 
-        if entry[1] == "empty":
+        if entry[1] == "empty" or (not len(entry[1])):
             try:
                 removal_entry = TrackingEntry.objects.get(
                     entry_date=date,

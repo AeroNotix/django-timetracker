@@ -19,6 +19,14 @@ document.onmouseup = function(e){
 }
 
 function applyClass(klass) {
+
+    /*
+       Checks all the table elements,
+       if they are selected, it removes the
+       selected class (and all other classes)
+       and applies the passed in class
+    */
+
     $("#holiday-table")
         .find("td")
         .each(function () {
@@ -52,6 +60,10 @@ function submit_holidays(user_id) {
     
     // create a map to hold the holidays
     var holiday_map = JSON;
+
+    // iterate through the table and check if it's
+    // selected or not, if it's selected, ignore it.
+    // else, add the number and the class to the map.
     $("#holiday-table")
         .find("td[usrid='"+user_id+"']")
         .each(function () {
@@ -67,8 +79,6 @@ function submit_holidays(user_id) {
         type: 'POST',
         dataType: 'json'
     });
-
-    console.log(JSON.stringify(holiday_map));
     
     // make the ajax call
     $.ajax({
@@ -97,11 +107,6 @@ function submit_holidays(user_id) {
 function addFunctions () {
 
     "use strict";
-
-    $("#holiday-table")
-        .find("td")
-        .attr("width", "18")
-        .attr("height", "18");
 
     // all the daytype classes
     // are assigned a click handler which
