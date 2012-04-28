@@ -50,7 +50,7 @@ function submit_all() {
     var successfully_completed = false;
     $("#holiday-table")
         .find(":button")
-        .not("#submit_all")
+        .not("#submit_all, #btn_change_td")
         .each(function () {
             var call = submit_holidays($(this).attr("user_id"), true)
             if (call === true) {
@@ -66,6 +66,9 @@ function submit_all() {
     } else {
         alert("There was an error adding holidays");
     }
+
+    // refresh the table data
+    change_table_data();
     return successfully_completed;
 }
 
@@ -79,6 +82,10 @@ function submit_holidays(user_id, mass) {
        Returns true for success, false for error
     */
 
+    if (!user_id) {
+        return true;
+    }
+
     // create a map to hold the holidays
     var holiday_map = JSON;
 
@@ -88,8 +95,12 @@ function submit_holidays(user_id, mass) {
     $("#holiday-table")
         .find("td[usrid='"+user_id+"']")
         .each(function () {
+            // remove the selected class off the element
+            $(this).removeClass("selected");
             // get the bg colour of the td
             var current_class = $(this).attr('class');
+            // this check is redundant but it helps if there
+            // are any changed to the selection methods
             if (current_class !== "selected") {
                 holiday_map[$(this).text()] = current_class;
             }
@@ -124,7 +135,7 @@ function submit_holidays(user_id, mass) {
         }
     });
 
-    // return true so programmatic callers can 
+    // return true so programmatic callers can
     // see we've completed
     return true;
 }
@@ -146,9 +157,7 @@ function addFunctions () {
                 if ($(this).hasClass("selected")) {
                     $(this).removeClass("selected");
                 } else {
-                    $(this).removeClass();
                     $(this).addClass("selected");
-                    $(this).addClass("empty");
                 }
                 e.preventDefault();
                 e.stopPropagation();
@@ -157,16 +166,16 @@ function addFunctions () {
         .mousedown(function (e) {
             if ($(this).hasClass("selected")) {
                 $(this).removeClass("selected");
-                $(this).addClass("empty");
             } else {
-                $(this).removeClass();
                 $(this).addClass("selected");
             }
         });
 
     $("#year_select").val($("#holiday-table").attr("year"));
     $("#month_select").val($("#holiday-table").attr("month"));
-
+    $("#year_select, #month_select").change(function () {
+        change_table_data();
+    });
 }
 
 function change_table_data () {
