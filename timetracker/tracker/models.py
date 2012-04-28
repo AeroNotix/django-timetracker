@@ -124,13 +124,17 @@ class Tbluser(models.Model):
 
         return self.firstname + ' ' + self.lastname
 
-    def tracking_entries(self):
+    def tracking_entries(self,
+                         year=dt.datetime.today().year,
+                         month=dt.datetime.today().month):
         """
         Returns all the tracking entries associated with
         this user
         """
 
-        return TrackingEntry.objects.filter(user_id=self.id)
+        return TrackingEntry.objects.filter(user_id=self.id,
+                                            entry_date__year=year,
+                                            entry_date__month=month)
 
     def get_holiday_balance(self, year):
         """
@@ -302,6 +306,11 @@ class Tblauthorization(models.Model):
         Adds a submit button along with passing the
         user_id to it.
         """
+
+        # we convert the arguments to ints because
+        # we get given unicode objects
+        year, month = int(year), int(month)
+
         str_output = []
         to_out = str_output.append
         to_out('<table year=%s month=%s id="holiday-table">' % (year, month))
@@ -324,7 +333,7 @@ class Tblauthorization(models.Model):
             # We have a dict with each day as currently
             # empty, we iterate through the tracking
             # entries and apply the daytype from that.
-            for entry in user.tracking_entries():
+            for entry in user.tracking_entries(year, month):
                 day_classes[entry.entry_date.day] = entry.daytype
 
             # output the table row title, which contains:-
