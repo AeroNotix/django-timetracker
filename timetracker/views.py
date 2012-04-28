@@ -186,13 +186,18 @@ def add_change_user(request):
     )
 
 @admin_check
-def holiday_planning(request):
+def holiday_planning(request,
+                     year=datetime.datetime.today().year,
+                     month=datetime.datetime.today().month):
     """
     Generates the full holiday table for all employees under a manager
     """
 
     auth = tblauth.objects.get(admin_id=request.session.get('user_id'))
-
-    return render_to_response("holidays.html",
-                              {"holiday_table": auth.gen_holiday_list()},
-                              RequestContext(request))
+    return render_to_response(
+        "holidays.html",
+        {
+        "holiday_table": auth.gen_holiday_list(int(year),
+                                               int(month))
+        },
+        RequestContext(request))

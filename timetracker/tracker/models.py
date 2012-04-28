@@ -370,7 +370,7 @@ class Tblauthorization(models.Model):
         year_select_data.sort()
 
         # generate the data for the month select box
-        month_select_data = [(month_num, month[1])
+        month_select_data = [(month_num + 1, month[1])
                              for month_num, month in MONTH_MAP.items()]
 
         # generate the select box for the years

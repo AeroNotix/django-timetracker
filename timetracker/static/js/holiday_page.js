@@ -78,7 +78,7 @@ function submit_holidays(user_id, mass) {
 
        Returns true for success, false for error
     */
-    
+
     // create a map to hold the holidays
     var holiday_map = JSON;
 
@@ -164,7 +164,33 @@ function addFunctions () {
             }
         });
 
+    $("#year_select").val($("#holiday-table").attr("year"));
+    $("#month_select").val($("#holiday-table").attr("month"));
+
 }
+
+function change_table_data () {
+
+    "use strict";
+
+    /*
+       Function which takes the values of the select boxes
+       constructs an ajax call based on those and replaces
+       the table with the data returned from the ajax call
+    */
+
+    var year = $("#year_select").val();
+    var month = $("#month_select").val();
+
+    console.log("in change_table_data");
+
+    $("#holiday-wrapper").load(
+        "/holiday_planning/" + year + "/" + month + " #holiday-table",
+        function () {
+            addFunctions();
+        });
+}
+
 
 $(function () {
     addFunctions();
