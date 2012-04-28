@@ -194,6 +194,7 @@ def holiday_planning(request,
     """
 
     auth = tblauth.objects.get(admin_id=request.session.get('user_id'))
+
     return render_to_response(
         "holidays.html",
         {
