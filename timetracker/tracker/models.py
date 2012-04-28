@@ -380,7 +380,7 @@ class Tblauthorization(models.Model):
         # generate submit all button
         to_out("""<tr>
                     <td colspan="100" align="right">
-                      <input id="change_table_data" value="Change" type="button" onclick="change_table_data()" />
+                      <input id="btn_change_td" value="Reload" type="button" onclick="change_table_data()" />
                       {0} {1}
                       <input id="submit_all" value="Submit All" type="button" onclick="submit_all()" />
                     </td>
