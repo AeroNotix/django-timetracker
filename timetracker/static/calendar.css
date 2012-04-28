@@ -28,6 +28,7 @@
 .SICKD {
    border: 1px solid black;
    background-color: #33FF00;
+   color: black;
 }
 
 .HOLIS {
@@ -72,7 +73,7 @@
    background-color: #004000;
 }
 
-.DAYOD { 
+.DAYOD {
    border: 1px solid black;
    background-color: #660066;
 }
