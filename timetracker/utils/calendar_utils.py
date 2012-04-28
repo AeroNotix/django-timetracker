@@ -521,13 +521,13 @@ def admin_check(func):
     Wrapper to see if the view is being called as an admin
     """
 
-    def inner(request):
+    def inner(request, **kwargs):
         admin_id = request.session.get('user_id', None)
 
         if not admin_id:
             raise Http404
 
-        return func(request)
+        return func(request, **kwargs)
 
     return inner
 
