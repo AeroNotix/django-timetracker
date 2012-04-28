@@ -12,6 +12,7 @@
 }
 
 .empty {
+   border: 1px solid black;
    background-color: #1d1d1d;
 }
 
@@ -20,59 +21,77 @@
 }
 
 .WKDAY {
-    background-color: #ff0000;
+   border: 1px solid black;
+   background-color: #ff0000;
 }
 
 .SICKD {
-    background: url('images/calendar/days_sprite.gif') 0 -172px;
+   border: 1px solid black;
+   background-color: #33FF00;
 }
 
 .HOLIS {
-    background-color: #ffff80;
+   border: 1px solid black;
+   background-color: #ffff80;
+   color: black;
 }
 
 .SPECI {
-    background-color: #00c000;
+   border: 1px solid black;
+   background-color: #00c000;
 }
 
 .MEDIC {
+   border: 1px solid black;
     background-color: #ffc0c0;
 }
 
 .PUABS {
+   border: 1px solid black;
     background-color: #8080ff;
 }
 
 .PUWRK {
-    background-color: #ff8000;
+   border: 1px solid black;
+   background-color: #ff8000;
 }
 
 .SATUR {
-    background-color: #c04000;
+   border: 1px solid black;
+   background-color: #c04000;
 }
 
 .RETRN {
-    background-color: #ffc080;
+   border: 1px solid black;
+   background-color: #ffc080;
+   color: black;
 }
 
 .WKHOM {
-    background-color: #004000;
+   border: 1px solid black;
+   background-color: #004000;
 }
 
 .DAYOD { 
-    background-color: #660066;
+   border: 1px solid black;
+   background-color: #660066;
 }
 
 .TRAIN {
-    background-color: #3366ff;
+   border: 1px solid black;
+   background-color: #3366ff;
 }
 
 .OTHER {
+   border: 1px solid black;
    background: pink;
+   color: black;
 }
 
 .selected {
+   border: 1px solid black;
    background-color: #FF6F00;
+   color: black;
 }
 
 #calendar {
@@ -137,10 +156,10 @@ this is a jQuery add-on
 /* table */
 
 #calendar-table {
-    background: black;
-    margin-top: 100px;
-    margin-left: auto;
-    margin-right: auto;
+   background: black;
+   margin-top: 100px;
+   margin-left: auto;
+   margin-right: auto;
 }
 
 #table-wrapper {

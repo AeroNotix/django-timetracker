@@ -1,4 +1,5 @@
 #holiday-table {
+   border-collapse: collapse;
    border-color: #1d1d1d;
    margin-top: 100px;
    margin-left: auto;
