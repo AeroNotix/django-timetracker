@@ -62,11 +62,11 @@ function submit_all() {
     // refresh the table data
     setTimeout("change_table_data()", 1000);
 
-    if (successfully_completed) {
-        alert("Holidays change successfully!");
-    } else {
-        alert("There was an error adding holidays");
-    }
+    // if (successfully_completed) {
+    //     alert("Holidays change successfully!");
+    // } else {
+    //     alert("There was an error adding holidays");
+    // }
 
     return successfully_completed;
 }
@@ -193,12 +193,13 @@ function change_table_data () {
 
     var year = $("#year_select").val();
     var month = $("#month_select").val();
-
+    $("#holiday-wrapper").fadeOut(500);
     $("#holiday-wrapper").load(
         "/holiday_planning/" + year + "/" + month + " #holiday-table",
         function () {
             addFunctions();
         });
+    $("#holiday-wrapper").fadeIn(500);
 }
 
 $(function () {
