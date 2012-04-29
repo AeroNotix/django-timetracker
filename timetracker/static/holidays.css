@@ -10,6 +10,10 @@
    color: white;
 }
 
+#holiday-buttons {
+   color: white;
+}
+
 .IEfix_nav {
    margin-top: 150px;
    z-index: 99;
@@ -21,10 +25,6 @@
    z-index: -99;
 }
 
-#holiday-buttons {
-   color: black;
-   background-color: white;
-}
 
 .holiday-button {
    width: 30px;
@@ -35,4 +35,3 @@
     width: 18px;
     height: 18px
 }
-

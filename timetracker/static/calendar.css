@@ -16,8 +16,18 @@
    background-color: #1d1d1d;
 }
 
+.empty:hover {
+   background-color: orange;
+   color: black;
+}
+
 .empty-day {
    background: url('images/calendar/days_sprite.gif') 0 -215px;
+}
+
+.empty-day:hover {
+   background-color: orange;
+   color: black;
 }
 
 .WKDAY {
@@ -25,9 +35,19 @@
    background-color: #ff0000;
 }
 
+.WKDAY:hover {
+   background-color: orange;
+   color: black;
+}
+
 .SICKD {
    border: 1px solid black;
    background-color: #33FF00;
+   color: black;
+}
+
+.SICKD:hover {
+   background-color: orange;
    color: black;
 }
 
@@ -37,9 +57,19 @@
    color: black;
 }
 
+.HOLIS:hover {
+   background-color: orange;
+   color: black;
+}
+
 .SPECI {
    border: 1px solid black;
    background-color: #00c000;
+}
+
+.SPECI:hover {
+   background-color: orange;
+   color: black;
 }
 
 .MEDIC {
@@ -47,9 +77,19 @@
     background-color: #ffc0c0;
 }
 
+.MEDIC:hover {
+   background-color: orange;
+   color: black;
+}
+
 .PUABS {
    border: 1px solid black;
     background-color: #8080ff;
+}
+
+.PUABS:hover {
+   background-color: orange;
+   color: black;
 }
 
 .PUWRK {
@@ -57,9 +97,19 @@
    background-color: #ff8000;
 }
 
+.PUWRK:hover {
+   background-color: orange;
+   color: black;
+}
+
 .SATUR {
    border: 1px solid black;
    background-color: #c04000;
+}
+
+.SATUR:hover {
+   background-color: orange;
+   color: black;
 }
 
 .RETRN {
@@ -68,9 +118,19 @@
    color: black;
 }
 
+.RETRN:hover {
+   background-color: orange;
+   color: black;
+}
+
 .WKHOM {
    border: 1px solid black;
    background-color: #004000;
+}
+
+.WKHOM:hover {
+   background-color: orange;
+   color: black;
 }
 
 .DAYOD {
@@ -78,14 +138,29 @@
    background-color: #660066;
 }
 
+.DAYOD:hover {
+   background-color: orange;
+   color: black;
+}
+
 .TRAIN {
    border: 1px solid black;
    background-color: #3366ff;
 }
 
+.TRAIN:hover {
+   background-color: orange;
+   color: black;
+}
+
 .OTHER {
    border: 1px solid black;
    background: pink;
+   color: black;
+}
+
+.OTHER:hover {
+   background-color: orange;
    color: black;
 }
 
