@@ -1,4 +1,3 @@
-
 var mouseState = false;
 document.onmousedown = function(e){
     mouseState = true;
@@ -55,10 +54,8 @@ function submit_all() {
             var call = submit_holidays($(this).attr("user_id"), true)
             if (call === true) {
                 successfully_completed = true;
-                console.log("completed");
             } else {
                 successfully_completed = false;
-                console.log("Error adding holidays");
             }
         });
     if (successfully_completed) {
@@ -131,7 +128,7 @@ function submit_holidays(user_id, mass) {
             }
         },
         error: function(ajaxObj, textStatus, error) {
-            console.log(error);
+            alert(error);
         }
     });
 
@@ -190,8 +187,6 @@ function change_table_data () {
 
     var year = $("#year_select").val();
     var month = $("#month_select").val();
-
-    console.log("in change_table_data");
 
     $("#holiday-wrapper").load(
         "/holiday_planning/" + year + "/" + month + " #holiday-table",
