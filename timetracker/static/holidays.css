@@ -8,14 +8,14 @@
 }
 
 .IEfix_nav {
-    position: absolute;
-    top: 20%;
-    z-index: 99;
+   margin-top: 150px;
+   z-index: 99;
 }
 .IEfix {
-    position: absolute;
-    top: 20%;
-    z-index: -99;
+   margin-top: 150px;
+   margin-left: auto;
+   margin-left: auto;
+   z-index: -99;
 }
 
 #holiday-buttons {

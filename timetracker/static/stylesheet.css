@@ -33,8 +33,9 @@ body {
    border-radius: 30px;
 }
 #IEroot {
-    position: absolute;
-    top: 20%;
+   margin-top: 200px
+   margin-left: auto;
+   margin-left: auto;
 }
 
 #logout {

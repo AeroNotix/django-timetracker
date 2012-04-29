@@ -109,7 +109,7 @@ function submit_holidays(user_id, mass) {
     // setup our ajax properties
     $.ajaxSetup({
         type: 'POST',
-        dataType: 'json'
+        dataType: 'json',
     });
 
     $.ajax({
