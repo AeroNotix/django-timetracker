@@ -117,10 +117,15 @@ function deleteEntry() {
 function addEntry() {
 
     /* 
-       Asynchrnously adds a user
+       Asynchronously adds a user
        
        Takes no parameters and returns undefined
     */
+
+    if ( !validateDate("#id_start_date") ) {
+        alert("validation fail");
+        return;
+    }
 
     if (!confirm("Are you sure?")) {
         return false;

@@ -58,14 +58,16 @@ function submit_all() {
                 successfully_completed = false;
             }
         });
+
+    // refresh the table data
+    setTimeout("change_table_data()", 3000);
+
     if (successfully_completed) {
         alert("Holidays change successfully!");
     } else {
         alert("There was an error adding holidays");
     }
 
-    // refresh the table data
-    change_table_data();
     return successfully_completed;
 }
 
@@ -173,6 +175,10 @@ function addFunctions () {
     $("#year_select, #month_select").change(function () {
         change_table_data();
     });
+
+    $("#holiday-table")
+        .find(".user-td")
+        .attr("width", "200")
 }
 
 function change_table_data () {
@@ -195,10 +201,6 @@ function change_table_data () {
         });
 }
 
-
 $(function () {
     addFunctions();
-    $("#holiday-table")
-        .find(".user-td")
-        .attr("width", "200")
 });
