@@ -12,9 +12,6 @@
 {% endblock menubar %}
 
 {% block content %}
-<!--[IF IE]>
-<div class="IEfix_nav">
-  <![endif]-->
 <table id="full-table-wrapper">
   <tr>
     <td valign="top">
@@ -56,22 +53,12 @@
         </table>
       </div>
     </td>
-    <!--[IF IE]>
-        </div>
-<![endif]-->
-
-    <!--[IF IE]>
-        <div class="IEfix">
-          <![endif]-->
     <td>
       <div id="holiday-wrapper">
         {{ holiday_table|safe }}
       </div>
     </td>
 </table>
-<!--[IF IE]>
-    </div>
-<![endif]-->
 {% endblock content %}
 {% block additional_javascript %}
 <script type="text/javascript" src="{{ STATIC_URL }}js/holiday_page.js"></script>
