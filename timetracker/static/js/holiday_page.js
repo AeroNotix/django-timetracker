@@ -60,7 +60,7 @@ function submit_all() {
         });
 
     // refresh the table data
-    setTimeout("change_table_data()", 3000);
+    setTimeout("change_table_data()", 1000);
 
     if (successfully_completed) {
         alert("Holidays change successfully!");
@@ -177,8 +177,8 @@ function addFunctions () {
     });
 
     $("#holiday-table")
+        .attr("border", "1")
         .find(".user-td")
-        .attr("width", "200")
 }
 
 function change_table_data () {
