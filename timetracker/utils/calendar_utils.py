@@ -626,6 +626,13 @@ def add_user(request):
         admin = Tblauth.objects.get(id=request.session.get('user_id'))
         admin.users.add(user)
         admin.save()
+    except IntegrityError as error:
+        if error[0] == DUPLICATE_ENTRY:
+            json_data['error'] = "Duplicate entry"
+            return json_data
+        else:
+            json_data['error'] = str(error)
+            return json_data
     except ValidationError:
         json_data['error'] = "Invalid Data."
         return json_data
