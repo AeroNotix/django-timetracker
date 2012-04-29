@@ -1,7 +1,10 @@
+#full-table-wrapper {
+   margin-top: 85px;
+}
+
 #holiday-table {
    border-collapse: collapse;
    border-color: #1d1d1d;
-   margin-top: 100px;
    margin-left: auto;
    margin-right: auto;
    color: white;
@@ -19,10 +22,8 @@
 }
 
 #holiday-buttons {
-   position: absolute;
-   margin-top: 30px;
-   margin-left: 10px;
-   color: white;
+   color: black;
+   background-color: white;
 }
 
 .holiday-button {
@@ -34,3 +35,4 @@
     width: 18px;
     height: 18px
 }
+
