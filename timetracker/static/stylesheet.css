@@ -40,11 +40,14 @@ body {
 }
 
 #logout {
-   float: right;
+   position: absolute;
+   top: 0px;
+   right: 100px;
 }
 
 #logo-btn {
-   float: right;
+   position: absolute;
+   top: 0px;
 }
 
 #login-fs {
@@ -90,12 +93,16 @@ a {
    text-decoration: none;
 }
 
+a img {
+   border: none;
+}
+
 a:hover {
    color: none;
 }
 
 a:visited {
-   color: blue;
+   color: #1d1d1d;
 }
 
 .menu-bar:hover {
