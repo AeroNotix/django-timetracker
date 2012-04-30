@@ -147,8 +147,13 @@ function addFunctions () {
     // swaps the colour depending on what
     // it currently is.
     $("#holiday-table")
-        .find('.empty, .DAYOD, .TRAIN, .WKDAY, .SICKD, .HOLIS, .SPECI, .MEDIC, .PUABS, .PUWRK, .SATUR, .RETRN, .WKHOM, .OTHER')
+        .find('.empty, .DAYOD, .TRAIN, '
+            + '.WKDAY, .SICKD, .HOLIS, '
+            + '.SPECI, .MEDIC, .PUABS, '
+            + '.PUWRK, .SATUR, .RETRN, '
+            + '.WKHOM, .OTHER')
         .not(":button")
+        .attr("unselectable", "on")   // make it so you can't select text
         .mouseover(function (e) {
             if (mouseState) {
 
