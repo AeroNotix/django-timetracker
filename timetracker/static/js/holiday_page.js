@@ -192,13 +192,14 @@ function change_table_data () {
 
     var year = $("#year_select").val();
     var month = $("#month_select").val();
-    $("#holiday-wrapper").fadeOut(500);
-    $("#holiday-wrapper").load(
-        "/holiday_planning/" + year + "/" + month + " #holiday-table",
-        function () {
-            addFunctions();
-        });
-    $("#holiday-wrapper").fadeIn(500);
+    $("#holiday-wrapper").fadeTo(500, 0, function() {
+        $("#holiday-wrapper").load(
+            "/holiday_planning/" + year + "/" + month + " #holiday-table",
+            function () {
+                $("#holiday-wrapper").fadeTo(500, 1);
+                addFunctions();
+            });
+    });
 }
 
 $(function () {
