@@ -174,13 +174,11 @@ def add_change_user(request):
     except tblauth.DoesNotExist:
         pass
 
-    form = UserForm()
-
     return render_to_response(
         "useredit.html",
         {
         "employees": employees,
-        "user_form": form
+        "user_form": UserForm()
         },
         RequestContext(request)
     )
