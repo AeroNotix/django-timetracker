@@ -58,7 +58,6 @@ function submit_all() {
                 successfully_completed = false;
             }
         });
-
     // refresh the table data
     setTimeout("change_table_data()", 1000);
 
@@ -108,7 +107,7 @@ function submit_holidays(user_id, mass) {
     // setup our ajax properties
     $.ajaxSetup({
         type: 'POST',
-        dataType: 'json',
+        dataType: 'json'
     });
 
     $.ajax({
@@ -204,4 +203,5 @@ function change_table_data () {
 
 $(function () {
     addFunctions();
+    change_table_data();
 });
