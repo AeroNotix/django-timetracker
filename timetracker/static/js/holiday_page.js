@@ -35,6 +35,7 @@ function applyClass(klass) {
 
             }
         });
+    return true;
 }
 
 function submit_all() {
@@ -183,6 +184,7 @@ function addFunctions () {
     $("#holiday-table")
         .attr("border", "1")
         .find(".user-td")
+    return true;
 }
 
 function change_table_data () {
@@ -205,6 +207,7 @@ function change_table_data () {
                 addFunctions();
             });
     });
+    return true;
 }
 
 $(function () {

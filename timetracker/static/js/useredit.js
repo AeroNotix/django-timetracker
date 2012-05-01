@@ -12,7 +12,7 @@ function onOptionChange() {
     var user_id = $("#user_select").val();
     if (user_id === 'null') {
         clearForm()
-        return
+        return false;
     }
 
     $.ajaxSetup({type: 'POST'});
@@ -49,6 +49,7 @@ function onOptionChange() {
             }
         }
     });
+    return true;
 }
 
 function clearForm() {
@@ -68,6 +69,7 @@ function clearForm() {
             $(this).val('');
         }
     );
+    return true;
 }
 
 function deleteEntry() {
@@ -80,7 +82,7 @@ function deleteEntry() {
 
     var user_id = $("#user_select").val();
     if (user_id === 'null') {
-        return 
+        return false;
     }
 
     if (!confirm("Are you sure?")) {
@@ -111,6 +113,7 @@ function deleteEntry() {
             }
         }
     });
+    return true;
 }
 
        
@@ -119,12 +122,12 @@ function addEntry() {
     /* 
        Asynchronously adds a user
        
-       Takes no parameters and returns undefined
+       Takes no parameters and returns true/false for success
     */
 
     if ( !validateDate("#id_start_date") ) {
         alert("validation fail");
-        return;
+        return false;
     }
 
     if (!confirm("Are you sure?")) {
@@ -180,6 +183,7 @@ function addEntry() {
             }
         }
     });
+    return true;
 }
 
 function setupUI() {
@@ -194,6 +198,8 @@ function setupUI() {
     $("#id_shiftlength").timepicker({
         timeFormat: 'hh:mm:ss'
     });
+
+    return true;
 }
 
 function ajaxSuccess() {
@@ -224,6 +230,7 @@ function ajaxSuccess() {
                 $("#id_password").remove();
             }
         });
+    return true;
 }
 
 $(function () {

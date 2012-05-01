@@ -22,13 +22,13 @@ function onOptionChange(date) {
             'form_type': 'admin_get',
             'eeid': eeid
         },
-        dataType: "json",
         success: function (data) {
             $("#calendar_div").html(data.calendar);
             $("#calendar tr td a").attr("href", "#");
             $("#calendar tr td a").css({'color':'black'});
         }
     });
+    return true;
 }
 
 $(function () {
