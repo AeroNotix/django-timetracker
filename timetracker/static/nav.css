@@ -1,0 +1,34 @@
+#naver {
+   position: absolute;
+   width: 100%;
+   height: 50px;
+   margin: 0;
+   padding: 0;
+   top: 0;
+   left: 0;   
+   list-style: none;
+   background-image: url('images/base/nav.png');
+   border-bottom: 2px solid #ccc;
+   border-top: 1px solid #ccc;
+}
+
+#naver li {
+   float: left;
+}
+
+#naver li a {
+   height: 50px;
+   display: block;
+   padding: 0px 15px;
+   text-decoration: none;
+   font-weight: bold;
+   color: #1d1d1d;
+   border-right: 1px solid #ccc; 
+}
+
+#naver li a:hover {
+   background-image: url('images/base/nav-highlight.png');
+}
+
+#logout-btn {
+}
