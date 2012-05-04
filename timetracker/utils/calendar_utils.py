@@ -242,13 +242,16 @@ def gen_calendar(year=datetime.datetime.today().year,
                     data.entry_date,
                     data.daytype,
                     _day,
-                    data.id
+                    data.id,
+                    data.breaks.minute,
+                    str(data.breaks)[0:5]
                     ]
 
                 to_cal("""\t\t\t\t
                        <td onclick="toggleChangeEntries({0}, {1}, '{2}',
                                                         {3}, {4}, '{5}',
-                                                        '{6}', '{7}', {9})"
+                                                        '{6}', '{7}', {9},
+                                                        {10}, '{11}')"
                            class="day-class {7}">{8}</td>\n""".format(*vals)
                        )
 
@@ -364,9 +367,6 @@ def ajax_add_entry(request):
         json_data['error'] = "Date Error"
         return json_data
 
-    # need to add a breaks section to the form
-    form['breaks'] = "00:15:00"
-
     try:
         entry = TrackingEntry(**form)
         entry.save()
@@ -460,7 +460,9 @@ def ajax_change_entry(request):
         'end_time': None,
         'daytype': None,
         'breaks': None,
-        'hidden-id': None
+        'hidden-id': None,
+        'breaks': None
+
     }
 
     # get the form data from the request object
@@ -477,9 +479,6 @@ def ajax_change_entry(request):
     except ValueError:
         json_data['error'] = "Date Error"
         return json_data
-
-    # need to add a breaks section to the form
-    form['breaks'] = "00:15:00"
 
     if form['hidden-id']:
         try:

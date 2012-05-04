@@ -26,7 +26,7 @@ class EntryForm(forms.Form):
     breaks = forms.TimeField(label="Breaks:")
     breaks.widget.attrs.update({'class': 'change-el',
                                 'id': 'change_breaks'})
-    
+
     daytype = forms.ChoiceField(label="Day Type:", choices=DAYTYPE_CHOICES)
     daytype.widget.attrs.update({'class': 'change-el',
                                     'id': 'change_daytype'})

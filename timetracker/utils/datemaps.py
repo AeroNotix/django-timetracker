@@ -1,7 +1,7 @@
 '''
 Maps of useful data
 
-Django has this built-in but it's annoying to use
+Django has this built-in but it is annoying to use
 '''
 
 MONTH_MAP = {
