@@ -3,15 +3,15 @@ body {
 }
 
 #menu-bar {
-    position: absolute;
-    height: 50px;
-    top: 0%;
-    left: 0%;
-    width: 100%;
-    padding: 0;
-    background: #1d1d1d;
-    color: white;
-    box-shadow: 0px 0px 50px white;
+   position: absolute;
+   height: 50px;
+   top: 0%;
+   left: 0%;
+   width: 100%;
+   padding: 0;
+   background: #1d1d1d;
+   color: white;
+   box-shadow: 0px 0px 50px white;
 }
 
 .menu-button {
@@ -62,18 +62,18 @@ body {
 }
 
 .tracker-val-ok {
-    background: green;
-    color: black;
+   background: green;
+   color: black;
 }
 
 .tracker-val-warning {
-    background: yellow;
-    color: black;
+   background: yellow;
+   color: black;
 }
 
 .tracker-val-danger {
-    background: red
-    color: black;
+   background: red
+   color: black;
 }
 
 * {
@@ -81,7 +81,7 @@ body {
 }
 
 #admin-inner-cal {
-    color: white;
+   color: white;
 }
 
 #edit-user-table {

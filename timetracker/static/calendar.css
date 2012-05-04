@@ -22,7 +22,7 @@
 }
 
 .empty-day {
-   background: url('images/calendar/days_sprite.gif') 0 -215px;
+   background-color: #A1A3A0;
 }
 
 .empty-day:hover {
@@ -177,7 +177,7 @@
 }
 
 .day-class:hover {
-   background: url('images/calendar/days_sprite.gif') 0 -258px ;
+   background-color: #FE9E2D;
 }
 
 .table-links {
