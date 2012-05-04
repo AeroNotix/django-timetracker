@@ -21,8 +21,12 @@ class EntryForm(forms.Form):
 
     end_time = forms.TimeField(label="End Time:")
     end_time.widget.attrs.update({'class': 'change-el',
-                                    'id': 'change_endtime'})
+                                  'id': 'change_endtime'})
 
+    breaks = forms.TimeField(label="Breaks:")
+    breaks.widget.attrs.update({'class': 'change-el',
+                                'id': 'change_breaks'})
+    
     daytype = forms.ChoiceField(label="Day Type:", choices=DAYTYPE_CHOICES)
     daytype.widget.attrs.update({'class': 'change-el',
                                     'id': 'change_daytype'})
@@ -45,6 +49,10 @@ class AddForm(forms.Form):
     end_time = forms.TimeField(label="End Time:")
     end_time.widget.attrs.update({'class': 'change-el',
                                     'id': 'add_endtime'})
+
+    breaks = forms.TimeField(label="Breaks:")
+    breaks.widget.attrs.update({'class': 'change-el',
+                                'id': 'add_breaks'})
 
     daytype = forms.ChoiceField(label="Day Type:", choices=DAYTYPE_CHOICES)
     daytype.widget.attrs.update({'class': 'change-el',
