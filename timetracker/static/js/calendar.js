@@ -91,7 +91,7 @@ function onOptionChange(element) {
     // form elements disabled if selected
     var disabledTypes = [
         "SICKD", "HOLIS", "MEDIC", "SPECI",
-        "PUABS", "TRAIN", "DAYOD"
+        "PUABS", "TRAIN", "DAYOD", "RETRN"
     ]
 
     if ( $.inArray(optionBoxVal, disabledTypes) > -1 ) {
@@ -321,5 +321,7 @@ function hideEntries(date) {
         minute: 0
     });
 
+    onOptionChange("add");
+    onOptionChange("change");
 }
 
