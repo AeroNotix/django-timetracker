@@ -597,7 +597,7 @@ def delete_user(request):
 @request_check
 @admin_check
 @json_response
-def add_user(request):
+def useredit(request):
 
     """
     Adds a user to the database asynchronously
@@ -609,7 +609,7 @@ def add_user(request):
 
     # get the data off the request object
     for item in request.POST:
-        if item != "form_type":
+        if item not in ["form_type", "mode"]:
             data[item] = request.POST[item]
 
     json_data = {
@@ -618,13 +618,23 @@ def add_user(request):
     }
 
     try:
-        # create the user
-        user = Tbluser(**data)
-        user.save()
-        # link the user to the admin
-        admin = Tblauth.objects.get(id=request.session.get('user_id'))
-        admin.users.add(user)
-        admin.save()
+        if not request.POST.get("mode"):
+            # create the user
+            user = Tbluser(**data)
+            user.save()
+            # link the user to the admin
+            admin = Tblauth.objects.get(id=request.session.get('user_id'))
+            admin.users.add(user)
+            admin.save()
+        else:
+            # If the mode contains a user_id
+            # get that user and update it's
+            # attributes with what was on the form
+            user = Tbluser.objects.get(id__exact=request.POST.get("mode"))
+            for key, value in data.items():
+                if getattr(user, key):
+                    setattr(user, key, value)
+            user.save()
     except IntegrityError as error:
         if error[0] == DUPLICATE_ENTRY:
             json_data['error'] = "Duplicate entry"
@@ -637,6 +647,7 @@ def add_user(request):
         return json_data
     except Tbluser.DoesNotExist:
         json_data['error'] = "User doesn't exist. Already deleted?"
+        return json_data
 
     json_data['success'] = True
     return json_data

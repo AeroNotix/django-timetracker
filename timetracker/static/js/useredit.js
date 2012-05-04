@@ -1,6 +1,6 @@
 function onOptionChange() {
-    /* 
-       When the select box is changed the form needs to 
+    /*
+       When the select box is changed the form needs to
        be updated with the employees data, so we grab the
        value and make an ajax request to the database to
        pull the data
@@ -29,7 +29,7 @@ function onOptionChange() {
             if (data.success === true) {
                 $("#id_breaklength").timepicker("destroy");
                 $("#id_shiftlength").timepicker("destroy");
-                
+
                 setupUI();
 
                 $("#id_user_id").val(data.username);
@@ -74,9 +74,9 @@ function clearForm() {
 
 function deleteEntry() {
 
-    /* 
+    /*
        Asynchrously deletes an entry
-       
+
        Takes no parameters and returns undefined
     */
 
@@ -116,12 +116,12 @@ function deleteEntry() {
     return true;
 }
 
-       
-function addEntry() {
 
-    /* 
+function addChangeEntry(entryType) {
+
+    /*
        Asynchronously adds a user
-       
+
        Takes no parameters and returns true/false for success
     */
 
@@ -153,10 +153,30 @@ function addEntry() {
         'holiday_balance'
     ]
 
-    var form_data = {'form_type': 'add_user'};
+    /*
+       here we run an anon function against
+       the passed in variable, if it's the
+       string add, we are creating a new
+       entry in the db.
+
+       Else we are changing an entry so
+       we take the current option box and
+       change that entry server-side
+    */
+       var form_data = {
+        'form_type': 'useredit',
+        'mode': function() {
+            if (entryType === 'add') {
+                return false;
+            } else {
+                return $("#user_select").val();
+            }
+        }()
+    };
+
     var index = 0;
     // loop through the wrapped set which is the same,
-    // size as the data array, that way we can get the 
+    // size as the data array, that way we can get the
     // vals easy
     $("#user-edit-form").find(":input").not(":button").each(
         function () {
@@ -204,10 +224,10 @@ function setupUI() {
 
 function ajaxSuccess() {
 
-    /* 
+    /*
        Lazy method for ajaxSuccess
     */
-    
+
     "use strict";
 
     setupUI();
