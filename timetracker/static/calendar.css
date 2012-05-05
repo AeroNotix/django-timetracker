@@ -12,7 +12,7 @@
 }
 
 .empty {
-   border: 1px solid black;
+   border: 1px solid white;
    background-color: #1d1d1d;
 }
 
@@ -31,7 +31,7 @@
 }
 
 .WKDAY {
-   border: 1px solid black;
+
    background-color: #ff0000;
 }
 
@@ -41,7 +41,7 @@
 }
 
 .SICKD {
-   border: 1px solid black;
+
    background-color: #33FF00;
    color: black;
 }
@@ -52,7 +52,7 @@
 }
 
 .HOLIS {
-   border: 1px solid black;
+
    background-color: #ffff80;
    color: black;
 }
@@ -63,7 +63,7 @@
 }
 
 .SPECI {
-   border: 1px solid black;
+
    background-color: #00c000;
 }
 
@@ -73,7 +73,7 @@
 }
 
 .MEDIC {
-   border: 1px solid black;
+
     background-color: #ffc0c0;
 }
 
@@ -83,7 +83,7 @@
 }
 
 .PUABS {
-   border: 1px solid black;
+
     background-color: #8080ff;
 }
 
@@ -93,7 +93,7 @@
 }
 
 .PUWRK {
-   border: 1px solid black;
+
    background-color: #ff8000;
 }
 
@@ -103,7 +103,7 @@
 }
 
 .SATUR {
-   border: 1px solid black;
+
    background-color: #c04000;
 }
 
@@ -113,7 +113,7 @@
 }
 
 .RETRN {
-   border: 1px solid black;
+
    background-color: #ffc080;
    color: black;
 }
@@ -124,7 +124,6 @@
 }
 
 .WKHOM {
-   border: 1px solid black;
    background-color: #004000;
 }
 
@@ -134,7 +133,6 @@
 }
 
 .DAYOD {
-   border: 1px solid black;
    background-color: #660066;
 }
 
@@ -144,7 +142,6 @@
 }
 
 .TRAIN {
-   border: 1px solid black;
    background-color: #3366ff;
 }
 
@@ -154,7 +151,6 @@
 }
 
 .OTHER {
-   border: 1px solid black;
    background: pink;
    color: black;
 }
@@ -165,7 +161,6 @@
 }
 
 .selected {
-   border: 1px solid black;
    background-color: #FF6F00;
    color: black;
 }
@@ -181,7 +176,6 @@
 }
 
 .table-links {
-   background: transparent;
    color: white;
    text-decoration: none;
 }

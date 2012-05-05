@@ -6,14 +6,14 @@
 
 #holiday-table {
    border-collapse: collapse;
-   border-color: #1d1d1d;
    margin-left: auto;
    margin-right: auto;
    color: white;
+   background: #1d1d1d;
 }
 
 #holiday-buttons {
-   color: white;
+   color: #1d1d1d;
 }
 
 .IEfix_nav {
@@ -33,12 +33,18 @@
 }
 
 #holiday-table td {
-    width: 18px;
-    height: 18px
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+   border: 1px solid #717171;
+   width: 18px;
+   height: 18px
+   -webkit-touch-callout: none;
+   -webkit-user-select: none;
+   -khtml-user-select: none;
+   -moz-user-select: none;
+   -ms-user-select: none;
+   user-select: none;
+}
+
+#holiday-table th {
+   border: 1px solid #717171;
+   color: #ccc;
 }

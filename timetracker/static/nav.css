@@ -8,8 +8,8 @@
    left: 0;   
    list-style: none;
    background-image: url('images/base/nav.png');
-   border-bottom: 2px solid #ccc;
-   border-top: 1px solid #ccc;
+   border-bottom: 2px solid #dcdad7;
+   border-top: 1px solid #dcdad7;
 }
 
 #naver li {
@@ -23,12 +23,16 @@
    text-decoration: none;
    font-weight: bold;
    color: #1d1d1d;
-   border-right: 1px solid #ccc; 
+   border-right: 1px solid #ccc;
 }
 
 #naver li a:hover {
-   background-image: url('images/base/nav-highlight.png');
+   background-color: #444444;
+   color: #f99713
 }
 
 #logout-btn {
+   position: absolute;
+   top: 0;
+   right: 0;
 }

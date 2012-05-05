@@ -325,3 +325,6 @@ function hideEntries(date) {
     onOptionChange("change");
 }
 
+$(function () {
+    $(".table-links").css({"color": "white"});
+});
