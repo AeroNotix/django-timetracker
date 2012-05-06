@@ -200,3 +200,15 @@ def holiday_planning(request,
                                                int(month))
         },
         RequestContext(request))
+
+
+def edit_profile(request):
+
+    """
+    View for sending the user to the edit profile page
+    """
+       
+    
+    return render_to_response("editprofile.html",
+                              {},
+                              RequestContext(request))
