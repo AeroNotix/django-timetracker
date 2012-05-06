@@ -58,7 +58,8 @@ function ajaxCall(form) {
         success: function (data) {
             if (data.success === true) {
                 $("#calendar-entry").fadeToggle("slow", function() {
-                          $("#calendar-entry").html(data.calendar);
+                    $("#calendar-entry").html(data.calendar);
+                    $(".table-links").css({"color": "white"});
                 });
                 $("#calendar-entry").fadeToggle("slow");
             } else {
