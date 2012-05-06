@@ -1,10 +1,10 @@
-/* 
+/*
    Intended to validate form fields
 */
 
 function validateDate (field) {
-    
-    /* 
+
+    /*
 
        Validates a field against the following:-
 
@@ -16,7 +16,7 @@ function validateDate (field) {
        returns true for a match, false for not
 
     */
-    
+
     if ( $(field).val().match( /\d{4}\-\d{1,2}\-\d{1,2}/ ) ) {
         return true;
     } else {
@@ -26,11 +26,11 @@ function validateDate (field) {
 
 
 function validateTime (field) {
-    
-    /* 
 
-       Validates a field against the following:- 
-      
+    /*
+
+       Validates a field against the following:-
+
        \d{1,2} = two digits
        \: = literal colon
        \d{1,2} = two digits
@@ -42,8 +42,39 @@ function validateTime (field) {
     */
 
     if ( $(field).val().match( /\d{1,2}\:\d{1,2}(\:\d{1,2})?/ ) ) {
-        return true;       
+        return true;
     } else {
         return false;
     }
+}
+
+function stringMatch (fieldA, fieldB) {
+
+    /*
+       String matching function
+    */
+
+    if ($(fieldA).val() === $(fieldB).val()) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function checkStringLengths (stringArray, len) {
+    /*
+      Checks all strings in the array for
+      a given length
+
+      Takes an array of strings and an integer
+      return true if all strings validate,
+      false otherwise.
+    */
+
+    for (idx=0;idx<stringArray.length;idx++) {
+        if (stringArray[idx].length < len) {
+            return false;
+        }
+    }
+    return true;
 }
