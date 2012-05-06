@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block menubar %}
+{% include "includes/user-nav.html" %}
+{% endblock menubar %}
+
+{% block header %}
+<link href="{{ STATIC_URL }}editprofile.css" type="text/css" rel="stylesheet" />
+{% endblock header %}
+
+{% block content %}
+  <table id="edit-profile-table">
+    <tr>
+      <td>
+        <label for="id-firstname">First Name:</label>
+      </td>
+      <td>
+        <input value="{{ firstname }}" id="id-firstname"/>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <label for="id-lastname">Last Name:</label>
+      </td>
+      <td>
+        <input value="{{ lastname }}" id="id-lastname"/>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <label for="id-password">Password:</label>
+      </td>
+      <td>
+        <input type="password" id="id-password"/>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <label for="id-password-rpt">Password Repeat:</label>
+      </td>
+      <td>
+        <input type="password" id="id-password-rpt"/>
+      </td>
+    </tr>
+    <tr>
+      <td></td>
+      <td align="right">
+        <input type="button" onclick="submitChanges()" value="Submit"/>
+      </td>
+</table>
+{% endblock content %}
+{% block additional_javascript %}
+    <script type="text/javascript" src="{{ STATIC_URL }}js/editprofile.js"></script>
+{% endblock additional_javascript %}
