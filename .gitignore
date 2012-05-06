@@ -7,3 +7,4 @@ settings.py
 .#*
 *.py#
 tt.wsgi
+eproject.cfg
