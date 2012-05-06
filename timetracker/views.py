@@ -207,8 +207,17 @@ def edit_profile(request):
     """
     View for sending the user to the edit profile page
     """
-       
     
+    try:
+        user = Tbluser.objects.get(id=request.session.get("user_id"))
+        if not user:
+            raise Http404
+    except Tbluser.DoesNotExist:
+        raise Http404
+    except TypeError:
+        raise Http404
+    print user.firstname, user.lastname
     return render_to_response("editprofile.html",
-                              {},
+                              {'firstname': user.firstname,
+                               'lastname': user.lastname},
                               RequestContext(request))
