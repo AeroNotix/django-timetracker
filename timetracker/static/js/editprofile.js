@@ -30,12 +30,6 @@ function submitChanges () {
         return false;
     }
 
-    $.ajaxSetup({
-        "type": "POST",
-        "url": "/ajax",
-        "dataType": "json"
-    });
-
     var passwords = [
         $("#id-password").val(),
         $("#id-password-rpt").val()
@@ -59,5 +53,31 @@ function submitChanges () {
         "password": $("#id-password").val()
     }
 
+
+    $.ajaxSetup({
+        "type": "POST",
+        "url": "/ajax",
+        "dataType": "json",
+        "data": {
+            "form_type": "profileedit",
+            "firstname": $("#id-firstname").val(),
+            "lastname": $("#id-lastname").val(),
+            "password": $("#id-password").val(),
+        }
+    });
+
+    $.ajax({
+        success: function(data) {
+            $("#edit-profile-wrapper")
+                .fadeTo(500, 0, function () {
+                    $("#edit-profile-wrapper")
+                        .load("/edit_profile/ #edit-profile-table",
+                              function () {
+                                  $("#edit-profile-wrapper")
+                                      .fadeTo(500, 1);
+                              });
+                });
+        }
+    });
     return true;
 }

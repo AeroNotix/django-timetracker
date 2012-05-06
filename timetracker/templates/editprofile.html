@@ -9,6 +9,7 @@
 {% endblock header %}
 
 {% block content %}
+<div id="edit-profile-wrapper">
   <table id="edit-profile-table">
     <tr>
       <td>
@@ -47,8 +48,9 @@
       <td align="right">
         <input type="button" onclick="submitChanges()" value="Submit"/>
       </td>
-</table>
-{% endblock content %}
-{% block additional_javascript %}
-    <script type="text/javascript" src="{{ STATIC_URL }}js/editprofile.js"></script>
-{% endblock additional_javascript %}
+  </table>
+</div>
+  {% endblock content %}
+  {% block additional_javascript %}
+  <script type="text/javascript" src="{{ STATIC_URL }}js/editprofile.js"></script>
+  {% endblock additional_javascript %}

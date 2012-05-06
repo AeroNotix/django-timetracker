@@ -14,7 +14,8 @@ from tracker.forms import EntryForm, AddForm, Login
 from utils.calendar_utils import (gen_calendar, ajax_add_entry,
                                   ajax_change_entry, ajax_delete_entry,
                                   ajax_error, get_user_data, admin_check,
-                                  delete_user, useredit, mass_holidays)
+                                  delete_user, useredit, mass_holidays,
+                                  profile_edit)
 
 def index(request):
     """
@@ -136,7 +137,8 @@ def ajax(request):
         'get_user_data': get_user_data,
         'useredit': useredit,
         'delete_user': delete_user,
-        'mass_holidays': mass_holidays
+        'mass_holidays': mass_holidays,
+        'profileedit': profile_edit
         }
     return ajax_funcs.get(form_type,
                           ajax_error("Form not found")

@@ -721,3 +721,42 @@ def mass_holidays(request):
 
     json_data['success'] = True
     return json_data
+
+
+@request_check
+@json_response
+def profile_edit(request):
+    """
+    Asynchronously edits a user's profile
+    """
+
+    json_data = {
+        "success": False,
+        "error": ''
+    }
+
+    try:
+        # get the user object from the db
+        user = Tbluser.objects.get(id=request.session.get("user_id"))
+    except Tbluser.DoesNotExist:
+        json_data['error'] = "User not found"
+        return json_data
+
+    # pull the data out the form
+    form_data = get_request_data({
+        'firstname': None,
+        'lastname': None,
+        'password': None
+        }, request)
+    # get request data also pulls out the user_id,
+    # we don't need it
+    form_data.pop("user_id")
+
+    # get the items from the form and save them onto the
+    # user object
+    for key, value in form_data.items():
+        setattr(user, key, value)
+    user.save()
+
+    json_data['success'] = True
+    return json_data
