@@ -1,5 +1,5 @@
 /*
-   Intended to validate form fields
+  Intended to validate form fields
 */
 
 function validateDate (field) {
