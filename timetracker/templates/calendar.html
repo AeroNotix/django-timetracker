@@ -4,6 +4,14 @@
     <link href="{{ STATIC_URL }}calendar.css" type="text/css"
           rel="stylesheet" />
 {% endblock header %}
+{% block menubar %}
+<link href="{{ STATIC_URL }}nav.css" type="text/css" rel="stylesheet" />
+<body>
+  <div id="naver">
+    <li><a href="edit_profile"></br />Edit Profile</a></li>
+    <li id="logout-btn"><a href="/logout/"><br/>Logout</a></li>
+  </div>
+{% endblock menubar %}
 {% block content %}
 <table id="calendar-table">
   <tr>

@@ -2,9 +2,11 @@
    margin-top: 10%;
    margin-left: auto;
    margin-right: auto;
+   border: 2px solid #1d1d1d;
 }
 
 #holiday-table {
+
    border-collapse: collapse;
    margin-left: auto;
    margin-right: auto;

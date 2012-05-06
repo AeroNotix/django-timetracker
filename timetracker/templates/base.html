@@ -4,15 +4,10 @@
     <title>{% block title %}{% endblock %}</title>
     <link href="{{ STATIC_URL }}stylesheet.css" type="text/css" rel="stylesheet" />
 	<link type="text/css" href="{{ STATIC_URL }}jquery/css/ui-darkness/jquery-ui-1.8.18.custom.css" rel="stylesheet" />
+    <link href="{{ STATIC_URL }}nav.css" type="text/css" rel="stylesheet" />
     {% block header %}
     {% endblock header %}
     {% block menubar %}
-    <div id="menu-bar">
-      <a id="logout" href="/logout/">
-        <img class="menu-button"
-             src="{{ STATIC_URL }}images/base/logout.gif" />
-      </a>
-    </div>
     {% endblock menubar %}
     {% block content %}
     {% endblock %}
