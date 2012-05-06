@@ -55,6 +55,7 @@ def login(request):
 
         # if all goes well, send to the tracker
         request.session['user_id'] = usr.id
+        request.session['firstname'] = usr.firstname
 
         if usr.user_type == "ADMIN":
             return HttpResponseRedirect("/admin_view/")
@@ -103,7 +104,8 @@ def user_view(request,
         {
          'calendar': calendar_table,
          'changeform': EntryForm(),
-         'addform' : AddForm()
+         'addform' : AddForm(),
+         'welcome_name': request.session['firstname']
         },
         RequestContext(request)
         )
@@ -160,7 +162,8 @@ def admin_view(request):
         return HttpResponseRedirect("/calendar/")
 
     return render_to_response("admin_view.html",
-                              {"employees": employees},
+                              {"employees": employees,
+                               'welcome_name': request.session['firstname']},
                                RequestContext(request))
 @admin_check
 def add_change_user(request):
@@ -180,7 +183,8 @@ def add_change_user(request):
         "useredit.html",
         {
         "employees": employees,
-        "user_form": UserForm()
+        "user_form": UserForm(),
+        'welcome_name': request.session['firstname']
         },
         RequestContext(request)
     )
@@ -199,7 +203,8 @@ def holiday_planning(request,
         "holidays.html",
         {
         "holiday_table": auth.gen_holiday_list(int(year),
-                                               int(month))
+                                               int(month)),
+        'welcome_name': request.session['firstname']
         },
         RequestContext(request))
 
@@ -209,7 +214,7 @@ def edit_profile(request):
     """
     View for sending the user to the edit profile page
     """
-    
+
     try:
         user = Tbluser.objects.get(id=request.session.get("user_id"))
         if not user:
@@ -221,5 +226,6 @@ def edit_profile(request):
     print user.firstname, user.lastname
     return render_to_response("editprofile.html",
                               {'firstname': user.firstname,
-                               'lastname': user.lastname},
+                               'lastname': user.lastname,
+                              'welcome_name': request.session['firstname']},
                               RequestContext(request))
