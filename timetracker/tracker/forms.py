@@ -5,6 +5,7 @@ Forms used for user input for the tracker app
 from django import forms
 from timetracker.utils.datemaps import DAYTYPE_CHOICES
 
+
 class EntryForm(forms.Form):
     """
     Change entry form
@@ -79,4 +80,3 @@ class Login(forms.Form):
 
     password.widget.attrs.update({'class': 'login-form',
                                   'id': 'login-password'})
-

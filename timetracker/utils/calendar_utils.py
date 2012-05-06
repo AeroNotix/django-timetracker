@@ -18,6 +18,7 @@ from timetracker.tracker.models import Tblauthorization as Tblauth
 from timetracker.utils.database_errors import DUPLICATE_ENTRY
 from timetracker.utils.datemaps import MONTH_MAP
 
+
 def pad(string, padchr='0', amount=2):
     """
     Pads a string
@@ -26,9 +27,10 @@ def pad(string, padchr='0', amount=2):
 
     if len(str(string)) < amount:
         pre = padchr * (amount - len(string))
-        return pre+string
+        return pre + string
 
     return string
+
 
 def get_request_data(form, request):
 
@@ -57,6 +59,7 @@ def get_request_data(form, request):
 
     return data
 
+
 def validate_time(start, end):
 
     """
@@ -68,6 +71,7 @@ def validate_time(start, end):
 
     return (datetime.time(shour, sminute)
             < datetime.time(ehour, eminute))
+
 
 def parse_time(timestring, type_of=int):
 
@@ -114,6 +118,7 @@ def calendar_wrapper(function):
 
     return inner
 
+
 @calendar_wrapper
 def gen_calendar(year=datetime.datetime.today().year,
                  month=datetime.datetime.today().month,
@@ -132,7 +137,7 @@ def gen_calendar(year=datetime.datetime.today().year,
     # django passes us Unicode strings
     year, month, day = int(year), int(month), int(day)
 
-    if month-1 not in MONTH_MAP.keys():
+    if month - 1 not in MONTH_MAP.keys():
         raise Http404
 
     # if we've generated December, link to the next year
@@ -146,7 +151,6 @@ def gen_calendar(year=datetime.datetime.today().year,
         previous_url = '"/calendar/%s/%s"' % (year - 1, 12)
     else:
         previous_url = '"/calendar/%s/%s"' % (year, month - 1)
-
 
     # user_id came from sessions or the ajax call
     # so this is pretty safe
@@ -194,7 +198,7 @@ def gen_calendar(year=datetime.datetime.today().year,
                 </td>
               </tr>\n""".format(previous_url,
                                 next_url,
-                                MONTH_MAP[int(month)-1][1]
+                                MONTH_MAP[int(month) - 1][1]
                         )
            )
 
@@ -288,6 +292,7 @@ def gen_calendar(year=datetime.datetime.today().year,
     # join up the html and push it back
     return ''.join(cal_html)
 
+
 def json_response(func):
 
     """
@@ -309,6 +314,7 @@ def json_response(func):
         return HttpResponse(simplejson.dumps(func(request)),
                             mimetype="application/javscript")
     return inner
+
 
 def request_check(func):
 
@@ -389,6 +395,7 @@ def ajax_add_entry(request):
     json_data['calendar'] = calendar
     return json_data
 
+
 @request_check
 @json_response
 def ajax_delete_entry(request):
@@ -432,6 +439,7 @@ def ajax_delete_entry(request):
     json_data['calendar'] = calendar
     return json_data
 
+
 @json_response
 def ajax_error(error):
 
@@ -444,6 +452,7 @@ def ajax_error(error):
         'success': False,
         'error': error
         }
+
 
 @request_check
 @json_response
@@ -514,6 +523,7 @@ def ajax_change_entry(request):
     json_data['calendar'] = calendar
     return json_data
 
+
 def admin_check(func):
 
     """
@@ -529,6 +539,7 @@ def admin_check(func):
         return func(request, **kwargs)
 
     return inner
+
 
 @request_check
 @admin_check
@@ -564,6 +575,7 @@ def get_user_data(request):
         }
 
     return json_data
+
 
 @request_check
 @admin_check
@@ -679,7 +691,8 @@ def mass_holidays(request):
 
     for entry in holiday_data.items():
 
-        day = str(int(entry[0])) # conversion to int->str removes newlines easier
+        # conversion to int->str removes newlines easier
+        day = str(int(entry[0]))
         year = form_data['year']
         month = form_data['month']
         date = '-'.join([year, month, day])

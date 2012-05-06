@@ -17,6 +17,7 @@ from utils.calendar_utils import (gen_calendar, ajax_add_entry,
                                   delete_user, useredit, mass_holidays,
                                   profile_edit)
 
+
 def index(request):
     """
     Serve the root page, there's nothing there at the moment
@@ -24,6 +25,7 @@ def index(request):
     return render_to_response('index.html',
                               {'login': Login()},
                               RequestContext(request))
+
 
 def login(request):
 
@@ -78,6 +80,7 @@ def logout(request):
 
     return HttpResponseRedirect("/")
 
+
 def user_view(request,
              year=datetime.date.today().year,
              month=datetime.date.today().month,
@@ -104,11 +107,12 @@ def user_view(request,
         {
          'calendar': calendar_table,
          'changeform': EntryForm(),
-         'addform' : AddForm(),
+         'addform': AddForm(),
          'welcome_name': request.session['firstname']
         },
         RequestContext(request)
         )
+
 
 def ajax(request):
 
@@ -146,6 +150,7 @@ def ajax(request):
                           ajax_error("Form not found")
                           )(request)
 
+
 @admin_check
 def admin_view(request):
 
@@ -165,6 +170,8 @@ def admin_view(request):
                               {"employees": employees,
                                'welcome_name': request.session['firstname']},
                                RequestContext(request))
+
+
 @admin_check
 def add_change_user(request):
 
@@ -188,6 +195,7 @@ def add_change_user(request):
         },
         RequestContext(request)
     )
+
 
 @admin_check
 def holiday_planning(request,

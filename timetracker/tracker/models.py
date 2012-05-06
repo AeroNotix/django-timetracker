@@ -11,6 +11,7 @@ from django.forms import ModelForm
 from timetracker.utils.datemaps import (MONTH_MAP, DAYTYPE_CHOICES,
                                         generate_select)
 
+
 class Tbluser(models.Model):
 
     """
@@ -168,20 +169,20 @@ class Tbluser(models.Model):
 
         for item in tracking_days:
 
-            total += (      item.end_time.hour
-                        - item.start_time.hour )
+            total += (item.end_time.hour
+                      - item.start_time.hour)
 
-            total_mins += (     item.end_time.minute
-                            - item.start_time.minute )
+            total_mins += (item.end_time.minute
+                           - item.start_time.minute)
 
-        trackingnumber =    (     len(tracking_days) * self.shiftlength.hour) \
-                              -  (total + (total_mins / 60.0)               )
+        trackingnumber = (len(tracking_days) * self.shiftlength.hour) \
+                         - (total + (total_mins / 60.0))
 
         tracker_class_map = {
             # create a map of values which map to the classes
-            frozenset(range(1)) : 'class=tracker-val-ok',
-            frozenset(range(-3, 0)) : 'class=tracker-val-warning',
-            frozenset(range(1, 4)) : 'class=tracker-val-warning',
+            frozenset(range(1)): 'class=tracker-val-ok',
+            frozenset(range(-3, 0)): 'class=tracker-val-warning',
+            frozenset(range(1, 4)): 'class=tracker-val-warning',
             }
 
         tracking_class = "class=tracking-val-danger"
@@ -193,10 +194,12 @@ class Tbluser(models.Model):
 
         return "<p %s> %.2f </p>" % (tracking_class, trackingnumber)
 
+
 class UserForm(ModelForm):
 
     class Meta:
         model = Tbluser
+
 
 class Tblauthorization(models.Model):
 
@@ -204,21 +207,22 @@ class Tblauthorization(models.Model):
     Links Administrators (managers) with their team.
     """
 
-    admin = models.ForeignKey(Tbluser,
-                              limit_choices_to = {
-                               'user_type':'ADMIN'
-                              },
-                              related_name="admin_foreign"
+    admin = models.ForeignKey(
+        Tbluser,
+        limit_choices_to={
+        'user_type': 'ADMIN'
+        },
+        related_name="admin_foreign"
+    )
 
-                   )
-
-    users = models.ManyToManyField(Tbluser,
-                                   limit_choices_to = {
-                                    'user_type':'RUSER'
-                                   },
-                                   related_name="subordinates",
-                                   verbose_name = ("Additional Users")
-                   )
+    users = models.ManyToManyField(
+        Tbluser,
+        limit_choices_to={
+        'user_type': 'RUSER'
+        },
+        related_name="subordinates",
+        verbose_name=("Additional Users")
+    )
 
     class Meta:
 
@@ -230,7 +234,6 @@ class Tblauthorization(models.Model):
         verbose_name = "Authorization Link"
         verbose_name_plural = "Authorization Links"
 
-
     def __unicode__(self):
 
         """
@@ -238,7 +241,6 @@ class Tblauthorization(models.Model):
         """
 
         return str(self.admin)
-
 
     def display_users(self):
 
@@ -289,7 +291,6 @@ class Tblauthorization(models.Model):
 
         return ''.join(str_output)
 
-
     def gen_holiday_list(self,
                          year=dt.datetime.today().year,
                          month=dt.datetime.today().month):
@@ -316,7 +317,7 @@ class Tblauthorization(models.Model):
         to_out('<table year=%s month=%s id="holiday-table">' % (year, month))
         to_out("""<tr>
                      <th align="centre" colspan="100">{0}</th>
-                  </tr>""".format(MONTH_MAP[month-1][1]))
+                  </tr>""".format(MONTH_MAP[month - 1][1]))
 
         # generate the calendar, flatten it and
         # get rid of the zeros
@@ -365,8 +366,8 @@ class Tblauthorization(models.Model):
             to_out('</tr>')
 
         # generate the data for the year select box
-        year_select_data = [(y, y) for y in range(year, year-3, -1)]
-        year_select_data.extend( [(y, y) for y in range(year+1, year+3)] )
+        year_select_data = [(y, y) for y in range(year, year - 3, -1)]
+        year_select_data.extend([(y, y) for y in range(year + 1, year + 3)])
         year_select_data.sort()
 
         # generate the data for the month select box
@@ -378,18 +379,24 @@ class Tblauthorization(models.Model):
         # generate the selecte box for the months
         month_select = generate_select(month_select_data, id="month_select")
         # generate submit all button
-        to_out("""<tr>
-                    <td colspan="100" align="right">
-                      <input id="btn_change_td" value="Reload" type="button" onclick="change_table_data()" />
-                      {0} {1}
-                      <input id="submit_all" value="Submit All" type="button" onclick="submit_all()" />
-                    </td>
-                  </tr>""".format(year_select, month_select))
+        to_out("""
+        <tr>
+          <td colspan="100" align="right">
+            <input id="btn_change_td" value="Reload"
+                   type="button"
+                   onclick="change_table_data()" />
+              {0} {1}
+            <input id="submit_all" value="Submit All"
+                   type="button"
+                   onclick="submit_all()" />
+          </td>
+         </tr>""".format(year_select, month_select))
 
         return ''.join(str_output)
 
     display_users.allow_tags = True
     display_users.short_discription = "Subordinate Users"
+
 
 class TrackingEntry(models.Model):
 

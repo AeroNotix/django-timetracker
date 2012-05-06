@@ -15,8 +15,8 @@ MONTH_MAP = {
     7: ('AUG', 'August'),
     8: ('SEP', 'September'),
     9: ('OCT', 'October'),
-    10:('NOV', 'November'),
-    11:('DEC', 'December')
+    10: ('NOV', 'November'),
+    11: ('DEC', 'December')
 }
 
 DAYTYPE_CHOICES = (
