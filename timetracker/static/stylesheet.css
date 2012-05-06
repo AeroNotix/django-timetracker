@@ -103,11 +103,10 @@ a:visited {
 }
 
 #edit-user-table {
-   margin-top: 50px;
-   width: 100%;
+   margin-top: 80px;
    margin-left: auto;
    margin-right: auto;
-   background-color: #1d1d1d;
-   color: #ccc;
+   background-color: white;
+   color: #1d1d1d;
    font-family: "Trebuchet MS", Helvetica, sans-serif
 }
