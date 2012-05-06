@@ -2,7 +2,10 @@
 </head>
 <body>
   <div id="naver">
-    <li id="logout-btn"><a href="/logout/"><br/>Logout</a></li>
+    <div id="right-elems">
+      <li id="welcome-name"><a><br/>Welcome {{ welcome_name }}</a></li>
+      <li id="logout-btn"><a href="/logout/"><br/>Logout</a></li>
+    </div>
     {% block navelements %}
     {% endblock navelements %}
   </div>
