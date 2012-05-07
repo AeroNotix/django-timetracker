@@ -5,11 +5,13 @@ Definition of the models used in the timetracker app
 import datetime as dt
 import calendar as cdr
 
+from operator import mul, add
+
 from django.db import models
 from django.forms import ModelForm
 
 from timetracker.utils.datemaps import (MONTH_MAP, DAYTYPE_CHOICES,
-                                        generate_select)
+                                        WORKING_CHOICES, generate_select)
 
 
 class Tbluser(models.Model):
@@ -157,42 +159,59 @@ class Tbluser(models.Model):
 
         return holiday_balance
 
-    def get_total_balance(self):
+    def get_total_balance(self, ret='html'):
 
         """
         Calculates the total balance for the user.
         """
 
-        total, total_mins = 0, 0
+        # we'll use augmented assignment
+        # so zero our local vars here
+        (trackingnumber, total_hours, total_mins,
+         shift_hours, shift_minutes) = (0, 0, 0, 0, 0)
+
+        day_types = [element[0] for element in WORKING_CHOICES]
         tracking_days = TrackingEntry.objects.filter(user_id=self.id,
-                                                     daytype="WKDAY")
+                                                     daytype__in=day_types)
 
         for item in tracking_days:
+            shift_hours += self.shiftlength.hour
+            shift_minutes += self.shiftlength.minute
 
-            total += (item.end_time.hour
-                      - item.start_time.hour)
+            total_hours  += (  item.end_time.hour
+                             - item.start_time.hour
+                             - item.breaks.hour
+                            )
 
-            total_mins += (item.end_time.minute
-                           - item.start_time.minute)
+            total_mins += (  item.end_time.minute
+                           - item.start_time.minute
+                           - item.breaks.minute
+                          )
 
-        trackingnumber = (len(tracking_days) * self.shiftlength.hour) \
-                         - (total + (total_mins / 60.0))
+        trackingnumber = (add(shift_hours, (shift_minutes / 60.0))
+                           - add(total_hours, (total_mins / 60.0)))
 
-        tracker_class_map = {
-            # create a map of values which map to the classes
-            frozenset(range(1)): 'class=tracker-val-ok',
-            frozenset(range(-3, 0)): 'class=tracker-val-warning',
-            frozenset(range(1, 4)): 'class=tracker-val-warning',
+        if ret == 'html':
+            tracker_class_map = {
+                # create a map of values which map to the classes
+                frozenset(range(1)): 'class=tracker-val-ok',
+                frozenset(range(-3, 0)): 'class=tracker-val-warning',
+                frozenset(range(1, 4)): 'class=tracker-val-warning',
             }
 
-        tracking_class = "class=tracking-val-danger"
-        for key in tracker_class_map:
-            # look in the map for the balance value to
-            # retrieve the class
-            if int(trackingnumber) in key:
-                tracking_class = tracker_class_map[key]
+            tracking_class = "class=tracking-val-danger"
+            for key in tracker_class_map:
+                # look in the map for the balance value to
+                # retrieve the class
+                if int(trackingnumber) in key:
+                    tracking_class = tracker_class_map[key]
 
-        return "<p %s> %.2f </p>" % (tracking_class, trackingnumber)
+            return "<p %s> %.2f </p>" % (tracking_class, trackingnumber)
+        elif ret == 'int':
+            return trackingnumber
+        elif ret == 'dbg':
+            return (trackingnumber, total_hours, total_mins,
+                    shift_hours, shift_minutes)
 
 
 class UserForm(ModelForm):

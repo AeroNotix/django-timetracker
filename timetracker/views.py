@@ -99,16 +99,18 @@ def user_view(request,
     if not request.session.get('user_id', None):
         raise Http404
 
+    user_id = request.session['user_id']
     calendar_table = gen_calendar(year, month, day,
-                                  user=request.session['user_id'])
-
+                                  user=user_id)
+    balance = Tbluser.objects.get(id=user_id).get_total_balance(ret='int')
     return render_to_response(
         'calendar.html',
         {
          'calendar': calendar_table,
          'changeform': EntryForm(),
          'addform': AddForm(),
-         'welcome_name': request.session['firstname']
+         'welcome_name': request.session['firstname'],
+         'balance': balance
         },
         RequestContext(request)
         )
@@ -231,9 +233,12 @@ def edit_profile(request):
         raise Http404
     except TypeError:
         raise Http404
-    print user.firstname, user.lastname
+
+    balance = user.get_total_balance(ret='int')
     return render_to_response("editprofile.html",
                               {'firstname': user.firstname,
                                'lastname': user.lastname,
-                              'welcome_name': request.session['firstname']},
+                               'welcome_name': request.session['firstname'],
+                               'balance': balance
+                               },
                               RequestContext(request))
