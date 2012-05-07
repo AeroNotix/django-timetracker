@@ -19,21 +19,25 @@ MONTH_MAP = {
     11: ('DEC', 'December')
 }
 
-DAYTYPE_CHOICES = (
+WORKING_CHOICES = (
     ('WKDAY', 'Work Day'),
+    ('SATUR', 'Work on Saturday'),
+    ('WKHOM', 'Work at home'),
+    ('SATUR', 'Work on Saturday')
+)
+
+ABSENT_CHOICES = (
+    ('PUABS', 'Public Holiday'),
     ('SICKD', 'Sickness Absence'),
     ('MEDIC', 'Medical Leave'),
     ('SPECI', 'Special Leave'),
-    ('SATUR', 'Work on Saturday'),
     ('HOLIS', 'Vacation'),
-    ('PUWRK', 'Work on Public Holiday'),
-    ('PUABS', 'Public Holiday'),
     ('RETRN', 'Return for Public Holiday'),
-    ('WKHOM', 'Work at home'),
     ('TRAIN', 'Training'),
     ('DAYOD', 'Day on demand'),
 )
 
+DAYTYPE_CHOICES = WORKING_CHOICES + ABSENT_CHOICES
 
 def generate_select(data, id=''):
     """
