@@ -6,11 +6,9 @@
 <link href="{{ STATIC_URL }}holidays.css" type="text/css"
       rel="stylesheet" />
 {% endblock header %}
-
 {% block menubar %}
 {% include "includes/admin-nav.html" %}
 {% endblock menubar %}
-
 {% block content %}
 <!--[If IE]>
 <div id=IEFix>
@@ -65,7 +63,6 @@
 <!--[If IE]>
 </div>
 <![endif]-->
-
 {% endblock content %}
 {% block additional_javascript %}
 <script type="text/javascript" src="{{ STATIC_URL }}js/holiday_page.js"></script>

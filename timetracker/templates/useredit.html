@@ -7,6 +7,9 @@
 {% endblock menubar %}
 
 {% block content %}
+<!--[ifIE]>
+<div id=IEroot>
+<!--[endif]-->
 <div id="edit-user-wrapper">
   <table id="edit-user-table">
     <tr>
@@ -32,8 +35,9 @@
       </td>
   </table>
 </div>
-
-
+<!--[ifIE]>
+</div>
+<!--[endif]-->
 {% endblock %}
 {% block additional_javascript %}
 <script type="text/javascript" src="{{ STATIC_URL }}js/useredit.js"></script>

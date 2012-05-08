@@ -7,6 +7,10 @@
 {% include "includes/admin-nav.html" %}
 {% endblock menubar %}
 {% block content %}
+<!--[ifIE]>
+<div id=IEroot>
+<!--[endif]-->
+
 <table id="user-table">
   <tr>
     <td valign="top">
@@ -36,6 +40,9 @@
     </td>
   </tr>
 </table>
+<!--[ifIE]>
+</div>
+<!--[endif]-->
 {% endblock content %}
 {% block additional_javascript %}
 <script type="text/javascript" src="{{ STATIC_URL }}js/admin_view.js"></script>
