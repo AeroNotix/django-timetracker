@@ -32,4 +32,5 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^user_edit/?$', views.add_change_user),
     url(r'^edit_profile/?$', views.edit_profile),
+    url(r'^explain/?$', views.explain),
 )

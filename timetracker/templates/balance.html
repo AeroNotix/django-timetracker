@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block menubar %}
+{% include "includes/user-nav.html" %}
+{% endblock menubar %}
+
+
+{% block content %}
+<!--[ifIE]>
+<div id="IEroot">
+<!--[endif]-->
+<div id="text-item">
+  <h3>Understanding your balance</h3>
+  <p>
+    Your balance is derived from taking your allocated shift length of
+    {{ shiftlength }}, multiplying it by the amount of work days recorded
+    in the database ({{ working_days }}) then taking the cumulative total
+    of the time tracked and finding the difference between the projected
+    total and the actual total.
+  </p>
+  <p>Below is a mathematical representation:</p>
+  <div id="code">
+    <ul>&nbsp&nbsp(shiftLength * (number_of_days_logged))</ul>
+    <ul>- (total_time_logged)</ul>       
+  </div>
+</div>
+<!--[ifIE]>
+</div>
+<!--[endif]-->
+{% endblock content %}

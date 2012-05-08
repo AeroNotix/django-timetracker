@@ -5,10 +5,10 @@ Views which are mapped from the URL objects in urls.py
 import datetime
 
 from django.http import HttpResponse, Http404, HttpResponseRedirect
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 
-from tracker.models import Tbluser, UserForm
+from tracker.models import Tbluser, UserForm, TrackingEntry
 from tracker.models import Tblauthorization as tblauth
 from tracker.forms import EntryForm, AddForm, Login
 from utils.calendar_utils import (gen_calendar, ajax_add_entry,
@@ -17,8 +17,27 @@ from utils.calendar_utils import (gen_calendar, ajax_add_entry,
                                   delete_user, useredit, mass_holidays,
                                   profile_edit)
 
+def loggedin(func):
+
+    """
+    Decorator to make sure that the view is being accessed
+    by a logged in user
+    """
+
+    def inner(request, *args, **kwargs):
+        try:
+            get_object_or_404(Tbluser, id=request.session.get("user_id"))
+        except Tbluser.DoesNotExist:
+            raise Http404
+        except TypeError:
+            raise Http404
+
+        return func(request)
+
+    return inner
 
 def index(request):
+
     """
     Serve the root page, there's nothing there at the moment
     """
@@ -80,7 +99,7 @@ def logout(request):
 
     return HttpResponseRedirect("/")
 
-
+@loggedin
 def user_view(request,
              year=datetime.date.today().year,
              month=datetime.date.today().month,
@@ -95,9 +114,6 @@ def user_view(request,
 
     The generated HTML is pretty printed
     """
-
-    if not request.session.get('user_id', None):
-        raise Http404
 
     user_id = request.session['user_id']
     calendar_table = gen_calendar(year, month, day,
@@ -218,21 +234,14 @@ def holiday_planning(request,
         },
         RequestContext(request))
 
-
+@loggedin
 def edit_profile(request):
 
     """
     View for sending the user to the edit profile page
     """
 
-    try:
-        user = Tbluser.objects.get(id=request.session.get("user_id"))
-        if not user:
-            raise Http404
-    except Tbluser.DoesNotExist:
-        raise Http404
-    except TypeError:
-        raise Http404
+    user = Tbluser.objects.get(id=request.session.get("user_id"))
 
     balance = user.get_total_balance(ret='int')
     return render_to_response("editprofile.html",
@@ -240,5 +249,27 @@ def edit_profile(request):
                                'lastname': user.lastname,
                                'welcome_name': request.session['firstname'],
                                'balance': balance
+                               },
+                              RequestContext(request))
+
+@loggedin
+def explain(request):
+
+    """
+    Renders the Balance explanation page
+    """
+
+    user = Tbluser.objects.get(id=request.session.get("user_id"))
+    shift = str(user.shiftlength.hour) + ':' + str(user.shiftlength.minute)
+    working_days = TrackingEntry.objects.filter(user=user.id).count()
+
+    balance = user.get_total_balance(ret='int')
+    return render_to_response("balance.html",
+                              {'firstname': user.firstname,
+                               'lastname': user.lastname,
+                               'welcome_name': request.session['firstname'],
+                               'balance': balance,
+                               'shiftlength': shift,
+                               'working_days': working_days
                                },
                               RequestContext(request))
