@@ -8,6 +8,7 @@ import datetime
 import calendar as cdr
 
 from django.core.handlers.wsgi import WSGIRequest
+from django.core.mail import send_mail
 from django.http import Http404, HttpResponse
 from django.db import IntegrityError
 from django.forms import ValidationError
@@ -616,7 +617,7 @@ def useredit(request):
     """
 
     # create a random enough password
-    password = ''.join([chr(random.randint(33, 90)) for _ in range(12)])
+    password = ''.join([chr(random.randint(65, 91)) for _ in range(12)])
     data = {'password': password}
 
     # get the data off the request object
@@ -630,7 +631,7 @@ def useredit(request):
     }
 
     try:
-        if not request.POST.get("mode"):
+        if request.POST.get("mode") == "false":
             # create the user
             user = Tbluser(**data)
             user.save()
@@ -638,6 +639,19 @@ def useredit(request):
             admin = Tblauth.objects.get(id=request.session.get('user_id'))
             admin.users.add(user)
             admin.save()
+            email_message = """
+Hi {0},
+\tYour account has been created with the timetracker.
+Please use the following password to login: {1}.\n
+Regards,
+{2}
+""".format(user.firstname, password, admin.admin.firstname)
+
+            send_mail('Your account has been created',
+                      email_message,
+                      'timetracker@unmonitored.com',
+                      [user.user_id],
+                      fail_silently=False)
         else:
             # If the mode contains a user_id
             # get that user and update it's
