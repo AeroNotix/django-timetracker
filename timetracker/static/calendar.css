@@ -226,6 +226,7 @@ this is a jQuery add-on
 /* table */
 
 #calendar-table {
+   height: 100%;
    background: black;
    margin-top: 100px;
    margin-left: auto;
