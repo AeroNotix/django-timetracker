@@ -5,7 +5,7 @@ Definition of the models used in the timetracker app
 import datetime as dt
 import calendar as cdr
 
-from operator import mul, add
+from operator import add
 
 from django.db import models
 from django.forms import ModelForm
@@ -188,27 +188,28 @@ class Tbluser(models.Model):
                            - item.breaks.minute
                           )
 
-        trackingnumber = (add(shift_hours, (shift_minutes / 60.0))
+        trackingnumber = 0 - (add(shift_hours, (shift_minutes / 60.0))
                            - add(total_hours, (total_mins / 60.0)))
 
         if ret == 'html':
             tracker_class_map = {
                 # create a map of values which map to the classes
-                frozenset(range(1)): 'class=tracker-val-ok',
-                frozenset(range(-3, 0)): 'class=tracker-val-warning',
-                frozenset(range(1, 4)): 'class=tracker-val-warning',
+                frozenset(range(-3, 3)): 'class=tracker-val-ok',
+                frozenset(range(-6, -3)): 'class=tracker-val-warning',
+                frozenset(range(4, 6)): 'class=tracker-val-warning',
             }
 
-            tracking_class = "class=tracking-val-danger"
+            tracking_class = 'class=tracker-val-danger'
             for key in tracker_class_map:
                 # look in the map for the balance value to
                 # retrieve the class
                 if int(trackingnumber) in key:
                     tracking_class = tracker_class_map[key]
+                    break
 
             return "<p %s> %.2f </p>" % (tracking_class, trackingnumber)
         elif ret == 'int':
-            return trackingnumber
+            return '%.2f hrs' % trackingnumber
         elif ret == 'dbg':
             return (trackingnumber, total_hours, total_mins,
                     shift_hours, shift_minutes)
