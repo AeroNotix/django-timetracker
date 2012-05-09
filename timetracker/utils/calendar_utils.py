@@ -636,7 +636,11 @@ def useredit(request):
             user = Tbluser(**data)
             user.save()
             # link the user to the admin
-            admin = Tblauth.objects.get(id=request.session.get('user_id'))
+            try:
+                admin = Tblauth.objects.get(id=request.session.get('user_id'))
+            except Tblauth.DoesNotExist:
+                admin = Tblauth(admin=Tbluser.objects.get(id=request.session.get('user_id')))
+                admin.save()
             admin.users.add(user)
             admin.save()
             email_message = """

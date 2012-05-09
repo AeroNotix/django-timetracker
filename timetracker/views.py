@@ -182,7 +182,7 @@ def admin_view(request):
     try:
         employees = tblauth.objects.get(admin=admin_id)
     except tblauth.DoesNotExist:
-        return HttpResponseRedirect("/calendar/")
+        employees = []
 
     return render_to_response("admin_view.html",
                               {"employees": employees,
@@ -202,7 +202,7 @@ def add_change_user(request):
     try:
         employees = tblauth.objects.get(admin_id=admin_id)
     except tblauth.DoesNotExist:
-        pass
+        employees = []
 
     return render_to_response(
         "useredit.html",
@@ -223,7 +223,10 @@ def holiday_planning(request,
     Generates the full holiday table for all employees under a manager
     """
 
-    auth = tblauth.objects.get(admin_id=request.session.get('user_id'))
+    try:
+        auth = tblauth.objects.get(admin_id=request.session.get('user_id'))
+    except tblauth.DoesNotExist:
+        return HttpResponseRedirect("/admin_view/")
 
     return render_to_response(
         "holidays.html",
