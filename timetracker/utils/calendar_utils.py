@@ -637,7 +637,7 @@ def useredit(request):
             user.save()
             # link the user to the admin
             try:
-                admin = Tblauth.objects.get(id=request.session.get('user_id'))
+                admin = Tblauth.objects.get(admin=request.session.get('user_id'))
             except Tblauth.DoesNotExist:
                 admin = Tblauth(admin=Tbluser.objects.get(id=request.session.get('user_id')))
                 admin.save()
