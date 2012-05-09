@@ -23,6 +23,7 @@ class Tbluser(models.Model):
 
     USER_TYPE = (
         ('ADMIN', 'Administrator'),
+        ('TEAML', 'Team Leader'),
         ('RUSER', 'Regular User')
     )
 
@@ -308,109 +309,6 @@ class Tblauthorization(models.Model):
                                                              user.name()))
         to_out("""<option value=null>----------</option>""")
         to_out("""</select>""")
-
-        return ''.join(str_output)
-
-    def gen_holiday_list(self,
-                         year=dt.datetime.today().year,
-                         month=dt.datetime.today().month):
-
-        """
-        Outputs a holiday calendar for that month.
-
-        For each user we get their tracking entries,
-        then iterate over each of their entries
-        checking if it is a holiday or not, if it is
-        then we change the class entry for that number
-        in the day class' dict.
-
-        Adds a submit button along with passing the
-        user_id to it.
-        """
-
-        # we convert the arguments to ints because
-        # we get given unicode objects
-        year, month = int(year), int(month)
-
-        str_output = []
-        to_out = str_output.append
-        to_out('<table year=%s month=%s id="holiday-table">' % (year, month))
-        to_out("""<tr>
-                     <th align="centre" colspan="100">{0}</th>
-                  </tr>""".format(MONTH_MAP[month - 1][1]))
-
-        # generate the calendar, flatten it and
-        # get rid of the zeros
-        calendar_array = list()
-        for week in cdr.monthcalendar(year, month):
-            calendar_array.extend(week)
-        calendar_array = filter((lambda x: x > 0), calendar_array)
-
-        for user in self.users.all():
-            day_classes = {
-                num: 'empty' for num in calendar_array
-            }
-
-            # We have a dict with each day as currently
-            # empty, we iterate through the tracking
-            # entries and apply the daytype from that.
-            for entry in user.tracking_entries(year, month):
-                day_classes[entry.entry_date.day] = entry.daytype
-
-            # output the table row title, which contains:-
-            # Full name, Holiday Balance and the User's
-            # job code.
-            to_out("""
-                   <tr>
-                     <th class="user-td">%s</th>
-                       <td>%s</td>
-                       <td>%s</td>""" % (user.name(),
-                                         user.get_holiday_balance(year),
-                                         user.job_code
-                                         )
-                   )
-
-            # We've mapped the users' days to the day number,
-            # we can write the user_id as an attribute to the
-            # table data and also the dayclass for styling,
-            # also, the current day number so that the table
-            # shows what number we're on.
-            for klass, day in day_classes.items():
-                to_out('<td usrid=%s class=%s>%s\n' % (user.id, day, klass))
-
-            # user_id is added as attr to make mass calls
-            to_out("""<td>
-                        <input value="submit" type="button" user_id="{0}"
-                               onclick="submit_holidays({0})" />
-                      </td>""".format(user.id))
-            to_out('</tr>')
-
-        # generate the data for the year select box
-        year_select_data = [(y, y) for y in range(year, year - 3, -1)]
-        year_select_data.extend([(y, y) for y in range(year + 1, year + 3)])
-        year_select_data.sort()
-
-        # generate the data for the month select box
-        month_select_data = [(month_num + 1, month[1])
-                             for month_num, month in MONTH_MAP.items()]
-
-        # generate the select box for the years
-        year_select = generate_select(year_select_data, id="year_select")
-        # generate the selecte box for the months
-        month_select = generate_select(month_select_data, id="month_select")
-        # generate submit all button
-        to_out("""
-        <tr>
-          <td colspan="100" align="right">
-            <input id="btn_change_td" value="Reload"
-                   type="button"
-                   onclick="change_table_data()" />
-              {0} {1}
-            <input id="submit_all" value="Submit All"
-                   type="button"
-                   onclick="submit_all()" />
-          </td>
-         </tr>""".format(year_select, month_select))
 
         return ''.join(str_output)
 

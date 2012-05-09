@@ -11,21 +11,15 @@
 <div id=IEroot>
 <!--[endif]-->
 <div id="edit-user-wrapper">
-  <table border="1" id="edit-user-table">
+  <table id="edit-user-table">
     <tr>
       <td valign="top"1>
         <table>
           <tr>
-            <th>My Team: </th>
+            <th>My Team:</th>
             <td>
               {{ employees.as_option_list|safe }}
             </td>
-          </tr>
-          <tr>
-            <th>All Employees: </th>
-            <td>
-              {{ all_employees|safe }}
-            <td>
           </tr>
         </table>
       </td>

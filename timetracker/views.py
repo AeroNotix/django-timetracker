@@ -12,10 +12,10 @@ from tracker.models import Tbluser, UserForm, TrackingEntry
 from tracker.models import Tblauthorization as tblauth
 from tracker.forms import EntryForm, AddForm, Login
 
-from utils.datemaps import generate_select
-from utils.calendar_utils import (gen_calendar, ajax_add_entry,
-                                  ajax_change_entry, ajax_delete_entry,
-                                  ajax_error, get_user_data, admin_check,
+from utils.calendar_utils import (gen_calendar, gen_holiday_list,
+                                  ajax_add_entry, ajax_change_entry,
+                                  ajax_delete_entry, ajax_error,
+                                  get_user_data, admin_check,
                                   delete_user, useredit, mass_holidays,
                                   profile_edit)
 
@@ -80,7 +80,7 @@ def login(request):
         request.session['user_id'] = usr.id
         request.session['firstname'] = usr.firstname
 
-        if usr.user_type == "ADMIN":
+        if usr.user_type in ["ADMIN", "TEAML"]:
             return HttpResponseRedirect("/admin_view/")
         else:
             return HttpResponseRedirect("/calendar/")
@@ -206,17 +206,12 @@ def add_change_user(request):
     except tblauth.DoesNotExist:
         employees = []
 
-    # generate the select dropdown for all employees
-    all_employees = generate_select([(user.id, user.name()) for user in Tbluser.objects.filter(user_type='RUSER')],
-                                    id="all_employee_select")
-
     return render_to_response(
         "useredit.html",
         {
         "employees": employees,
         "user_form": UserForm(),
         'welcome_name': request.session['firstname'],
-        'all_employees': all_employees
         },
         RequestContext(request)
     )
@@ -238,8 +233,9 @@ def holiday_planning(request,
     return render_to_response(
         "holidays.html",
         {
-        "holiday_table": auth.gen_holiday_list(int(year),
-                                               int(month)),
+        "holiday_table": gen_holiday_list(auth,
+                                          int(year),
+                                          int(month)),
         'welcome_name': request.session['firstname']
         },
         RequestContext(request))
