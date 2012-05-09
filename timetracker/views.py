@@ -5,7 +5,7 @@ Views which are mapped from the URL objects in urls.py
 import datetime
 
 from django.http import HttpResponse, Http404, HttpResponseRedirect
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render_to_response
 from django.template import RequestContext
 
 from tracker.models import Tbluser, UserForm, TrackingEntry
@@ -15,28 +15,10 @@ from tracker.forms import EntryForm, AddForm, Login
 from utils.calendar_utils import (gen_calendar, gen_holiday_list,
                                   ajax_add_entry, ajax_change_entry,
                                   ajax_delete_entry, ajax_error,
-                                  get_user_data, admin_check,
-                                  delete_user, useredit, mass_holidays,
-                                  profile_edit)
+                                  get_user_data, delete_user, useredit,
+                                  mass_holidays, profile_edit)
+from utils.decorators import admin_check, loggedin
 
-def loggedin(func):
-
-    """
-    Decorator to make sure that the view is being accessed
-    by a logged in user
-    """
-
-    def inner(request, *args, **kwargs):
-        try:
-            get_object_or_404(Tbluser, id=request.session.get("user_id"))
-        except Tbluser.DoesNotExist:
-            raise Http404
-        except TypeError:
-            raise Http404
-
-        return func(request)
-
-    return inner
 
 def index(request):
 
@@ -68,19 +50,19 @@ def login(request):
     try:
         # pull out the user from the POST and
         # match it against our db
-        usr = Tbluser.objects.get(user_id__exact=request.POST['user_name'])
-
+        user = Tbluser.objects.get(user_id__exact=request.POST['user_name'])
+        
     # if the user doesn't match anything, notify
     except Tbluser.DoesNotExist:
         return HttpResponse("Username and Password don't match")
 
-    if usr.password == request.POST['password']:
+    if user.password == request.POST['password']:
 
         # if all goes well, send to the tracker
-        request.session['user_id'] = usr.id
-        request.session['firstname'] = usr.firstname
+        request.session['user_id'] = user.id
+        request.session['firstname'] = user.firstname
 
-        if usr.user_type in ["ADMIN", "TEAML"]:
+        if user.is_admin():
             return HttpResponseRedirect("/admin_view/")
         else:
             return HttpResponseRedirect("/calendar/")
@@ -179,8 +161,9 @@ def admin_view(request):
     view based on their team
     """
 
-    admin_id = request.session.get("user_id", None)
-
+    # retrieve and assign user object
+    admin_id = Tbluser.objects.get(id=request.session.get("user_id", None))
+    
     try:
         employees = tblauth.objects.get(admin=admin_id)
     except tblauth.DoesNotExist:
@@ -266,7 +249,7 @@ def explain(request):
     """
 
     user = Tbluser.objects.get(id=request.session.get("user_id"))
-    shift = str(user.shiftlength.hour) + ':' + str(user.shiftlength.minute)
+    shift = str(user.shiftlength.hour) + ': ' + str(user.shiftlength.minute)
     working_days = TrackingEntry.objects.filter(user=user.id).count()
 
     balance = user.get_total_balance(ret='int')

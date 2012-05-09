@@ -3,16 +3,13 @@ Definition of the models used in the timetracker app
 '''
 
 import datetime as dt
-import calendar as cdr
 
 from operator import add
 
 from django.db import models
 from django.forms import ModelForm
 
-from timetracker.utils.datemaps import (MONTH_MAP, DAYTYPE_CHOICES,
-                                        WORKING_CHOICES, generate_select)
-
+from timetracker.utils.datemaps import WORKING_CHOICES, DAYTYPE_CHOICES
 
 class Tbluser(models.Model):
 
@@ -139,6 +136,12 @@ class Tbluser(models.Model):
         return TrackingEntry.objects.filter(user_id=self.id,
                                             entry_date__year=year,
                                             entry_date__month=month)
+    def is_admin(self):
+        """
+        Returns whether or not the user instance is an admin
+        """
+
+        return self.user_type in ["ADMIN", "TEAML"]
 
     def get_holiday_balance(self, year):
         """

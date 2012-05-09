@@ -19,6 +19,8 @@ from timetracker.tracker.models import TrackingEntry, Tbluser
 from timetracker.tracker.models import Tblauthorization as Tblauth
 from timetracker.utils.database_errors import DUPLICATE_ENTRY
 from timetracker.utils.datemaps import MONTH_MAP, generate_select
+from timetracker.utils.decorators import (admin_check, json_response,
+                                          request_check)
 
 
 def pad(string, padchr='0', amount=2):
@@ -399,54 +401,6 @@ def gen_calendar(year=datetime.datetime.today().year,
     return ''.join(cal_html)
 
 
-def json_response(func):
-
-    """
-    Decorator function that when applied to a function which
-    returns some json data will be turned into a HttpResponse
-
-    This is useful because the call site can literally just
-    call the function as it is without needed to make a http-
-    response.
-    """
-
-    def inner(request):
-
-        """
-        Grabs the request object on the decorated and calls
-        it
-        """
-
-        return HttpResponse(simplejson.dumps(func(request)),
-                            mimetype="application/javscript")
-    return inner
-
-
-def request_check(func):
-
-    """
-    Decorator to check an incoming request against a few rules
-    """
-
-    def inner(request):
-
-        """
-        Pulls the request object off the decorated function
-        """
-
-        if not request.is_ajax():
-            raise Http404
-
-        if not request.session.get('user_id', None):
-            # if there is no user id in the session
-            # something weird is going on
-            raise Http404
-
-        return func(request)
-
-    return inner
-
-
 @request_check
 @json_response
 def ajax_add_entry(request):
@@ -628,23 +582,6 @@ def ajax_change_entry(request):
     json_data['success'] = True
     json_data['calendar'] = calendar
     return json_data
-
-
-def admin_check(func):
-
-    """
-    Wrapper to see if the view is being called as an admin
-    """
-
-    def inner(request, **kwargs):
-        admin_id = request.session.get('user_id', None)
-
-        if not admin_id:
-            raise Http404
-
-        return func(request, **kwargs)
-
-    return inner
 
 
 @request_check
