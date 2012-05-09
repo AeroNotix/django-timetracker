@@ -17,7 +17,9 @@ from utils.calendar_utils import (gen_calendar, gen_holiday_list,
                                   ajax_delete_entry, ajax_error,
                                   get_user_data, delete_user, useredit,
                                   mass_holidays, profile_edit)
-from utils.decorators import admin_check, loggedin
+
+from timetracker.utils.datemaps import generate_select
+from timetracker.utils.decorators import admin_check, loggedin
 
 
 def index(request):
@@ -166,13 +168,23 @@ def admin_view(request):
     
     try:
         employees = tblauth.objects.get(admin=admin_id)
+        employees_select = generate_select(
+            [ (user.id, user.name()) for user in employees.users.all() ],
+            id="user_select"
+        )
     except tblauth.DoesNotExist:
         employees = []
+        employees_select = "<select id=user_select></select>"
 
-    return render_to_response("admin_view.html",
-                              {"employees": employees,
-                               'welcome_name': request.session['firstname']},
-                               RequestContext(request))
+    return render_to_response(
+        "admin_view.html",
+        {
+        "employees": employees,
+        'welcome_name': request.session['firstname'],
+        'employee_option_list': employees_select
+        },
+        RequestContext(request)
+    )
 
 
 @admin_check
@@ -181,13 +193,19 @@ def add_change_user(request):
     """
     Creates the view for changing/adding users
     """
-
-    admin_id = request.session.get('user_id', None)
+    
+    # retrieve and assign user object
+    admin_id = Tbluser.objects.get(id=request.session.get("user_id", None))
 
     try:
         employees = tblauth.objects.get(admin_id=admin_id)
+        employees_select = generate_select(
+            [ (user.id, user.name()) for user in employees.users.all() ],
+            id="user_select"
+        )
     except tblauth.DoesNotExist:
         employees = []
+        employees_select = "<select id=user_select></select>"
 
     return render_to_response(
         "useredit.html",
@@ -195,6 +213,7 @@ def add_change_user(request):
         "employees": employees,
         "user_form": UserForm(),
         'welcome_name': request.session['firstname'],
+        'employee_option_list': employees_select
         },
         RequestContext(request)
     )
