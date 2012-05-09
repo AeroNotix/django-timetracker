@@ -195,10 +195,23 @@ def add_change_user(request):
     """
     
     # retrieve and assign user object
-    admin_id = Tbluser.objects.get(id=request.session.get("user_id", None))
+    auth = Tbluser.objects.get(
+        id=request.session.get("user_id", None)
+    )
 
+    # if the user is actually a TeamLeader, they can
+    # view the team assigned to their manager
+    if auth.user_type == "TEAML":
+        auth = tblauth.objects.get(
+            users=request.session.get("user_id", None
+        )).admin
+
+    # since we now will have a manage either way,
+    # via the team leader or the actual manager,
+    # we get all the users and generate a select
+    # option box.
     try:
-        employees = tblauth.objects.get(admin_id=admin_id)
+        employees = tblauth.objects.get(admin_id=auth)
         employees_select = generate_select(
             [ (user.id, user.name()) for user in employees.users.all() ],
             id="user_select"
@@ -227,10 +240,28 @@ def holiday_planning(request,
     Generates the full holiday table for all employees under a manager
     """
 
+    # if the admin/tl tries to access the holiday page
+    # before any users have been assigned to them, then
+    # we just throw them back to the main page. This is
+    # doubly ensuring that they can't access what would
+    # otherwise be a completely borked page.
     try:
-        auth = tblauth.objects.get(admin_id=request.session.get('user_id'))
-    except tblauth.DoesNotExist:
+        user = Tbluser.objects.get(
+            id=request.session.get('user_id')
+        )
+    except Tbluser.DoesNotExist:
         return HttpResponseRedirect("/admin_view/")
+
+    # if the user is actually a TeamLeader, they can
+    # view the team assigned to their manager
+    if user.user_type == "TEAML":
+        user = tblauth.objects.get(
+            users=request.session.get("user_id", None
+        )).admin
+
+    # whichever user we're left with,
+    # get the users assigned to them
+    auth = tblauth.objects.get(admin=user)
 
     return render_to_response(
         "holidays.html",
