@@ -6,7 +6,7 @@
 }
 
 #table-legend {
-    color: white;
+   color: black;
 }
 
 .day-names {
@@ -176,7 +176,7 @@
 
 #calendar {
    text-align: center;
-   background: #1d1d1d;
+   background: black;
    height: 350px;
 }
 
@@ -235,7 +235,7 @@ this is a jQuery add-on
 /* table */
 
 #calendar-table {
-   background: black;
+   background: white;
    margin-top: 100px;
    margin-left: auto;
    margin-right: auto;
@@ -253,7 +253,7 @@ this is a jQuery add-on
 
 .entry-form {
    background: white;
-   width: 320px;
+   width: 300px;
    border: 2px solid black;
 }
 

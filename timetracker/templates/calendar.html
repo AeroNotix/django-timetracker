@@ -8,9 +8,9 @@
     {% endblock menubar %}
     {% block content %}
     <div id=IEroot>
-<table id="calendar-table" rowspan="99">
+<table id="calendar-table">
   <tr>
-    <td>
+    <td rowspan="2" valign="top">
       <table id="table-legend">
         <tr>
           <td class="empty holiday-button"></td><td>Empty</td>
@@ -116,15 +116,13 @@
         </fieldset>
       </form>
     </td>
-    <td rowspan="2" width="400">
-      <div id="calendar-entry">
+    <td rowspan="2" width="400" valign="top">
+      <div  id="calendar-entry">
         {{ calendar|safe }}
       </div>
     </td>
   </tr>
-
   <tr>
-    <td></td>
     <td>
       <form action="#" method="POST" id="change-form">
         <input type="hidden" id="hidden_id"/>
@@ -200,16 +198,6 @@
     </td>
   </tr>
 </table>
-</div>
-</td>
-<td>
-  <div id="holiday-wrapper">
-    {{ holiday_table|safe }}
-  </div>
-</td>
-</table>
-
-</div>
 {% endblock content %}
 </body>
 {% block additional_javascript %}
