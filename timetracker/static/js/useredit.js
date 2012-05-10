@@ -250,6 +250,10 @@ function ajaxSuccess() {
                 $("#id_password").remove();
             }
         });
+
+    if ( $("#is_team_leader").attr("value") ) {
+        $("#id_job_code").hide();
+    }
     return true;
 }
 

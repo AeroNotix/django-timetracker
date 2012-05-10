@@ -45,6 +45,9 @@
 <!--[ifIE]>
 </div>
 <!--[endif]-->
+{% if is_team_leader %}
+   <div id="is_team_leader" hidden="hidden" value="true"></div>
+{% endif %}
 {% endblock %}
 {% block additional_javascript %}
 <script type="text/javascript" src="{{ STATIC_URL }}js/useredit.js"></script>

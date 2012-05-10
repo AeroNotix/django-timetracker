@@ -215,7 +215,9 @@ def add_change_user(request):
 
     # if the user is actually a TeamLeader, they can
     # view the team assigned to their manager
+    is_team_leader = False
     if auth.user_type == "TEAML":
+        is_team_leader = True
         auth = tblauth.objects.get(
             users=request.session.get("user_id", None
         )).admin
@@ -244,7 +246,8 @@ def add_change_user(request):
         "employees": employees,
         "user_form": UserForm(),
         'welcome_name': request.session['firstname'],
-        'employee_option_list': employees_select
+        'employee_option_list': employees_select,
+        'is_team_leader': is_team_leader
         },
         RequestContext(request)
     )
@@ -273,7 +276,9 @@ def holiday_planning(request,
 
     # if the user is actually a TeamLeader, they can
     # view the team assigned to their manager
+    is_team_leader = False
     if user.user_type == "TEAML":
+        is_team_leader = True
         try:
             user = tblauth.objects.get(
                 users=request.session.get("user_id", None
@@ -295,7 +300,8 @@ def holiday_planning(request,
         "holiday_table": gen_holiday_list(auth,
                                           int(year),
                                           int(month)),
-        'welcome_name': request.session['firstname']
+        'welcome_name': request.session['firstname'],
+        'is_team_leader': is_team_leader
         },
         RequestContext(request))
 
