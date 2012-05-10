@@ -9,7 +9,7 @@ from operator import add
 from django.db import models
 from django.forms import ModelForm
 
-from timetracker.utils.datemaps import WORKING_CHOICES, DAYTYPE_CHOICES
+from timetracker.utils.datemaps import WORKING_CHOICES, DAYTYPE_CHOICES, float_to_time
 
 class Tbluser(models.Model):
 
@@ -213,7 +213,7 @@ class Tbluser(models.Model):
 
             return "<p %s> %.2f </p>" % (tracking_class, trackingnumber)
         elif ret == 'int':
-            return '%.2f hrs' % trackingnumber
+            return float_to_time(trackingnumber)
         elif ret == 'dbg':
             return (trackingnumber, total_hours, total_mins,
                     shift_hours, shift_minutes)

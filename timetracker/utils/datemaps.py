@@ -67,3 +67,30 @@ def generate_select(data, id=''):
         out('\t<option value="%s">%s</option>\n' % (option[0], option[1]))
     out('</select>')
     return ''.join(output)
+
+def pad(string, padchr='0', amount=2):
+    """
+    Pads a string
+    """
+    string = str(string)
+
+    if len(str(string)) < amount:
+        pre = padchr * (amount - len(string))
+        return pre + string
+
+    return string
+
+def float_to_time(timefloat):
+
+    """
+    Takes a float and returns the same representation of time
+    """
+    prefix = ''
+    if timefloat < 0:
+        timefloat = 0 - timefloat
+        prefix = '-'
+
+    minutes = pad(int((60.0 * timefloat) % 60))
+    hours = pad(int((60.0 * timefloat) // 60))
+
+    return '%s%s:%s' % (prefix, hours, minutes)

@@ -18,22 +18,9 @@ import simplejson
 from timetracker.tracker.models import TrackingEntry, Tbluser
 from timetracker.tracker.models import Tblauthorization as Tblauth
 from timetracker.utils.database_errors import DUPLICATE_ENTRY
-from timetracker.utils.datemaps import MONTH_MAP, generate_select
+from timetracker.utils.datemaps import MONTH_MAP, generate_select, pad
 from timetracker.utils.decorators import (admin_check, json_response,
                                           request_check)
-
-
-def pad(string, padchr='0', amount=2):
-    """
-    Pads a string
-    """
-    string = str(string)
-
-    if len(str(string)) < amount:
-        pre = padchr * (amount - len(string))
-        return pre + string
-
-    return string
 
 
 def get_request_data(form, request):
