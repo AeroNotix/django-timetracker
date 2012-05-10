@@ -149,7 +149,7 @@ def ajax(request):
         'delete_user': delete_user,
         'mass_holidays': mass_holidays,
         'profileedit': profile_edit
-        }
+    }
     return ajax_funcs.get(form_type,
                           ajax_error("Form not found")
                           )(request)
@@ -168,13 +168,17 @@ def admin_view(request):
     
     try:
         employees = tblauth.objects.get(admin=admin_id)
+        employees_tuple = [ (user.id, user.name()) for user in employees.users.all() ]
+        employees_tuple.append(("null", "----------"))
         employees_select = generate_select(
-            [ (user.id, user.name()) for user in employees.users.all() ],
+            employees_tuple,
             id="user_select"
         )
     except tblauth.DoesNotExist:
         employees = []
-        employees_select = "<select id=user_select></select>"
+        employees_select = """<select id=user_select>
+                                <option id="null">----------</option>
+                              </select>"""
 
     return render_to_response(
         "admin_view.html",
@@ -212,13 +216,17 @@ def add_change_user(request):
     # option box.
     try:
         employees = tblauth.objects.get(admin_id=auth)
+        employees_tuple = [ (user.id, user.name()) for user in employees.users.all() ]
+        employees_tuple.append(("null", "----------"))
         employees_select = generate_select(
-            [ (user.id, user.name()) for user in employees.users.all() ],
+            employees_tuple,
             id="user_select"
         )
     except tblauth.DoesNotExist:
         employees = []
-        employees_select = "<select id=user_select></select>"
+        employees_select = """<select id=user_select>
+                                <option id="null">----------</option>
+                              </select>"""
 
     return render_to_response(
         "useredit.html",
@@ -232,6 +240,7 @@ def add_change_user(request):
     )
 
 
+@loggedin
 @admin_check
 def holiday_planning(request,
                      year=datetime.datetime.today().year,
@@ -250,18 +259,25 @@ def holiday_planning(request,
             id=request.session.get('user_id')
         )
     except Tbluser.DoesNotExist:
-        return HttpResponseRedirect("/admin_view/")
+        raise Http404
 
     # if the user is actually a TeamLeader, they can
     # view the team assigned to their manager
     if user.user_type == "TEAML":
-        user = tblauth.objects.get(
-            users=request.session.get("user_id", None
-        )).admin
+        try:
+            user = tblauth.objects.get(
+                users=request.session.get("user_id", None
+                                          )).admin
+        except tblauth.DoesNotExist:
+           return HttpResponseRedirect("/admin_view/")
 
     # whichever user we're left with,
     # get the users assigned to them
-    auth = tblauth.objects.get(admin=user)
+    try:
+        auth = tblauth.objects.get(admin=user)
+    except tblauth.DoesNotExist:
+        return HttpResponseRedirect("/admin_view/")
+
 
     return render_to_response(
         "holidays.html",
