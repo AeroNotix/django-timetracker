@@ -313,13 +313,18 @@ def edit_profile(request):
     """
 
     user = Tbluser.objects.get(id=request.session.get("user_id"))
+    if user.user_type in {"ADMIN", "TEAML"}:
+        adminrequest = True
+    else:
+        adminrequest = False
 
     balance = user.get_total_balance(ret='int')
     return render_to_response("editprofile.html",
                               {'firstname': user.firstname,
                                'lastname': user.lastname,
                                'welcome_name': request.session['firstname'],
-                               'balance': balance
+                               'balance': balance,
+                               'adminrequest': adminrequest
                                },
                               RequestContext(request))
 
