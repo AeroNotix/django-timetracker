@@ -5,11 +5,48 @@
 {% endblock header %}
 {% block menubar %}
 {% include "includes/user-nav.html" %}
-{% endblock menubar %}
-{% block content %}
-<div id=IEroot>
-<table id="calendar-table">
+    {% endblock menubar %}
+    {% block content %}
+    <div id=IEroot>
+<table id="calendar-table" rowspan="99">
   <tr>
+    <td>
+      <table id="table-legend">
+        <tr>
+          <td class="empty holiday-button"></td><td>Empty</td>
+        </tr>
+        <tr>
+          <td class="SICKD holiday-button"></td><td>Sickness</td>
+        </tr>
+        <tr>
+          <td class="HOLIS holiday-button"></td><td>Holiday</td>
+        </tr>
+        <tr>
+          <td class="PUABS holiday-button"></td><td>Public Hol</td>
+        </tr>
+        <tr>
+          <td class="PUWRK holiday-button"></td><td>Work on holiday</td>
+        </tr>
+        <tr>
+          <td class="SATUR holiday-button"></td><td>Saturday</td>
+        </tr>
+        <tr>
+          <td class="RETRN holiday-button"></td><td>Returned day</td>
+        </tr>
+        <tr>
+          <td class="WKHOM holiday-button"></td><td>Home</td>
+        </tr>
+        <tr>
+          <td class="TRAIN holiday-button"></td><td>Training</td>
+        </tr>
+        <tr>
+          <td class="DAYOD holiday-button"></td><td>Day on demand</td>
+        </tr>
+        <tr>
+          <td class="OTHER holiday-button"></td><td>Other</td>
+        </tr>
+      </table>
+</td>
     <td>
       <form action="" id="add-form">
         {% csrf_token %}
@@ -87,6 +124,7 @@
   </tr>
 
   <tr>
+    <td></td>
     <td>
       <form action="#" method="POST" id="change-form">
         <input type="hidden" id="hidden_id"/>
@@ -162,6 +200,15 @@
     </td>
   </tr>
 </table>
+</div>
+</td>
+<td>
+  <div id="holiday-wrapper">
+    {{ holiday_table|safe }}
+  </div>
+</td>
+</table>
+
 </div>
 {% endblock content %}
 </body>

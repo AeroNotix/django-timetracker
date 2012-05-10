@@ -1,5 +1,14 @@
 /* calendar days */
 
+.holiday-button {
+    height: 30px;
+    width: 30px;
+}
+
+#table-legend {
+    color: white;
+}
+
 .day-names {
    background: black;
    color: white;

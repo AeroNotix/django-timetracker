@@ -62,12 +62,6 @@ function submit_all() {
     // refresh the table data
     setTimeout("change_table_data()", 1000);
 
-    // if (successfully_completed) {
-    //     alert("Holidays change successfully!");
-    // } else {
-    //     alert("There was an error adding holidays");
-    // }
-
     return successfully_completed;
 }
 
@@ -190,7 +184,7 @@ function addFunctions () {
 
     $("#holiday-table")
         .attr("border", "1")
-        .find(".user-td")
+
     return true;
 }
 
