@@ -23,21 +23,30 @@ WORKING_CHOICES = (
     ('WKDAY', 'Work Day'),
     ('SATUR', 'Work on Saturday'),
     ('WKHOM', 'Work at home'),
-    ('SATUR', 'Work on Saturday')
 )
 
 ABSENT_CHOICES = (
-    ('PUABS', 'Public Holiday'),
-    ('SICKD', 'Sickness Absence'),
-    ('MEDIC', 'Medical Leave'),
-    ('SPECI', 'Special Leave'),
     ('HOLIS', 'Vacation'),
+    ('SICKD', 'Sickness Absence'),
+    ('PUABS', 'Public Holiday'),
+    ('SPECI', 'Special Leave'),
     ('RETRN', 'Return for Public Holiday'),
     ('TRAIN', 'Training'),
     ('DAYOD', 'Day on demand'),
 )
 
-DAYTYPE_CHOICES = WORKING_CHOICES + ABSENT_CHOICES
+DAYTYPE_CHOICES = (
+    ('WKDAY', 'Work Day'),
+    ('HOLIS', 'Vacation'),
+    ('SICKD', 'Sickness Absence'),
+    ('PUABS', 'Public Holiday'),
+    ('RETRN', 'Return for Public Holiday'),
+    ('SPECI', 'Special Leave'),
+    ('TRAIN', 'Training'),
+    ('DAYOD', 'Day on demand'),
+    ('SATUR', 'Work on Saturday'),
+    ('WKHOM', 'Work at home'),
+)
 
 def generate_select(data, id=''):
     """
