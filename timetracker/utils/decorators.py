@@ -25,7 +25,7 @@ def loggedin(func):
         except TypeError:
             raise Http404
 
-        return func(request)
+        return func(request, *args, **kwargs)
 
     return inner
 

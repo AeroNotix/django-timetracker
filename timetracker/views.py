@@ -53,7 +53,7 @@ def login(request):
         # pull out the user from the POST and
         # match it against our db
         user = Tbluser.objects.get(user_id__exact=request.POST['user_name'])
-        
+
     # if the user doesn't match anything, notify
     except Tbluser.DoesNotExist:
         return HttpResponse("Username and Password don't match")
@@ -104,6 +104,7 @@ def user_view(request,
     user_id = request.session['user_id']
     calendar_table = gen_calendar(year, month, day,
                                   user=user_id)
+
     balance = Tbluser.objects.get(id=user_id).get_total_balance(ret='int')
     return render_to_response(
         'calendar.html',
@@ -174,7 +175,7 @@ def admin_view(request):
         auth = tblauth.objects.get(
             users=request.session.get("user_id", None
         )).admin
-    
+
     try:
         employees = tblauth.objects.get(admin=auth)
         employees_tuple = [ (user.id, user.name()) for user in employees.users.all() ]
@@ -206,7 +207,7 @@ def add_change_user(request):
     """
     Creates the view for changing/adding users
     """
-    
+
     # retrieve and assign user object
     auth = Tbluser.objects.get(
         id=request.session.get("user_id", None)
