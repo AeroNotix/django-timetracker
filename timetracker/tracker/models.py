@@ -242,7 +242,7 @@ class Tblauthorization(models.Model):
     users = models.ManyToManyField(
         Tbluser,
         limit_choices_to={
-        'user_type': 'RUSER'
+        'user_type__in': ['TEAML', 'RUSER']
         },
         related_name="subordinates",
         verbose_name=("Additional Users")
