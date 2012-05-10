@@ -7,9 +7,7 @@
 {% include "includes/user-nav.html" %}
 {% endblock menubar %}
 {% block content %}
-<!--[ifIE]>
 <div id=IEroot>
-<!--[endif]-->
 <table id="calendar-table">
   <tr>
     <td>
@@ -164,11 +162,8 @@
     </td>
   </tr>
 </table>
-<!--[ifIE]>
 </div>
-<!--[endif]-->
 {% endblock content %}
-
 </body>
 {% block additional_javascript %}
     <script type="text/javascript" src="{{ STATIC_URL }}jquery/js/timepicker.js">
