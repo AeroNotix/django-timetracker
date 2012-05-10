@@ -143,6 +143,13 @@ function addFunctions () {
 
     "use strict";
 
+    $("#holiday-table")
+        .find(".job_code").each( function () {
+            if ( $("#is_team_leader").attr("value") ) {
+                $(this).text('');
+            }
+        });
+
     // all the daytype classes
     // are assigned a click handler which
     // swaps the colour depending on what
@@ -197,6 +204,8 @@ function change_table_data () {
        the table with the data returned from the ajax call
     */
 
+    var is_team_leader = $("#is_team_leader").attr("value")
+
     var year = $("#year_select").val();
     var month = $("#month_select").val();
     $("#holiday-wrapper").fadeTo(500, 0, function() {
@@ -205,12 +214,24 @@ function change_table_data () {
             function () {
                 $("#holiday-wrapper").fadeTo(500, 1);
                 addFunctions();
+                $("#holiday-table")
+                    .find(".job_code").each( function () {
+                        if ( is_team_leader ) {
+                            $(this).text('');
+                        }
+                        $(this).css("color", "white")
+                    });
             });
     });
+
     return true;
 }
 
 $(function () {
     addFunctions();
     change_table_data();
+    $("#holiday-table")
+        .find(".job_code").each( function () {
+            $(this).css("color", "white");
+        });
 });

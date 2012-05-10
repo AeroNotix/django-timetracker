@@ -163,10 +163,10 @@ def gen_holiday_list(admin_user,
                    <tr>
                      <th class="user-td">%s</th>
                        <td>%s</td>
-                       <td>%s</td>""" % (user.name(),
-                                         user.get_holiday_balance(year),
-                                         user.job_code
-                                         )
+                       <td class="job_code">%s</td>""" % (user.name(),
+                                                          user.get_holiday_balance(year),
+                                                          user.job_code
+                                                          )
                    )
 
             # We've mapped the users' days to the day number,
@@ -697,8 +697,7 @@ Regards,
             # attributes with what was on the form
             user = Tbluser.objects.get(id__exact=request.POST.get("mode"))
             for key, value in data.items():
-                if getattr(user, key):
-                    setattr(user, key, value)
+                setattr(user, key, value)
             user.save()
     except IntegrityError as error:
         if error[0] == DUPLICATE_ENTRY:
