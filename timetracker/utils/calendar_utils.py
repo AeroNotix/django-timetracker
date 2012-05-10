@@ -697,7 +697,8 @@ Regards,
             # attributes with what was on the form
             user = Tbluser.objects.get(id__exact=request.POST.get("mode"))
             for key, value in data.items():
-                setattr(user, key, value)
+                if key != 'password':
+                    setattr(user, key, value)
             user.save()
     except IntegrityError as error:
         if error[0] == DUPLICATE_ENTRY:
