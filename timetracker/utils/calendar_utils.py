@@ -679,19 +679,25 @@ def useredit(request):
             user.save()
             # link the user to the admin
             try:
-                admin = Tblauth.objects.get(admin=request.session.get('user_id'))
+                auth_user = Tbluser.objects.get(id=request.session.get('user_id'))
+                if auth_user.user_type == "TEAML":
+                    auth_user = Tblauth.objects.get(
+                        users=request.session.get("user_id", None
+                    )).admin
+
+                auth = Tblauth.objects.get(admin=auth_user)
             except Tblauth.DoesNotExist:
-                admin = Tblauth(admin=Tbluser.objects.get(id=request.session.get('user_id')))
-                admin.save()
-            admin.users.add(user)
-            admin.save()
+                auth = Tblauth(admin=Tbluser.objects.get(id=request.session.get('user_id')))
+                auth.save()
+            auth.users.add(user)
+            auth.save()
             email_message = """
 Hi {0},
 \tYour account has been created with the timetracker.
 Please use the following password to login: {1}.\n
 Regards,
 {2}
-""".format(user.firstname, password, admin.admin.firstname)
+""".format(user.firstname, password, auth_user.firstname)
 
             send_mail('Your account has been created',
                       email_message,
