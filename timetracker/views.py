@@ -164,10 +164,19 @@ def admin_view(request):
     """
 
     # retrieve and assign user object
-    admin_id = Tbluser.objects.get(id=request.session.get("user_id", None))
+    auth = Tbluser.objects.get(
+        id=request.session.get("user_id", None)
+    )
+
+    # if the user is actually a TeamLeader, they can
+    # view the team assigned to their manager
+    if auth.user_type == "TEAML":
+        auth = tblauth.objects.get(
+            users=request.session.get("user_id", None
+        )).admin
     
     try:
-        employees = tblauth.objects.get(admin=admin_id)
+        employees = tblauth.objects.get(admin=auth)
         employees_tuple = [ (user.id, user.name()) for user in employees.users.all() ]
         employees_tuple.append(("null", "----------"))
         employees_select = generate_select(
