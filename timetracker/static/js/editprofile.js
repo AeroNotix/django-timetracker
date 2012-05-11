@@ -62,7 +62,7 @@ function submitChanges () {
             "form_type": "profileedit",
             "firstname": $("#id-firstname").val(),
             "lastname": $("#id-lastname").val(),
-            "password": $("#id-password").val(),
+            "password": $("#id-password").val()
         }
     });
 
