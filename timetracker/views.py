@@ -172,10 +172,7 @@ def admin_view(request):
     # if the user is actually a TeamLeader, they can
     # view the team assigned to their manager
     if auth.user_type == "TEAML":
-        auth = tblauth.objects.get(
-            users=request.session.get("user_id", None
-        )).admin
-
+        auth = auth.get_administrator()
     try:
         employees = tblauth.objects.get(admin=auth)
         employees_tuple = [ (user.id, user.name()) for user in employees.users.all() ]
@@ -218,9 +215,7 @@ def add_change_user(request):
     is_team_leader = False
     if auth.user_type == "TEAML":
         is_team_leader = True
-        auth = tblauth.objects.get(
-            users=request.session.get("user_id", None
-        )).admin
+        auth = auth.get_administrator()
 
     # since we now will have a manage either way,
     # via the team leader or the actual manager,
@@ -280,9 +275,7 @@ def holiday_planning(request,
     if user.user_type == "TEAML":
         is_team_leader = True
         try:
-            user = tblauth.objects.get(
-                users=request.session.get("user_id", None
-                                          )).admin
+            user = user.get_administrator()
         except tblauth.DoesNotExist:
            return HttpResponseRedirect("/admin_view/")
 

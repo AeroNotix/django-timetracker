@@ -108,6 +108,13 @@ class Tbluser(models.Model):
         return '%s - %s %s ' % (self.user_id,
                                 self.firstname,
                                 self.lastname)
+    def get_administrator(self):
+
+        """
+        Returns the administrator associated with this
+        """
+
+        return Tblauthorization.objects.get(users=self).admin
 
     def display_user_type(self):
 
