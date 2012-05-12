@@ -690,7 +690,7 @@ Regards,
                       email_message,
                       'timetracker@unmonitored.com',
                       [user.user_id],
-                      fail_silently=False)
+                      fail_silently=True)
         else:
             # If the mode contains a user_id
             # get that user and update it's
