@@ -33,4 +33,5 @@ urlpatterns = patterns('',
     url(r'^user_edit/?$', views.add_change_user),
     url(r'^edit_profile/?$', views.edit_profile),
     url(r'^explain/?$', views.explain),
+    url(r'^forgot_my_password/?$', views.forgot_pass),
 )

@@ -4,20 +4,22 @@ Login - Timetracker
 {% endblock title %}
 {% block content %}
 <div id="IEroot">
-<fieldset id="login">
-  <form method="POST" action="/login/">
-    {% csrf_token %}
-    <table>
-      {{ login.as_table }}
-      <tr>
-        <td></td>
-        <td align="right">
-          <input type="submit"
-                 onclick="/login/"
-                 id="add_button"
-                 value="Login"/>
-        </td>
-    </table>
-  </form>
-   </div>
+  <fieldset id="login">
+    <form method="POST" action="/login/">
+      {% csrf_token %}
+      <table>
+        {{ login.as_table }}
+        <tr>
+          <td colspan="2">
+            <a href="/forgot_my_password/">Forgot your password?</a>
+          </td>
+          <td align="right">
+            <input type="submit"
+                   onclick="/login/"
+                   id="add_button"
+                   value="Login"/>
+          </td>
+      </table>
+    </form>
+</div>
 {% endblock content %}

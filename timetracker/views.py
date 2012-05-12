@@ -7,6 +7,7 @@ import datetime
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.core.mail import send_mail
 
 from tracker.models import Tbluser, UserForm, TrackingEntry
 from tracker.models import Tblauthorization as tblauth
@@ -306,10 +307,6 @@ def edit_profile(request):
     """
 
     user = Tbluser.objects.get(id=request.session.get("user_id"))
-    if user.user_type in {"ADMIN", "TEAML"}:
-        adminrequest = True
-    else:
-        adminrequest = False
 
     balance = user.get_total_balance(ret='int')
     return render_to_response("editprofile.html",
@@ -317,7 +314,7 @@ def edit_profile(request):
                                'lastname': user.lastname,
                                'welcome_name': request.session['firstname'],
                                'balance': balance,
-                               'adminrequest': adminrequest
+                               'adminrequest': user.is_admin()
                                },
                               RequestContext(request))
 
@@ -342,3 +339,31 @@ def explain(request):
                                'working_days': working_days
                                },
                               RequestContext(request))
+
+def forgot_pass(request):
+
+    """
+    View for resetting a user's password
+    """
+
+    # if the email recipient isn't in the POST dict,
+    # then we've got a non-post request
+    email_recipient = request.POST.get("email_input", None)
+    if not email_recipient:
+        return render_to_response("forgotpass.html",
+                                  {},
+                                  RequestContext(request))
+
+    # if we're here then the request was a post and we
+    # should return the password for the email address
+    try:
+        password = Tbluser.objects.get(user_id=email_recipient).password
+        send_mail('You recently requested a password reminder',
+                  email_message,
+                  'timetracker@unmonitored.com',
+                  [email_recipient])
+    except Tbluser.DoesNotExist:
+        pass
+    finally:
+        return HttpResponseRedirect("/")
+
