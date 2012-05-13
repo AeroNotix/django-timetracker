@@ -17,7 +17,7 @@ import simplejson
 
 from timetracker.tracker.models import TrackingEntry, Tbluser
 from timetracker.tracker.models import Tblauthorization as Tblauth
-from timetracker.utils.database_errors import DUPLICATE_ENTRY
+from timetracker.utils.error_codes import DUPLICATE_ENTRY
 from timetracker.utils.datemaps import MONTH_MAP, generate_select, pad
 from timetracker.utils.decorators import (admin_check, json_response,
                                           request_check)
