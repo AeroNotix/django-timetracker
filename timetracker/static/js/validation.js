@@ -82,6 +82,9 @@ function checkStringLengths (stringArray, len) {
 function emailValidate (element_name) {
     /*
        Validates an email address
+       
+       Takes a element tag and returns boolean if the
+       value matches or not.
     */
 
     var email = $(element_name).val();

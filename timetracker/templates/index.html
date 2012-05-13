@@ -1,25 +1,36 @@
-{% extends "base.html" %}
+{% extends "navless.html" %}
 {% block title %}
 Login - Timetracker
 {% endblock title %}
-{% block content %}
-<div id="IEroot">
-  <fieldset id="login">
-    <form method="POST" action="/login/">
-      {% csrf_token %}
-      <table>
-        {{ login.as_table }}
-        <tr>
-          <td colspan="2">
-            <a href="/forgot_my_password/">Forgot your password?</a>
-          </td>
-          <td align="right">
-            <input type="submit"
-                   onclick="/login/"
-                   id="add_button"
-                   value="Login"/>
-          </td>
-      </table>
-    </form>
+{% block centre_piece %}
+<div id="wrapper">
+  <form id="login" method="POST" action="/login/">
+    <img id="hp-logo" src="{{ STATIC_URL }}images/logos/hp-logo.png" />
+    {% csrf_token %}
+    <table id="login-table">
+      <tr>
+        <th><label for="login-user">Username/HP Email:</label></th>
+        <td colspan="2">
+          {{ login.user_name }}
+        </td>
+      </tr>
+      <tr>
+        <th><label for="login-password">Password:</label></th>
+        <td colspan="2">
+          {{ login.password }}
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2">
+          <a href="/forgot_my_password/">Forgot your password?</a>
+        </td>
+        <td align="right">
+          <input type="submit"
+                 onclick="/login/"
+                 id="add_button"
+                 value="Login"/>
+        </td>
+    </table>
+  </form>
 </div>
-{% endblock content %}
+{% endblock centre_piece %}

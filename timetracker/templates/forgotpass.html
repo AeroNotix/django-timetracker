@@ -1,16 +1,15 @@
-{% extends "base.html" %}
+{% extends "navless.html" %}
 {% block header %}
 <link href="{{ STATIC_URL }}forgotpass.css" type="text/css" rel="stylesheet" />
 {% endblock header %}
-{% block content %}
-<div id="IEroot">
+{% block centre_piece %}
   <div id="wrapper">
-    <form action="/forgot_my_password/" method="POST">
+    <img id="hp-logo" src="{{ STATIC_URL }}images/logos/hp-logo.png" />
+    <form id="login-form" action="/forgot_my_password/" method="POST">
       {% csrf_token %}
       <label for="email_input">Your Email:</label>
       <input type="text" name="email_input" />
       <button  value="Submit">Submit</button>
     </form>
   </div>
-</div>
-{% endblock content %}
+{% endblock centre_piece %}

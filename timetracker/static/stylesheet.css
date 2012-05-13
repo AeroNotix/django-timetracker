@@ -25,30 +25,50 @@ body {
    text-align: center;
 }
 
-#login {
-   margin-top: 200px;
+#centre-block {
+   position: absolute;
+   top: 0%;
+   padding: 0;
+   height: 100%;
+   left: 20%;
+   right: 20%;
+   background: #1d1d1d;
+   border-left: 3px solid #5E8AFF;
+   border-right: 3px solid #5E8AFF;
+   z-index: -1;
+   box-shadow: 0px -3px 50px -5px black;
+   -webkit-box-shadow: 0px -3px 15px -5px black;
+   -moz-box-shadow: 0px -3px 50px 5px black;
+}
+
+#hp-logo {
+   padding: 6px;
+   float: right;
+}
+
+#wrapper {
+   position: relative;
+   margin-top: 20%;
    margin-left: auto;
    margin-right: auto;
    background: white;
-   width: 300px;
-   height: 100px;
-   background-image: url('images/calendar/HP_login_box.gif');
-   box-shadow: 0px 50px 300px white;
-   border-radius: 30px;
+   height: 300px;
+   box-shadow: 0px 0px 30px #5E8AFF;
+   border: 3px solid #5E8AFF;
    color: #1d1d1d;
 }
 
-#IEroot {
-   top: 50px;
-   margin-left: auto;
-   margin-left: auto;
+#login {
+   position: relative;
+   top: -10px;
+   z-index: 99;
 }
 
 #logout {
    position: absolute;
    top: 0px;
    right: 100px;
-}
+}x
 
 #logo-btn {
    position: absolute;
@@ -58,6 +78,12 @@ body {
 #login-fs {
     background: none;
     border: 1px solid blue;
+}
+
+#login-table {
+   position: relative;
+   top: 50px;
+   left: 12%;
 }
 
 #user-table {
