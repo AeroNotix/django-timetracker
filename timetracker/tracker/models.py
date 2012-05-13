@@ -47,7 +47,8 @@ class Tbluser(models.Model):
     )
 
     user_id = models.EmailField(max_length=105,
-                                verbose_name=("UserID / HP Email"))
+                                verbose_name=("UserID / HP Email"),
+                                unique=True)
 
     firstname = models.CharField(max_length=60,
                                  db_column='uFirstName',
@@ -97,7 +98,6 @@ class Tbluser(models.Model):
         db_table = u'tbluser'
         verbose_name = "User"
         verbose_name_plural = "Users"
-        unique_together = ("user_id", "firstname", "lastname")
 
     def __unicode__(self):
 
