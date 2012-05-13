@@ -79,12 +79,19 @@ function checkStringLengths (stringArray, len) {
     return true;
 }
 
-function emailValidate (email) {
+function emailValidate (element_name) {
     /*
        Validates an email address
     */
 
-    if (email.match( /^[A-Za-z_.]+@[A-Za-z0-9_.]+\.[A-Za-z]+$/ ) ) {
+    var email = $(element_name).val();
+
+    /*
+      [A-Za-z0-9_.]+ = matches all alphanumeric characters with _ and .
+      @ = matches @
+      \.[A-Za-z]+ = matches . with any length alphanumeric string after
+    */
+    if (email.match( /^[A-Za-z0-9_.]+@[A-Za-z0-9_.]+\.[A-Za-z]+$/ ) ) {
         return true;
     } else {
         return false;
