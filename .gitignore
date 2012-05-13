@@ -1,3 +1,6 @@
+timetracker/static/admin/*
+timetracker/static/admin
+timetracker/static_collected/*
 timetracker/static/jquery/css/ui-darkness/images/*
 .ropeproject/*
 admin/*
