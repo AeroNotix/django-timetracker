@@ -78,3 +78,15 @@ function checkStringLengths (stringArray, len) {
     }
     return true;
 }
+
+function emailValidate (email) {
+    /*
+       Validates an email address
+    */
+
+    if (email.match( /^[A-Za-z_.]+@[A-Za-z0-9_.]+\.[A-Za-z]+$/ ) ) {
+        return true;
+    } else {
+        return false;
+    }
+}
