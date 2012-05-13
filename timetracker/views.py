@@ -21,7 +21,7 @@ from utils.calendar_utils import (gen_calendar, gen_holiday_list,
 
 from timetracker.utils.datemaps import generate_select
 from timetracker.utils.decorators import admin_check, loggedin
-
+from timetracker.utils.error_codes import CONNECTION_REFUSED
 
 def index(request):
 
@@ -357,13 +357,24 @@ def forgot_pass(request):
     # if we're here then the request was a post and we
     # should return the password for the email address
     try:
-        password = Tbluser.objects.get(user_id=email_recipient).password
+        user = Tbluser.objects.get(user_id=email_recipient)
+
+        email_message = '''
+              Hi {name},
+              \tYour password reminder is: {password}\n
+              Regards,
+              '''.format(**{
+                'name': user.name(),
+                'password': user.password
+                })
         send_mail('You recently requested a password reminder',
                   email_message,
                   'timetracker@unmonitored.com',
-                  [email_recipient])
+                  [email_recipient], fail_silently=False)
     except Tbluser.DoesNotExist:
         pass
-    finally:
-        return HttpResponseRedirect("/")
+    except Exception as error:
+        if error[0] == CONNECTION_REFUSED:
+            print email_message
+    return HttpResponseRedirect("/")
 
