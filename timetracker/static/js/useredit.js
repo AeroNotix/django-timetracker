@@ -125,8 +125,13 @@ function addChangeEntry(entryType) {
        Takes no parameters and returns true/false for success
     */
 
+    if ( !emailValidate("#id_user_id") ) {
+        alert("Invalid E-mail address");
+        return false;
+    }
+
     if ( !validateDate("#id_start_date") ) {
-        alert("validation fail");
+        alert("Start Date validation error");
         return false;
     }
 
