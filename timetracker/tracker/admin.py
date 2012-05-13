@@ -3,6 +3,7 @@ from django.core.mail import send_mail
 
 from timetracker.tracker import models
 from timetracker.utils.error_codes import CONNECTION_REFUSED
+
 def send_password_reminder(modeladmin, request, queryset):
 
     '''
