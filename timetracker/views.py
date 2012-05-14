@@ -22,6 +22,8 @@ from utils.calendar_utils import (gen_calendar, gen_holiday_list,
 from timetracker.utils.datemaps import generate_select
 from timetracker.utils.decorators import admin_check, loggedin
 from timetracker.utils.error_codes import CONNECTION_REFUSED
+from timetracker.loggers import suspicious_log, email_log, error_log
+
 
 def index(request):
 
@@ -54,7 +56,6 @@ def login(request):
         # pull out the user from the POST and
         # match it against our db
         user = Tbluser.objects.get(user_id__exact=request.POST['user_name'])
-
     # if the user doesn't match anything, notify
     except Tbluser.DoesNotExist:
         return HttpResponse("Username and Password don't match")
@@ -83,7 +84,6 @@ def logout(request):
         del request.session['user_id']
     except KeyError:
         pass
-
     return HttpResponseRedirect("/")
 
 @loggedin
@@ -287,7 +287,6 @@ def holiday_planning(request,
     except tblauth.DoesNotExist:
         return HttpResponseRedirect("/admin_view/")
 
-
     return render_to_response(
         "holidays.html",
         {
@@ -372,9 +371,13 @@ def forgot_pass(request):
                   'timetracker@unmonitored.com',
                   [email_recipient], fail_silently=False)
     except Tbluser.DoesNotExist:
-        pass
+        suspicious_log.info(
+            "Someone tried to reset a password of a non-existant address"
+        )
     except Exception as error:
         if error[0] == CONNECTION_REFUSED:
-            print email_message
+            email_log.error("Failed sending e-mail to: %s" % email_recipient)
+        else:
+            error_log.critical(str(error))
     return HttpResponseRedirect("/")
 
