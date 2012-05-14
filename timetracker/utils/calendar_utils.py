@@ -71,7 +71,7 @@ def parse_time(timestring, type_of=int):
 
     """
     Given a time string will return a tuple of ints,
-    i.e. "09:44" returns (9, 44) with the default args,
+    i.e. "09:44" returns [9, 44] with the default args,
     you can pass any function to the type argument.
     """
 
