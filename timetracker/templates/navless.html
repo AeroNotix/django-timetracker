@@ -2,6 +2,9 @@
 {% block title %}
 {% endblock title %}
 {% block content %}
+<!--[if IE]>
+    <link href="{{ STATIC_URL }}ie_styles.css" type="text/css" rel="stylesheet" />
+<![endif]-->
 <div id="centre-block">
   {% block centre_piece %}
   {% endblock centre_piece %}
