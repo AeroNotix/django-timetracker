@@ -5,9 +5,11 @@ Module to for sharing decorators between all modules
 import simplejson
 
 from django.http import HttpResponse, Http404
-from django.shortcuts import get_object_or_404
 
 from timetracker.tracker.models import Tbluser
+from timetracker.loggers import (debug_log, info_log,
+                                 email_log, database_log,
+                                 error_log, suspicious_log)
 
 
 def loggedin(func):
@@ -19,12 +21,10 @@ def loggedin(func):
 
     def inner(request, *args, **kwargs):
         try:
-            get_object_or_404(Tbluser, id=request.session.get("user_id"))
+            Tbluser.objects.get(id=request.session.get("user_id"))
         except Tbluser.DoesNotExist:
+            info_log.info("Non-logged in user accessing @loggedin page")
             raise Http404
-        except TypeError:
-            raise Http404
-
         return func(request, *args, **kwargs)
 
     return inner
@@ -43,8 +43,10 @@ def admin_check(func):
                 id=request.session.get('user_id', None)
             )
         except Tbluser.DoesNotExist:
+            info_log.info("Non-logged in user accessing @loggedin page")
             raise Http404
         if not user.is_admin():
+            suspicious_log.info("Non-admin user accessing @admin_check page")
             raise Http404
         else:
             return func(request, **kwargs)
@@ -87,13 +89,12 @@ def request_check(func):
         """
 
         if not request.is_ajax():
+            suspicious_log.info("Request check made on non-ajax call")
             raise Http404
-
         if not request.session.get('user_id', None):
             # if there is no user id in the session
             # something weird is going on
+            suspicious_log.info("Ajax call made by a non-logged in entity")
             raise Http404
-
         return func(request)
-
     return inner

@@ -34,6 +34,8 @@ email_log = create_logger('email', root_path=ROOT_DIR)
 debug_log = create_logger('debug', root_path=ROOT_DIR)
 info_log = create_logger('info', root_path=ROOT_DIR)
 error_log = create_logger('error', root_path=ROOT_DIR)
+suspicious_log = create_logger('suspicious', root_path=ROOT_DIR)
+
 if __name__ == '__main__':
     database_log.debug('hello')
     database_log.info('hello')
