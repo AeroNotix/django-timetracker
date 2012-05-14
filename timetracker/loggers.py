@@ -10,7 +10,7 @@ except:
     LOGLEVEL = logging.DEBUG
 
 # Where you want the logs to go
-ROOT_DIR = '/home/xeno/log/timetracker/'
+ROOT_DIR = '/var/log/timetracker/'
 
 def create_logger(filename,
                   level=logging.DEBUG,
