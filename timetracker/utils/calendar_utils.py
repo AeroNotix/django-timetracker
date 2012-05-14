@@ -15,9 +15,12 @@ from django.forms import ValidationError
 
 import simplejson
 
+from timetracker.loggers import (debug_log, info_log,
+                                 email_log, database_log,
+                                 error_log)
 from timetracker.tracker.models import TrackingEntry, Tbluser
 from timetracker.tracker.models import Tblauthorization as Tblauth
-from timetracker.utils.error_codes import DUPLICATE_ENTRY
+from timetracker.utils.error_codes import DUPLICATE_ENTRY, CONNECTION_REFUSED
 from timetracker.utils.datemaps import MONTH_MAP, generate_select, pad
 from timetracker.utils.decorators import (admin_check, json_response,
                                           request_check)
@@ -100,6 +103,7 @@ def calendar_wrapper(function):
                 return HttpResponse(simplejson.dumps(json_dict))
 
             except Exception as e:
+                error_log.error(str(e))
                 return HttpResponse(str(e))
 
         else:
@@ -417,6 +421,8 @@ def ajax_add_entry(request):
             json_data['error'] = "Start time after end time"
             return json_data
     except ValueError:
+        error_log.warn("Date error got through - %s and %s" %
+                       (form['start_time'], form['end_time']))
         json_data['error'] = "Date Error"
         return json_data
 
@@ -425,8 +431,10 @@ def ajax_add_entry(request):
         entry.save()
     except IntegrityError as error:
         if error[0] == DUPLICATE_ENTRY:
+            database_log.info("Duplicate entry from %s" % form['user_id'])
             json_data['error'] = "There is a duplicate entry for this value"
         else:
+            error_log.error(str(error))
             json_data['error'] = str(error)
         return json_data
 
@@ -471,6 +479,7 @@ def ajax_delete_entry(request):
                                   user=user)
             entry.delete()
         except Exception as error:
+            error_log.error(str(error))
             json_data['error'] = str(error)
             return json_data
 
@@ -533,6 +542,8 @@ def ajax_change_entry(request):
             json_data['error'] = "Start time after end time"
             return json_data
     except ValueError:
+        error_log.error("Date error got through - %s and %s" %
+                        (form['start_time'], form['end_time']))
         json_data['error'] = "Date Error"
         return json_data
 
@@ -555,6 +566,7 @@ def ajax_change_entry(request):
             entry.save()
 
         except Exception as error:
+            error_log.error(str(error))
             json_data['error'] = str(error)
             return json_data
 
@@ -627,6 +639,7 @@ def delete_user(request):
             user = Tbluser.objects.get(id=user_id)
             user.delete()
         except Tbluser.DoesNotExist:
+            error_log.error("Tried to delete non-existant user")
             json_data['error'] = "User does not exist"
             return json_data
 
@@ -659,6 +672,7 @@ def useredit(request):
         'error': ''
     }
 
+    session_id = request.session.get('user_id')
     try:
         if request.POST.get("mode") == "false":
             # create the user
@@ -666,31 +680,41 @@ def useredit(request):
             user.save()
             # link the user to the admin
             try:
-                auth_user = Tbluser.objects.get(id=request.session.get('user_id'))
-                if auth_user.user_type == "TEAML":
-                    auth_user = Tblauth.objects.get(
-                        users=request.session.get("user_id", None
-                    )).admin
+                # get the user object from the database
+                auth_user = Tbluser.objects.get(id=session_id)
 
+                # if the user is a team leader, they don't have
+                # table auth instances assigned to them, their
+                # manager is the one with the table auth, but
+                # the TEAML is assigned the same team.
+                if auth_user.user_type == "TEAML":
+
+                    # we find the Tblauth instance with the TEAML user
+                    # assigned to it, so we can pull that team
+                    auth_user = Tblauth.objects.get(users=session_id).admin
+
+                # Now we have the user with the auth table, get their instance
                 auth = Tblauth.objects.get(admin=auth_user)
             except Tblauth.DoesNotExist:
-                auth = Tblauth(admin=Tbluser.objects.get(id=request.session.get('user_id')))
+                auth = Tblauth(
+                    admin=Tbluser.objects.get(
+                    id=session_id))
                 auth.save()
             auth.users.add(user)
             auth.save()
             email_message = """
-Hi {0},
-\tYour account has been created with the timetracker.
-Please use the following password to login: {1}.\n
-Regards,
-{2}
-""".format(user.firstname, password, auth_user.firstname)
+                Hi {0},
+                \tYour account has been created with the timetracker.
+                Please use the following password to login: {1}.\n
+                Regards,
+                {2}
+                """.format(user.firstname, password, auth_user.firstname)
 
             send_mail('Your account has been created',
                       email_message,
                       'timetracker@unmonitored.com',
                       [user.user_id],
-                      fail_silently=True)
+                      fail_silently=False)
         else:
             # If the mode contains a user_id
             # get that user and update it's
@@ -702,18 +726,23 @@ Regards,
             user.save()
     except IntegrityError as error:
         if error[0] == DUPLICATE_ENTRY:
+            database_log.info("Duplicate entry")
             json_data['error'] = "Duplicate entry"
             return json_data
         else:
+            database_log.error(str(error))
             json_data['error'] = str(error)
             return json_data
     except ValidationError:
+        error_log.error("Invalid data in creating a user")
         json_data['error'] = "Invalid Data."
         return json_data
-    except Tbluser.DoesNotExist:
-        json_data['error'] = "User doesn't exist. Already deleted?"
-        return json_data
-
+    except Exception as error:
+        if error[0] == CONNECTION_REFUSED:
+            email_log.error("email failed to send to %s with manager %s" %
+                            (user.user_id, auth.admin.name()))
+        else:
+            error_log.critical(str(error))
     json_data['success'] = True
     return json_data
 
@@ -758,9 +787,21 @@ def mass_holidays(request):
                     )
                 removal_entry.delete()
             except TrackingEntry.DoesNotExist:
+                """
+                because we're sending all data
+                with each ajax request, we delete
+                ones that are in the database, but
+                not in the ajax data, therefore,
+                if we get a DoesNotExist it just
+                means that we don't need to do
+                anything
+                """
                 pass
         else:
             try:
+                # mass uploads are non-working days
+                # so the admin doesn't need to assign
+                # tonnes of time data to each entry
                 time_str = "00:00:00"
                 new_entry = TrackingEntry(
                     user_id=form_data['user_id'],
@@ -772,6 +813,11 @@ def mass_holidays(request):
                     )
                 new_entry.save()
             except IntegrityError as error:
+                """
+                if we find that it's an existant
+                entry, it means that we're in change
+                mode, so assign the new daytype and save
+                """
                 if error[0] == DUPLICATE_ENTRY:
                     change_entry = TrackingEntry.objects.get(
                         user_id=form_data['user_id'],
@@ -780,11 +826,15 @@ def mass_holidays(request):
                     change_entry.daytype = entry[1]
                     change_entry.save()
                 else:
+                    # if we're here, something real bad has happened
+                    # don't send this error to the user
+                    error_log.critical(str(error))
                     raise Exception(error)
             except Exception as error:
+                # I know this is bad but, we can't allow errors to bubble
+                error_log.critical(str(error))
                 json_data['error'] = str(error)
                 return json_data
-
     json_data['success'] = True
     return json_data
 
@@ -805,6 +855,7 @@ def profile_edit(request):
         # get the user object from the db
         user = Tbluser.objects.get(id=request.session.get("user_id"))
     except Tbluser.DoesNotExist:
+        error_log.error("Editing a non-existant user")
         json_data['error'] = "User not found"
         return json_data
 
