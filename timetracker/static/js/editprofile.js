@@ -55,20 +55,20 @@ function submitChanges () {
 
 
     $.ajaxSetup({
-        "type": "POST",
-        "url": "/ajax",
-        "dataType": "json",
-        "data": {
+        type: "POST"
+    });
+
+    $.ajax({
+        url: "/ajax/",
+        dataType: "json",
+        data: {
             "form_type": "profileedit",
             "firstname": $("#id-firstname").val(),
             "lastname": $("#id-lastname").val(),
             "password": $("#id-password").val()
-        }
-    });
-
-    $.ajax({
+        },
         success: function(data) {
-            $("#edit-profile-wrapper")
+             $("#edit-profile-wrapper")
                 .fadeTo(500, 0, function () {
                     $("#edit-profile-wrapper")
                         .load("/edit_profile/ #edit-profile-table",
