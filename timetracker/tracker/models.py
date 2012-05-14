@@ -288,12 +288,12 @@ class Tblauthorization(models.Model):
 
         table_data_string = """
                             <tr>
-                              <td>{0} {1}</td>
+                              <td>{0}</td>
                             </tr>
                             """
 
         table_inner_list = [
-            table_data_string.format(user.firstname, user.lastname)
+            table_data_string.format(user.name())
             for user in self.users.all()
         ]
 
