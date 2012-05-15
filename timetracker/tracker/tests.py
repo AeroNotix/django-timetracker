@@ -202,7 +202,7 @@ class UserTestCase(BaseUserTest):
         self.assertEquals(self.linked_manager.display_user_type(), "ADMIN")
         self.assertEquals(self.linked_user.display_user_type(), "RUSER")
 
-    def testHolidayBalance(self):
+    def testHolidayBalanceMix(self):
         '''
         Test to make sure that the holiday balance calculates correctly
         '''
@@ -219,6 +219,10 @@ class UserTestCase(BaseUserTest):
 
         self.assertEquals(self.linked_user.get_holiday_balance(2012), 20)
 
+    def testHolidayBalanceAdd(self):
+        '''
+        Test for the holiday additional total works
+        '''
         for day in (("1", "HOLIS"), ("2", "HOLIS"), ("3", "HOLIS")):
             entry = TrackingEntry(
                 entry_date="2012-01-%s" % day[0],
