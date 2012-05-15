@@ -631,7 +631,7 @@ def delete_user(request):
 
     json_data = {
         'success': False,
-        'error': 'Missing user',
+        'error': '',
     }
 
     if user_id:
@@ -645,7 +645,8 @@ def delete_user(request):
 
         json_data['success'] = True
         return json_data
-
+    else:
+        json_data['error'] = "Missing user"
     return json_data
 
 
@@ -742,7 +743,9 @@ def useredit(request):
             email_log.error("email failed to send to %s with manager %s" %
                             (user.user_id, auth.admin.name()))
         else:
+            json_data['error'] = str(error)
             error_log.critical(str(error))
+            return json_data
     json_data['success'] = True
     return json_data
 
