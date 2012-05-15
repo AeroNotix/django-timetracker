@@ -5,7 +5,6 @@ when you run "manage.py test".
 Replace this with more appropriate tests for your application.
 """
 
-import unittest
 import datetime
 import simplejson
 import random
@@ -173,6 +172,7 @@ class BaseUserTest(TestCase):
     def tearDown(self):
         del(self.linked_manager_request)
         [user.delete() for user in Tbluser.objects.all()]
+        [holiday.delete() for holiday in TrackingEntry.objects.all()]
 
 class UserTestCase(BaseUserTest):
     '''
@@ -201,6 +201,24 @@ class UserTestCase(BaseUserTest):
         '''
         self.assertEquals(self.linked_manager.display_user_type(), "ADMIN")
         self.assertEquals(self.linked_user.display_user_type(), "RUSER")
+
+    def testHolidayBalance(self):
+        '''
+        Test to make sure that the holiday balance calculates correctly
+        '''
+        for day in (("1", "HOLIS"), ("2", "PUWRK"), ("3", "RETRN")):
+            entry = TrackingEntry(
+                entry_date="2012-01-%s" % day[0],
+                user_id=self.linked_user.id,
+                start_time="00:00:00",
+                end_time="00:00:00",
+                breaks="00:00:00",
+                daytype=day[1],
+            )
+            entry.save()
+
+        self.assertEquals(self.linked_user.get_holiday_balance(2012), 20)
+
 
 class AjaxTestCase(BaseUserTest):
 
