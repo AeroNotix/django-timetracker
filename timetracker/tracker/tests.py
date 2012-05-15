@@ -223,7 +223,7 @@ class UserTestCase(BaseUserTest):
         '''
         Test for the holiday additional total works
         '''
-        for day in (("1", "HOLIS"), ("2", "HOLIS"), ("3", "HOLIS")):
+        for day in (("1", "PUWRK"), ("2", "PUWRK"), ("3", "PUWRK")):
             entry = TrackingEntry(
                 entry_date="2012-01-%s" % day[0],
                 user_id=self.linked_user.id,
@@ -233,8 +233,25 @@ class UserTestCase(BaseUserTest):
                 daytype=day[1],
             )
             entry.save()
-            
+
         self.assertEquals(self.linked_user.get_holiday_balance(2012), 26)
+
+    def testHolidayBalanceDecrement(self):
+        '''
+        Test for the return decrement total works
+        '''
+        for day in (("1", "RETRN"), ("2", "RETRN"), ("3", "RETRN")):
+            entry = TrackingEntry(
+                entry_date="2012-01-%s" % day[0],
+                user_id=self.linked_user.id,
+                start_time="00:00:00",
+                end_time="00:00:00",
+                breaks="00:00:00",
+                daytype=day[1],
+            )
+            entry.save()
+
+        self.assertEquals(self.linked_user.get_holiday_balance(2012), 17)
 
 
 class AjaxTestCase(BaseUserTest):
