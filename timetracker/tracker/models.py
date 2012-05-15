@@ -220,7 +220,7 @@ class Tbluser(models.Model):
                     tracking_class = tracker_class_map[key]
                     break
 
-            return "<p %s> %.2f </p>" % (tracking_class, trackingnumber)
+            return "<p %s> %.2f </p>" % (tracking_class, float_to_time(trackingnumber))
         elif ret == 'int':
             return float_to_time(trackingnumber)
         elif ret == 'dbg':
