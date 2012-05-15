@@ -467,7 +467,10 @@ def ajax_delete_entry(request):
     form.update(get_request_data(form, request))
 
     # create our json structure
-    json_data = dict()
+    json_data = {
+        'success': False,
+        'error': ''
+    }
 
     if form['hidden-id']:
         try:
@@ -526,15 +529,16 @@ def ajax_change_entry(request):
         'daytype': None,
         'breaks': None,
         'hidden-id': None,
-        'breaks': None
-
     }
 
     # get the form data from the request object
     form.update(get_request_data(form, request))
 
     # create objects to put our data into
-    json_data = dict()
+    json_data = {
+        'success': True,
+        'error': ''
+    }
 
     try:
         # server-side time validation
