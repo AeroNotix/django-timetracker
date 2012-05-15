@@ -219,6 +219,19 @@ class UserTestCase(BaseUserTest):
 
         self.assertEquals(self.linked_user.get_holiday_balance(2012), 20)
 
+        for day in (("1", "HOLIS"), ("2", "HOLIS"), ("3", "HOLIS")):
+            entry = TrackingEntry(
+                entry_date="2012-01-%s" % day[0],
+                user_id=self.linked_user.id,
+                start_time="00:00:00",
+                end_time="00:00:00",
+                breaks="00:00:00",
+                daytype=day[1],
+            )
+            entry.save()
+            
+        self.assertEquals(self.linked_user.get_holiday_balance(2012), 26)
+
 
 class AjaxTestCase(BaseUserTest):
 
