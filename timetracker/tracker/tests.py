@@ -8,6 +8,7 @@ Replace this with more appropriate tests for your application.
 import unittest
 import datetime
 import simplejson
+import random
 
 from django.test import TestCase
 from django.http import HttpResponse, Http404
@@ -15,8 +16,12 @@ from django.http import HttpResponse, Http404
 from timetracker.tracker.models import (Tbluser,
                                         TrackingEntry,
                                         Tblauthorization)
-from timetracker.utils.calendar_utils import validate_time, parse_time, delete_user, useredit
-from timetracker.utils.datemaps import pad, float_to_time, generate_select
+from timetracker.utils.calendar_utils import (validate_time, parse_time,
+                                              delete_user, useredit,
+                                              mass_holidays, ajax_delete_entry,
+                                              gen_calendar, ajax_change_entry,
+                                              ajax_error)
+from timetracker.utils.datemaps import pad, float_to_time, generate_select, ABSENT_CHOICES
 
 class BaseUserTest(TestCase):
 
@@ -121,6 +126,7 @@ class BaseUserTest(TestCase):
             holiday_balance=20
         )
 
+        # create a new_user dict to share among tests
         self.new_user = {
             'mode': "false",
             'user_id': "new_test@user.com",
@@ -135,6 +141,15 @@ class BaseUserTest(TestCase):
             'job_code': "ABCDE",
             'holiday_balance': 20
         }
+
+        # create some random holiday data
+        holidays = {}
+        holidays_empty = {}
+        for day in range(1, 32):
+            holidays[day] = random.choice(ABSENT_CHOICES)[0]
+            holidays[day] = "empty"
+        self.holiday_data = simplejson.dumps(holidays)
+        self.holiday_data_empty = simplejson.dumps(holidays_empty)
 
         class Request(object):
             def __init__(self, model_id):
@@ -272,6 +287,105 @@ class AjaxTestCase(BaseUserTest):
         self.assertIsInstance(valid, HttpResponse)
         json = simplejson.dumps({'success': True, 'error': ''})
         self.assertEquals(valid.content, json)
+
+    def testValidAddMassHolidaysManager(self):
+
+        # create the post
+        self.linked_manager_request.POST = {
+            'form_data': 'mass_holiday',
+            'user_id': self.linked_user.id,
+            'year': '2012',
+            'month': '1',
+            'holiday_data': self.holiday_data
+            }
+
+        # the first time should be a virgin entry
+        valid = mass_holidays(self.linked_manager_request)
+        self.assertIsInstance(valid, HttpResponse)
+        json = simplejson.dumps({'success': True, 'error': ''})
+        self.assertEquals(valid.content, json)
+
+        self.linked_manager_request.POST = {
+            'form_data': 'mass_holiday',
+            'user_id': self.linked_user.id,
+            'year': '2012',
+            'month': '1',
+            'holiday_data': self.holiday_data_empty
+            }
+
+        # the 2nd time should still work, but silently pass
+        valid = mass_holidays(self.linked_manager_request)
+        self.assertIsInstance(valid, HttpResponse)
+        json = simplejson.dumps({'success': True, 'error': ''})
+        self.assertEquals(valid.content, json)
+
+        # create the post
+        self.linked_manager_request.POST = {
+            'form_data': 'mass_holiday',
+            'user_id': self.linked_user.id,
+            'year': '2012',
+            'month': '1',
+            'holiday_data': self.holiday_data
+            }
+
+        # the last time
+        valid = mass_holidays(self.linked_manager_request)
+        self.assertIsInstance(valid, HttpResponse)
+        json = simplejson.dumps({'success': True, 'error': ''})
+        self.assertEquals(valid.content, json)
+
+    def testValidAjaxDeleteHolidayEntry(self):
+
+        # create the entry we want to delete
+        TrackingEntry(entry_date="2012-01-01", user_id=self.linked_user.id)
+
+        # create the post
+        self.linked_user_request.POST = {
+            'hidden-id': self.linked_user.id,
+            'entry_date': '2012-01-01'
+            }
+        valid = ajax_delete_entry(self.linked_user_request)
+        self.assertIsInstance(valid, HttpResponse)
+        self.assertEquals(simplejson.dumps({
+                "success": True,
+                "error": '',
+                "calendar": gen_calendar(2012, 1, 1, user=self.linked_user.id)
+                }),
+                valid.content)
+
+    def testValidAjaxChangeHolidayEntry(self):
+
+        # create the entry we want to delete
+        TrackingEntry(entry_date="2012-01-01", user_id=self.linked_user.id)
+
+        # create the post
+        self.linked_user_request.POST = {
+            'entry_date': '2012-01-01',
+            'start_time': '09:00',
+            'end_time': '17:00',
+            'daytype': 'WRKDY',
+            'breaks': '00:15:00',
+            'hidden-id': self.linked_user.id,
+        }
+        valid = ajax_change_entry(self.linked_user_request)
+        self.assertIsInstance(valid, HttpResponse)
+        self.assertEquals(simplejson.dumps({
+                "success": True,
+                "error": '',
+                "calendar": gen_calendar(2012, 1, 1, user=self.linked_user.id)
+                }),
+                valid.content)
+
+    def testAjaxError(self):
+
+        valid = ajax_error("test string")
+        self.assertIsInstance(valid, HttpResponse)
+
+        self.assertEquals(valid.content, simplejson.dumps({
+                    'success': False,
+                    'error': 'test string'
+                    })
+                          )
 
 class UtilitiesTest(TestCase):
 
