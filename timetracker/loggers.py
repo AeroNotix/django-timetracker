@@ -5,12 +5,13 @@ A module to create and share a few logging instances
 import logging
 import os
 try:
+    from timetracker.settings import ROOT_LOG_DIR
+except:
+    ROOT_LOG_DIR = os.path.dirname(__file__)
+try:
     from timetracker.settings import LOGLEVEL
 except:
     LOGLEVEL = logging.DEBUG
-
-# Where you want the logs to go
-ROOT_DIR = '/var/log/timetracker/'
 
 def create_logger(filename,
                   level=logging.DEBUG,
@@ -29,14 +30,15 @@ def create_logger(filename,
     logger.addHandler(fh)
     return logger
 
-database_log = create_logger('database', root_path=ROOT_DIR)
-email_log = create_logger('email', root_path=ROOT_DIR)
-debug_log = create_logger('debug', root_path=ROOT_DIR)
-info_log = create_logger('info', root_path=ROOT_DIR)
-error_log = create_logger('error', root_path=ROOT_DIR)
-suspicious_log = create_logger('suspicious', root_path=ROOT_DIR)
+database_log = create_logger('database', root_path=ROOT_LOG_DIR)
+email_log = create_logger('email', root_path=ROOT_LOG_DIR)
+debug_log = create_logger('debug', root_path=ROOT_LOG_DIR)
+info_log = create_logger('info', root_path=ROOT_LOG_DIR)
+error_log = create_logger('error', root_path=ROOT_LOG_DIR)
+suspicious_log = create_logger('suspicious', root_path=ROOT_LOG_DIR)
 
 if __name__ == '__main__':
+    # test the logs
     database_log.debug('hello')
     database_log.info('hello')
     database_log.warn('hello')

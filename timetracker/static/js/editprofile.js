@@ -53,7 +53,6 @@ function submitChanges () {
         "password": $("#id-password").val()
     }
 
-
     $.ajaxSetup({
         type: "POST"
     });
@@ -66,7 +65,7 @@ function submitChanges () {
             "firstname": $("#id-firstname").val(),
             "lastname": $("#id-lastname").val(),
             "password": $("#id-password").val()
-        },
+        }
         success: function(data) {
              $("#edit-profile-wrapper")
                 .fadeTo(500, 0, function () {
