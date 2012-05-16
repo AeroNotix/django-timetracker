@@ -281,6 +281,8 @@ class DatabaseTestCase(BaseUserTest):
                 job_code="00F20G",
                 holiday_balance=20
                 )
+        # we're catching & ignoring duplicate entry
+        # because that's what it's supposed to do
         except IntegrityError as error:
             if error[0] == DUPLICATE_ENTRY:
                 pass
