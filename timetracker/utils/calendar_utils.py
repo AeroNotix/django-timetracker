@@ -731,7 +731,7 @@ def useredit(request):
             user.save()
     except IntegrityError as error:
         if error[0] == DUPLICATE_ENTRY:
-            database_log.info("Duplicate entry")
+            database_log.info("Duplicate entry - %s" % str(error))
             json_data['error'] = "Duplicate entry"
             return json_data
         else:
