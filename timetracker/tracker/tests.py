@@ -9,6 +9,7 @@ import datetime
 import simplejson
 import random
 
+from django.db import IntegrityError
 from django.test import TestCase
 from django.http import HttpResponse, Http404
 
@@ -21,6 +22,7 @@ from timetracker.utils.calendar_utils import (validate_time, parse_time,
                                               gen_calendar, ajax_change_entry,
                                               ajax_error)
 from timetracker.utils.datemaps import pad, float_to_time, generate_select, ABSENT_CHOICES
+from timetracker.utils.error_codes import DUPLICATE_ENTRY
 
 class BaseUserTest(TestCase):
 
@@ -254,7 +256,41 @@ class UserTestCase(BaseUserTest):
         self.assertEquals(self.linked_user.get_holiday_balance(2012), 17)
 
 
+class DatabaseTestCase(BaseUserTest):
+    '''
+    Class which tests the database for improper settings
+    '''
+
+    def testDuplicateError(self):
+        '''
+        Test which ensures that duplicate e-mail addresses
+        cannot be used
+        '''
+        try:
+            self.manager = Tbluser.objects.create(
+                user_id="test.manager@test.com",
+                firstname="test",
+                lastname="case",
+                password="password",
+                user_type="ADMIN",
+                market="BG",
+                process="AP",
+                start_date=datetime.datetime.today(),
+                breaklength="00:15:00",
+                shiftlength="08:00:00",
+                job_code="00F20G",
+                holiday_balance=20
+                )
+        except IntegrityError as error:
+            if error[0] == DUPLICATE_ENTRY:
+                pass
+            else:
+                raise
+
 class AjaxTestCase(BaseUserTest):
+    '''
+    Class which tests the ajax request handler functions
+    '''
 
     def testValidDeleteUserViaManager(self):
         '''
