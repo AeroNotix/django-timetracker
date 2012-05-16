@@ -108,6 +108,7 @@ class Tbluser(models.Model):
         return '%s - %s %s ' % (self.user_id,
                                 self.firstname,
                                 self.lastname)
+
     def get_administrator(self):
 
         """
