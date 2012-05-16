@@ -86,6 +86,7 @@ def logout(request):
         pass
     return HttpResponseRedirect("/")
 
+
 @loggedin
 def user_view(request,
              year=datetime.date.today().year,
@@ -176,10 +177,10 @@ def admin_view(request):
         auth = auth.get_administrator()
     try:
         employees = tblauth.objects.get(admin=auth)
-        employees_tuple = [ (user.id, user.name()) for user in employees.users.all() ]
-        employees_tuple.append(("null", "----------"))
+        ees_tuple = [(user.id, user.name()) for user in employees.users.all()]
+        ees_tuple.append(("null", "----------"))
         employees_select = generate_select(
-            employees_tuple,
+            ees_tuple,
             id="user_select"
         )
     except tblauth.DoesNotExist:
@@ -224,10 +225,10 @@ def add_change_user(request):
     # option box.
     try:
         employees = tblauth.objects.get(admin_id=auth)
-        employees_tuple = [ (user.id, user.name()) for user in employees.users.all() ]
-        employees_tuple.append(("null", "----------"))
+        ees_tuple = [(user.id, user.name()) for user in employees.users.all()]
+        ees_tuple.append(("null", "----------"))
         employees_select = generate_select(
-            employees_tuple,
+            ees_tuple,
             id="user_select"
         )
     except tblauth.DoesNotExist:
@@ -278,7 +279,7 @@ def holiday_planning(request,
         try:
             user = user.get_administrator()
         except tblauth.DoesNotExist:
-           return HttpResponseRedirect("/admin_view/")
+            return HttpResponseRedirect("/admin_view/")
 
     # whichever user we're left with,
     # get the users assigned to them
@@ -298,6 +299,7 @@ def holiday_planning(request,
         },
         RequestContext(request))
 
+
 @loggedin
 def edit_profile(request):
 
@@ -316,6 +318,7 @@ def edit_profile(request):
                                'adminrequest': user.is_admin()
                                },
                               RequestContext(request))
+
 
 @loggedin
 def explain(request):
@@ -338,6 +341,7 @@ def explain(request):
                                'working_days': working_days
                                },
                               RequestContext(request))
+
 
 def forgot_pass(request):
 
@@ -380,4 +384,3 @@ def forgot_pass(request):
         else:
             error_log.critical(str(error))
     return HttpResponseRedirect("/")
-

@@ -26,7 +26,6 @@ from timetracker.utils.decorators import (admin_check, json_response,
                                           request_check)
 
 
-
 def get_request_data(form, request):
 
     """

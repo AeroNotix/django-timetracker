@@ -6,11 +6,11 @@ import logging
 import os
 try:
     from timetracker.settings import ROOT_LOG_DIR
-except:
+except ImportError:
     ROOT_LOG_DIR = os.path.dirname(__file__)
 try:
     from timetracker.settings import LOGLEVEL
-except:
+except ImportError:
     LOGLEVEL = logging.DEBUG
 
 

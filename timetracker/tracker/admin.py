@@ -4,6 +4,7 @@ from django.core.mail import send_mail
 from timetracker.tracker import models
 from timetracker.utils.error_codes import CONNECTION_REFUSED
 
+
 def send_password_reminder(modeladmin, request, queryset):
 
     '''
@@ -32,6 +33,7 @@ def send_password_reminder(modeladmin, request, queryset):
 class UserAdmin(admin.ModelAdmin):
     list_display = ('__unicode__', 'display_user_type')
     actions = [send_password_reminder]
+
 
 class AuthAdmin(admin.ModelAdmin):
     list_display = ('__unicode__', 'display_users')

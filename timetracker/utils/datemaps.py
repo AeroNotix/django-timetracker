@@ -48,6 +48,7 @@ DAYTYPE_CHOICES = (
     ('WKHOM', 'Work at home'),
 )
 
+
 def generate_select(data, id=''):
     """
     Generates a select box from a tuple of tuples
@@ -77,6 +78,7 @@ def generate_select(data, id=''):
     out('</select>')
     return ''.join(output)
 
+
 def pad(string, padchr='0', amount=2):
     """
     Pads a string
@@ -88,6 +90,7 @@ def pad(string, padchr='0', amount=2):
         return pre + string
 
     return string
+
 
 def float_to_time(timefloat):
 

@@ -9,7 +9,10 @@ from operator import add
 from django.db import models
 from django.forms import ModelForm
 
-from timetracker.utils.datemaps import WORKING_CHOICES, DAYTYPE_CHOICES, float_to_time
+from timetracker.utils.datemaps import (
+    WORKING_CHOICES, DAYTYPE_CHOICES, float_to_time
+    )
+
 
 class Tbluser(models.Model):
 
@@ -146,6 +149,7 @@ class Tbluser(models.Model):
         return TrackingEntry.objects.filter(user_id=self.id,
                                             entry_date__year=year,
                                             entry_date__month=month)
+
     def is_admin(self):
         """
         Returns whether or not the user instance is an admin
@@ -192,15 +196,17 @@ class Tbluser(models.Model):
             shift_hours += self.shiftlength.hour
             shift_minutes += self.shiftlength.minute
 
-            total_hours  += (  item.end_time.hour
-                             - item.start_time.hour
-                             - item.breaks.hour
-                            )
+            total_hours += (
+                  item.end_time.hour
+                - item.start_time.hour
+                - item.breaks.hour
+                )
 
-            total_mins += (  item.end_time.minute
-                           - item.start_time.minute
-                           - item.breaks.minute
-                          )
+            total_mins += (
+                  item.end_time.minute
+                - item.start_time.minute
+                - item.breaks.minute
+                )
 
         trackingnumber = 0 - (add(shift_hours, (shift_minutes / 60.0))
                            - add(total_hours, (total_mins / 60.0)))
@@ -221,7 +227,11 @@ class Tbluser(models.Model):
                     tracking_class = tracker_class_map[key]
                     break
 
-            return "<p %s>%s</p>" % (tracking_class, float_to_time(trackingnumber))
+            return "<p %s>%s</p>" % (
+                tracking_class,
+                float_to_time(trackingnumber)
+            )
+
         elif ret == 'int':
             return float_to_time(trackingnumber)
         elif ret == 'dbg':
