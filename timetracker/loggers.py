@@ -13,6 +13,7 @@ try:
 except:
     LOGLEVEL = logging.DEBUG
 
+
 def create_logger(filename,
                   level=logging.DEBUG,
                   root_path=os.path.dirname(__file__)):
@@ -25,7 +26,7 @@ def create_logger(filename,
 
     logger = logging.getLogger(filename)
     logger.setLevel(LOGLEVEL)
-    fh = logging.FileHandler(os.path.join(root_path, filename+'.log'))
+    fh = logging.FileHandler(os.path.join(root_path, filename + '.log'))
     fh.setFormatter(frmt)
     logger.addHandler(fh)
     return logger
