@@ -26,6 +26,7 @@ from timetracker.utils.decorators import (admin_check, json_response,
                                           request_check)
 
 
+
 def get_request_data(form, request):
 
     """
@@ -149,7 +150,11 @@ def gen_holiday_list(admin_user,
             calendar_array.extend(week)
         calendar_array = filter((lambda x: x > 0), calendar_array)
 
-        for user in admin_user.users.all():
+        # here we add the administrator to their list of employees
+        # this means that administrator accounts can view/change
+        # their own holidays
+        user_list = list(admin_user.users.all()) + [admin_user.admin]
+        for user in user_list:
             day_classes = {
                 num: 'empty' for num in calendar_array
             }
