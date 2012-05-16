@@ -21,9 +21,11 @@ from timetracker.loggers import (debug_log, info_log,
 from timetracker.tracker.models import TrackingEntry, Tbluser
 from timetracker.tracker.models import Tblauthorization as Tblauth
 from timetracker.utils.error_codes import DUPLICATE_ENTRY, CONNECTION_REFUSED
-from timetracker.utils.datemaps import MONTH_MAP, generate_select, pad
+from timetracker.utils.datemaps import (MONTH_MAP, WEEK_MAP_SHORT,
+                                        generate_select, pad)
 from timetracker.utils.decorators import (admin_check, json_response,
                                           request_check)
+
 
 
 def get_request_data(form, request):
@@ -142,17 +144,23 @@ def gen_holiday_list(admin_user,
                  <th align="centre" colspan="100">{0}</th>
               </tr>""".format(MONTH_MAP[month - 1][1]))
 
-    # generate the calendar, flatten it and
-    # get rid of the zeros
-    calendar_array = list()
-    for week in cdr.monthcalendar(year, month):
-        calendar_array.extend(week)
-    calendar_array = filter((lambda x: x > 0), calendar_array)
+    # generate the calendar,
+    datetime_cal = gen_datetime_cal(year, month)
+
+    # get just the days for the td text
+    calendar_array = [day.day for day in datetime_cal]
+
+    # generate the top row, with day names
+    day_names = [WEEK_MAP_SHORT[day.weekday()] for day in datetime_cal]
+    print zip(datetime_cal, day_names)
+    to_out("""<tr><td></td><td></td><td></td>""")
+    [to_out("<td>%s</td>\n" % day) for day in day_names]
+    to_out("</tr>")
 
     # here we add the administrator to their list of employees
     # this means that administrator accounts can view/change
     # their own holidays
-    user_list = list(admin_user.users.all()) + [admin_user.admin]
+    user_list = [admin_user.admin] + list(admin_user.users.all())
     for user in user_list:
         day_classes = {
             num: 'empty' for num in calendar_array
@@ -889,3 +897,15 @@ def profile_edit(request):
 
     json_data['success'] = True
     return json_data
+
+
+def gen_datetime_cal(year, month):
+    '''
+    Generates a datetime list of all days in a month
+    '''
+    dt = datetime
+    days = []
+    for week in cdr.monthcalendar(year, month):
+        days.extend(week)
+    days = filter((lambda x: x > 0), days)
+    return [dt.datetime(year=year, month=month, day=day) for day in days]

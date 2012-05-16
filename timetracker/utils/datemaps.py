@@ -4,6 +4,26 @@ Maps of useful data
 Django has this built-in but it is annoying to use
 '''
 
+WEEK_MAP_MID = {
+    0: 'Mon',
+    1: 'Tue',
+    2: 'Wed',
+    3: 'Thu',
+    4: 'Fri',
+    5: 'Sat',
+    6: 'Sat'
+}
+
+WEEK_MAP_SHORT = {
+    0: 'Mo',
+    1: 'Tu',
+    2: 'We',
+    3: 'Th',
+    4: 'Fr',
+    5: 'Sa',
+    6: 'Su'
+}
+
 MONTH_MAP = {
     0: ('JAN', 'January'),
     1: ('FEB', 'February'),
