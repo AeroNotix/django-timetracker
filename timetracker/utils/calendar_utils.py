@@ -159,7 +159,12 @@ def gen_holiday_list(admin_user,
     # here we add the administrator to their list of employees
     # this means that administrator accounts can view/change
     # their own holidays
-    user_list = [admin_user.admin] + list(admin_user.users.all())
+    auth_user = Tblauth.objects.get(admin=admin_user.get_administrator())
+    if admin_user.user_type == "TEAML":
+        user_list = list(auth_user.users.all())
+    else:
+        user_list = [admin_user] + list(auth_user.users.all())
+
     for user in user_list:
         day_classes = {
             num: 'empty' for num in calendar_array

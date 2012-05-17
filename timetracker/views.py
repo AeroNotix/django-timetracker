@@ -277,21 +277,14 @@ def holiday_planning(request,
     if user.user_type == "TEAML":
         is_team_leader = True
         try:
-            user = user.get_administrator()
+            user.get_administrator()
         except tblauth.DoesNotExist:
             return HttpResponseRedirect("/admin_view/")
-
-    # whichever user we're left with,
-    # get the users assigned to them
-    try:
-        auth = tblauth.objects.get(admin=user)
-    except tblauth.DoesNotExist:
-        return HttpResponseRedirect("/admin_view/")
 
     return render_to_response(
         "holidays.html",
         {
-        "holiday_table": gen_holiday_list(auth,
+        "holiday_table": gen_holiday_list(user,
                                           int(year),
                                           int(month)),
         'welcome_name': request.session['firstname'],
