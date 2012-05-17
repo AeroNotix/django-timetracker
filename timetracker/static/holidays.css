@@ -54,3 +54,7 @@
 .job_code {
     color: black;
 }
+
+#theader td {
+    font-size: 12px;
+}
