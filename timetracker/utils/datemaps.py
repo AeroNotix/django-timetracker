@@ -125,5 +125,5 @@ def float_to_time(timefloat):
         prefix = '-'
 
     seconds = timefloat * 3600
-    time = str(datetime.timedelta(seconds=seconds))
-    return '%s%s' % (prefix, time)
+    time = prefix + str(datetime.timedelta(seconds=seconds))
+    return pad(time[:-3], amount=5)
