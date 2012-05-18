@@ -10,8 +10,8 @@
    border-collapse: collapse;
    margin-left: auto;
    margin-right: auto;
-   color: white;
-   background: #1d1d1d;
+   color: black;
+   background: white;
 }
 
 #holiday-buttons {
@@ -48,7 +48,7 @@
 
 #holiday-table th {
    border: 1px solid #717171;
-   color: #ccc;
+   color: black;
 }
 
 .job_code {
@@ -57,4 +57,12 @@
 
 #theader td {
     font-size: 12px;
+}
+
+.empty {
+    background: white;
+}
+
+.selected {
+    background: orange;
 }
