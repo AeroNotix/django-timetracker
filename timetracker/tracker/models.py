@@ -13,7 +13,6 @@ from timetracker.utils.datemaps import (
     WORKING_CHOICES, DAYTYPE_CHOICES, float_to_time
     )
 
-
 class Tbluser(models.Model):
 
     """
@@ -91,6 +90,7 @@ class Tbluser(models.Model):
 
     holiday_balance = models.IntegerField(db_column='Holiday_Balance',
                                           verbose_name=('Holiday Balance'))
+
 
     class Meta:
 
@@ -315,6 +315,12 @@ class Tblauthorization(models.Model):
             ''.join([table_entry for table_entry in table_inner_list]),
             '</table>']
         )
+
+    def manager_view(self):
+        return self.users.all()
+
+    def teamleader_view(self):
+        return self.users.exclude(user_type__in={"TEAML", "ADMIN"})
 
     display_users.allow_tags = True
     display_users.short_discription = "Subordinate Users"

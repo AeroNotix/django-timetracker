@@ -46,6 +46,10 @@
    user-select: none;
 }
 
+.user-td {
+   width: 200px;
+}
+
 #holiday-table th {
    border: 1px solid #717171;
    color: black;

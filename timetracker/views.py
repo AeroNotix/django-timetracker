@@ -1,4 +1,5 @@
 '''
+.. automodule::
 Views which are mapped from the URL objects in urls.py
 '''
 
@@ -28,7 +29,9 @@ from timetracker.loggers import suspicious_log, email_log, error_log
 def index(request):
 
     """
-    Serve the root page, there's nothing there at the moment
+    Serve the root page.
+
+    This contains a login box and some basic markup.
     """
     return render_to_response('index.html',
                               {'login': Login()},
@@ -208,31 +211,36 @@ def add_change_user(request):
     """
 
     # retrieve and assign user object
-    auth = Tbluser.objects.get(
+    user = Tbluser.objects.get(
         id=request.session.get("user_id", None)
     )
 
     # if the user is actually a TeamLeader, they can
     # view the team assigned to their manager
     is_team_leader = False
-    if auth.user_type == "TEAML":
+    if user.user_type == "TEAML":
         is_team_leader = True
-        auth = auth.get_administrator()
 
+    # get the admin for this user.
+    auth = user.get_administrator()
     # since we now will have a manage either way,
     # via the team leader or the actual manager,
     # we get all the users and generate a select
     # option box.
     try:
-        employees = tblauth.objects.get(admin_id=auth)
-        ees_tuple = [(user.id, user.name()) for user in employees.users.all()]
+        auth_links = tblauth.objects.get(admin_id=auth)
+        if not is_team_leader:
+            ees = auth_links.manager_view()
+        else:
+            ees = auth_links.teamleader_view()
+        ees_tuple = [(user.id, user.name()) for user in ees]
         ees_tuple.append(("null", "----------"))
         employees_select = generate_select(
             ees_tuple,
             id="user_select"
         )
     except tblauth.DoesNotExist:
-        employees = []
+        ees = []
         employees_select = """<select id=user_select>
                                 <option id="null">----------</option>
                               </select>"""
@@ -240,7 +248,7 @@ def add_change_user(request):
     return render_to_response(
         "useredit.html",
         {
-        "employees": employees,
+        "employees": ees,
         "user_form": UserForm(),
         'welcome_name': request.session['firstname'],
         'employee_option_list': employees_select,
