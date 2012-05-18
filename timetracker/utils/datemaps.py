@@ -4,6 +4,8 @@ Maps of useful data
 Django has this built-in but it is annoying to use
 '''
 
+import datetime
+
 WEEK_MAP_MID = {
     0: 'Mon',
     1: 'Tue',
@@ -122,7 +124,6 @@ def float_to_time(timefloat):
         timefloat = 0 - timefloat
         prefix = '-'
 
-    minutes = pad(int((60.0 * timefloat) % 60))
-    hours = pad(int((60.0 * timefloat) // 60))
-
-    return '%s%s:%s' % (prefix, hours, minutes)
+    seconds = timefloat * 3600
+    time = str(datetime.timedelta(seconds=seconds))
+    return '%s%s' % (prefix, time)
