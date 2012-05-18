@@ -36,10 +36,7 @@ function toggleChangeEntries(st_hour, st_min, full_st,
                              entry_date, daytype,
                              change_id, breakLength,
                              breakLength_full) {
-
-    var balance = fi_hour - st_hour;
-    console.log(balance);
-
+        
     var text_information = "Start Time: " + full_st;
     var text_information = text_information + " | End Time: " + full_fi;
     var text_information = text_information + " | Breaks: " + breakLength_full;
