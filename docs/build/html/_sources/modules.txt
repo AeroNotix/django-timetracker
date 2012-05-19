@@ -1,0 +1,7 @@
+timetracker
+===========
+
+.. toctree::
+   :maxdepth: 4
+
+   timetracker
