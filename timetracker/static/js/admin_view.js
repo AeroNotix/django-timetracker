@@ -74,7 +74,6 @@ function toggleChangeEntries(st_hour, st_min, full_st,
     }
     
     var shiftLength = " | Shift Length: " + hour_string + ":" + breaks;
-
     var text_information = start_string+end_string;
     $("#day_information").fadeTo(500, 0, function() {    
         $("#day_information").text(text_information + shiftLength);
