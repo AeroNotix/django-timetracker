@@ -27,9 +27,6 @@ def loggedin(func):
             info_log.info("Non-logged in user accessing @loggedin page")
             raise Http404
         return func(request, *args, **kwargs)
-
-    # re-attach the docstrings
-    print func.__doc__
     return inner
 
 

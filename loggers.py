@@ -5,11 +5,11 @@ A module to create and share a few logging instances
 import logging
 import os
 try:
-    from timetracker.settings import ROOT_LOG_DIR
+    from settings import ROOT_LOG_DIR
 except ImportError:
     ROOT_LOG_DIR = os.path.dirname(__file__)
 try:
-    from timetracker.settings import LOGLEVEL
+    from settings import LOGLEVEL
 except ImportError:
     LOGLEVEL = logging.DEBUG
 

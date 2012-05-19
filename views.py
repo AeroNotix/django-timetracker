@@ -9,11 +9,11 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.core.mail import send_mail
 
-from tracker.models import Tbluser, UserForm, TrackingEntry
-from tracker.models import Tblauthorization as tblauth
-from tracker.forms import EntryForm, AddForm, Login
+from timetracker.tracker.models import Tbluser, UserForm, TrackingEntry
+from timetracker.tracker.models import Tblauthorization as tblauth
+from timetracker.tracker.forms import EntryForm, AddForm, Login
 
-from utils.calendar_utils import (gen_calendar, gen_holiday_list,
+from timetracker.utils.calendar_utils import (gen_calendar, gen_holiday_list,
                                   ajax_add_entry, ajax_change_entry,
                                   ajax_delete_entry, ajax_error,
                                   get_user_data, delete_user, useredit,
