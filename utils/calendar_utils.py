@@ -1,6 +1,4 @@
 """
-.. module:: Calendar Utils
-   :platform: Unix, Windows, MacOSX
 Module for collecting the utility functions dealing with mostly calendar
 tasks, processing dates and creating time-based code.
 """

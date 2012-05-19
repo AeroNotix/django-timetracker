@@ -1,0 +1,35 @@
+utils Package
+=============
+
+:mod:`calendar_utils` Module
+----------------------------
+
+.. automodule:: timetracker.utils.calendar_utils
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`datemaps` Module
+----------------------
+
+.. automodule:: timetracker.utils.datemaps
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`decorators` Module
+------------------------
+
+.. automodule:: timetracker.utils.decorators
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`error_codes` Module
+-------------------------
+
+.. automodule:: timetracker.utils.error_codes
+    :members:
+    :undoc-members:
+    :show-inheritance:
+

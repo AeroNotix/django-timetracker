@@ -1,0 +1,72 @@
+#full-table-wrapper {
+   margin-top: 10%;
+   margin-left: auto;
+   margin-right: auto;
+   border: 2px solid #1d1d1d;
+}
+
+#holiday-table {
+
+   border-collapse: collapse;
+   margin-left: auto;
+   margin-right: auto;
+   color: black;
+   background: white;
+}
+
+#holiday-buttons {
+   color: #1d1d1d;
+}
+
+.IEfix_nav {
+   margin-top: 150px;
+   z-index: 99;
+}
+.IEfix {
+   margin-top: 50%;
+   margin-left: auto;
+   margin-left: auto;
+   z-index: -99;
+}
+
+.holiday-button {
+   width: 30px;
+   height: 30px;
+}
+
+#holiday-table td {
+   border: 1px solid #717171;
+   width: 18px;
+   height: 18px
+   -webkit-touch-callout: none;
+   -webkit-user-select: none;
+   -khtml-user-select: none;
+   -moz-user-select: none;
+   -ms-user-select: none;
+   user-select: none;
+}
+
+.user-td {
+   width: 200px;
+}
+
+#holiday-table th {
+   border: 1px solid #717171;
+   color: black;
+}
+
+.job_code {
+    color: black;
+}
+
+#theader td {
+    font-size: 12px;
+}
+
+.empty {
+    background: white;
+}
+
+.selected {
+    background: orange;
+}

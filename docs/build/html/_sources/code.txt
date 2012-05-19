@@ -1,0 +1,2 @@
+.. automodule:: timetracker.views
+   :members:
