@@ -20,6 +20,7 @@ def loggedin(func):
     """
 
     def inner(request, *args, **kwargs):
+
         try:
             Tbluser.objects.get(id=request.session.get("user_id"))
         except Tbluser.DoesNotExist:
@@ -27,6 +28,8 @@ def loggedin(func):
             raise Http404
         return func(request, *args, **kwargs)
 
+    # re-attach the docstrings
+    print func.__doc__
     return inner
 
 

@@ -1,6 +1,5 @@
-'''
-.. automodule::
-Views which are mapped from the URL objects in urls.py
+'''Views which are mapped from the URL objects in urls.py
+    .. moduleauthor: Aaron France <aaron.france@hp.com>
 '''
 
 import datetime
@@ -28,10 +27,13 @@ from timetracker.loggers import suspicious_log, email_log, error_log
 
 def index(request):
 
-    """
-    Serve the root page.
-
-    This contains a login box and some basic markup.
+    """ This function serves the base login page. TODO: Make this view check
+    to see if the user is already logged in and if so, redirect.
+    
+    This function shouldn't be directly called, it's invocation is automatic
+    
+        :param request: Automatically passed. Contains a map of the httprequest
+        :return: A HttpResponse object which is then passed to the browser
     """
     return render_to_response('index.html',
                               {'login': Login()},
@@ -40,10 +42,20 @@ def index(request):
 
 def login(request):
 
-    """
-    Basic login function.
+    """ This function logs the user in, directly adding the session id to
+    a database entry. This function is invoked from the url mapped in urls.py.
+    The url is POSTed to, and should contain two fields, the use_name and the
+    pass word field. This is then pulled from the database and matched
+    against, what the user supplied. If they match, the user is then checked
+    to see what *kind* of user their are, if they are ADMIN or TEAML they will
+    be sent to the administrator view. Else they will be sent to the user
+    page.
 
-    Dispatches to admin/user depending on usertype
+    This function shouldn't be directly called, it's invocation is automatic
+    from the url mappings.
+    
+        :param request: Automatically passed. Contains a map of the httprequest
+        :return: A HttpResponse object which is then passed to the browser
     """
 
     # if this somehow gets requested via Ajax, then
@@ -79,8 +91,13 @@ def login(request):
 
 def logout(request):
 
-    """
-    Simple logout function
+    """ Simple logout function
+
+    This function will delete a session id from the session dictionary so that
+    the user will need to log back in order to access the same pages.
+
+        :param request: Automatically passed contains a map of the httprequest
+        :return: A HttpResponse object which is passed to the browser.
     """
 
     try:
@@ -96,7 +113,6 @@ def user_view(request,
              month=datetime.date.today().month,
              day=datetime.date.today().day,
              ):
-
     """
     Generates a calendar based on the URL it receives.
     site.com/calendar/2012/02/, also takes a day
