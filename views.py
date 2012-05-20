@@ -113,13 +113,21 @@ def user_view(request,
              month=datetime.date.today().month,
              day=datetime.date.today().day,
              ):
-    """
-    Generates a calendar based on the URL it receives.
-    site.com/calendar/2012/02/, also takes a day
-    just in case you want to add a particular view for a day,
-    for example.
+    """Generates a calendar based on the URL it receives.
+    For example: domain.com/calendar/{year}/{month}/{day},
+    also takes a day just in case you want to add a particular
+    view for a day, for example. Currently a day-level is not
+    in-use.
 
-    The generated HTML is pretty printed
+        :note: The generated HTML should be pretty printed
+        :param request: Automatically passed contains a map of the httprequest
+        :param year: The year that the view will be rendered with, default is
+                     the current year.
+        :param month: The month that the view will be rendered with, default is
+                      the current month.
+        :param day: The day that the view will be rendered with, default is
+                    the current day
+        :return: A HttpResponse object which is passed to the browser.
     """
 
     user_id = request.session['user_id']
@@ -142,9 +150,46 @@ def user_view(request,
 
 def ajax(request):
 
-    """
-    Ajax request handler, dispatches to specific ajax functions
-    depending on what json gets sent.
+    """Ajax request handler, dispatches to specific ajax functions depending
+    on what json gets sent.
+
+    Any additional ajax views should be added to the ajax_funcs map, this will
+    allow the dispatch function to be used. Future revisions could have a kind
+    of decorator which could be applied to functions to mutate some global map
+    of ajax dispatch functions. For now, however, just add them into the map.
+
+    The idea for this is that on the client-side call you would construct your
+    javascript call with something like the below (using jQuery):
+
+    $.ajaxSetup({
+        type: 'POST',\n
+        url: '/ajax/',\n
+        dataType: 'json'\n
+    });
+
+    $.ajax({
+        data: {
+            form: 'functionName',\n
+            data: 'data'\n
+        }
+    });
+
+    Using this method, this allows us to construct a single view url and have
+    all ajax requests come through here. This is highly advantagious because
+    then we don't have to create a url map and construct views to handle that
+    specific call. We just have some server-side map and route through there.
+
+    The lookup and dispatch works like this:
+
+    1) Request comes through.
+    2) Request gets sent to the ajax view due to the client-side call making a
+       request to the url mapped to this view.
+    3) The form type is detected in the json data sent along with the call.
+    4) This string is then pulled out of the dict, executed and it's response
+       sent back to the browser.
+
+       :param request: Automatically passed contains a map of the httprequest
+       :return: HttpResponse object back to the browser.
     """
 
     # if the page is accessed via the browser (or other means)
