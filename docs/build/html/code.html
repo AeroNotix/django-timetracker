@@ -49,16 +49,100 @@
   <span class="target" id="module-timetracker.views"></span><p>Views which are mapped from the URL objects in urls.py
 .. moduleauthor: Aaron France &lt;<a class="reference external" href="mailto:aaron&#46;france&#37;&#52;&#48;hp&#46;com">aaron<span>&#46;</span>france<span>&#64;</span>hp<span>&#46;</span>com</a>&gt;</p>
 <dl class="function">
+<dt id="timetracker.views.add_change_user">
+<tt class="descclassname">timetracker.views.</tt><tt class="descname">add_change_user</tt><big>(</big><em>request</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/timetracker/views.html#add_change_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.views.add_change_user" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the view for changing/adding users</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="timetracker.views.admin_view">
+<tt class="descclassname">timetracker.views.</tt><tt class="descname">admin_view</tt><big>(</big><em>request</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/timetracker/views.html#admin_view"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.views.admin_view" title="Permalink to this definition">¶</a></dt>
+<dd><p>The user logged in is an admin, we show them a
+view based on their team</p>
+</dd></dl>
+
+<dl class="function">
 <dt id="timetracker.views.ajax">
 <tt class="descclassname">timetracker.views.</tt><tt class="descname">ajax</tt><big>(</big><em>request</em><big>)</big><a class="reference internal" href="_modules/timetracker/views.html#ajax"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.views.ajax" title="Permalink to this definition">¶</a></dt>
-<dd><p>Ajax request handler, dispatches to specific ajax functions
-depending on what json gets sent.</p>
+<dd><p>Ajax request handler, dispatches to specific ajax functions depending
+on what json gets sent.</p>
+<p>Any additional ajax views should be added to the ajax_funcs map, this will
+allow the dispatch function to be used. Future revisions could have a kind
+of decorator which could be applied to functions to mutate some global map
+of ajax dispatch functions. For now, however, just add them into the map.</p>
+<p>The idea for this is that on the client-side call you would construct your
+javascript call with something like the below (using jQuery):</p>
+<dl class="docutils">
+<dt>$.ajaxSetup({</dt>
+<dd><p class="first">type: &#8216;POST&#8217;,</p>
+<p>url: &#8216;/ajax/&#8217;,</p>
+<p class="last">dataType: &#8216;json&#8217;</p>
+</dd>
+</dl>
+<p>});</p>
+<dl class="docutils">
+<dt>$.ajax({</dt>
+<dd><dl class="first docutils">
+<dt>data: {</dt>
+<dd><p class="first">form: &#8216;functionName&#8217;,</p>
+<p class="last">data: &#8216;data&#8217;</p>
+</dd>
+</dl>
+<p class="last">}</p>
+</dd>
+</dl>
+<p>});</p>
+<p>Using this method, this allows us to construct a single view url and have
+all ajax requests come through here. This is highly advantagious because
+then we don&#8217;t have to create a url map and construct views to handle that
+specific call. We just have some server-side map and route through there.</p>
+<p>The lookup and dispatch works like this:</p>
+<ol class="arabic">
+<li><p class="first">Request comes through.</p>
+</li>
+<li><p class="first">Request gets sent to the ajax view due to the client-side call making a
+request to the url mapped to this view.</p>
+</li>
+<li><p class="first">The form type is detected in the json data sent along with the call.</p>
+</li>
+<li><p class="first">This string is then pulled out of the dict, executed and it&#8217;s response
+sent back to the browser.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">param request:</th><td class="field-body">Automatically passed contains a map of the httprequest</td>
+</tr>
+<tr class="field-even field"><th class="field-name">return:</th><td class="field-body">HttpResponse object back to the browser.</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ol>
+</dd></dl>
+
+<dl class="function">
+<dt id="timetracker.views.edit_profile">
+<tt class="descclassname">timetracker.views.</tt><tt class="descname">edit_profile</tt><big>(</big><em>request</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/timetracker/views.html#edit_profile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.views.edit_profile" title="Permalink to this definition">¶</a></dt>
+<dd><p>View for sending the user to the edit profile page</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="timetracker.views.explain">
+<tt class="descclassname">timetracker.views.</tt><tt class="descname">explain</tt><big>(</big><em>request</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/timetracker/views.html#explain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.views.explain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Renders the Balance explanation page</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="timetracker.views.forgot_pass">
 <tt class="descclassname">timetracker.views.</tt><tt class="descname">forgot_pass</tt><big>(</big><em>request</em><big>)</big><a class="reference internal" href="_modules/timetracker/views.html#forgot_pass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.views.forgot_pass" title="Permalink to this definition">¶</a></dt>
 <dd><p>View for resetting a user&#8217;s password</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="timetracker.views.holiday_planning">
+<tt class="descclassname">timetracker.views.</tt><tt class="descname">holiday_planning</tt><big>(</big><em>request</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/timetracker/views.html#holiday_planning"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.views.holiday_planning" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates the full holiday table for all employees under a manager</p>
 </dd></dl>
 
 <dl class="function">
@@ -120,6 +204,39 @@ the user will need to log back in order to access the same pages.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">param request:</th><td class="field-body">Automatically passed contains a map of the httprequest</td>
+</tr>
+<tr class="field-even field"><th class="field-name">return:</th><td class="field-body">A HttpResponse object which is passed to the browser.</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="timetracker.views.user_view">
+<tt class="descclassname">timetracker.views.</tt><tt class="descname">user_view</tt><big>(</big><em>request</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/timetracker/views.html#user_view"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.views.user_view" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a calendar based on the URL it receives.
+For example: domain.com/calendar/{year}/{month}/{day},
+also takes a day just in case you want to add a particular
+view for a day, for example. Currently a day-level is not
+in-use.</p>
+<blockquote>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">note:</th><td class="field-body">The generated HTML should be pretty printed</td>
+</tr>
+<tr class="field-even field"><th class="field-name">param request:</th><td class="field-body">Automatically passed contains a map of the httprequest</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">param year:</th><td class="field-body">The year that the view will be rendered with, default is
+the current year.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">param month:</th><td class="field-body">The month that the view will be rendered with, default is
+the current month.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">param day:</th><td class="field-body">The day that the view will be rendered with, default is
+the current day</td>
 </tr>
 <tr class="field-even field"><th class="field-name">return:</th><td class="field-body">A HttpResponse object which is passed to the browser.</td>
 </tr>
