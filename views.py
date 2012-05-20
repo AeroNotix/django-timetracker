@@ -1,11 +1,9 @@
 '''Views which are mapped from the URL objects in urls.py
 
     .. moduleauthor:: Aaron France <aaron.france@hp.com>
-    .. module:: Views
 
     :platform: All
     :synopsis: Module which contains view functions that are mapped from urls
-
 '''
 
 import datetime
@@ -194,10 +192,10 @@ def ajax(request):
 
     1) Request comes through.
     2) Request gets sent to the ajax view due to the client-side call making a
-    request to the url mapped to this view.
+       request to the url mapped to this view.
     3) The form type is detected in the json data sent along with the call.
     4) This string is then pulled out of the dict, executed and it's response
-    sent back to the browser.
+       sent back to the browser.
        
    :param request: Automatically passed contains a map of the httprequest
    :return: HttpResponse object back to the browser.
