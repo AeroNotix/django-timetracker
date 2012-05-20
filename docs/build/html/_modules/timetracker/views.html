@@ -49,9 +49,14 @@
           <div class="body">
             
   <h1>Source code for timetracker.views</h1><div class="highlight"><pre>
-<span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">.. automodule::</span>
-<span class="sd">Views which are mapped from the URL objects in urls.py</span>
+<span class="sd">&#39;&#39;&#39;Views which are mapped from the URL objects in urls.py</span>
+
+<span class="sd">    .. moduleauthor:: Aaron France &lt;aaron.france@hp.com&gt;</span>
+<span class="sd">    .. module:: Views</span>
+
+<span class="sd">    :platform: All</span>
+<span class="sd">    :synopsis: Module which contains view functions that are mapped from urls</span>
+
 <span class="sd">&#39;&#39;&#39;</span>
 
 <span class="kn">import</span> <span class="nn">datetime</span>
@@ -61,11 +66,11 @@
 <span class="kn">from</span> <span class="nn">django.template</span> <span class="kn">import</span> <span class="n">RequestContext</span>
 <span class="kn">from</span> <span class="nn">django.core.mail</span> <span class="kn">import</span> <span class="n">send_mail</span>
 
-<span class="kn">from</span> <span class="nn">tracker.models</span> <span class="kn">import</span> <span class="n">Tbluser</span><span class="p">,</span> <span class="n">UserForm</span><span class="p">,</span> <span class="n">TrackingEntry</span>
-<span class="kn">from</span> <span class="nn">tracker.models</span> <span class="kn">import</span> <span class="n">Tblauthorization</span> <span class="k">as</span> <span class="n">tblauth</span>
-<span class="kn">from</span> <span class="nn">tracker.forms</span> <span class="kn">import</span> <span class="n">EntryForm</span><span class="p">,</span> <span class="n">AddForm</span><span class="p">,</span> <span class="n">Login</span>
+<span class="kn">from</span> <span class="nn">timetracker.tracker.models</span> <span class="kn">import</span> <span class="n">Tbluser</span><span class="p">,</span> <span class="n">UserForm</span><span class="p">,</span> <span class="n">TrackingEntry</span>
+<span class="kn">from</span> <span class="nn">timetracker.tracker.models</span> <span class="kn">import</span> <span class="n">Tblauthorization</span> <span class="k">as</span> <span class="n">tblauth</span>
+<span class="kn">from</span> <span class="nn">timetracker.tracker.forms</span> <span class="kn">import</span> <span class="n">EntryForm</span><span class="p">,</span> <span class="n">AddForm</span><span class="p">,</span> <span class="n">Login</span>
 
-<span class="kn">from</span> <span class="nn">utils.calendar_utils</span> <span class="kn">import</span> <span class="p">(</span><span class="n">gen_calendar</span><span class="p">,</span> <span class="n">gen_holiday_list</span><span class="p">,</span>
+<span class="kn">from</span> <span class="nn">timetracker.utils.calendar_utils</span> <span class="kn">import</span> <span class="p">(</span><span class="n">gen_calendar</span><span class="p">,</span> <span class="n">gen_holiday_list</span><span class="p">,</span>
                                   <span class="n">ajax_add_entry</span><span class="p">,</span> <span class="n">ajax_change_entry</span><span class="p">,</span>
                                   <span class="n">ajax_delete_entry</span><span class="p">,</span> <span class="n">ajax_error</span><span class="p">,</span>
                                   <span class="n">get_user_data</span><span class="p">,</span> <span class="n">delete_user</span><span class="p">,</span> <span class="n">useredit</span><span class="p">,</span>
@@ -79,10 +84,14 @@
 
 <div class="viewcode-block" id="index"><a class="viewcode-back" href="../../code.html#timetracker.views.index">[docs]</a><span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
 
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Serve the root page.</span>
+    <span class="sd">&quot;&quot;&quot; This function serves the base login page. TODO: Make this view check</span>
+<span class="sd">    to see if the user is already logged in and if so, redirect.</span>
+<span class="sd">    </span>
+<span class="sd">    This function shouldn&#39;t be directly called, it&#39;s invocation is automatic</span>
+<span class="sd">    </span>
+<span class="sd">        :param request: Automatically passed. Contains a map of the httprequest</span>
+<span class="sd">        :return: A HttpResponse object which is then passed to the browser</span>
 
-<span class="sd">    This contains a login box and some basic markup.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">render_to_response</span><span class="p">(</span><span class="s">&#39;index.html&#39;</span><span class="p">,</span>
                               <span class="p">{</span><span class="s">&#39;login&#39;</span><span class="p">:</span> <span class="n">Login</span><span class="p">()},</span>
@@ -91,10 +100,20 @@
 </div>
 <div class="viewcode-block" id="login"><a class="viewcode-back" href="../../code.html#timetracker.views.login">[docs]</a><span class="k">def</span> <span class="nf">login</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
 
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Basic login function.</span>
+    <span class="sd">&quot;&quot;&quot; This function logs the user in, directly adding the session id to</span>
+<span class="sd">    a database entry. This function is invoked from the url mapped in urls.py.</span>
+<span class="sd">    The url is POSTed to, and should contain two fields, the use_name and the</span>
+<span class="sd">    pass word field. This is then pulled from the database and matched</span>
+<span class="sd">    against, what the user supplied. If they match, the user is then checked</span>
+<span class="sd">    to see what *kind* of user their are, if they are ADMIN or TEAML they will</span>
+<span class="sd">    be sent to the administrator view. Else they will be sent to the user</span>
+<span class="sd">    page.</span>
 
-<span class="sd">    Dispatches to admin/user depending on usertype</span>
+<span class="sd">    This function shouldn&#39;t be directly called, it&#39;s invocation is automatic</span>
+<span class="sd">    from the url mappings.</span>
+<span class="sd">    </span>
+<span class="sd">        :param request: Automatically passed. Contains a map of the httprequest</span>
+<span class="sd">        :return: A HttpResponse object which is then passed to the browser</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c"># if this somehow gets requested via Ajax, then</span>
@@ -130,8 +149,13 @@
 </div>
 <div class="viewcode-block" id="logout"><a class="viewcode-back" href="../../code.html#timetracker.views.logout">[docs]</a><span class="k">def</span> <span class="nf">logout</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
 
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Simple logout function</span>
+    <span class="sd">&quot;&quot;&quot; Simple logout function</span>
+
+<span class="sd">    This function will delete a session id from the session dictionary so that</span>
+<span class="sd">    the user will need to log back in order to access the same pages.</span>
+
+<span class="sd">    :param request: Automatically passed contains a map of the httprequest</span>
+<span class="sd">    :return: A HttpResponse object which is passed to the browser.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">try</span><span class="p">:</span>
@@ -147,14 +171,24 @@
              <span class="n">month</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span><span class="o">.</span><span class="n">month</span><span class="p">,</span>
              <span class="n">day</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span><span class="o">.</span><span class="n">day</span><span class="p">,</span>
              <span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Generates a calendar based on the URL it receives.</span>
+<span class="sd">    For example: domain.com/calendar/{year}/{month}/{day},</span>
+<span class="sd">    also takes a day just in case you want to add a particular</span>
+<span class="sd">    view for a day, for example. Currently a day-level is not</span>
+<span class="sd">    in-use.</span>
 
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Generates a calendar based on the URL it receives.</span>
-<span class="sd">    site.com/calendar/2012/02/, also takes a day</span>
-<span class="sd">    just in case you want to add a particular view for a day,</span>
-<span class="sd">    for example.</span>
+<span class="sd">    :note: The generated HTML should be pretty printed</span>
 
-<span class="sd">    The generated HTML is pretty printed</span>
+<span class="sd">    :param request: Automatically passed contains a map of the httprequest</span>
+<span class="sd">    :param year: The year that the view will be rendered with, default is</span>
+<span class="sd">                 the current year.</span>
+<span class="sd">    :param month: The month that the view will be rendered with, default is</span>
+<span class="sd">                  the current month.</span>
+<span class="sd">    :param day: The day that the view will be rendered with, default is</span>
+<span class="sd">                the current day</span>
+
+<span class="sd">    :return: A HttpResponse object which is passed to the browser.</span>
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">user_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="s">&#39;user_id&#39;</span><span class="p">]</span>
@@ -177,9 +211,48 @@
 </div>
 <div class="viewcode-block" id="ajax"><a class="viewcode-back" href="../../code.html#timetracker.views.ajax">[docs]</a><span class="k">def</span> <span class="nf">ajax</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
 
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Ajax request handler, dispatches to specific ajax functions</span>
-<span class="sd">    depending on what json gets sent.</span>
+    <span class="sd">&quot;&quot;&quot;Ajax request handler, dispatches to specific ajax functions depending</span>
+<span class="sd">    on what json gets sent.</span>
+
+<span class="sd">    Any additional ajax views should be added to the ajax_funcs map, this will</span>
+<span class="sd">    allow the dispatch function to be used. Future revisions could have a kind</span>
+<span class="sd">    of decorator which could be applied to functions to mutate some global map</span>
+<span class="sd">    of ajax dispatch functions. For now, however, just add them into the map.</span>
+
+<span class="sd">    The idea for this is that on the client-side call you would construct your</span>
+<span class="sd">    javascript call with something like the below (using jQuery):</span>
+
+<span class="sd">        .. code-block:: javascript</span>
+
+<span class="sd">           $.ajaxSetup({</span>
+<span class="sd">               type: &#39;POST&#39;,</span>
+<span class="sd">               url: &#39;/ajax/&#39;,</span>
+<span class="sd">               dataType: &#39;json&#39;</span>
+<span class="sd">           });\n</span>
+<span class="sd">           $.ajax({</span>
+<span class="sd">               data: {</span>
+<span class="sd">                   form: &#39;functionName&#39;,</span>
+<span class="sd">                   data: &#39;data&#39;</span>
+<span class="sd">               }</span>
+<span class="sd">          });</span>
+
+<span class="sd">    Using this method, this allows us to construct a single view url and have</span>
+<span class="sd">    all ajax requests come through here. This is highly advantagious because</span>
+<span class="sd">    then we don&#39;t have to create a url map and construct views to handle that</span>
+<span class="sd">    specific call. We just have some server-side map and route through there.</span>
+
+<span class="sd">    The lookup and dispatch works like this:</span>
+
+<span class="sd">    1) Request comes through.</span>
+<span class="sd">    2) Request gets sent to the ajax view due to the client-side call making a</span>
+<span class="sd">    request to the url mapped to this view.</span>
+<span class="sd">    3) The form type is detected in the json data sent along with the call.</span>
+<span class="sd">    4) This string is then pulled out of the dict, executed and it&#39;s response</span>
+<span class="sd">    sent back to the browser.</span>
+<span class="sd">       </span>
+<span class="sd">   :param request: Automatically passed contains a map of the httprequest</span>
+<span class="sd">   :return: HttpResponse object back to the browser.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c"># if the page is accessed via the browser (or other means)</span>
@@ -215,9 +288,17 @@
 <span class="nd">@admin_check</span>
 <div class="viewcode-block" id="admin_view"><a class="viewcode-back" href="../../code.html#timetracker.views.admin_view">[docs]</a><span class="k">def</span> <span class="nf">admin_view</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
 
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    The user logged in is an admin, we show them a</span>
-<span class="sd">    view based on their team</span>
+    <span class="sd">&quot;&quot;&quot;This view checks to see if the user logged in is either a team leader or</span>
+<span class="sd">    an administrator. If the user is an administrator, their authorization</span>
+<span class="sd">    table entry is found, iterated over to create a select box and it&#39;s HTML</span>
+<span class="sd">    markup, sent to the template. If the user is a team leader, then *their*</span>
+<span class="sd">    manager&#39;s authorization table entry is found and used instead. This is to</span>
+<span class="sd">    enable team leaders to view and edit the team in which they are on but</span>
+<span class="sd">    also make it so that we don&#39;t explicitly have to duplicate the</span>
+<span class="sd">    authorization table linking the team leader with their team.</span>
+
+<span class="sd">    :param request: Automatically passed contains a map of the httprequest</span>
+<span class="sd">    :return: HttpResponse object back to the browser.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c"># retrieve and assign user object</span>
@@ -257,8 +338,17 @@
 <span class="nd">@admin_check</span>
 <div class="viewcode-block" id="add_change_user"><a class="viewcode-back" href="../../code.html#timetracker.views.add_change_user">[docs]</a><span class="k">def</span> <span class="nf">add_change_user</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
 
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Creates the view for changing/adding users</span>
+    <span class="sd">&quot;&quot;&quot;Creates the view for changing/adding users</span>
+
+<span class="sd">    This is the view which generates the page to add/edit/change/remove users,</span>
+<span class="sd">    the view first gets the user object from the database, then checks it&#39;s</span>
+<span class="sd">    user_type. If it&#39;s an administrator, their authorization table entry is</span>
+<span class="sd">    found then used to create a select box and it&#39;s HTML markup. Then pushed</span>
+<span class="sd">    to the template. If it&#39;s a team leader, their manager&#39;s authorization</span>
+<span class="sd">    table is used instead.</span>
+
+<span class="sd">    :param request: Automatically passed contains a map of the httprequest</span>
+<span class="sd">    :return: HttpResponse object back to the browser.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c"># retrieve and assign user object</span>
@@ -316,13 +406,21 @@
                      <span class="n">month</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">today</span><span class="p">()</span><span class="o">.</span><span class="n">month</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generates the full holiday table for all employees under a manager</span>
+
+<span class="sd">    First we find the user object and find whether or not that user is a team</span>
+<span class="sd">    leader or not. If they are a team leader, which set a boolean flag to show</span>
+<span class="sd">    the template what kind of user is logged in. This is so that the team</span>
+<span class="sd">    leaders are not able to view certain things (e.g. Job Codes).</span>
+<span class="sd">    </span>
+<span class="sd">    If the admin/tl tries to access the holiday page before any users have</span>
+<span class="sd">    been assigned to them, then we just throw them back to the main page. This</span>
+<span class="sd">    is doubly ensuring that they can&#39;t access what would otherwise be a</span>
+<span class="sd">    completely borked page.</span>
+
+<span class="sd">    :param request: Automatically passed contains a map of the httprequest</span>
+<span class="sd">    :return: HttpResponse object back to the browser.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c"># if the admin/tl tries to access the holiday page</span>
-    <span class="c"># before any users have been assigned to them, then</span>
-    <span class="c"># we just throw them back to the main page. This is</span>
-    <span class="c"># doubly ensuring that they can&#39;t access what would</span>
-    <span class="c"># otherwise be a completely borked page.</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">user</span> <span class="o">=</span> <span class="n">Tbluser</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
             <span class="nb">id</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;user_id&#39;</span><span class="p">)</span>
@@ -355,8 +453,14 @@
 <span class="nd">@loggedin</span>
 <div class="viewcode-block" id="edit_profile"><a class="viewcode-back" href="../../code.html#timetracker.views.edit_profile">[docs]</a><span class="k">def</span> <span class="nf">edit_profile</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
 
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    View for sending the user to the edit profile page</span>
+    <span class="sd">&quot;&quot;&quot;View for sending the user to the edit profile page</span>
+
+<span class="sd">    This view is a simple set of fields which allow all kinds of users to edit</span>
+<span class="sd">    pieces of information about their profile, currently it allows uers to</span>
+<span class="sd">    edit their name and their password.</span>
+
+<span class="sd">    :param request: Automatically passed contains a map of the httprequest</span>
+<span class="sd">    :return: HttpResponse object back to the browser.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">user</span> <span class="o">=</span> <span class="n">Tbluser</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;user_id&quot;</span><span class="p">))</span>
@@ -375,8 +479,20 @@
 <span class="nd">@loggedin</span>
 <div class="viewcode-block" id="explain"><a class="viewcode-back" href="../../code.html#timetracker.views.explain">[docs]</a><span class="k">def</span> <span class="nf">explain</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
 
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Renders the Balance explanation page</span>
+    <span class="sd">&quot;&quot;&quot;Renders the Balance explanation page</span>
+
+<span class="sd">    This page renders a simple template to show the users how their balance is</span>
+<span class="sd">    calculated. This view takes the user object, retrieves a couple of fields,</span>
+<span class="sd">    which are user.shiftlength and the associated values with that datetime</span>
+<span class="sd">    objects, constructs a string with them and passes it to the template as</span>
+<span class="sd">    the users &#39;shiftlength&#39; attribute. It then takes the count of working</span>
+<span class="sd">    days in the database so that the user has an idea of how many days they</span>
+<span class="sd">    have tracked altogether. Then it calculates their total balance and pushes</span>
+<span class="sd">    all these strings into the template.</span>
+<span class="sd">    </span>
+<span class="sd">        :param request: Automatically passed contains a map of the httprequest</span>
+<span class="sd">        :return: HttpResponse object back to the browser.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">user</span> <span class="o">=</span> <span class="n">Tbluser</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;user_id&quot;</span><span class="p">))</span>
@@ -397,8 +513,22 @@
 </div>
 <div class="viewcode-block" id="forgot_pass"><a class="viewcode-back" href="../../code.html#timetracker.views.forgot_pass">[docs]</a><span class="k">def</span> <span class="nf">forgot_pass</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
 
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    View for resetting a user&#39;s password</span>
+    <span class="sd">&quot;&quot;&quot;Simple view for resetting a user&#39;s password</span>
+
+<span class="sd">    This view has a dual function. The first function is to simply render the</span>
+<span class="sd">    initial page which has a field and the themed markup. On this page a user</span>
+<span class="sd">    can enter their e-mail address and then click submit to have their</span>
+<span class="sd">    password sent to them.</span>
+
+<span class="sd">    The second function of this page is to respond to the change password</span>
+<span class="sd">    request. In the html markup of the &#39;forgotpass.html&#39; page you will see</span>
+<span class="sd">    that the intention is to have the page post to the same URL which this</span>
+<span class="sd">    page was rendered from. If the request contains POST information then we</span>
+<span class="sd">    retrieve that user from the database, construct an e-mail based on that</span>
+<span class="sd">    and send their password to them. Finally, we redirect to the login page.</span>
+
+<span class="sd">    :param request: Automatically passed contains a map of the httprequest</span>
+<span class="sd">    :return: HttpResponse object back to the browser.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c"># if the email recipient isn&#39;t in the POST dict,</span>
