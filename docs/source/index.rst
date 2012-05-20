@@ -7,10 +7,11 @@ Welcome to Timetracker's documentation!
 =======================================
 
 Contents:
-
+---------
 .. toctree::
    :maxdepth: 2
 
+   deps
    code
 
 Indices and tables
