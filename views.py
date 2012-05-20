@@ -1,5 +1,11 @@
 '''Views which are mapped from the URL objects in urls.py
-    .. moduleauthor: Aaron France <aaron.france@hp.com>
+
+    .. moduleauthor:: Aaron France <aaron.france@hp.com>
+    .. module:: Views
+
+    :platform: All
+    :synopsis: Module which contains view functions that are mapped from urls
+
 '''
 
 import datetime
@@ -34,6 +40,7 @@ def index(request):
     
         :param request: Automatically passed. Contains a map of the httprequest
         :return: A HttpResponse object which is then passed to the browser
+
     """
     return render_to_response('index.html',
                               {'login': Login()},
@@ -96,8 +103,8 @@ def logout(request):
     This function will delete a session id from the session dictionary so that
     the user will need to log back in order to access the same pages.
 
-        :param request: Automatically passed contains a map of the httprequest
-        :return: A HttpResponse object which is passed to the browser.
+    :param request: Automatically passed contains a map of the httprequest
+    :return: A HttpResponse object which is passed to the browser.
     """
 
     try:
@@ -119,15 +126,18 @@ def user_view(request,
     view for a day, for example. Currently a day-level is not
     in-use.
 
-        :note: The generated HTML should be pretty printed
-        :param request: Automatically passed contains a map of the httprequest
-        :param year: The year that the view will be rendered with, default is
-                     the current year.
-        :param month: The month that the view will be rendered with, default is
-                      the current month.
-        :param day: The day that the view will be rendered with, default is
-                    the current day
-        :return: A HttpResponse object which is passed to the browser.
+    :note: The generated HTML should be pretty printed
+
+    :param request: Automatically passed contains a map of the httprequest
+    :param year: The year that the view will be rendered with, default is
+                 the current year.
+    :param month: The month that the view will be rendered with, default is
+                  the current month.
+    :param day: The day that the view will be rendered with, default is
+                the current day
+
+    :return: A HttpResponse object which is passed to the browser.
+    
     """
 
     user_id = request.session['user_id']
@@ -161,18 +171,19 @@ def ajax(request):
     The idea for this is that on the client-side call you would construct your
     javascript call with something like the below (using jQuery):
 
-    $.ajaxSetup({
-        type: 'POST',\n
-        url: '/ajax/',\n
-        dataType: 'json'\n
-    });
+        .. code-block:: javascript
 
-    $.ajax({
-        data: {
-            form: 'functionName',\n
-            data: 'data'\n
-        }
-    });
+           $.ajaxSetup({
+               type: 'POST',
+               url: '/ajax/',
+               dataType: 'json'
+           });\n
+           $.ajax({
+               data: {
+                   form: 'functionName',
+                   data: 'data'
+               }
+          });
 
     Using this method, this allows us to construct a single view url and have
     all ajax requests come through here. This is highly advantagious because
@@ -183,13 +194,14 @@ def ajax(request):
 
     1) Request comes through.
     2) Request gets sent to the ajax view due to the client-side call making a
-       request to the url mapped to this view.
+    request to the url mapped to this view.
     3) The form type is detected in the json data sent along with the call.
     4) This string is then pulled out of the dict, executed and it's response
-       sent back to the browser.
+    sent back to the browser.
+       
+   :param request: Automatically passed contains a map of the httprequest
+   :return: HttpResponse object back to the browser.
 
-       :param request: Automatically passed contains a map of the httprequest
-       :return: HttpResponse object back to the browser.
     """
 
     # if the page is accessed via the browser (or other means)
@@ -225,9 +237,17 @@ def ajax(request):
 @admin_check
 def admin_view(request):
 
-    """
-    The user logged in is an admin, we show them a
-    view based on their team
+    """This view checks to see if the user logged in is either a team leader or
+    an administrator. If the user is an administrator, their authorization
+    table entry is found, iterated over to create a select box and it's HTML
+    markup, sent to the template. If the user is a team leader, then *their*
+    manager's authorization table entry is found and used instead. This is to
+    enable team leaders to view and edit the team in which they are on but
+    also make it so that we don't explicitly have to duplicate the
+    authorization table linking the team leader with their team.
+
+    :param request: Automatically passed contains a map of the httprequest
+    :return: HttpResponse object back to the browser.
     """
 
     # retrieve and assign user object
@@ -267,8 +287,17 @@ def admin_view(request):
 @admin_check
 def add_change_user(request):
 
-    """
-    Creates the view for changing/adding users
+    """Creates the view for changing/adding users
+
+    This is the view which generates the page to add/edit/change/remove users,
+    the view first gets the user object from the database, then checks it's
+    user_type. If it's an administrator, their authorization table entry is
+    found then used to create a select box and it's HTML markup. Then pushed
+    to the template. If it's a team leader, their manager's authorization
+    table is used instead.
+
+    :param request: Automatically passed contains a map of the httprequest
+    :return: HttpResponse object back to the browser.
     """
 
     # retrieve and assign user object
@@ -326,13 +355,21 @@ def holiday_planning(request,
                      month=datetime.datetime.today().month):
     """
     Generates the full holiday table for all employees under a manager
+
+    First we find the user object and find whether or not that user is a team
+    leader or not. If they are a team leader, which set a boolean flag to show
+    the template what kind of user is logged in. This is so that the team
+    leaders are not able to view certain things (e.g. Job Codes).
+    
+    If the admin/tl tries to access the holiday page before any users have
+    been assigned to them, then we just throw them back to the main page. This
+    is doubly ensuring that they can't access what would otherwise be a
+    completely borked page.
+
+    :param request: Automatically passed contains a map of the httprequest
+    :return: HttpResponse object back to the browser.
     """
 
-    # if the admin/tl tries to access the holiday page
-    # before any users have been assigned to them, then
-    # we just throw them back to the main page. This is
-    # doubly ensuring that they can't access what would
-    # otherwise be a completely borked page.
     try:
         user = Tbluser.objects.get(
             id=request.session.get('user_id')
@@ -365,8 +402,14 @@ def holiday_planning(request,
 @loggedin
 def edit_profile(request):
 
-    """
-    View for sending the user to the edit profile page
+    """View for sending the user to the edit profile page
+
+    This view is a simple set of fields which allow all kinds of users to edit
+    pieces of information about their profile, currently it allows uers to
+    edit their name and their password.
+
+    :param request: Automatically passed contains a map of the httprequest
+    :return: HttpResponse object back to the browser.
     """
 
     user = Tbluser.objects.get(id=request.session.get("user_id"))
@@ -385,8 +428,20 @@ def edit_profile(request):
 @loggedin
 def explain(request):
 
-    """
-    Renders the Balance explanation page
+    """Renders the Balance explanation page
+
+    This page renders a simple template to show the users how their balance is
+    calculated. This view takes the user object, retrieves a couple of fields,
+    which are user.shiftlength and the associated values with that datetime
+    objects, constructs a string with them and passes it to the template as
+    the users 'shiftlength' attribute. It then takes the count of working
+    days in the database so that the user has an idea of how many days they
+    have tracked altogether. Then it calculates their total balance and pushes
+    all these strings into the template.
+    
+        :param request: Automatically passed contains a map of the httprequest
+        :return: HttpResponse object back to the browser.
+
     """
 
     user = Tbluser.objects.get(id=request.session.get("user_id"))
@@ -407,8 +462,22 @@ def explain(request):
 
 def forgot_pass(request):
 
-    """
-    View for resetting a user's password
+    """Simple view for resetting a user's password
+
+    This view has a dual function. The first function is to simply render the
+    initial page which has a field and the themed markup. On this page a user
+    can enter their e-mail address and then click submit to have their
+    password sent to them.
+
+    The second function of this page is to respond to the change password
+    request. In the html markup of the 'forgotpass.html' page you will see
+    that the intention is to have the page post to the same URL which this
+    page was rendered from. If the request contains POST information then we
+    retrieve that user from the database, construct an e-mail based on that
+    and send their password to them. Finally, we redirect to the login page.
+
+    :param request: Automatically passed contains a map of the httprequest
+    :return: HttpResponse object back to the browser.
     """
 
     # if the email recipient isn't in the POST dict,
