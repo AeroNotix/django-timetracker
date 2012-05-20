@@ -12,3 +12,8 @@ Apache Settings module
 ======================
 .. automodule:: timetracker.apache_settings
    :members:
+
+Database Models
+===============
+.. automodule:: timetracker.tracker.models
+   :members:
