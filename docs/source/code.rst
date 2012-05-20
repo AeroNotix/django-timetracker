@@ -1,5 +1,5 @@
 View Module
-==========
+===========
 .. automodule:: timetracker.views
    :members:
 
