@@ -1,5 +1,9 @@
-'''
-Definition of the models used in the timetracker app
+'''Definition of the models used in the timetracker app
+
+    .. moduleauthor:: Aaron France <aaron.france@hp.com>
+
+    :platform: All
+    :synopsis: Module which contains view functions that are mapped from urls
 '''
 
 import datetime as dt
@@ -15,9 +19,36 @@ from timetracker.utils.datemaps import (
 
 class Tbluser(models.Model):
 
-    """
-    Models the user table and provides the admin interface with the
+    """Models the user table and provides the admin interface with the
     niceties it needs.
+
+    This model is the central pillar to this entire application.
+
+    The permissions for a user is determined in the view functions, not in a
+    table this is a design choice because there is only a minimal set of
+    things to have permissions *over*, so it would be overkill to take full
+    advantage of the MVC pattern.
+    
+    User\n
+    The most general and base type of a User is the *RUSER*, which is
+    shorthand (and what actually gets stored in the database) for Regular
+    User. A regular user will only be able to access a specific section of the
+    site.
+    
+    Team Leader\n
+    The second type of User is the *TEAML*, this user has very similar level
+    access as the administrator type but has only a limited subset of their
+    access rights. They cannot have a team of their own, but view the team
+    their manager is assigned. They cannot view and/or change job codes, but
+    they can create new users with all the *other* information that they
+    need. They can view/create/add/change holidays of themselves and the users
+    that are assigned to their manager.
+
+    Administrator\n
+    The third type of User is the Administrator/*ADMIN*. They have full access to all
+    functions of the app. They can view/create/change/delete members of their
+    team. They can view/create/add/change holidays of all members of their
+    team and themselves. They can create users of any type.
     """
 
     USER_TYPE = (
@@ -106,6 +137,9 @@ class Tbluser(models.Model):
 
         """
         How the row is represented in admin
+
+        :note: This method shouldn't be called directly.
+        :rtype: :class:`string`
         """
 
         return '%s - %s %s ' % (self.user_id,
@@ -115,7 +149,10 @@ class Tbluser(models.Model):
     def get_administrator(self):
 
         """
-        Returns the administrator associated with this
+        Returns the :class:`Tbluser` who is this instances Authorization link
+        
+        :returns: A :class:`Tbluser` instance
+        :rtype: :class:`Tbluser`
         """
         try:
             return Tblauthorization.objects.get(users=self).admin
@@ -125,7 +162,10 @@ class Tbluser(models.Model):
     def display_user_type(self):
 
         """
-        Function for displaying the user in admin
+        Function for displaying the user_type in admin.
+
+            :note: This method shouldn't be called directly.
+            :rtype: :class:`string`
         """
 
         return self.user_type
@@ -133,7 +173,11 @@ class Tbluser(models.Model):
     def name(self):
 
         """
-        Utility method for returning users full name
+        Utility method for returning users full name. This is useful for when
+        we are pretty printing users and their names. For example in e-mails
+        and or when we are displaying users on the front-end.
+
+        :rtype: :class:`string`
         """
 
         return self.firstname + ' ' + self.lastname
@@ -141,9 +185,17 @@ class Tbluser(models.Model):
     def tracking_entries(self,
                          year=dt.datetime.today().year,
                          month=dt.datetime.today().month):
-        """
-        Returns all the tracking entries associated with
-        this user
+        """Returns all the tracking entries associated with
+        this user.
+
+        This is particularly useful when required to make a report or generate
+        a specific view of the tracking entries of the user.
+
+        :param year: The year in which the QuerySet should be filtered
+                     by. Defaults to the current year.
+        :param month: The month in which the QuerySet should be filtered
+                     by. Defaults to the current month.
+        :rtype: :class:`QuerySet`
         """
 
         return TrackingEntry.objects.filter(user_id=self.id,
@@ -152,7 +204,10 @@ class Tbluser(models.Model):
 
     def is_admin(self):
         """
-        Returns whether or not the user instance is an admin
+        Returns whether or not the user instance is an admin type user. The
+        two types of 'admin'-y user_types are ADMIN and TEAML.
+
+        :rtype: :class:`boolean`
         """
 
         return self.user_type in ["ADMIN", "TEAML"]
@@ -160,6 +215,23 @@ class Tbluser(models.Model):
     def get_holiday_balance(self, year):
         """
         Calculates the holiday balance for the employee
+
+        This method loops over all :class:`TrackingEntry` entries attached to
+        the user instance which are in the year passed in, taking each entries
+        day_type and looking that up in a value map.
+
+        Values can be:
+        
+        1) Holiday: Remove a day
+        
+        2) Work on Public Holiday: Add two days
+        
+        2) Return for working Public Holiday: Remove a day
+
+        :param year: The year in which the holiday balance should be
+                     calculated from
+        :type year: :class:`int`
+        :rtype: :class:`Integer`
         """
 
         tracking_days = TrackingEntry.objects.filter(user_id=self.id,
@@ -179,9 +251,31 @@ class Tbluser(models.Model):
 
     def get_total_balance(self, ret='html'):
 
+        """ Calculates the total balance for the user.
+
+        This method iterates through every :class:`TrackingEntry` attached to
+        this user instance which is a working day, multiplies the user's
+        shiftlength by the number of days and finds the difference between the
+        projected working hours and the actual working hours.
+
+        The return type of this function is different depending on the
+        argument supplied.
+        
+        :note: To customize how the CSS class is determined when using the
+               html mode you will need to change the ranges in the
+               tracking_class_map attribute.
+        :param ret: Determines the return type of the function. If it is not
+                    supplied then it defaults to 'html'. If it is 'int' then
+                    the function will return an integer, finally, if the
+                    string 'dbg' is passed then we output all the values used
+                    to calculate and the final value.
+        :rtype: :class:`string` or :class:`integer`
         """
-        Calculates the total balance for the user.
-        """
+
+        ret = ret.lower()
+        # if the argument isn't supported'
+        if ret not in {'html', 'int', 'dbg'}:
+            raise Exception("Unsupported Argument. Must be html, int or dbg")
 
         # we'll use augmented assignment
         # so zero our local vars here
@@ -247,8 +341,29 @@ class UserForm(ModelForm):
 
 class Tblauthorization(models.Model):
 
-    """
-    Links Administrators (managers) with their team.
+    """Links Administrators (managers) with their team.
+
+    This table is a many-to-many relationship between Administrators and any
+    other any user type in TEAML/RUSER.
+
+    This table is used to explicitly show which people are in an
+    Administrator's team. Usually in SQL-land, you would be able to
+    instanstiate multiple rows of many-to-many relationships, however, due to
+    the fact that working with these tables in an object orientated fashion is
+    far simpler adding multiple relationships to the same
+    :class:`Tblauthorization` object, we re-use the relationship when
+    creating/adding additional :class:`Tblauthorization` instances.
+
+    This means that, if you were to need to add a relationship between an
+    Administrator and a RUSER, then you would need to make sure that you
+    retrieve the :class:`Tblauthorization` object *before* and save the new
+    link using that instance. Failure to do this would mean that areas where
+    the .get() method is employed would start to throw
+    Tblauthorization.MultipleObjectsReturned.
+
+    In future, and time, I would like to make it so that the .save() method is
+    overloaded and then we can check if a :class:`Tblauthorization` link
+    already exists and if so, save to that instead.    
     """
 
     admin = models.ForeignKey(
@@ -283,13 +398,18 @@ class Tblauthorization(models.Model):
         """
         Admin view uses this to display the entry
         """
-
         return str(self.admin)
 
     def display_users(self):
 
         """
         Method which generates the HTML for the admin views
+
+        This method is depracated in favour of not actually using the admin
+        interface to interact with :class:`Tblauthorization` instances too
+        much. That and, it's not unicode-safe.
+
+        :rtype: :class:`string`
         """
 
         table_header = """
@@ -317,9 +437,23 @@ class Tblauthorization(models.Model):
         )
 
     def manager_view(self):
+        """
+        Method which negates needing to retrieve the users via the
+        Tblauthorization.objects.all() method which is, needless to say, a
+        mouthfull.
+
+        :rtype: :class:`QuerySet`
+        """
         return self.users.all()
 
     def teamleader_view(self):
+        """
+        Method which provides a shortcut to retrieving the set of users which
+        are available to the TeamLeader based upon the rules of what they can
+        access.
+
+        :rtype: :class:`QuerySet`
+        """
         return self.users.exclude(user_type__in={"TEAML", "ADMIN"})
 
     display_users.allow_tags = True
@@ -328,8 +462,19 @@ class Tblauthorization(models.Model):
 
 class TrackingEntry(models.Model):
 
-    """
-    Entry for a specific day
+    """Model which is used to enter working logs into the database.
+
+    A tracking entry consists of several fields:-
+
+    1) Entry date: The date that the working log happened.
+    2) Start Time: The start time of the working day.
+    3) End Time: The end time of the working day.
+    4) Breaks: Any breaks taken during that day.
+    5) Day Type: The type of working log.
+
+    Again, the TrackingEntry model is a core component of the time tracking
+    application. It directly links users with the time-spent at work and the
+    the type of day that was.
     """
 
     user = models.ForeignKey(Tbluser, related_name="user_tracking")
@@ -357,6 +502,8 @@ class TrackingEntry(models.Model):
 
         """
         Method to display entry in admin
+
+        :rtype: :class:`string`
         """
 
         date = '/'.join(
