@@ -1,7 +1,7 @@
 '''
 Module to for sharing decorators between all modules
 '''
-
+from functools import wraps
 import simplejson
 
 from django.http import HttpResponse, Http404
@@ -19,6 +19,7 @@ def loggedin(func):
     by a logged in user
     """
 
+    @wraps(func)
     def inner(request, *args, **kwargs):
 
         try:
@@ -36,6 +37,7 @@ def admin_check(func):
     Wrapper to see if the view is being called as an admin
     """
 
+    @wraps(func)
     def inner(request, **kwargs):
 
         try:
@@ -65,6 +67,7 @@ def json_response(func):
     response.
     """
 
+    @wraps(func)
     def inner(request):
 
         """
@@ -83,6 +86,7 @@ def request_check(func):
     Decorator to check an incoming request against a few rules
     """
 
+    @wraps(func)
     def inner(request):
 
         """
