@@ -6,6 +6,7 @@ tasks, processing dates and creating time-based code.
 import random
 import datetime
 import calendar as cdr
+from functools import wraps
 
 from django.core.handlers.wsgi import WSGIRequest
 from django.core.mail import send_mail
@@ -34,14 +35,19 @@ def get_request_data(form, request):
     Given a form and a request object we pull out
     from the request what the form defines.
 
-    i.e.
+    i.e.::
+    
+       form = {
+            'data1': None
+       }
 
-    form = {
-        'data1': None
-    }
+    get_request_data(form, request) will then fill that data with what's in
+    the request object.
 
-    get_request_data(form, request) will then fill
-    that data with what's in the request object.
+    :param form: A dictionary of items which should be filled from
+    :param request: The request object where the data should be taken from.
+    :returns: A dictionary which contains the actual data from the request.
+    :rtype: :class:`dict`
     """
 
     data = dict()
@@ -59,7 +65,11 @@ def get_request_data(form, request):
 def validate_time(start, end):
 
     """
-    Validates the times given
+    Validates that the start time is before the end time
+
+    :param start: String time such as "09:45"
+    :param end: String time such as "17:00"
+    :rtype: :class:`boolean`
     """
 
     shour, sminute = parse_time(start)
@@ -75,6 +85,11 @@ def parse_time(timestring, type_of=int):
     Given a time string will return a tuple of ints,
     i.e. "09:44" returns [9, 44] with the default args,
     you can pass any function to the type argument.
+
+    :param timestring: String such as '09:44'
+    :param type_of: A type which the split string should be converted to,
+                    suitable types are: :class:`int`, :class:`str` and
+                    :class:`float`.
     """
 
     return map(type_of, timestring.split(":"))
@@ -86,8 +101,12 @@ def calendar_wrapper(function):
     called as an ajax request or not, if so, then the
     the wrapper constructs the arguments for the call
     from the POST items
+
+    :param function: Literally just gen_calendar.
+    :rtype: Nothing directly because it returns gen_calendar's
     """
 
+    @wraps(function)
     def inner(*args, **kwargs):
         """
         Checks argument length and constructs the call
@@ -123,14 +142,18 @@ def gen_holiday_list(admin_user,
     """
     Outputs a holiday calendar for that month.
 
-    For each user we get their tracking entries,
-    then iterate over each of their entries
-    checking if it is a holiday or not, if it is
-    then we change the class entry for that number
-    in the day class' dict.
+    For each user we get their tracking entries, then iterate over each of
+    their entries checking if it is a holiday or not, if it is then we change
+    the class entry for that number in the day class' dict. Adds a submit
+    button along with passing the user_id to it.
 
-    Adds a submit button along with passing the
-    user_id to it.
+    :param admin_user: :class:`timetracker.tracker.models.Tbluser` instance.
+    :param year: :class:`int` of the year required to be output, defaults to
+                 the current year.
+    :param month: :class:`int` of the month required to be output, defaults to
+                 the current month.
+    :returns: A partially pretty printed html string.
+    :rtype: :class:`str`
     """
 
     # we convert the arguments to ints because
