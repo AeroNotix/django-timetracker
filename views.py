@@ -36,9 +36,8 @@ def index(request):
     
     This function shouldn't be directly called, it's invocation is automatic
     
-        :param request: Automatically passed. Contains a map of the httprequest
-        :return: A HttpResponse object which is then passed to the browser
-
+    :param request: Automatically passed. Contains a map of the httprequest
+    :return: A HttpResponse object which is then passed to the browser
     """
     return render_to_response('index.html',
                               {'login': Login()},
@@ -59,8 +58,8 @@ def login(request):
     This function shouldn't be directly called, it's invocation is automatic
     from the url mappings.
     
-        :param request: Automatically passed. Contains a map of the httprequest
-        :return: A HttpResponse object which is then passed to the browser
+    :param request: Automatically passed. Contains a map of the httprequest
+    :return: A HttpResponse object which is then passed to the browser
     """
 
     # if this somehow gets requested via Ajax, then
@@ -134,7 +133,7 @@ def user_view(request,
     :param day: The day that the view will be rendered with, default is
                 the current day
 
-    :return: A HttpResponse object which is passed to the browser.
+    :returns: A HttpResponse object which is passed to the browser.
     
     """
 
@@ -197,8 +196,8 @@ def ajax(request):
     4) This string is then pulled out of the dict, executed and it's response
        sent back to the browser.
        
-   :param request: Automatically passed contains a map of the httprequest
-   :return: HttpResponse object back to the browser.
+    :param request: Automatically passed contains a map of the httprequest
+    :return: HttpResponse object back to the browser.
 
     """
 
@@ -437,9 +436,8 @@ def explain(request):
     have tracked altogether. Then it calculates their total balance and pushes
     all these strings into the template.
     
-        :param request: Automatically passed contains a map of the httprequest
-        :return: HttpResponse object back to the browser.
-
+    :param request: Automatically passed contains a map of the httprequest
+    :return: HttpResponse object back to the browser.
     """
 
     user = Tbluser.objects.get(id=request.session.get("user_id"))
