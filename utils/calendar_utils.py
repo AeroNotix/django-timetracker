@@ -271,6 +271,9 @@ def gen_calendar(year=datetime.datetime.today().year,
 
     The generated HTML should be 'pretty printed' as well, so the output code
     should be pretty readable.
+
+    :param year: Integer for the year required for output, defaults to the
+                 current year.
     """
 
     # django passes us Unicode strings
