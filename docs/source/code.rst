@@ -1,19 +1,22 @@
-View Module
-===========
-.. automodule:: timetracker.views
-   :members:
+Code
+====
 
-Development Server Settings module
-==================================
+Basic Server Settings module
+----------------------------------
 .. automodule:: timetracker.settings
    :members:
 
 Apache Settings module
-======================
+----------------------
 .. automodule:: timetracker.apache_settings
    :members:
 
-Database Models
-===============
+timetracker.views
+-----------
+.. automodule:: timetracker.views
+   :members:
+
+timetracker.models
+---------------
 .. automodule:: timetracker.tracker.models
    :members:
