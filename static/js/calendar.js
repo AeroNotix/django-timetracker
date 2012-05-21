@@ -134,7 +134,8 @@ function addTimePicker(element, state) {
     "use strict";
 
     $(element).timepicker({
-        showHour: true
+        showHour: true,
+        stepMinute: 5
     });
 
     $(element).val('');
