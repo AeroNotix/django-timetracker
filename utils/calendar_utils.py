@@ -616,21 +616,9 @@ def ajax_delete_entry(request):
     their TrackingEntries. This method is only available via ajax
     and obviously requires that users be logged in.
 
-    First we start by creating a server-side counterpart to the request
-    POST data, which holds only the hidden-id of the user, which isn't
-    required really because the user_id will be in the session database
-    for the user. We use this redundancy because when we generate the
-    calendar it also adds the id of the user to each and every tracking
-    entry, therefore we are sure that the user that is logged in and the
-    user that the clicked tracking entry are one and the same user. It's
-    redundant validation, but that's the best kind of validation.
-
     We then create our json_data map to hold our success status and any
     error codes we may generate so that we may inform the user of the
     status of the request once we complete.
-
-    We then check that the hidden-id is the same as the user-id, if so,
-    we can go ahead with the deletion of the tracking entry.
 
     This part of the code will catch all errors because, well, this is
     production code and there's no chance I'll be letting server 500
@@ -665,11 +653,10 @@ def ajax_delete_entry(request):
             # get the user and make sure that the user
             # assigned to the TrackingEntry is the same
             # as what's requesting the deletion
-            if form['hidden-id'] == form['user_id']:
-                user = Tbluser.objects.get(id__exact=form['user_id'])
-                entry = TrackingEntry(id=form['hidden-id'],
-                                      user=user)
-                entry.delete()
+            user = Tbluser.objects.get(id__exact=form['user_id'])
+            entry = TrackingEntry(id=form['hidden-id'],
+                                  user=user)
+            entry.delete()
         except Exception as error:
             error_log.error(str(error))
             json_data['error'] = str(error)
