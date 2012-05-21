@@ -12,7 +12,8 @@ Contents:
    :maxdepth: 2
 
    deps
-   code
+   settings
+   timetracker
 
 Indices and tables
 ==================
