@@ -1,0 +1,1373 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Timetracker API and code &mdash; Timetracker 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Timetracker 1 documentation" href="index.html" />
+    <link rel="prev" title="Settings files" href="settings.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="settings.html" title="Settings files"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Timetracker 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="timetracker-api-and-code">
+<h1>Timetracker API and code<a class="headerlink" href="#timetracker-api-and-code" title="Permalink to this headline">¶</a></h1>
+<p>Here I will outline the API for the timetracker application and any advice I
+have pertaining to the inner-workings of the code itself.</p>
+<div class="section" id="module-timetracker.views">
+<span id="timetracker-views"></span><h2>timetracker.views<a class="headerlink" href="#module-timetracker.views" title="Permalink to this headline">¶</a></h2>
+<p>Views which are mapped from the URL objects in urls.py</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">platform:</th><td class="field-body">All</td>
+</tr>
+<tr class="field-even field"><th class="field-name">synopsis:</th><td class="field-body">Module which contains view functions that are mapped from urls</td>
+</tr>
+</tbody>
+</table>
+<dl class="function">
+<dt id="timetracker.views.add_change_user">
+<tt class="descclassname">timetracker.views.</tt><tt class="descname">add_change_user</tt><big>(</big><em>request</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/timetracker/views.html#add_change_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.views.add_change_user" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the view for changing/adding users</p>
+<p>This is the view which generates the page to add/edit/change/remove users,
+the view first gets the user object from the database, then checks it&#8217;s
+user_type. If it&#8217;s an administrator, their authorization table entry is
+found then used to create a select box and it&#8217;s HTML markup. Then pushed
+to the template. If it&#8217;s a team leader, their manager&#8217;s authorization
+table is used instead.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>request</strong> &#8211; Automatically passed contains a map of the httprequest</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">HttpResponse object back to the browser.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="timetracker.views.admin_view">
+<tt class="descclassname">timetracker.views.</tt><tt class="descname">admin_view</tt><big>(</big><em>request</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/timetracker/views.html#admin_view"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.views.admin_view" title="Permalink to this definition">¶</a></dt>
+<dd><p>This view checks to see if the user logged in is either a team leader or
+an administrator. If the user is an administrator, their authorization
+table entry is found, iterated over to create a select box and it&#8217;s HTML
+markup, sent to the template. If the user is a team leader, then <em>their</em>
+manager&#8217;s authorization table entry is found and used instead. This is to
+enable team leaders to view and edit the team in which they are on but
+also make it so that we don&#8217;t explicitly have to duplicate the
+authorization table linking the team leader with their team.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>request</strong> &#8211; Automatically passed contains a map of the httprequest</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">HttpResponse object back to the browser.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="timetracker.views.ajax">
+<tt class="descclassname">timetracker.views.</tt><tt class="descname">ajax</tt><big>(</big><em>request</em><big>)</big><a class="reference internal" href="_modules/timetracker/views.html#ajax"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.views.ajax" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ajax request handler, dispatches to specific ajax functions depending
+on what json gets sent.</p>
+<p>Any additional ajax views should be added to the ajax_funcs map, this will
+allow the dispatch function to be used. Future revisions could have a kind
+of decorator which could be applied to functions to mutate some global map
+of ajax dispatch functions. For now, however, just add them into the map.</p>
+<p>The idea for this is that on the client-side call you would construct your
+javascript call with something like the below (using jQuery):</p>
+<blockquote>
+<div><div class="highlight-javascript"><div class="highlight"><pre> <span class="nx">$</span><span class="p">.</span><span class="nx">ajaxSetup</span><span class="p">({</span>
+     <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;POST&#39;</span><span class="p">,</span>
+     <span class="nx">url</span><span class="o">:</span> <span class="s1">&#39;/ajax/&#39;</span><span class="p">,</span>
+     <span class="nx">dataType</span><span class="o">:</span> <span class="s1">&#39;json&#39;</span>
+ <span class="p">});</span>
+
+ <span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">({</span>
+     <span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
+         <span class="nx">form</span><span class="o">:</span> <span class="s1">&#39;functionName&#39;</span><span class="p">,</span>
+         <span class="nx">data</span><span class="o">:</span> <span class="s1">&#39;data&#39;</span>
+     <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>Using this method, this allows us to construct a single view url and have
+all ajax requests come through here. This is highly advantagious because
+then we don&#8217;t have to create a url map and construct views to handle that
+specific call. We just have some server-side map and route through there.</p>
+<p>The lookup and dispatch works like this:</p>
+<ol class="arabic simple">
+<li>Request comes through.</li>
+<li>Request gets sent to the ajax view due to the client-side call making a
+request to the url mapped to this view.</li>
+<li>The form type is detected in the json data sent along with the call.</li>
+<li>This string is then pulled out of the dict, executed and it&#8217;s response
+sent back to the browser.</li>
+</ol>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>request</strong> &#8211; Automatically passed contains a map of the httprequest</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">HttpResponse object back to the browser.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="timetracker.views.edit_profile">
+<tt class="descclassname">timetracker.views.</tt><tt class="descname">edit_profile</tt><big>(</big><em>request</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/timetracker/views.html#edit_profile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.views.edit_profile" title="Permalink to this definition">¶</a></dt>
+<dd><p>View for sending the user to the edit profile page</p>
+<p>This view is a simple set of fields which allow all kinds of users to edit
+pieces of information about their profile, currently it allows uers to
+edit their name and their password.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>request</strong> &#8211; Automatically passed contains a map of the httprequest</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">HttpResponse object back to the browser.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="timetracker.views.explain">
+<tt class="descclassname">timetracker.views.</tt><tt class="descname">explain</tt><big>(</big><em>request</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/timetracker/views.html#explain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.views.explain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Renders the Balance explanation page</p>
+<p>This page renders a simple template to show the users how their balance is
+calculated. This view takes the user object, retrieves a couple of fields,
+which are user.shiftlength and the associated values with that datetime
+objects, constructs a string with them and passes it to the template as
+the users &#8216;shiftlength&#8217; attribute. It then takes the count of working
+days in the database so that the user has an idea of how many days they
+have tracked altogether. Then it calculates their total balance and pushes
+all these strings into the template.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>request</strong> &#8211; Automatically passed contains a map of the httprequest</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">HttpResponse object back to the browser.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="timetracker.views.forgot_pass">
+<tt class="descclassname">timetracker.views.</tt><tt class="descname">forgot_pass</tt><big>(</big><em>request</em><big>)</big><a class="reference internal" href="_modules/timetracker/views.html#forgot_pass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.views.forgot_pass" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simple view for resetting a user&#8217;s password</p>
+<p>This view has a dual function. The first function is to simply render the
+initial page which has a field and the themed markup. On this page a user
+can enter their e-mail address and then click submit to have their
+password sent to them.</p>
+<p>The second function of this page is to respond to the change password
+request. In the html markup of the &#8216;forgotpass.html&#8217; page you will see
+that the intention is to have the page post to the same URL which this
+page was rendered from. If the request contains POST information then we
+retrieve that user from the database, construct an e-mail based on that
+and send their password to them. Finally, we redirect to the login page.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>request</strong> &#8211; Automatically passed contains a map of the httprequest</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">HttpResponse object back to the browser.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="timetracker.views.holiday_planning">
+<tt class="descclassname">timetracker.views.</tt><tt class="descname">holiday_planning</tt><big>(</big><em>request</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/timetracker/views.html#holiday_planning"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.views.holiday_planning" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates the full holiday table for all employees under a manager</p>
+<p>First we find the user object and find whether or not that user is a team
+leader or not. If they are a team leader, which set a boolean flag to show
+the template what kind of user is logged in. This is so that the team
+leaders are not able to view certain things (e.g. Job Codes).</p>
+<p>If the admin/tl tries to access the holiday page before any users have
+been assigned to them, then we just throw them back to the main page. This
+is doubly ensuring that they can&#8217;t access what would otherwise be a
+completely borked page.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>request</strong> &#8211; Automatically passed contains a map of the httprequest</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">HttpResponse object back to the browser.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="timetracker.views.index">
+<tt class="descclassname">timetracker.views.</tt><tt class="descname">index</tt><big>(</big><em>request</em><big>)</big><a class="reference internal" href="_modules/timetracker/views.html#index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.views.index" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function serves the base login page. TODO: Make this view check
+to see if the user is already logged in and if so, redirect.</p>
+<p>This function shouldn&#8217;t be directly called, it&#8217;s invocation is automatic</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>request</strong> &#8211; Automatically passed. Contains a map of the httprequest</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A HttpResponse object which is then passed to the browser</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="timetracker.views.login">
+<tt class="descclassname">timetracker.views.</tt><tt class="descname">login</tt><big>(</big><em>request</em><big>)</big><a class="reference internal" href="_modules/timetracker/views.html#login"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.views.login" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function logs the user in, directly adding the session id to
+a database entry. This function is invoked from the url mapped in urls.py.
+The url is POSTed to, and should contain two fields, the use_name and the
+pass word field. This is then pulled from the database and matched
+against, what the user supplied. If they match, the user is then checked
+to see what <em>kind</em> of user their are, if they are ADMIN or TEAML they will
+be sent to the administrator view. Else they will be sent to the user
+page.</p>
+<p>This function shouldn&#8217;t be directly called, it&#8217;s invocation is automatic
+from the url mappings.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>request</strong> &#8211; Automatically passed. Contains a map of the httprequest</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A HttpResponse object which is then passed to the browser</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="timetracker.views.logout">
+<tt class="descclassname">timetracker.views.</tt><tt class="descname">logout</tt><big>(</big><em>request</em><big>)</big><a class="reference internal" href="_modules/timetracker/views.html#logout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.views.logout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simple logout function</p>
+<p>This function will delete a session id from the session dictionary so that
+the user will need to log back in order to access the same pages.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>request</strong> &#8211; Automatically passed contains a map of the httprequest</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A HttpResponse object which is passed to the browser.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="timetracker.views.user_view">
+<tt class="descclassname">timetracker.views.</tt><tt class="descname">user_view</tt><big>(</big><em>request</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/timetracker/views.html#user_view"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.views.user_view" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a calendar based on the URL it receives.
+For example: domain.com/calendar/{year}/{month}/{day},
+also takes a day just in case you want to add a particular
+view for a day, for example. Currently a day-level is not
+in-use.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Note :</th><td class="field-body"><p class="first">The generated HTML should be pretty printed</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>request</strong> &#8211; Automatically passed contains a map of the httprequest</li>
+<li><strong>year</strong> &#8211; The year that the view will be rendered with, default is
+the current year.</li>
+<li><strong>month</strong> &#8211; The month that the view will be rendered with, default is
+the current month.</li>
+<li><strong>day</strong> &#8211; The day that the view will be rendered with, default is
+the current day</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A HttpResponse object which is passed to the browser.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-timetracker.tracker.models">
+<span id="timetracker-models"></span><h2>timetracker.models<a class="headerlink" href="#module-timetracker.tracker.models" title="Permalink to this headline">¶</a></h2>
+<p>Definition of the models used in the timetracker app</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">platform:</th><td class="field-body">All</td>
+</tr>
+<tr class="field-even field"><th class="field-name">synopsis:</th><td class="field-body">Module which contains view functions that are mapped from urls</td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="timetracker.tracker.models.Tblauthorization">
+<em class="property">class </em><tt class="descclassname">timetracker.tracker.models.</tt><tt class="descname">Tblauthorization</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/timetracker/tracker/models.html#Tblauthorization"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.tracker.models.Tblauthorization" title="Permalink to this definition">¶</a></dt>
+<dd><p>Links Administrators (managers) with their team.</p>
+<p>This table is a many-to-many relationship between Administrators and any
+other any user type in TEAML/RUSER.</p>
+<p>This table is used to explicitly show which people are in an
+Administrator&#8217;s team. Usually in SQL-land, you would be able to
+instanstiate multiple rows of many-to-many relationships, however, due to
+the fact that working with these tables in an object orientated fashion is
+far simpler adding multiple relationships to the same
+<a class="reference internal" href="#timetracker.tracker.models.Tblauthorization" title="timetracker.tracker.models.Tblauthorization"><tt class="xref py py-class docutils literal"><span class="pre">Tblauthorization</span></tt></a> object, we re-use the relationship when
+creating/adding additional <a class="reference internal" href="#timetracker.tracker.models.Tblauthorization" title="timetracker.tracker.models.Tblauthorization"><tt class="xref py py-class docutils literal"><span class="pre">Tblauthorization</span></tt></a> instances.</p>
+<p>This means that, if you were to need to add a relationship between an
+Administrator and a RUSER, then you would need to make sure that you
+retrieve the <a class="reference internal" href="#timetracker.tracker.models.Tblauthorization" title="timetracker.tracker.models.Tblauthorization"><tt class="xref py py-class docutils literal"><span class="pre">Tblauthorization</span></tt></a> object <em>before</em> and save the new
+link using that instance. Failure to do this would mean that areas where
+the .get() method is employed would start to throw
+Tblauthorization.MultipleObjectsReturned.</p>
+<p>In future, and time, I would like to make it so that the .save() method is
+overloaded and then we can check if a <a class="reference internal" href="#timetracker.tracker.models.Tblauthorization" title="timetracker.tracker.models.Tblauthorization"><tt class="xref py py-class docutils literal"><span class="pre">Tblauthorization</span></tt></a> link
+already exists and if so, save to that instead.</p>
+<dl class="method">
+<dt id="timetracker.tracker.models.Tblauthorization.display_users">
+<tt class="descname">display_users</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/timetracker/tracker/models.html#Tblauthorization.display_users"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.tracker.models.Tblauthorization.display_users" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method which generates the HTML for the admin views</p>
+<p>This method is depracated in favour of not actually using the admin
+interface to interact with <a class="reference internal" href="#timetracker.tracker.models.Tblauthorization" title="timetracker.tracker.models.Tblauthorization"><tt class="xref py py-class docutils literal"><span class="pre">Tblauthorization</span></tt></a> instances too
+much. That and, it&#8217;s not unicode-safe.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">string</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="timetracker.tracker.models.Tblauthorization.manager_view">
+<tt class="descname">manager_view</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/timetracker/tracker/models.html#Tblauthorization.manager_view"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.tracker.models.Tblauthorization.manager_view" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method which negates needing to retrieve the users via the
+Tblauthorization.objects.all() method which is, needless to say, a
+mouthfull.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">QuerySet</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="timetracker.tracker.models.Tblauthorization.teamleader_view">
+<tt class="descname">teamleader_view</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/timetracker/tracker/models.html#Tblauthorization.teamleader_view"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.tracker.models.Tblauthorization.teamleader_view" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method which provides a shortcut to retrieving the set of users which
+are available to the TeamLeader based upon the rules of what they can
+access.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">QuerySet</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="timetracker.tracker.models.Tbluser">
+<em class="property">class </em><tt class="descclassname">timetracker.tracker.models.</tt><tt class="descname">Tbluser</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/timetracker/tracker/models.html#Tbluser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.tracker.models.Tbluser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Models the user table and provides the admin interface with the
+niceties it needs.</p>
+<p>This model is the central pillar to this entire application.</p>
+<p>The permissions for a user is determined in the view functions, not in a
+table this is a design choice because there is only a minimal set of
+things to have permissions <em>over</em>, so it would be overkill to take full
+advantage of the MVC pattern.</p>
+<p>User</p>
+<p>The most general and base type of a User is the <em>RUSER</em>, which is
+shorthand (and what actually gets stored in the database) for Regular
+User. A regular user will only be able to access a specific section of the
+site.</p>
+<p>Team Leader</p>
+<p>The second type of User is the <em>TEAML</em>, this user has very similar level
+access as the administrator type but has only a limited subset of their
+access rights. They cannot have a team of their own, but view the team
+their manager is assigned. They cannot view and/or change job codes, but
+they can create new users with all the <em>other</em> information that they
+need. They can view/create/add/change holidays of themselves and the users
+that are assigned to their manager.</p>
+<p>Administrator</p>
+<p>The third type of User is the Administrator/<em>ADMIN</em>. They have full access to all
+functions of the app. They can view/create/change/delete members of their
+team. They can view/create/add/change holidays of all members of their
+team and themselves. They can create users of any type.</p>
+<dl class="method">
+<dt id="timetracker.tracker.models.Tbluser.display_user_type">
+<tt class="descname">display_user_type</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/timetracker/tracker/models.html#Tbluser.display_user_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.tracker.models.Tbluser.display_user_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function for displaying the user_type in admin.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Note :</th><td class="field-body">This method shouldn&#8217;t be called directly.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">string</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="timetracker.tracker.models.Tbluser.get_administrator">
+<tt class="descname">get_administrator</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/timetracker/tracker/models.html#Tbluser.get_administrator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.tracker.models.Tbluser.get_administrator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the <a class="reference internal" href="#timetracker.tracker.models.Tbluser" title="timetracker.tracker.models.Tbluser"><tt class="xref py py-class docutils literal"><span class="pre">Tbluser</span></tt></a> who is this instances Authorization link</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A <a class="reference internal" href="#timetracker.tracker.models.Tbluser" title="timetracker.tracker.models.Tbluser"><tt class="xref py py-class docutils literal"><span class="pre">Tbluser</span></tt></a> instance</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#timetracker.tracker.models.Tbluser" title="timetracker.tracker.models.Tbluser"><tt class="xref py py-class docutils literal"><span class="pre">Tbluser</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="timetracker.tracker.models.Tbluser.get_holiday_balance">
+<tt class="descname">get_holiday_balance</tt><big>(</big><em>year</em><big>)</big><a class="reference internal" href="_modules/timetracker/tracker/models.html#Tbluser.get_holiday_balance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.tracker.models.Tbluser.get_holiday_balance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the holiday balance for the employee</p>
+<p>This method loops over all <a class="reference internal" href="#timetracker.tracker.models.TrackingEntry" title="timetracker.tracker.models.TrackingEntry"><tt class="xref py py-class docutils literal"><span class="pre">TrackingEntry</span></tt></a> entries attached to
+the user instance which are in the year passed in, taking each entries
+day_type and looking that up in a value map.</p>
+<p>Values can be:</p>
+<ol class="arabic simple">
+<li>Holiday: Remove a day</li>
+<li>Work on Public Holiday: Add two days</li>
+</ol>
+<ol class="arabic simple" start="2">
+<li>Return for working Public Holiday: Remove a day</li>
+</ol>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>year</strong> (<tt class="xref py py-class docutils literal"><span class="pre">int</span></tt>) &#8211; The year in which the holiday balance should be
+calculated from</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">Integer</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="timetracker.tracker.models.Tbluser.get_total_balance">
+<tt class="descname">get_total_balance</tt><big>(</big><em>ret='html'</em><big>)</big><a class="reference internal" href="_modules/timetracker/tracker/models.html#Tbluser.get_total_balance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.tracker.models.Tbluser.get_total_balance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the total balance for the user.</p>
+<p>This method iterates through every <a class="reference internal" href="#timetracker.tracker.models.TrackingEntry" title="timetracker.tracker.models.TrackingEntry"><tt class="xref py py-class docutils literal"><span class="pre">TrackingEntry</span></tt></a> attached to
+this user instance which is a working day, multiplies the user&#8217;s
+shiftlength by the number of days and finds the difference between the
+projected working hours and the actual working hours.</p>
+<p>The return type of this function is different depending on the
+argument supplied.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Note :</th><td class="field-body">To customize how the CSS class is determined when using the
+html mode you will need to change the ranges in the
+tracking_class_map attribute.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ret</strong> &#8211; Determines the return type of the function. If it is not
+supplied then it defaults to &#8216;html&#8217;. If it is &#8216;int&#8217; then
+the function will return an integer, finally, if the
+string &#8216;dbg&#8217; is passed then we output all the values used
+to calculate and the final value.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">string</span></tt> or <tt class="xref py py-class docutils literal"><span class="pre">integer</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="timetracker.tracker.models.Tbluser.is_admin">
+<tt class="descname">is_admin</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/timetracker/tracker/models.html#Tbluser.is_admin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.tracker.models.Tbluser.is_admin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns whether or not the user instance is an admin type user. The
+two types of &#8216;admin&#8217;-y user_types are ADMIN and TEAML.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">boolean</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="timetracker.tracker.models.Tbluser.name">
+<tt class="descname">name</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/timetracker/tracker/models.html#Tbluser.name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.tracker.models.Tbluser.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Utility method for returning users full name. This is useful for when
+we are pretty printing users and their names. For example in e-mails
+and or when we are displaying users on the front-end.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">string</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="timetracker.tracker.models.Tbluser.tracking_entries">
+<tt class="descname">tracking_entries</tt><big>(</big><em>year=2012</em>, <em>month=5</em><big>)</big><a class="reference internal" href="_modules/timetracker/tracker/models.html#Tbluser.tracking_entries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.tracker.models.Tbluser.tracking_entries" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all the tracking entries associated with
+this user.</p>
+<p>This is particularly useful when required to make a report or generate
+a specific view of the tracking entries of the user.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>year</strong> &#8211; The year in which the QuerySet should be filtered
+by. Defaults to the current year.</li>
+<li><strong>month</strong> &#8211; The month in which the QuerySet should be filtered
+by. Defaults to the current month.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><tt class="xref py py-class docutils literal"><span class="pre">QuerySet</span></tt></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="timetracker.tracker.models.TrackingEntry">
+<em class="property">class </em><tt class="descclassname">timetracker.tracker.models.</tt><tt class="descname">TrackingEntry</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/timetracker/tracker/models.html#TrackingEntry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.tracker.models.TrackingEntry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Model which is used to enter working logs into the database.</p>
+<p>A tracking entry consists of several fields:-</p>
+<ol class="arabic simple">
+<li>Entry date: The date that the working log happened.</li>
+<li>Start Time: The start time of the working day.</li>
+<li>End Time: The end time of the working day.</li>
+<li>Breaks: Any breaks taken during that day.</li>
+<li>Day Type: The type of working log.</li>
+</ol>
+<p>Again, the TrackingEntry model is a core component of the time tracking
+application. It directly links users with the time-spent at work and the
+the type of day that was.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-timetracker.utils.calendar_utils">
+<span id="timetracker-utils-calendar-utils"></span><h2>timetracker.utils.calendar_utils<a class="headerlink" href="#module-timetracker.utils.calendar_utils" title="Permalink to this headline">¶</a></h2>
+<p>Module for collecting the utility functions dealing with mostly calendar
+tasks, processing dates and creating time-based code.</p>
+<div class="section" id="module-functions">
+<h3>Module Functions<a class="headerlink" href="#module-functions" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="docutils">
+<colgroup>
+<col width="51%" />
+<col width="49%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head"></th>
+<th class="head"></th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><a class="reference internal" href="#timetracker.utils.calendar_utils.get_request_data" title="timetracker.utils.calendar_utils.get_request_data"><tt class="xref py py-func docutils literal"><span class="pre">get_request_data()</span></tt></a></td>
+<td><a class="reference internal" href="#timetracker.utils.calendar_utils.calendar_wrapper" title="timetracker.utils.calendar_utils.calendar_wrapper"><tt class="xref py py-func docutils literal"><span class="pre">calendar_wrapper()</span></tt></a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#timetracker.utils.calendar_utils.validate_time" title="timetracker.utils.calendar_utils.validate_time"><tt class="xref py py-func docutils literal"><span class="pre">validate_time()</span></tt></a></td>
+<td><a class="reference internal" href="#timetracker.utils.calendar_utils.gen_holiday_list" title="timetracker.utils.calendar_utils.gen_holiday_list"><tt class="xref py py-func docutils literal"><span class="pre">gen_holiday_list()</span></tt></a></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#timetracker.utils.calendar_utils.parse_time" title="timetracker.utils.calendar_utils.parse_time"><tt class="xref py py-func docutils literal"><span class="pre">parse_time()</span></tt></a></td>
+<td><a class="reference internal" href="#timetracker.utils.calendar_utils.ajax_add_entry" title="timetracker.utils.calendar_utils.ajax_add_entry"><tt class="xref py py-func docutils literal"><span class="pre">ajax_add_entry()</span></tt></a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#timetracker.utils.calendar_utils.ajax_delete_entry" title="timetracker.utils.calendar_utils.ajax_delete_entry"><tt class="xref py py-func docutils literal"><span class="pre">ajax_delete_entry()</span></tt></a></td>
+<td><a class="reference internal" href="#timetracker.utils.calendar_utils.ajax_error" title="timetracker.utils.calendar_utils.ajax_error"><tt class="xref py py-func docutils literal"><span class="pre">ajax_error()</span></tt></a></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#timetracker.utils.calendar_utils.ajax_change_entry" title="timetracker.utils.calendar_utils.ajax_change_entry"><tt class="xref py py-func docutils literal"><span class="pre">ajax_change_entry()</span></tt></a></td>
+<td><a class="reference internal" href="#timetracker.utils.calendar_utils.get_user_data" title="timetracker.utils.calendar_utils.get_user_data"><tt class="xref py py-func docutils literal"><span class="pre">get_user_data()</span></tt></a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#timetracker.utils.calendar_utils.delete_user" title="timetracker.utils.calendar_utils.delete_user"><tt class="xref py py-func docutils literal"><span class="pre">delete_user()</span></tt></a></td>
+<td><a class="reference internal" href="#timetracker.utils.calendar_utils.useredit" title="timetracker.utils.calendar_utils.useredit"><tt class="xref py py-func docutils literal"><span class="pre">useredit()</span></tt></a></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#timetracker.utils.calendar_utils.mass_holidays" title="timetracker.utils.calendar_utils.mass_holidays"><tt class="xref py py-func docutils literal"><span class="pre">mass_holidays()</span></tt></a></td>
+<td><a class="reference internal" href="#timetracker.utils.calendar_utils.profile_edit" title="timetracker.utils.calendar_utils.profile_edit"><tt class="xref py py-func docutils literal"><span class="pre">profile_edit()</span></tt></a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#timetracker.utils.calendar_utils.gen_datetime_cal" title="timetracker.utils.calendar_utils.gen_datetime_cal"><tt class="xref py py-func docutils literal"><span class="pre">gen_datetime_cal()</span></tt></a></td>
+<td>&nbsp;</td>
+</tr>
+</tbody>
+</table>
+<dl class="function">
+<dt id="timetracker.utils.calendar_utils.ajax_add_entry">
+<tt class="descclassname">timetracker.utils.calendar_utils.</tt><tt class="descname">ajax_add_entry</tt><big>(</big><em>request</em><big>)</big><a class="reference internal" href="_modules/timetracker/utils/calendar_utils.html#ajax_add_entry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.utils.calendar_utils.ajax_add_entry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a calendar entry asynchronously.</p>
+<p>This method is for RUSERs who wish to add a single entry to their
+TrackingEntries. This method is only available via ajax and obviously
+requires that users be logged in.</p>
+<p>The client-side code which POSTs to this view should contain a json map
+of, for example:</p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="nx">json_map</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;entry_date&#39;</span><span class="o">:</span> <span class="s2">&quot;2012-01-01&quot;</span><span class="p">,</span>
+    <span class="s1">&#39;start_time&#39;</span><span class="o">:</span> <span class="s2">&quot;09:00&quot;</span><span class="p">,</span>
+    <span class="s1">&#39;end_time&#39;</span><span class="o">:</span> <span class="s2">&quot;17:00&quot;</span><span class="p">,</span>
+    <span class="s1">&#39;daytype&#39;</span><span class="o">:</span> <span class="s2">&quot;WRKDY&quot;</span><span class="p">,</span>
+    <span class="s1">&#39;breaks&#39;</span><span class="o">:</span> <span class="s2">&quot;00:15:00&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Consider that the UserID will be in the session database, then we simply
+run some server-side validations and then enter the entry into the db,
+there are also some client-side validation, which is essentially the same
+as here. The redundancy for validation is just <em>good practice</em> because of
+the various malicious ways it is possible to subvert client-side
+javascript or turn it off completely. Therefore, redundancy.</p>
+<p>When this view is launched, we create a server-side counterpart of the
+json which is in request object. We then fill it, passing None if there
+are any items missing.</p>
+<p>We then create a json_data dict to store the json success/error codes in
+to pass back to the User and inform them of the status of the ajax
+request.</p>
+<p>We then validate the data. Which involves only time validation.</p>
+<p>The creation of the entry goes like this:
+The form object holds purely the data that the TrackingEntry needs to
+hold, it&#8217;s also already validated, so, as insecure it looks, it&#8217;s actually
+perfectly fine as there has been client-side side validation and
+server-side validation. There will also be validation on the database
+level. So we can use **kwargs to instantiate the TrackingEntry and
+.save() it without much worry for saving some erroneous and/or harmful
+data.</p>
+<p>If all goes well with saving the TrackingEntry, i.e. the entry isn&#8217;t a
+duplicate, or the database validation doesn&#8217;t fail. We then generate the
+calendar again using the entry_date in the form. We use this date because
+it&#8217;s logical to assume that if the user enters a TrackingEntry using this
+date, then their calendar will be showing this month.</p>
+<p>We create the calendar and push it all back to the client. The client-side
+code then updates the calendar display with the new data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>request</strong> &#8211; HttpRequest object.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">HttpResponse</span></tt> object with the mime/application type as
+json.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">HttpResponse</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="timetracker.utils.calendar_utils.ajax_change_entry">
+<tt class="descclassname">timetracker.utils.calendar_utils.</tt><tt class="descname">ajax_change_entry</tt><big>(</big><em>request</em><big>)</big><a class="reference internal" href="_modules/timetracker/utils/calendar_utils.html#ajax_change_entry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.utils.calendar_utils.ajax_change_entry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Changes a calendar entry asynchronously</p>
+<p>This method works in an extremely similar fashion to <a class="reference internal" href="#timetracker.utils.calendar_utils.ajax_add_entry" title="timetracker.utils.calendar_utils.ajax_add_entry"><tt class="xref py py-meth docutils literal"><span class="pre">ajax_add_entry()</span></tt></a>,
+with modicum of difference. The main difference is that in the add_entry
+method, we are simply looking for the hidden-id and deleting it from the
+table. In this method we are <em>creating</em> an entry from the form object
+and saving it into the table.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>request</strong> &#8211; <tt class="xref py py-class docutils literal"><span class="pre">HttpRequest</span></tt></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">HttpResponse</span></tt> with mime/application of JSON</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">HttpResponse</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="timetracker.utils.calendar_utils.ajax_delete_entry">
+<tt class="descclassname">timetracker.utils.calendar_utils.</tt><tt class="descname">ajax_delete_entry</tt><big>(</big><em>request</em><big>)</big><a class="reference internal" href="_modules/timetracker/utils/calendar_utils.html#ajax_delete_entry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.utils.calendar_utils.ajax_delete_entry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Asynchronously deletes an entry</p>
+<p>This method is for RUSERs who wish to delete a single entry from
+their TrackingEntries. This method is only available via ajax
+and obviously requires that users be logged in.</p>
+<p>We then create our json_data map to hold our success status and any
+error codes we may generate so that we may inform the user of the
+status of the request once we complete.</p>
+<p>This part of the code will catch all errors because, well, this is
+production code and there&#8217;s no chance I&#8217;ll be letting server 500
+errors bubble to the client without catching and making them
+sound pretty and plausable. Therefore we catch all errors.</p>
+<p>We then take the entry date, and generate the calendar for that year/
+month.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>request</strong> &#8211; <tt class="xref py py-class docutils literal"><span class="pre">HttpRequest</span></tt></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">HttpResponse</span></tt> object with mime/application of json</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">HttpResponse</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="timetracker.utils.calendar_utils.ajax_error">
+<tt class="descclassname">timetracker.utils.calendar_utils.</tt><tt class="descname">ajax_error</tt><big>(</big><em>request</em><big>)</big><a class="reference internal" href="_modules/timetracker/utils/calendar_utils.html#ajax_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.utils.calendar_utils.ajax_error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a HttpResponse with JSON as a payload</p>
+<p>This function is a simple way of instantiating an error when using
+json_functions. It is decorated with the json_response decorator so that
+the dict that we return is dumped into a json object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>error</strong> &#8211; <tt class="xref py py-class docutils literal"><span class="pre">str</span></tt> which contains the pretty
+error, this will be seen by the user so
+make sure it&#8217;s understandable.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">HttpResponse</span></tt> with mime/application of json.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">HttpResponse</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="timetracker.utils.calendar_utils.calendar_wrapper">
+<tt class="descclassname">timetracker.utils.calendar_utils.</tt><tt class="descname">calendar_wrapper</tt><big>(</big><em>function</em><big>)</big><a class="reference internal" href="_modules/timetracker/utils/calendar_utils.html#calendar_wrapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.utils.calendar_utils.calendar_wrapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decorator which checks if the calendar function was
+called as an ajax request or not, if so, then the
+the wrapper constructs the arguments for the call
+from the POST items</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>function</strong> &#8211; Literally just gen_calendar.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">Nothing directly because it returns gen_calendar&#8217;s</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="timetracker.utils.calendar_utils.delete_user">
+<tt class="descclassname">timetracker.utils.calendar_utils.</tt><tt class="descname">delete_user</tt><big>(</big><em>request</em><big>)</big><a class="reference internal" href="_modules/timetracker/utils/calendar_utils.html#delete_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.utils.calendar_utils.delete_user" title="Permalink to this definition">¶</a></dt>
+<dd><p>Asynchronously deletes a user.</p>
+<p>This function simply deletes a user. We asynchronously delete the user
+because it provides a better user-experience for the people doing data
+entry on the form. It also allows the page to not have to deal with a
+jerky nor have to create annoying &#8216;loading&#8217; bars/spinners.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Note :</th><td class="field-body">This function should not be called directly.</td>
+</tr>
+</tbody>
+</table>
+<p>This function should be POSTed to via an Ajax call. Like so:</p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="nx">$</span><span class="p">.</span><span class="nx">ajaxSetup</span><span class="p">({</span>
+    <span class="nx">type</span><span class="o">:</span> <span class="s2">&quot;POST&quot;</span><span class="p">,</span>
+    <span class="nx">url</span><span class="o">:</span> <span class="s2">&quot;/ajax/&quot;</span><span class="p">,</span>       <span class="c1">// &quot;ajax&quot; is the url we created in urls.py</span>
+    <span class="nx">dataType</span><span class="o">:</span> <span class="s2">&quot;json&quot;</span>
+<span class="p">});</span>
+
+<span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">({</span>
+    <span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">user_id</span><span class="o">:</span> <span class="mi">1</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>Once this is received, we check that the user POSTing this data is an
+administrator, or at least a team leader and we go ahead and delete the
+user from the table.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>request</strong> &#8211; <tt class="xref py py-class docutils literal"><span class="pre">HttpRequest</span></tt></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">HttpResponse</span></tt> mime/application JSON</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">HttpResponse</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="timetracker.utils.calendar_utils.gen_calendar">
+<tt class="descclassname">timetracker.utils.calendar_utils.</tt><tt class="descname">gen_calendar</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/timetracker/utils/calendar_utils.html#gen_calendar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.utils.calendar_utils.gen_calendar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a HTML calendar, calling a database user to get their day-by-day
+entries and gives each day a special CSS class so that days can be styled
+individually.</p>
+<p>How this works is that, we iterate through each of the entries found in the
+TrackingEntry QuerySet for {year}/{month}. Create the table&gt;td for that entry
+then attach the CSS class to that td. This means that each different type of
+day can be individually styled per the front-end style that is required.
+The choice to use a custom calendar table is precisely <em>because of</em> this fact
+the jQueryUI calendar doesn&#8217;t support the individual styling of days, nor does
+it support event handling with the level of detail which we require.</p>
+<p>Each day td has one of two functions assigned to it depending on whether the
+day was an &#8216;empty&#8217; day or a non-empty day. The two functions are called:</p>
+<blockquote>
+<div><div class="highlight-javascript"><div class="highlight"><pre><span class="kd">function</span> <span class="nx">toggleChangeEntries</span><span class="p">(</span><span class="nx">st_hour</span><span class="p">,</span> <span class="nx">st_min</span><span class="p">,</span> <span class="nx">full_st</span><span class="p">,</span>
+                             <span class="nx">fi_hour</span><span class="p">,</span> <span class="nx">fi_min</span><span class="p">,</span> <span class="nx">full_fi</span><span class="p">,</span>
+                             <span class="nx">entry_date</span><span class="p">,</span> <span class="nx">daytype</span><span class="p">,</span>
+                             <span class="nx">change_id</span><span class="p">,</span> <span class="nx">breakLength</span><span class="p">,</span>
+                             <span class="nx">breakLength_full</span><span class="p">)</span>
+ <span class="c1">// and</span>
+
+ <span class="kd">function</span> <span class="nx">hideEntries</span><span class="p">(</span><span class="nx">date</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>These two functions could be slightly more generically named, as the calendar
+markup is used in two different places, in the {templates}/calendar.html and
+the {templates}/admin_view.html therefore I will move to naming these based
+on their event names, i.e. &#8216;calendarClickEventDay()&#8217; and
+&#8216;calendarClickEventEmpty&#8217;.</p>
+<p>The toggleChangeEntries() function takes 11 arguments, yes. 11. It&#8217;s quite
+a lot but it&#8217;s all the relevant data associated with a tracking entry.</p>
+<ol class="arabic simple">
+<li>st_hour is the start hour of the tracking entry, just the hour.</li>
+<li>st_min is the start minute of the tracking entry, just the minute.</li>
+<li>full_st is the full start time of the tracking entry.</li>
+<li>fi_hour is the end hour of the tracking entry, just the hour.</li>
+<li>fi_min is the end minute of the tracking entry, just the minute.</li>
+<li>full_fi is the full end time of the tracking entry.</li>
+<li>entry_date is the entry date of the tracking entry.</li>
+<li>daytype is the daytype of the tracking entry.</li>
+<li>change_id this is the ID of the tracking entry.</li>
+<li>breakLength this is the break length&#8217;s minutes. Such as &#8216;15&#8217;.</li>
+<li>This is the breaklength string such as &#8220;00:15:00&#8221;</li>
+</ol>
+<p>The hideEntries function takes a single parameter, date which is the date of
+the entry you want to fill in the Add Entry form.</p>
+<p>The generated HTML should be &#8216;pretty printed&#8217; as well, so the output code
+should be pretty readable.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>year</strong> &#8211; Integer for the year required for output, defaults to the
+current year.</li>
+<li><strong>month</strong> &#8211; Integer for the month required for output, defaults to the
+current month.</li>
+<li><strong>day</strong> &#8211; Integer for the day required for output, defaults to the
+current day.</li>
+<li><strong>user</strong> &#8211; Integer ID for the user in the database, this will automatically,
+be passed to this function. However, if you need to use it in
+another setting make sure this is passed.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">HTML String</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="timetracker.utils.calendar_utils.gen_datetime_cal">
+<tt class="descclassname">timetracker.utils.calendar_utils.</tt><tt class="descname">gen_datetime_cal</tt><big>(</big><em>year</em>, <em>month</em><big>)</big><a class="reference internal" href="_modules/timetracker/utils/calendar_utils.html#gen_datetime_cal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.utils.calendar_utils.gen_datetime_cal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a datetime list of all days in a month</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>year</strong> &#8211; <tt class="xref py py-class docutils literal"><span class="pre">int</span></tt></li>
+<li><strong>month</strong> &#8211; <tt class="xref py py-class docutils literal"><span class="pre">int</span></tt></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A flat list of datetime objects for the given month</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><tt class="xref py py-class docutils literal"><span class="pre">List</span></tt> containing <tt class="xref py py-class docutils literal"><span class="pre">datetime.datetime</span></tt> objects.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="timetracker.utils.calendar_utils.gen_holiday_list">
+<tt class="descclassname">timetracker.utils.calendar_utils.</tt><tt class="descname">gen_holiday_list</tt><big>(</big><em>admin_user</em>, <em>year=2012</em>, <em>month=5</em><big>)</big><a class="reference internal" href="_modules/timetracker/utils/calendar_utils.html#gen_holiday_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.utils.calendar_utils.gen_holiday_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Outputs a holiday calendar for that month.</p>
+<p>For each user we get their tracking entries, then iterate over each of
+their entries checking if it is a holiday or not, if it is then we change
+the class entry for that number in the day class&#8217; dict. Adds a submit
+button along with passing the user_id to it.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>admin_user</strong> &#8211; <a class="reference internal" href="#timetracker.tracker.models.Tbluser" title="timetracker.tracker.models.Tbluser"><tt class="xref py py-class docutils literal"><span class="pre">timetracker.tracker.models.Tbluser</span></tt></a> instance.</li>
+<li><strong>year</strong> &#8211; <tt class="xref py py-class docutils literal"><span class="pre">int</span></tt> of the year required to be output, defaults to
+the current year.</li>
+<li><strong>month</strong> &#8211; <tt class="xref py py-class docutils literal"><span class="pre">int</span></tt> of the month required to be output, defaults to
+the current month.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A partially pretty printed html string.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><tt class="xref py py-class docutils literal"><span class="pre">str</span></tt></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="timetracker.utils.calendar_utils.get_request_data">
+<tt class="descclassname">timetracker.utils.calendar_utils.</tt><tt class="descname">get_request_data</tt><big>(</big><em>form</em>, <em>request</em><big>)</big><a class="reference internal" href="_modules/timetracker/utils/calendar_utils.html#get_request_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.utils.calendar_utils.get_request_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a form and a request object we pull out
+from the request what the form defines.</p>
+<p>i.e.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">form</span> <span class="o">=</span> <span class="p">{</span>
+     <span class="s">&#39;data1&#39;</span><span class="p">:</span> <span class="bp">None</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>get_request_data(form, request) will then fill that data with what&#8217;s in
+the request object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>form</strong> &#8211; A dictionary of items which should be filled from</li>
+<li><strong>request</strong> &#8211; The request object where the data should be taken from.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A dictionary which contains the actual data from the request.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><tt class="xref py py-class docutils literal"><span class="pre">dict</span></tt></p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises :</th><td class="field-body"><p class="first last">KeyError</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="timetracker.utils.calendar_utils.get_user_data">
+<tt class="descclassname">timetracker.utils.calendar_utils.</tt><tt class="descname">get_user_data</tt><big>(</big><em>request</em><big>)</big><a class="reference internal" href="_modules/timetracker/utils/calendar_utils.html#get_user_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.utils.calendar_utils.get_user_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a user as a json object.</p>
+<p>This is a very simple method. First, the <tt class="xref py py-class docutils literal"><span class="pre">HttpRequest</span></tt> POST is
+checked to see if it contains a user_id. If so, we grab that user from
+the database and take all their relevant information and encode it into
+JSON then send it back to the browser.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>request</strong> &#8211; <tt class="xref py py-class docutils literal"><span class="pre">HttpRequest</span></tt> object</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">HttpRequest</span></tt> with mime/application of JSON</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">HttpResponse</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="timetracker.utils.calendar_utils.mass_holidays">
+<tt class="descclassname">timetracker.utils.calendar_utils.</tt><tt class="descname">mass_holidays</tt><big>(</big><em>request</em><big>)</big><a class="reference internal" href="_modules/timetracker/utils/calendar_utils.html#mass_holidays"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.utils.calendar_utils.mass_holidays" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a holidays for a specific user en masse</p>
+<p>This function takes a large amount of holidays as json input, iterates
+over them, adding or deleting each one from the database.</p>
+<p>The json data looks as such:</p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="nx">holidays</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="mi">1</span><span class="o">:</span> <span class="nx">daytype</span><span class="p">,</span>
+    <span class="mi">2</span><span class="o">:</span> <span class="nx">daytype</span><span class="p">,</span>
+    <span class="mi">3</span><span class="o">:</span> <span class="nx">daytype</span>
+    <span class="p">...</span>
+ <span class="p">}</span>
+</pre></div>
+</div>
+<p>And so on, for the entire month. In the request object we also have the
+month and the year. We use this to create a date to filter the month by,
+this is so that we&#8217;re not deleting/changing the wrong month. The
+year/month are taken from the current table headings on the client. We
+then check what kind of day it is.</p>
+<p>If the daytype is &#8216;empty&#8217; then we attempt to retrieve the day mapped to
+that date, if there&#8217;s an entry, we delete it. This is because when the
+holiday page is rendered it shows whether or not that day is assigned. If
+it was assigned and now it&#8217;s empty, it means the user has marked it as
+empty.</p>
+<p>If the daytype is <em>not</em> empty, then we create a new TrackingEntry instance
+using the data that was the current step of iteration through the
+holiday_data dict. This will be a number and a daytype. We have the user
+we&#8217;re uploading this for and the year/month from the request object. We
+also choose sensible defaults for what we&#8217;re not supplied with, i.e. we&#8217;re
+not supplied with start/end times, nor a break time. This is because the
+holiday page only deals with <em>non-working-days</em> therefore we can track
+these days with zeroed times.</p>
+<p>If at this point an IntegrityError is raised, it means one of two things:
+we can either have a duplicate entry, in which case we retrieve that entry
+and change it&#8217;s daytype, or we can have a different error, in which case
+we wrap up working with this set of data and return an error to the
+browser.</p>
+<p>If all goes well, we mark the return object&#8217;s success attribute with True
+and return.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>request</strong> &#8211; <tt class="xref py py-class docutils literal"><span class="pre">HttpRequest</span></tt></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">HttpResponse</span></tt> with mime/application as JSON</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Note :</th><td class="field-body">All exceptions are caught, however here is a list:</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises :</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">IntegrityError</span></tt> <tt class="xref py py-class docutils literal"><span class="pre">DoesNotExist</span></tt>
+<tt class="xref py py-class docutils literal"><span class="pre">ValidationError</span></tt> <tt class="xref py py-class docutils literal"><span class="pre">Exception</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="timetracker.utils.calendar_utils.parse_time">
+<tt class="descclassname">timetracker.utils.calendar_utils.</tt><tt class="descname">parse_time</tt><big>(</big><em>timestring</em>, <em>type_of=&lt;type 'int'&gt;</em><big>)</big><a class="reference internal" href="_modules/timetracker/utils/calendar_utils.html#parse_time"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.utils.calendar_utils.parse_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a time string will return a tuple of ints,
+i.e. &#8220;09:44&#8221; returns [9, 44] with the default args,
+you can pass any function to the type argument.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>timestring</strong> &#8211; String such as &#8216;09:44&#8217;</li>
+<li><strong>type_of</strong> &#8211; A type which the split string should be converted to,
+suitable types are: <tt class="xref py py-class docutils literal"><span class="pre">int</span></tt>, <tt class="xref py py-class docutils literal"><span class="pre">str</span></tt> and
+<tt class="xref py py-class docutils literal"><span class="pre">float</span></tt>.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="timetracker.utils.calendar_utils.profile_edit">
+<tt class="descclassname">timetracker.utils.calendar_utils.</tt><tt class="descname">profile_edit</tt><big>(</big><em>request</em><big>)</big><a class="reference internal" href="_modules/timetracker/utils/calendar_utils.html#profile_edit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.utils.calendar_utils.profile_edit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Asynchronously edits a user&#8217;s profile.</p>
+<p>Access Level: All</p>
+<p>First we pull out the user instance that is currently logged in. Then as
+with most ajax functions, we construct a map to receive what should be in
+the in the POST object. This view specifically deals with changing a Name,
+Surname and Password. Any other data is not required to be changed.</p>
+<p>Once this data has been populated from the POST object we then retrieve
+the string names for the attributes and use setattr to change them to what
+we&#8217;ve been supplied here.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>request</strong> &#8211; <tt class="xref py py-class docutils literal"><span class="pre">HttpRequest</span></tt></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">HttpResponse</span></tt> with mime/application as JSON</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="timetracker.utils.calendar_utils.useredit">
+<tt class="descclassname">timetracker.utils.calendar_utils.</tt><tt class="descname">useredit</tt><big>(</big><em>request</em><big>)</big><a class="reference internal" href="_modules/timetracker/utils/calendar_utils.html#useredit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.utils.calendar_utils.useredit" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function both adds and edits a user</p>
+<ul class="simple">
+<li>Adding a user</li>
+</ul>
+<p>Adding a user via ajax. This function cannot be used outside of an ajax
+request. This is simply because there&#8217;s no need. If there ever is a need
+to synchronously add users then I will remove the &#64;request_check from the
+function.</p>
+<p>The function shouldn&#8217;t be called directly, instead, you should POST to the
+ajax view which points to this via <tt class="xref py py-mod docutils literal"><span class="pre">timetracker.urls</span></tt> you also
+need to include in the POST data. Here is an example call using jQuery:</p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="nx">$</span><span class="p">.</span><span class="nx">ajaxSetup</span><span class="p">({</span>
+    <span class="nx">type</span><span class="o">:</span> <span class="s2">&quot;POST&quot;</span><span class="p">,</span>
+    <span class="nx">dataType</span><span class="o">:</span> <span class="s2">&quot;json&quot;</span>
+<span class="p">});</span>
+
+<span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">({</span>
+    <span class="nx">url</span><span class="o">:</span> <span class="s2">&quot;/ajax/&quot;</span><span class="p">,</span>
+    <span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s1">&#39;user_id&#39;</span><span class="o">:</span> <span class="s2">&quot;aaron.france@hp.com&quot;</span><span class="p">,</span>
+        <span class="s1">&#39;firstname&#39;</span><span class="o">:</span> <span class="s2">&quot;Aaron&quot;</span><span class="p">,</span>
+        <span class="s1">&#39;lastname&#39;</span><span class="o">:</span> <span class="s2">&quot;France&quot;</span><span class="p">,</span>
+        <span class="s1">&#39;user_type&#39;</span><span class="o">:</span> <span class="s2">&quot;RUSER&quot;</span><span class="p">,</span>
+        <span class="s1">&#39;market&#39;</span><span class="o">:</span> <span class="s2">&quot;BK&quot;</span><span class="p">,</span>
+        <span class="s1">&#39;process&#39;</span><span class="o">:</span> <span class="s2">&quot;AR&quot;</span><span class="p">,</span>
+        <span class="s1">&#39;start_date&#39;</span><span class="o">:</span> <span class="s2">&quot;2012-01-01&quot;</span>
+        <span class="s1">&#39;breaklength&#39;</span><span class="o">:</span> <span class="s2">&quot;00:15:00&quot;</span>
+        <span class="s1">&#39;shiftlength&#39;</span><span class="o">:</span> <span class="s2">&quot;00:07:45&quot;</span>
+        <span class="s1">&#39;job_code&#39;</span><span class="o">:</span> <span class="s2">&quot;ABC123&quot;</span>
+        <span class="s1">&#39;holiday_balance&#39;</span><span class="o">:</span> <span class="mi">20</span><span class="p">,</span>
+        <span class="s1">&#39;mode&#39;</span><span class="o">:</span> <span class="s2">&quot;false&quot;</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>You would also create success and error handlers but for the sake of
+documentation lets assume you know what you&#8217;re doing with javascript. When
+the function receives this data, it first checks the &#8216;mode&#8217; attribute of
+the json data. If it contains &#8216;false&#8217; then we are looking at an &#8216;add_user&#8217;
+kind of request. Because of this, and the client-side validation that is
+done. We simply use some **kwargs magic on the
+<a class="reference internal" href="#timetracker.tracker.models.Tbluser" title="timetracker.tracker.models.Tbluser"><tt class="xref py py-class docutils literal"><span class="pre">timetracker.tracker.models.Tbluser</span></tt></a> constructor and save our
+Tbluser object.</p>
+<p>Providing that this didn&#8217;t throw an error and it may, the next step is to
+create a Tblauthorization link to make sure that the user that created
+this user instance has the newly created user assigned to their team (or
+to their manager&#8217;s team in the case of team leaders). We make the team
+leader check, if it&#8217;s a team leader we call get_administrator() on the
+authorized user and then save the newly created user into the
+Tblauthorization instance found. Once this has happened we send the user
+an e-mail informing them of their account details and the password that we
+generated for them.</p>
+<ul class="simple">
+<li>Editing a user</li>
+</ul>
+<p>This function also deals with the <em>editing</em> of a user instance, it&#8217;s
+possible that this functionality will be refactored into it&#8217;s own function
+but for now, we have both in here.</p>
+<p>Editing a user happens much the same as adding a user save for some very
+minor differences:</p>
+<blockquote>
+<div><div class="highlight-javascript"><div class="highlight"><pre><span class="nx">$</span><span class="p">.</span><span class="nx">ajaxSetup</span><span class="p">({</span>
+   <span class="nx">type</span><span class="o">:</span> <span class="s2">&quot;POST&quot;</span><span class="p">,</span>
+   <span class="nx">dataType</span><span class="o">:</span> <span class="s2">&quot;json&quot;</span>
+<span class="p">});</span>
+
+<span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">({</span>
+    <span class="nx">url</span><span class="o">:</span> <span class="s2">&quot;/ajax/&quot;</span><span class="p">,</span>
+    <span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s1">&#39;user_id&#39;</span><span class="o">:</span> <span class="s2">&quot;aaron.france@hp.com&quot;</span><span class="p">,</span>
+        <span class="s1">&#39;firstname&#39;</span><span class="o">:</span> <span class="s2">&quot;Aaron&quot;</span><span class="p">,</span>
+        <span class="s1">&#39;lastname&#39;</span><span class="o">:</span> <span class="s2">&quot;France&quot;</span><span class="p">,</span>
+        <span class="s1">&#39;user_type&#39;</span><span class="o">:</span> <span class="s2">&quot;RUSER&quot;</span><span class="p">,</span>
+        <span class="s1">&#39;job_code&#39;</span><span class="o">:</span> <span class="s2">&quot;ABC456&quot;</span>
+        <span class="s1">&#39;holiday_balance&#39;</span><span class="o">:</span> <span class="mi">50</span><span class="p">,</span>
+        <span class="s1">&#39;mode&#39;</span><span class="o">:</span> <span class="mi">1</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>You may notice that the amount of data isn&#8217;t the same. When editing a user
+it is not vital that all attributes of the user instance are changed
+and/or sent to this view. This is because of the method used to assign
+back to the user instance the changes of attributes (getattr/setattr).</p>
+<p>The attribute which determines that the call is an edit call and not a add
+user call is the mode, if the mode is not false and is a number.</p>
+<p>When we first step into this function we look for the mode attribute of
+the json data. If it&#8217;s a number then we look up the user with that user_id
+we then step through each attribute on the request map and assign it to
+the user object which we retrieved from the database.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>request</strong> &#8211; <tt class="xref py py-class docutils literal"><span class="pre">HttpRequest</span></tt></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">HttpResponse</span></tt> with mime/application of JSON</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">Integrity</span></tt> <tt class="xref py py-class docutils literal"><span class="pre">Validation</span></tt> and <tt class="xref py py-class docutils literal"><span class="pre">Exception</span></tt></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Note :</th><td class="field-body">Please remember that all exceptions are caught here and to make
+sure that things are working be sure to read the response in the
+browser to see if there are any errors.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="timetracker.utils.calendar_utils.validate_time">
+<tt class="descclassname">timetracker.utils.calendar_utils.</tt><tt class="descname">validate_time</tt><big>(</big><em>start</em>, <em>end</em><big>)</big><a class="reference internal" href="_modules/timetracker/utils/calendar_utils.html#validate_time"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.utils.calendar_utils.validate_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validates that the start time is before the end time</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>start</strong> &#8211; String time such as &#8220;09:45&#8221;</li>
+<li><strong>end</strong> &#8211; String time such as &#8220;17:00&#8221;</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><tt class="xref py py-class docutils literal"><span class="pre">boolean</span></tt></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Timetracker API and code</a><ul>
+<li><a class="reference internal" href="#module-timetracker.views">timetracker.views</a></li>
+<li><a class="reference internal" href="#module-timetracker.tracker.models">timetracker.models</a></li>
+<li><a class="reference internal" href="#module-timetracker.utils.calendar_utils">timetracker.utils.calendar_utils</a><ul>
+<li><a class="reference internal" href="#module-functions">Module Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="settings.html"
+                        title="previous chapter">Settings files</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/timetracker.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="settings.html" title="Settings files"
+             >previous</a> |</li>
+        <li><a href="index.html">Timetracker 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Aaron France.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,163 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Settings files &mdash; Timetracker 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Timetracker 1 documentation" href="index.html" />
+    <link rel="next" title="Timetracker" href="timetracker.html" />
+    <link rel="prev" title="Dependencies" href="deps.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="timetracker.html" title="Timetracker"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="deps.html" title="Dependencies"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Timetracker 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="settings-files">
+<h1>Settings files<a class="headerlink" href="#settings-files" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-timetracker.settings">
+<span id="basic-server-settings-module"></span><h2>Basic Server Settings module<a class="headerlink" href="#module-timetracker.settings" title="Permalink to this headline">¶</a></h2>
+<p>This module is used for the DJANGO_SETTINGS_MODULE when the development server
+is being used. This is because there are different levels of logging and the
+location of the logs is completely different from when the production server
+is being used.</p>
+<p>Another reason is that usually (and you should be) the production server is
+being run as a daemon user (http user in the case of Apache) and this causes
+problems for certain portions of code, particularly logging or anything that
+requires write access to the filesystem, thus, the separation of production
+settings and the development one.</p>
+<p>TODO: Create a base settings module and import attributes from there,
+overriding when we need to.</p>
+</div>
+<div class="section" id="module-timetracker.apache_settings">
+<span id="apache-settings-module"></span><h2>Apache Settings module<a class="headerlink" href="#module-timetracker.apache_settings" title="Permalink to this headline">¶</a></h2>
+<p>This module is used for the DJANGO_SETTINGS_MODULE for when apache is being
+used. This is because there are different levels of logging when using the dev
+server and when using the apache server. They also are running under different
+user profiles and therefore have different filesystem access rights. On
+Windows this isn&#8217;t a problem but on Linux it makes it a lot easier to use two
+separate settings files.</p>
+<p>TODO: Create a base settings module and import attributes from there,
+overriding when we need to.</p>
+<blockquote>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">platform:</th><td class="field-body">All</td>
+</tr>
+<tr class="field-even field"><th class="field-name">synopsis:</th><td class="field-body">Module which contains settings for running the app on Apache</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Settings files</a><ul>
+<li><a class="reference internal" href="#module-timetracker.settings">Basic Server Settings module</a></li>
+<li><a class="reference internal" href="#module-timetracker.apache_settings">Apache Settings module</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="deps.html"
+                        title="previous chapter">Dependencies</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="timetracker.html"
+                        title="next chapter">Timetracker</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/settings.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="timetracker.html" title="Timetracker"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="deps.html" title="Dependencies"
+             >previous</a> |</li>
+        <li><a href="index.html">Timetracker 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Aaron France.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

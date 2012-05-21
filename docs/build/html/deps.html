@@ -1,0 +1,230 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Dependencies &mdash; Timetracker 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Timetracker 1 documentation" href="index.html" />
+    <link rel="next" title="Code" href="code.html" />
+    <link rel="prev" title="Welcome to Timetracker’s documentation!" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="code.html" title="Code"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to Timetracker’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Timetracker 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="dependencies">
+<h1>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="python-specific">
+<h2>Python specific<a class="headerlink" href="#python-specific" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Python v2.7</li>
+<li>Django v1.4</li>
+<li>simplejson (included with Django)</li>
+<li>MySQLdb Python MySQL bindings</li>
+</ul>
+</div>
+<div class="section" id="misc">
+<h2>Misc<a class="headerlink" href="#misc" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Apache+mod_wsgi</li>
+<li>Any SMTP Server</li>
+<li>MySQL Server</li>
+</ul>
+</div>
+<div class="section" id="detailed-instructions">
+<h2>Detailed Instructions<a class="headerlink" href="#detailed-instructions" title="Permalink to this headline">¶</a></h2>
+<p>Below will outline all the required steps to prepare your system.</p>
+</div>
+<div class="section" id="install-python">
+<h2>Install Python<a class="headerlink" href="#install-python" title="Permalink to this headline">¶</a></h2>
+<p>If you&#8217;re using Windows, this will simply be a case of heading to the main
+Python website and downloading the Python 2.7 binary and installing. It is
+extremely vital that this particular version of Python is used otherwise,
+the later (and some earlier) versions are code-incompatible. Either through
+syntax differences or some modules are not available.</p>
+<p>If you&#8217;re on Linux, any debian-based system will have the python2 package in
+it&#8217;s repos. Most distros will have the package required.</p>
+</div>
+<div class="section" id="install-django">
+<h2>Install Django<a class="headerlink" href="#install-django" title="Permalink to this headline">¶</a></h2>
+<p>If you&#8217;re using Windows, head to the Django website and download and unzip
+the 1.4 source then follow the below:</p>
+<div class="highlight-python"><pre>cd django1.4
+python setup.py install</pre>
+</div>
+<p>Other than taking an inordinate amount of time. This will then install Django
+1.4 onto your system.</p>
+<p>If you&#8217;re on Linux, please refer to the available packages in your repos to
+find the exact name of the package. However, the steps will include:</p>
+<div class="highlight-python"><pre>for Arch:
+sudo pacman -S python-django
+Debian-based:
+sudo apt-get install python-django</pre>
+</div>
+</div>
+<div class="section" id="simplejson">
+<h2>simplejson<a class="headerlink" href="#simplejson" title="Permalink to this headline">¶</a></h2>
+<p>This should come with django, but, for whatever reason you wish to use an
+externally sourced version, please go to Google and download the latest
+via any links found on there.</p>
+</div>
+<div class="section" id="mysqldb-python-bindings">
+<h2>MySQLdb Python bindings<a class="headerlink" href="#mysqldb-python-bindings" title="Permalink to this headline">¶</a></h2>
+<p>This part is actually a little tricky for Windows. Therefore we have decided
+to link to a pre-compiled binary for the MySQLdb Python bindings. It can be
+found <a class="reference external" href="http://www.lfd.uci.edu/~gohlke/pythonlibs/">here.</a></p>
+<p>If you&#8217;re on Linux, please refer to your distro&#8217;s repos for what the package
+name is, however, some hints are below:</p>
+<div class="highlight-python"><pre>on Arch:
+sudo pacman -S mysql-python
+Debian-based:
+sudo apt-get install mysql-python</pre>
+</div>
+<p>This covers the installation portion of the code-dependencies.</p>
+<p>Next is preparing your system for the software which needs to be installed.</p>
+</div>
+<div class="section" id="apache">
+<h2>Apache<a class="headerlink" href="#apache" title="Permalink to this headline">¶</a></h2>
+<p>Windows:</p>
+<p>Head to the Apache website and download the Apache 2.2 binary and install.</p>
+<p>Linux:</p>
+<div class="highlight-python"><pre>On Arch:
+sudo pacman -S apache
+Debian based:
+sudo apt-get install apache</pre>
+</div>
+</div>
+<div class="section" id="mod-wsgi">
+<h2>mod_wsgi<a class="headerlink" href="#mod-wsgi" title="Permalink to this headline">¶</a></h2>
+<p>Download the latest mod_wsgi.so file from the mod_wsgi downloads page found,
+<a class="reference external" href="http://code.google.com/p/modwsgi/wiki/DownloadTheSoftware">on here.</a></p>
+<p>Then, depending on the system you are using, put it into your Apache modules
+directory.</p>
+<p>Windows:</p>
+<div class="highlight-python"><pre>C:\Program Files\Apache Software Foundation\Apache2.2\bin\</pre>
+</div>
+<p>Linux:</p>
+<div class="highlight-python"><pre>/etc/httpd/modules</pre>
+</div>
+<p>Then for both, modify your httpd.conf file so that it enabled the mod_wsgi.so
+module:</p>
+<div class="highlight-python"><pre>LoadModule wsgi_module &lt;path_to_modules_dir&gt;/mod_wsgi.so</pre>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Dependencies</a><ul>
+<li><a class="reference internal" href="#python-specific">Python specific</a></li>
+<li><a class="reference internal" href="#misc">Misc</a></li>
+<li><a class="reference internal" href="#detailed-instructions">Detailed Instructions</a></li>
+<li><a class="reference internal" href="#install-python">Install Python</a></li>
+<li><a class="reference internal" href="#install-django">Install Django</a></li>
+<li><a class="reference internal" href="#simplejson">simplejson</a></li>
+<li><a class="reference internal" href="#mysqldb-python-bindings">MySQLdb Python bindings</a></li>
+<li><a class="reference internal" href="#apache">Apache</a></li>
+<li><a class="reference internal" href="#mod-wsgi">mod_wsgi</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Welcome to Timetracker&#8217;s documentation!</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="code.html"
+                        title="next chapter">Code</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/deps.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="code.html" title="Code"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to Timetracker’s documentation!"
+             >previous</a> |</li>
+        <li><a href="index.html">Timetracker 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Aaron France.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

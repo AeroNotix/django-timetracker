@@ -1,0 +1,13 @@
+Dependencies
+============
+
+Python specific
+---------------
+* Django v1.4
+* Python v2.7
+* simplejson (included with Django)
+
+Misc
+----
+* Apache+mod_wsgi
+* Any SMTP Server
