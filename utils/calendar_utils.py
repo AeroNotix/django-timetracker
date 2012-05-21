@@ -1118,8 +1118,57 @@ def useredit(request):
 @admin_check
 @json_response
 def mass_holidays(request):
-    """
-    Adds a holidays for a specific user en masse
+    """Adds a holidays for a specific user en masse
+
+    This function takes a large amount of holidays as json input, iterates
+    over them, adding or deleting each one from the database.
+
+    The json data looks as such:
+
+    .. code-block:: javascript
+
+       holidays = {
+           1: daytype,
+           2: daytype,
+           3: daytype
+           ...
+        }
+
+    And so on, for the entire month. In the request object we also have the
+    month and the year. We use this to create a date to filter the month by,
+    this is so that we're not deleting/changing the wrong month. The
+    year/month are taken from the current table headings on the client. We
+    then check what kind of day it is.
+
+    If the daytype is 'empty' then we attempt to retrieve the day mapped to
+    that date, if there's an entry, we delete it. This is because when the
+    holiday page is rendered it shows whether or not that day is assigned. If
+    it was assigned and now it's empty, it means the user has marked it as
+    empty.
+
+    If the daytype is *not* empty, then we create a new TrackingEntry instance
+    using the data that was the current step of iteration through the
+    holiday_data dict. This will be a number and a daytype. We have the user
+    we're uploading this for and the year/month from the request object. We
+    also choose sensible defaults for what we're not supplied with, i.e. we're
+    not supplied with start/end times, nor a break time. This is because the
+    holiday page only deals with *non-working-days* therefore we can track
+    these days with zeroed times.
+
+    If at this point an IntegrityError is raised, it means one of two things:
+    we can either have a duplicate entry, in which case we retrieve that entry
+    and change it's daytype, or we can have a different error, in which case
+    we wrap up working with this set of data and return an error to the
+    browser.
+
+    If all goes well, we mark the return object's success attribute with True
+    and return.
+
+    :param request: :class:`HttpRequest`
+    :returns: :class:`HttpResponse` with mime/application as JSON
+    :note: All exceptions are caught, however here is a list:
+    :raises: :class:`IntegrityError` :class:`DoesNotExist`
+             :class:`ValidationError` :class:`Exception`
     """
 
     json_data = {
@@ -1209,8 +1258,21 @@ def mass_holidays(request):
 @request_check
 @json_response
 def profile_edit(request):
-    """
-    Asynchronously edits a user's profile
+    """Asynchronously edits a user's profile.
+
+    Access Level: All
+
+    First we pull out the user instance that is currently logged in. Then as
+    with most ajax functions, we construct a map to receive what should be in
+    the in the POST object. This view specifically deals with changing a Name,
+    Surname and Password. Any other data is not required to be changed.
+
+    Once this data has been populated from the POST object we then retrieve
+    the string names for the attributes and use setattr to change them to what
+    we've been supplied here.
+
+    :param request: :class:`HttpRequest`
+    :returns: :class:`HttpResponse` with mime/application as JSON
     """
 
     json_data = {
@@ -1247,12 +1309,19 @@ def profile_edit(request):
 
 
 def gen_datetime_cal(year, month):
-    '''
-    Generates a datetime list of all days in a month
+    '''Generates a datetime list of all days in a month
+
+    :param year: :class:`int`
+    :param month: :class:`int`
+    :returns: A flat list of datetime objects for the given month
+    :rtype: :class:`List` containing :class:`datetime.datetime` objects.
+
     '''
     dt = datetime
     days = []
     for week in cdr.monthcalendar(year, month):
         days.extend(week)
+
+    # filter out zeroed days
     days = filter((lambda x: x > 0), days)
     return [dt.datetime(year=year, month=month, day=day) for day in days]
