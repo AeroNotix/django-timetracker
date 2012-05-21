@@ -53,7 +53,7 @@ def get_request_data(form, request):
     from the request what the form defines.
 
     i.e.::
-    
+
        form = {
             'data1': None
        }
@@ -299,7 +299,7 @@ def gen_calendar(year=datetime.datetime.today().year,
     day was an 'empty' day or a non-empty day. The two functions are called:
 
         .. code-block:: javascript
-        
+
            function toggleChangeEntries(st_hour, st_min, full_st,
                                         fi_hour, fi_min, full_fi,
                                         entry_date, daytype,
@@ -333,7 +333,7 @@ def gen_calendar(year=datetime.datetime.today().year,
 
     The hideEntries function takes a single parameter, date which is the date of
     the entry you want to fill in the Add Entry form.
-    
+
     The generated HTML should be 'pretty printed' as well, so the output code
     should be pretty readable.
 
@@ -517,12 +517,12 @@ def ajax_add_entry(request):
     This method is for RUSERs who wish to add a single entry to their
     TrackingEntries. This method is only available via ajax and obviously
     requires that users be logged in.
-    
+
     The client-side code which POSTs to this view should contain a json map
     of, for example:
 
     .. code-block:: javascript
-    
+
        json_map = {
            'entry_date': "2012-01-01",
            'start_time': "09:00",
@@ -531,7 +531,7 @@ def ajax_add_entry(request):
            'breaks': "00:15:00",
        }
 
-    
+
     Consider that the UserID will be in the session database, then we simply
     run some server-side validations and then enter the entry into the db,
     there are also some client-side validation, which is essentially the same
@@ -584,7 +584,7 @@ def ajax_add_entry(request):
 
     # get the form data from the request object
     form.update(get_request_data(form, request))
-    
+
     # create objects to put our data into
     json_data = {
         'succes': False,
@@ -853,8 +853,38 @@ def get_user_data(request):
 @admin_check
 @json_response
 def delete_user(request):
-    """
-    Asynchronously deletes a user
+    """Asynchronously deletes a user.
+
+    This function simply deletes a user. We asynchronously delete the user
+    because it provides a better user-experience for the people doing data
+    entry on the form. It also allows the page to not have to deal with a
+    jerky nor have to create annoying 'loading' bars/spinners.
+
+    :note: This function should not be called directly.
+
+    This function should be POSTed to via an Ajax call. Like so:
+
+    .. code-block:: javascript
+
+       $.ajaxSetup({
+           type: "POST",
+           url: "/ajax/",       // "ajax" is the url we created in urls.py
+           dataType: "json"
+       });
+
+       $.ajax({
+           data: {
+               user_id: 1
+           }
+       });
+
+    Once this is received, we check that the user POSTing this data is an
+    administrator, or at least a team leader and we go ahead and delete the
+    user from the table.
+
+    :param request: :class:`HttpRequest`
+    :returns: :class:`HttpResponse` mime/application JSON
+    :rtype: :class:`HttpResponse`
     """
 
     user_id = request.POST.get('user_id', None)
@@ -886,7 +916,111 @@ def delete_user(request):
 def useredit(request):
 
     """
-    Adds a user to the database asynchronously
+    This function both adds and edits a user
+
+    * Adding a user
+
+    Adding a user via ajax. This function cannot be used outside of an ajax
+    request. This is simply because there's no need. If there ever is a need
+    to synchronously add users then I will remove the @request_check from the
+    function.
+
+    The function shouldn't be called directly, instead, you should POST to the
+    ajax view which points to this via :mod:`timetracker.urls` you also
+    need to include in the POST data. Here is an example call using jQuery:
+
+    .. code-block:: javascript
+
+       $.ajaxSetup({
+           type: "POST",
+           dataType: "json"
+       });
+
+       $.ajax({
+           url: "/ajax/",
+           data: {
+               'user_id': "aaron.france@hp.com",
+               'firstname': "Aaron",
+               'lastname': "France",
+               'user_type': "RUSER",
+               'market': "BK",
+               'process': "AR",
+               'start_date': "2012-01-01"
+               'breaklength': "00:15:00"
+               'shiftlength': "00:07:45"
+               'job_code': "ABC123"
+               'holiday_balance': 20,
+               'mode': "false"
+           }
+       });
+
+    You would also create success and error handlers but for the sake of
+    documentation lets assume you know what you're doing with javascript. When
+    the function receives this data, it first checks the 'mode' attribute of
+    the json data. If it contains 'false' then we are looking at an 'add_user'
+    kind of request. Because of this, and the client-side validation that is
+    done. We simply use some \*\*kwargs magic on the
+    :class:`timetracker.tracker.models.Tbluser` constructor and save our
+    Tbluser object.
+
+    Providing that this didn't throw an error and it may, the next step is to
+    create a Tblauthorization link to make sure that the user that created
+    this user instance has the newly created user assigned to their team (or
+    to their manager's team in the case of team leaders). We make the team
+    leader check, if it's a team leader we call get_administrator() on the
+    authorized user and then save the newly created user into the
+    Tblauthorization instance found. Once this has happened we send the user
+    an e-mail informing them of their account details and the password that we
+    generated for them.
+
+    * Editing a user
+
+    This function also deals with the *editing* of a user instance, it's
+    possible that this functionality will be refactored into it's own function
+    but for now, we have both in here.
+
+    Editing a user happens much the same as adding a user save for some very
+    minor differences:
+
+        .. code-block:: javascript
+
+           $.ajaxSetup({
+              type: "POST",
+              dataType: "json"
+           });
+
+           $.ajax({
+               url: "/ajax/",
+               data: {
+                   'user_id': "aaron.france@hp.com",
+                   'firstname': "Aaron",
+                   'lastname': "France",
+                   'user_type': "RUSER",
+                   'job_code': "ABC456"
+                   'holiday_balance': 50,
+                   'mode': 1
+               }
+           });
+
+    You may notice that the amount of data isn't the same. When editing a user
+    it is not vital that all attributes of the user instance are changed
+    and/or sent to this view. This is because of the method used to assign
+    back to the user instance the changes of attributes (getattr/setattr).
+
+    The attribute which determines that the call is an edit call and not a add
+    user call is the mode, if the mode is not false and is a number.
+
+    When we first step into this function we look for the mode attribute of
+    the json data. If it's a number then we look up the user with that user_id
+    we then step through each attribute on the request map and assign it to
+    the user object which we retrieved from the database.
+
+    :param request: :class:`HttpRequest`
+    :returns: :class:`HttpResponse` with mime/application of JSON
+    :raises: :class:`Integrity` :class:`Validation` and :class:`Exception`
+    :note: Please remember that all exceptions are caught here and to make
+           sure that things are working be sure to read the response in the
+           browser to see if there are any errors.
     """
 
     # create a random enough password
