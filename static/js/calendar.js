@@ -257,19 +257,22 @@ function toggleChangeEntries(st_hour, st_min, full_st,
     $("#change_starttime").timepicker({
         showHour: true,
         hour: st_hour,
-        minute: st_min
+        minute: st_min,
+        stepMinute: 5
     });
 
     $("#change_endtime").timepicker({
         showHour: true,
         hour: fi_hour,
-        minute: fi_min
+        minute: fi_min,
+        stepMinute: 5
     });
 
     $("#change_breaks").timepicker({
         hour: 0,
         minute: breakLength,
-        showHour: false
+        showHour: false,
+        stepMinute: 5
     });
 
     // it seems programmatically changing the option box
@@ -307,19 +310,22 @@ function hideEntries(date) {
     $("#add_starttime").timepicker({
         showHour: true,
         hour: 0,
-        minute: 0
+        minute: 0,
+        stepMinute: 5
     });
 
     $("#add_endtime").timepicker({
         showHour: true,
         hour: 0,
-        minute: 0
+        minute: 0,
+        stepMinute: 5
     });
 
     $("#add_breaks").timepicker({
         showHour: false,
         hour: 0,
-        minute: 0
+        minute: 0,
+        stepMinute: 5
     });
 
     onOptionChange("add");
