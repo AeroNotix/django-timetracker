@@ -702,8 +702,17 @@ def ajax_error(error):
 @json_response
 def ajax_change_entry(request):
 
-    '''
-    Changes a calendar entry asynchronously
+    '''Changes a calendar entry asynchronously
+
+    This method works in an extremely similar fashion to :method:`ajax_add_entry`,
+    with modicum of difference. The main difference is that in the add_entry method,
+    we are simply looking for the hidden-id and deleting it from the table. In this
+    method we are *creating* an entry from the form object and saving it into the
+    table.
+
+    :param request: :class:`HttpRequest`
+    :returns: :class:`HttpResponse` with mime/application of JSON
+    :rtype: :class:`HttpResponse`
     '''
 
     # object to dump form data into
@@ -776,20 +785,31 @@ def ajax_change_entry(request):
 @admin_check
 @json_response
 def get_user_data(request):
-    """
-    Returns a user as a json object
-    """
+    """Returns a user as a json object.
 
-    user = Tbluser.objects.get(
-        id__exact=request.POST.get('user_id', None)
-    )
+    This is a very simple method. First, the :class:`HttpRequest` POST
+    is checked to see if it contains a user_id. If so, we grab that user
+    from the database and take all their relevant information and encode
+    it into JSON then send it back to the browser.
+
+    :param request: :class:`HttpRequest` object
+    :returns: :class:`HttpRequest` with mime/application of JSON
+    :rtype: :class:`HttpResponse`
+    """
 
     json_data = {
-        'success': False
+        'success': False,
+        'error': ''
     }
 
-    if user:
+    try:
+        user = Tbluser.objects.get(
+            id__exact=request.POST.get('user_id', None)
+            )
+    except Tbluser.DoesNotExist:
+        json_data['error'] = "User does not exist"
 
+    if user:
         json_data = {
             'success': True,
             'username': user.user_id,
@@ -804,6 +824,7 @@ def get_user_data(request):
             'job_code': user.job_code,
             'holiday_balance': user.holiday_balance
         }
+        json_data['success'] = True
 
     return json_data
 
@@ -930,7 +951,7 @@ def useredit(request):
     except Exception as error:
         if error[0] == CONNECTION_REFUSED:
             email_log.error("email failed to send to %s with manager %s" %
-                            (user.user_id, auth.admin.name()))
+                            (user.name(), auth.admin.name()))
         else:
             json_data['error'] = str(error)
             error_log.critical(str(error))

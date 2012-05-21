@@ -36,6 +36,10 @@ function ajaxCall(form) {
         pre = "#" + form + "_";
     }
 
+    if (  $(pre + 'daytype').val() !== "WKDAY" ) {
+        return;
+    }
+
     var formData = {
         "form_type" : form,
         "entry_date" : $(pre + 'entrydate').val(),
@@ -213,6 +217,10 @@ function deleteEntry() {
     */
 
     "use strict";
+
+    if ($("#change_daytype").val() !== "WKDAY") {
+        return;
+    }
 
     var answer = confirm("Are you sure?");
     if (answer) {

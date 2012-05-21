@@ -208,6 +208,24 @@
 {% endblock content %}
 </body>
 {% block additional_javascript %}
+    <script type="text/javascript">
+        $("#change-entry-fs")
+            .find("label")
+            .each( function () {
+                if ($(this).attr("for") === "change_daytype") {
+                    $(this).hide();
+                }
+            });
+        $("#add-entry-fs")
+            .find("label")
+            .each( function () {
+                if ($(this).attr("for") === "add_daytype") {
+                    $(this).hide();
+                }
+            });
+        $("#change_daytype").hide();
+        $("#add_daytype").hide();
+    </script>
     <script type="text/javascript" src="{{ STATIC_URL }}jquery/js/timepicker.js">
     </script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/calendar.js">
