@@ -1,6 +1,23 @@
 """
 Module for collecting the utility functions dealing with mostly calendar
 tasks, processing dates and creating time-based code.
+
+Module Functions
+++++++++++++++++
+
+
+=========================  ========================
+..                         ..
+=========================  ========================
+:func:`get_request_data`   :func:`calendar_wrapper`
+:func:`validate_time`      :func:`gen_holiday_list`
+:func:`parse_time`         :func:`ajax_add_entry`
+:func:`ajax_delete_entry`  :func:`ajax_error`
+:func:`ajax_change_entry`  :func:`get_user_data`
+:func:`delete_user`        :func:`useredit`
+:func:`mass_holidays`      :func:`profile_edit`
+:func:`gen_datetime_cal`
+=========================  ========================
 """
 
 import random
@@ -281,14 +298,17 @@ def gen_calendar(year=datetime.datetime.today().year,
     Each day td has one of two functions assigned to it depending on whether the
     day was an 'empty' day or a non-empty day. The two functions are called:
 
-    ..codeblock:: javascript
-    function toggleChangeEntries(st_hour, st_min, full_st,
-                                 fi_hour, fi_min, full_fi,
-                                 entry_date, daytype,
-                                 change_id, breakLength,
-                                 breakLength_full)
-    // and
-    function hideEntries(date)
+        .. code-block:: javascript
+        
+           function toggleChangeEntries(st_hour, st_min, full_st,
+                                        fi_hour, fi_min, full_fi,
+                                        entry_date, daytype,
+                                        change_id, breakLength,
+                                        breakLength_full)
+            // and
+
+            function hideEntries(date)
+
 
     These two functions could be slightly more generically named, as the calendar
     markup is used in two different places, in the {templates}/calendar.html and
@@ -501,41 +521,42 @@ def ajax_add_entry(request):
     The client-side code which POSTs to this view should contain a json map
     of, for example:
 
-    .. codeblock:: javascript
+    .. code-block:: javascript
     
-    json_map = {
-        'entry_date': "2012-01-01",
-        'start_time': "09:00",
-        'end_time': "17:00",
-        'daytype': "WRKDY",
-        'breaks': "00:15:00",
-    }
+       json_map = {
+           'entry_date': "2012-01-01",
+           'start_time': "09:00",
+           'end_time': "17:00",
+           'daytype': "WRKDY",
+           'breaks': "00:15:00",
+       }
 
     
     Consider that the UserID will be in the session database, then we simply
     run some server-side validations and then enter the entry into the db,
     there are also some client-side validation, which is essentially the same
     as here. The redundancy for validation is just *good practice* because of
-    the various malicious ways it is possible to subvert client-side javascript
-    or turn it off completely. Therefore, redundancy.
+    the various malicious ways it is possible to subvert client-side
+    javascript or turn it off completely. Therefore, redundancy.
 
-    When this view is launched, we create a server-side counterpart of the json
-    which is in request object. We then fill it, passing None if there are any
-    items missing.
+    When this view is launched, we create a server-side counterpart of the
+    json which is in request object. We then fill it, passing None if there
+    are any items missing.
 
     We then create a json_data dict to store the json success/error codes in
-    to pass back to the User and inform them of the status of the ajax request.
+    to pass back to the User and inform them of the status of the ajax
+    request.
 
     We then validate the data. Which involves only time validation.
 
     The creation of the entry goes like this:
-
-    The form object holds purely the data that the TrackingEntry needs to hold,
-    it's also already validated, so, as insecure it looks, it's actually perfectly
-    fine as there has been client-side side validation and server-side validation.
-    There will also be validation on the database level. So we can use **magic
-    to instantiate the TrackingEntry and .save() it without much worry for
-    saving some erroneous and/or harmful data.
+    The form object holds purely the data that the TrackingEntry needs to
+    hold, it's also already validated, so, as insecure it looks, it's actually
+    perfectly fine as there has been client-side side validation and
+    server-side validation. There will also be validation on the database
+    level. So we can use \*\*kwargs to instantiate the TrackingEntry and
+    .save() it without much worry for saving some erroneous and/or harmful
+    data.
 
     If all goes well with saving the TrackingEntry, i.e. the entry isn't a
     duplicate, or the database validation doesn't fail. We then generate the
@@ -680,10 +701,9 @@ def ajax_error(error):
 
     """Returns a HttpResponse with JSON as a payload
 
-    This function is a simple way of instantiating an error
-    when using json_functions. It is decorated with the
-    json_response decorator so that the dict that we return
-    is dumped into a json object.
+    This function is a simple way of instantiating an error when using
+    json_functions. It is decorated with the json_response decorator so that
+    the dict that we return is dumped into a json object.
 
     :param error: :class:`str` which contains the pretty
                   error, this will be seen by the user so
@@ -704,11 +724,11 @@ def ajax_change_entry(request):
 
     '''Changes a calendar entry asynchronously
 
-    This method works in an extremely similar fashion to :method:`ajax_add_entry`,
-    with modicum of difference. The main difference is that in the add_entry method,
-    we are simply looking for the hidden-id and deleting it from the table. In this
-    method we are *creating* an entry from the form object and saving it into the
-    table.
+    This method works in an extremely similar fashion to :meth:`ajax_add_entry`,
+    with modicum of difference. The main difference is that in the add_entry
+    method, we are simply looking for the hidden-id and deleting it from the
+    table. In this method we are *creating* an entry from the form object
+    and saving it into the table.
 
     :param request: :class:`HttpRequest`
     :returns: :class:`HttpResponse` with mime/application of JSON
@@ -787,10 +807,10 @@ def ajax_change_entry(request):
 def get_user_data(request):
     """Returns a user as a json object.
 
-    This is a very simple method. First, the :class:`HttpRequest` POST
-    is checked to see if it contains a user_id. If so, we grab that user
-    from the database and take all their relevant information and encode
-    it into JSON then send it back to the browser.
+    This is a very simple method. First, the :class:`HttpRequest` POST is
+    checked to see if it contains a user_id. If so, we grab that user from
+    the database and take all their relevant information and encode it into
+    JSON then send it back to the browser.
 
     :param request: :class:`HttpRequest` object
     :returns: :class:`HttpRequest` with mime/application of JSON
