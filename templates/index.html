@@ -3,6 +3,13 @@
 Login - Timetracker
 {% endblock title %}
 {% block centre_piece %}
+
+<script type="text/javascript">
+  function open_OMEGA () {
+     var OmegaWindow = window.open("https://login.portal.hp.com/smlogin/fcc/smloginb.fcc?TYPE=33554433&REALMOID=06-d3be75ae-8cf1-4ffd-9c4f-8589bf52b75f&GUID=&SMAUTHREASON=0&METHOD=GET&SMAGENTNAME=$SM$arF0TagS7FN9cHeraqcTZkK1ZZ12dCyVb43zrCkgXQyKJ%2f0KCY5BM5x5Hc%2fptSnH&TARGET=$SM$HTTP%3a%2f%2fvausintpro2l%2eaustin%2ehp%2ecom%2fPages%2fHome%2easpx%3finstance%3dOMEGA","_newtab");
+  }
+</script>
+
 <div id="wrapper">
   <form id="login" method="POST" action="/login/">
     <img id="hp-logo" src="{{ STATIC_URL }}images/logos/hp-logo.png" />
@@ -26,7 +33,7 @@ Login - Timetracker
         </td>
         <td align="right">
           <input type="submit"
-                 onclick="/login/"
+                 onclick="open_OMEGA()"
                  id="add_button"
                  value="Login"/>
         </td>
