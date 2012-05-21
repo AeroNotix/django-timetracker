@@ -48,6 +48,7 @@ def get_request_data(form, request):
     :param request: The request object where the data should be taken from.
     :returns: A dictionary which contains the actual data from the request.
     :rtype: :class:`dict`
+    :raises: KeyError
     """
 
     data = dict()
@@ -269,11 +270,63 @@ def gen_calendar(year=datetime.datetime.today().year,
     entries and gives each day a special CSS class so that days can be styled
     individually.
 
+    How this works is that, we iterate through each of the entries found in the
+    TrackingEntry QuerySet for {year}/{month}. Create the table>td for that entry
+    then attach the CSS class to that td. This means that each different type of
+    day can be individually styled per the front-end style that is required.
+    The choice to use a custom calendar table is precisely *because of* this fact
+    the jQueryUI calendar doesn't support the individual styling of days, nor does
+    it support event handling with the level of detail which we require.
+
+    Each day td has one of two functions assigned to it depending on whether the
+    day was an 'empty' day or a non-empty day. The two functions are called:
+
+    ..codeblock:: javascript
+    function toggleChangeEntries(st_hour, st_min, full_st,
+                                 fi_hour, fi_min, full_fi,
+                                 entry_date, daytype,
+                                 change_id, breakLength,
+                                 breakLength_full)
+    // and
+    function hideEntries(date)
+
+    These two functions could be slightly more generically named, as the calendar
+    markup is used in two different places, in the {templates}/calendar.html and
+    the {templates}/admin_view.html therefore I will move to naming these based
+    on their event names, i.e. 'calendarClickEventDay()' and
+    'calendarClickEventEmpty'.
+
+    The toggleChangeEntries() function takes 11 arguments, yes. 11. It's quite
+    a lot but it's all the relevant data associated with a tracking entry.
+
+    1) st_hour is the start hour of the tracking entry, just the hour.
+    2) st_min is the start minute of the tracking entry, just the minute.
+    3) full_st is the full start time of the tracking entry.
+    4) fi_hour is the end hour of the tracking entry, just the hour.
+    5) fi_min is the end minute of the tracking entry, just the minute.
+    6) full_fi is the full end time of the tracking entry.
+    7) entry_date is the entry date of the tracking entry.
+    8) daytype is the daytype of the tracking entry.
+    9) change_id this is the ID of the tracking entry.
+    10) breakLength this is the break length's minutes. Such as '15'.
+    11) This is the breaklength string such as "00:15:00"
+
+    The hideEntries function takes a single parameter, date which is the date of
+    the entry you want to fill in the Add Entry form.
+    
     The generated HTML should be 'pretty printed' as well, so the output code
     should be pretty readable.
 
     :param year: Integer for the year required for output, defaults to the
                  current year.
+    :param month: Integer for the month required for output, defaults to the
+                 current month.
+    :param day: Integer for the day required for output, defaults to the
+                 current day.
+    :param user: Integer ID for the user in the database, this will automatically,
+                 be passed to this function. However, if you need to use it in
+                 another setting make sure this is passed.
+    :returns: HTML String
     """
 
     # django passes us Unicode strings
@@ -439,8 +492,64 @@ def gen_calendar(year=datetime.datetime.today().year,
 @json_response
 def ajax_add_entry(request):
 
-    '''
-    Adds a calendar entry asynchronously
+    '''Adds a calendar entry asynchronously.
+
+    This method is for RUSERs who wish to add a single entry to their
+    TrackingEntries. This method is only available via ajax and obviously
+    requires that users be logged in.
+    
+    The client-side code which POSTs to this view should contain a json map
+    of, for example:
+
+    .. codeblock:: javascript
+    
+    json_map = {
+        'entry_date': "2012-01-01",
+        'start_time': "09:00",
+        'end_time': "17:00",
+        'daytype': "WRKDY",
+        'breaks': "00:15:00",
+    }
+
+    
+    Consider that the UserID will be in the session database, then we simply
+    run some server-side validations and then enter the entry into the db,
+    there are also some client-side validation, which is essentially the same
+    as here. The redundancy for validation is just *good practice* because of
+    the various malicious ways it is possible to subvert client-side javascript
+    or turn it off completely. Therefore, redundancy.
+
+    When this view is launched, we create a server-side counterpart of the json
+    which is in request object. We then fill it, passing None if there are any
+    items missing.
+
+    We then create a json_data dict to store the json success/error codes in
+    to pass back to the User and inform them of the status of the ajax request.
+
+    We then validate the data. Which involves only time validation.
+
+    The creation of the entry goes like this:
+
+    The form object holds purely the data that the TrackingEntry needs to hold,
+    it's also already validated, so, as insecure it looks, it's actually perfectly
+    fine as there has been client-side side validation and server-side validation.
+    There will also be validation on the database level. So we can use **magic
+    to instantiate the TrackingEntry and .save() it without much worry for
+    saving some erroneous and/or harmful data.
+
+    If all goes well with saving the TrackingEntry, i.e. the entry isn't a
+    duplicate, or the database validation doesn't fail. We then generate the
+    calendar again using the entry_date in the form. We use this date because
+    it's logical to assume that if the user enters a TrackingEntry using this
+    date, then their calendar will be showing this month.
+
+    We create the calendar and push it all back to the client. The client-side
+    code then updates the calendar display with the new data.
+
+    :param request: HttpRequest object.
+    :returns: :class:`HttpResponse` object with the mime/application type as
+              json.
+    :rtype: :class:`HttpResponse`
     '''
 
     # object to dump form data into
@@ -454,9 +563,13 @@ def ajax_add_entry(request):
 
     # get the form data from the request object
     form.update(get_request_data(form, request))
-
+    
     # create objects to put our data into
-    json_data = dict()
+    json_data = {
+        'succes': False,
+        'error': '',
+        'calendar': ''
+    }
 
     try:
         # server-side time validation
@@ -497,8 +610,39 @@ def ajax_add_entry(request):
 @request_check
 @json_response
 def ajax_delete_entry(request):
-    """
-    Asynchronously deletes an entry
+    """Asynchronously deletes an entry
+
+    This method is for RUSERs who wish to delete a single entry from
+    their TrackingEntries. This method is only available via ajax
+    and obviously requires that users be logged in.
+
+    First we start by creating a server-side counterpart to the request
+    POST data, which holds only the hidden-id of the user, which isn't
+    required really because the user_id will be in the session database
+    for the user. We use this redundancy because when we generate the
+    calendar it also adds the id of the user to each and every tracking
+    entry, therefore we are sure that the user that is logged in and the
+    user that the clicked tracking entry are one and the same user. It's
+    redundant validation, but that's the best kind of validation.
+
+    We then create our json_data map to hold our success status and any
+    error codes we may generate so that we may inform the user of the
+    status of the request once we complete.
+
+    We then check that the hidden-id is the same as the user-id, if so,
+    we can go ahead with the deletion of the tracking entry.
+
+    This part of the code will catch all errors because, well, this is
+    production code and there's no chance I'll be letting server 500
+    errors bubble to the client without catching and making them
+    sound pretty and plausable. Therefore we catch all errors.
+
+    We then take the entry date, and generate the calendar for that year/
+    month.
+
+    :param request: :class:`HttpRequest`
+    :returns: :class:`HttpResponse` object with mime/application of json
+    :rtype: :class:`HttpResponse`
     """
 
     form = {
@@ -512,7 +656,8 @@ def ajax_delete_entry(request):
     # create our json structure
     json_data = {
         'success': False,
-        'error': ''
+        'error': '',
+        'calendar': ''
     }
 
     if form['hidden-id']:
@@ -520,10 +665,11 @@ def ajax_delete_entry(request):
             # get the user and make sure that the user
             # assigned to the TrackingEntry is the same
             # as what's requesting the deletion
-            user = Tbluser.objects.get(id__exact=form['user_id'])
-            entry = TrackingEntry(id=form['hidden-id'],
-                                  user=user)
-            entry.delete()
+            if form['hidden-id'] == form['user_id']:
+                user = Tbluser.objects.get(id__exact=form['user_id'])
+                entry = TrackingEntry(id=form['hidden-id'],
+                                      user=user)
+                entry.delete()
         except Exception as error:
             error_log.error(str(error))
             json_data['error'] = str(error)
@@ -545,9 +691,18 @@ def ajax_delete_entry(request):
 @json_response
 def ajax_error(error):
 
-    """
-    Returns a HttpResponse with JSON as a payload with the error
-    code as the string that the function is called with
+    """Returns a HttpResponse with JSON as a payload
+
+    This function is a simple way of instantiating an error
+    when using json_functions. It is decorated with the
+    json_response decorator so that the dict that we return
+    is dumped into a json object.
+
+    :param error: :class:`str` which contains the pretty
+                  error, this will be seen by the user so
+                  make sure it's understandable.
+    :returns: :class:`HttpResponse` with mime/application of json.
+    :rtype: :class:`HttpResponse`
     """
 
     return {
