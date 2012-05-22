@@ -398,7 +398,7 @@ class Tblauthorization(models.Model):
         """
         Admin view uses this to display the entry
         """
-        return str(self.admin)
+        return unicode(self.admin)
 
     def display_users(self):
 
@@ -507,11 +507,11 @@ class TrackingEntry(models.Model):
         """
 
         date = '/'.join(
-            map(str,
+            map(unicode,
                 [self.entry_date.year,
                  self.entry_date.month,
                  self.entry_date.day
                  ])
             )
 
-        return str(self.user) + ' - ' + date
+        return unicode(self.user) + ' - ' + date
