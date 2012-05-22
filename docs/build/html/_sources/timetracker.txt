@@ -12,10 +12,12 @@ timetracker.views
 
 timetracker.models
 ------------------
+
 .. automodule:: timetracker.tracker.models
    :members:
 
 timetracker.utils.calendar_utils
 --------------------------------
+
 .. automodule:: timetracker.utils.calendar_utils
    :members:
