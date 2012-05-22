@@ -54,31 +54,17 @@ function toggleChangeEntries(st_hour, st_min, full_st,
         return str;
     }
 
-    /*
-       Here we are building the time string from the start time,
-       the end time and the break time.
-
-       What we do is minus the start time from the end time,
-       then minus the break time in minutes from 60, then
-       concatenate them all together. This will break if the
-       break time needs to go above 60 minutes.
-    */
-
-    var break_time = 60 - breakLength;
-    if (break_time < 60) {
-        var breaks = pad(60 - breakLength, 2, "0");
-        var hour_string = pad((fi_hour - st_hour) - 1, 2, "0");
-    } else {
-        var breaks = "00";
-        var hour_string = pad(fi_hour - st_hour, 2, "0");
-    }
+    console.log("Full Start: " + full_st);
+    console.log("Full End: " + full_fi);
+    console.log("Breaks: " + breakLength_full);
     
-    var shiftLength = " | Shift Length: " + hour_string + ":" + breaks;
-    var text_information = start_string+end_string;
-    $("#day_information").fadeTo(500, 0, function() {    
-        $("#day_information").text(text_information + shiftLength);
-    });
-    $("#day_information").fadeTo(500, 1);
+
+    var working_hours = (fi_hour - st_hour) * 3600;
+    var working_mins = ((fi_min - st_min) / 60) * 3600;
+    var working_seconds = working_hours + working_mins;
+    var time_hours = parseInt((working_seconds / 3600));
+    var time_minutes = parseInt(((60 * ((working_seconds / 3600.0) % 1))));
+    console.log(time_hours+':'+time_minutes);
 }
 
 function hideEntries() {
