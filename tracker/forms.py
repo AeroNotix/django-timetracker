@@ -18,15 +18,18 @@ class EntryForm(forms.Form):
 
     start_time = forms.TimeField(label="Start Time:")
     start_time.widget.attrs.update({'class': 'change-el',
-                                    'id': 'change_starttime'})
+                                    'id': 'change_starttime',
+                                    'maxlength': '5'})
 
     end_time = forms.TimeField(label="End Time:")
     end_time.widget.attrs.update({'class': 'change-el',
-                                  'id': 'change_endtime'})
+                                  'id': 'change_endtime',
+                                'maxlength': '5'})
 
     breaks = forms.TimeField(label="Breaks:")
     breaks.widget.attrs.update({'class': 'change-el',
-                                'id': 'change_breaks'})
+                                'id': 'change_breaks',
+                                'maxlength': '5'})
 
     daytype = forms.ChoiceField(label="Day Type:", choices=DAYTYPE_CHOICES)
     daytype.widget.attrs.update({'class': 'change-el',
@@ -45,19 +48,23 @@ class AddForm(forms.Form):
 
     start_time = forms.TimeField(label="Start Time:")
     start_time.widget.attrs.update({'class': 'change-el',
-                                    'id': 'add_starttime'})
+                                    'id': 'add_starttime',
+                                    'maxlength': '5'})
 
     end_time = forms.TimeField(label="End Time:")
     end_time.widget.attrs.update({'class': 'change-el',
-                                    'id': 'add_endtime'})
+                                    'id': 'add_endtime',
+                                  'maxlength': '5'})
 
     breaks = forms.TimeField(label="Breaks:")
     breaks.widget.attrs.update({'class': 'change-el',
-                                'id': 'add_breaks'})
+                                'id': 'add_breaks',
+                                'maxlength': '5'})
 
     daytype = forms.ChoiceField(label="Day Type:", choices=DAYTYPE_CHOICES)
     daytype.widget.attrs.update({'class': 'change-el',
-                                    'id': 'add_daytype'})
+                                    'id': 'add_daytype',
+                                 'maxlength': '5'})
 
 
 class Login(forms.Form):
