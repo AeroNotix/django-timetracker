@@ -54,21 +54,30 @@ function toggleChangeEntries(st_hour, st_min, full_st,
         return str;
     }
 
-    console.log("Full Start: " + full_st);
-    console.log("Full End: " + full_fi);
-    console.log("Breaks: " + breakLength_full);
-    
+    var hours = fi_hour - st_hour;
+    var minutes = (fi_min - st_min)
 
-    var working_hours = (fi_hour - st_hour) * 3600;
-    var working_mins = ((fi_min - st_min) / 60) * 3600;
-    var working_seconds = working_hours + working_mins;
-    var time_hours = parseInt((working_seconds / 3600));
-    var time_minutes = parseInt(((60 * ((working_seconds / 3600.0) % 1))));
-    console.log(time_hours+':'+time_minutes);
+    if (minutes < 0) {
+        minutes = minutes + 60;
+        hours--;
+    }
+    
+    var str_hours = pad(hours, 2, '0');
+    var str_mins = pad(minutes, 2, '0');
+    
+    $("#day_information")
+        .fadeTo(200, 0.1, function() {
+            $("#start_time").text("Start: " + full_st);
+            $("#end_time").text("End: " + full_fi);
+            $("#shiftlength").text("Shift Length: "+str_hours+':'+str_mins);
+            $("#breaks").text("Breaks: "+breakLength_full);
+        });
+    $("#day_information")
+        .fadeTo(200, 1);
 }
 
 function hideEntries() {
-    $("#day_information").text('');
+    $("#day_information").hide()
 }
 
 $(function () {
@@ -76,4 +85,5 @@ $(function () {
         onOptionChange();
     });
     onOptionChange();
+    $("#day_information").hide();
 });
