@@ -10,12 +10,22 @@
 \contentsline {subsection}{\numberline {1.1.7}MySQLdb Python bindings}{2}{subsection.1.1.7}
 \contentsline {subsection}{\numberline {1.1.8}Apache}{2}{subsection.1.1.8}
 \contentsline {subsection}{\numberline {1.1.9}mod\_wsgi}{2}{subsection.1.1.9}
-\contentsline {section}{\numberline {1.2}Code}{3}{section.1.2}
+\contentsline {section}{\numberline {1.2}Settings files}{3}{section.1.2}
 \contentsline {subsection}{\numberline {1.2.1}Basic Server Settings module}{3}{subsection.1.2.1}
 \contentsline {subsection}{\numberline {1.2.2}Apache Settings module}{3}{subsection.1.2.2}
-\contentsline {subsection}{\numberline {1.2.3}timetracker.views}{3}{subsection.1.2.3}
-\contentsline {subsection}{\numberline {1.2.4}timetracker.models}{6}{subsection.1.2.4}
-\contentsline {subsection}{\numberline {1.2.5}timetracker.utils.calendar\_utils}{9}{subsection.1.2.5}
-\contentsline {chapter}{\numberline {2}Indices and tables}{11}{chapter.2}
-\contentsline {chapter}{Python Module Index}{13}{section*.43}
-\contentsline {chapter}{Index}{15}{section*.44}
+\contentsline {section}{\numberline {1.3}Timetracker API and code}{3}{section.1.3}
+\contentsline {subsection}{\numberline {1.3.1}timetracker.views}{3}{subsection.1.3.1}
+\contentsline {subsection}{\numberline {1.3.2}timetracker.utils.calendar\_utils}{6}{subsection.1.3.2}
+\contentsline {subsubsection}{Module Functions}{6}{subsubsection*.14}
+\contentsline {subsection}{\numberline {1.3.3}timetracker.utils.datemaps}{13}{subsection.1.3.3}
+\contentsline {subsection}{\numberline {1.3.4}timetracker.utils.error\_codes}{14}{subsection.1.3.4}
+\contentsline {subsection}{\numberline {1.3.5}timetracker.utils.decorators}{15}{subsection.1.3.5}
+\contentsline {subsection}{\numberline {1.3.6}timetracker.tracker.models}{16}{subsection.1.3.6}
+\contentsline {subsection}{\numberline {1.3.7}timetracker.tracker.admin}{18}{subsection.1.3.7}
+\contentsline {subsection}{\numberline {1.3.8}timetracker.tracker.forms}{19}{subsection.1.3.8}
+\contentsline {subsubsection}{Module Overview}{19}{subsubsection*.55}
+\contentsline {section}{\numberline {1.4}Client-side Javascript modules}{20}{section.1.4}
+\contentsline {subsection}{\numberline {1.4.1}Calendar Module}{20}{subsection.1.4.1}
+\contentsline {chapter}{\numberline {2}Indices and tables}{21}{chapter.2}
+\contentsline {chapter}{Python Module Index}{23}{section*.61}
+\contentsline {chapter}{Index}{25}{section*.62}

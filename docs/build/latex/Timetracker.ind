@@ -3,41 +3,48 @@
 
   \bigletter A
   \item add\_change\_user() (in module timetracker.views), \hyperpage{3}
-  \item admin\_view() (in module timetracker.views), \hyperpage{3}
+  \item AddForm (class in timetracker.tracker.forms), \hyperpage{19}
+  \item admin\_check() (in module timetracker.utils.decorators), \hyperpage{15}
+  \item admin\_view() (in module timetracker.views), \hyperpage{4}
   \item ajax() (in module timetracker.views), \hyperpage{4}
-  \item ajax\_add\_entry() (in module timetracker.utils.calendar\_utils), \hyperpage{9}
-  \item ajax\_change\_entry() (in module timetracker.utils.calendar\_utils), \hyperpage{9}
-  \item ajax\_delete\_entry() (in module timetracker.utils.calendar\_utils), \hyperpage{9}
-  \item ajax\_error() (in module timetracker.utils.calendar\_utils), \hyperpage{9}
+  \item ajax\_add\_entry() (in module timetracker.utils.calendar\_utils), \hyperpage{6}
+  \item ajax\_change\_entry() (in module timetracker.utils.calendar\_utils), \hyperpage{7}
+  \item ajax\_delete\_entry() (in module timetracker.utils.calendar\_utils), \hyperpage{7}
+  \item ajax\_error() (in module timetracker.utils.calendar\_utils), \hyperpage{8}
+  \item ajaxCall() (built-in function), \hyperpage{20}
+  \item AuthAdmin (class in timetracker.tracker.admin), \hyperpage{18}
 
   \indexspace
   \bigletter C
-  \item calendar\_wrapper() (in module timetracker.utils.calendar\_utils), \hyperpage{9}
+  \item calendar\_wrapper() (in module timetracker.utils.calendar\_utils), \hyperpage{8}
 
   \indexspace
   \bigletter D
-  \item delete\_user() (in module timetracker.utils.calendar\_utils), \hyperpage{9}
-  \item display\_user\_type() (timetracker.tracker.models.Tbluser method), \hyperpage{7}
-  \item display\_users() (timetracker.tracker.models.Tblauthorization method), \hyperpage{6}
+  \item delete\_user() (in module timetracker.utils.calendar\_utils), \hyperpage{8}
+  \item display\_user\_type() (timetracker.tracker.models.Tbluser method), \hyperpage{17}
+  \item display\_users() (timetracker.tracker.models.Tblauthorization method), \hyperpage{16}
 
   \indexspace
   \bigletter E
   \item edit\_profile() (in module timetracker.views), \hyperpage{4}
-  \item explain() (in module timetracker.views), \hyperpage{4}
+  \item EntryForm (class in timetracker.tracker.forms), \hyperpage{19}
+  \item explain() (in module timetracker.views), \hyperpage{5}
 
   \indexspace
   \bigletter F
+  \item float\_to\_time() (in module timetracker.utils.datemaps), \hyperpage{14}
   \item forgot\_pass() (in module timetracker.views), \hyperpage{5}
 
   \indexspace
   \bigletter G
-  \item gen\_calendar() (in module timetracker.utils.calendar\_utils), \hyperpage{9}
-  \item gen\_datetime\_cal() (in module timetracker.utils.calendar\_utils), \hyperpage{9}
-  \item gen\_holiday\_list() (in module timetracker.utils.calendar\_utils), \hyperpage{9}
-  \item get\_administrator() (timetracker.tracker.models.Tbluser method), \hyperpage{7}
-  \item get\_holiday\_balance() (timetracker.tracker.models.Tbluser method), \hyperpage{7}
-  \item get\_request\_data() (in module timetracker.utils.calendar\_utils), \hyperpage{9}
-  \item get\_total\_balance() (timetracker.tracker.models.Tbluser method), \hyperpage{8}
+  \item gen\_calendar() (in module timetracker.utils.calendar\_utils), \hyperpage{8}
+  \item gen\_datetime\_cal() (in module timetracker.utils.calendar\_utils), \hyperpage{10}
+  \item gen\_holiday\_list() (in module timetracker.utils.calendar\_utils), \hyperpage{10}
+  \item generate\_select() (in module timetracker.utils.datemaps), \hyperpage{14}
+  \item get\_administrator() (timetracker.tracker.models.Tbluser method), \hyperpage{17}
+  \item get\_holiday\_balance() (timetracker.tracker.models.Tbluser method), \hyperpage{17}
+  \item get\_request\_data() (in module timetracker.utils.calendar\_utils), \hyperpage{10}
+  \item get\_total\_balance() (timetracker.tracker.models.Tbluser method), \hyperpage{17}
   \item get\_user\_data() (in module timetracker.utils.calendar\_utils), \hyperpage{10}
 
   \indexspace
@@ -47,47 +54,73 @@
   \indexspace
   \bigletter I
   \item index() (in module timetracker.views), \hyperpage{5}
-  \item is\_admin() (timetracker.tracker.models.Tbluser method), \hyperpage{8}
+  \item is\_admin() (timetracker.tracker.models.Tbluser method), \hyperpage{17}
+
+  \indexspace
+  \bigletter J
+  \item json\_response() (in module timetracker.utils.decorators), \hyperpage{15}
 
   \indexspace
   \bigletter L
+  \item loggedin() (in module timetracker.utils.decorators), \hyperpage{15}
+  \item Login (class in timetracker.tracker.forms), \hyperpage{19}
   \item login() (in module timetracker.views), \hyperpage{5}
-  \item logout() (in module timetracker.views), \hyperpage{5}
+  \item logout() (in module timetracker.views), \hyperpage{6}
 
   \indexspace
   \bigletter M
-  \item manager\_view() (timetracker.tracker.models.Tblauthorization method), \hyperpage{7}
-  \item mass\_holidays() (in module timetracker.utils.calendar\_utils), \hyperpage{10}
+  \item manager\_view() (timetracker.tracker.models.Tblauthorization method), \hyperpage{16}
+  \item mass\_holidays() (in module timetracker.utils.calendar\_utils), \hyperpage{11}
 
   \indexspace
   \bigletter N
-  \item name() (timetracker.tracker.models.Tbluser method), \hyperpage{8}
+  \item name() (timetracker.tracker.models.Tbluser method), \hyperpage{18}
+
+  \indexspace
+  \bigletter O
+  \item onOptionChange() (built-in function), \hyperpage{20}
 
   \indexspace
   \bigletter P
-  \item parse\_time() (in module timetracker.utils.calendar\_utils), \hyperpage{10}
-  \item profile\_edit() (in module timetracker.utils.calendar\_utils), \hyperpage{10}
+  \item pad() (in module timetracker.utils.datemaps), \hyperpage{14}
+  \item parse\_time() (in module timetracker.utils.calendar\_utils), \hyperpage{11}
+  \item profile\_edit() (in module timetracker.utils.calendar\_utils), \hyperpage{11}
+
+  \indexspace
+  \bigletter R
+  \item request\_check() (in module timetracker.utils.decorators), \hyperpage{15}
+
+  \indexspace
+  \bigletter S
+  \item send\_password\_reminder() (in module timetracker.tracker.admin), \hyperpage{19}
 
   \indexspace
   \bigletter T
-  \item Tblauthorization (class in timetracker.tracker.models), \hyperpage{6}
-  \item Tbluser (class in timetracker.tracker.models), \hyperpage{7}
-  \item teamleader\_view() (timetracker.tracker.models.Tblauthorization method), \hyperpage{7}
+  \item Tblauthorization (class in timetracker.tracker.models), \hyperpage{16}
+  \item Tbluser (class in timetracker.tracker.models), \hyperpage{16}
+  \item teamleader\_view() (timetracker.tracker.models.Tblauthorization method), \hyperpage{16}
   \item timetracker.apache\_settings (module), \hyperpage{3}
   \item timetracker.settings (module), \hyperpage{3}
-  \item timetracker.tracker.models (module), \hyperpage{6}
-  \item timetracker.utils.calendar\_utils (module), \hyperpage{9}
+  \item timetracker.tracker.admin (module), \hyperpage{18}
+  \item timetracker.tracker.forms (module), \hyperpage{19}
+  \item timetracker.tracker.models (module), \hyperpage{16}
+  \item timetracker.utils.calendar\_utils (module), \hyperpage{6}
+  \item timetracker.utils.datemaps (module), \hyperpage{13}
+  \item timetracker.utils.decorators (module), \hyperpage{15}
+  \item timetracker.utils.error\_codes (module), \hyperpage{14}
   \item timetracker.views (module), \hyperpage{3}
-  \item tracking\_entries() (timetracker.tracker.models.Tbluser method), \hyperpage{8}
-  \item TrackingEntry (class in timetracker.tracker.models), \hyperpage{8}
+  \item TrackerAdmin (class in timetracker.tracker.admin), \hyperpage{18}
+  \item tracking\_entries() (timetracker.tracker.models.Tbluser method), \hyperpage{18}
+  \item TrackingEntry (class in timetracker.tracker.models), \hyperpage{18}
 
   \indexspace
   \bigletter U
   \item user\_view() (in module timetracker.views), \hyperpage{6}
-  \item useredit() (in module timetracker.utils.calendar\_utils), \hyperpage{10}
+  \item UserAdmin (class in timetracker.tracker.admin), \hyperpage{18}
+  \item useredit() (in module timetracker.utils.calendar\_utils), \hyperpage{12}
 
   \indexspace
   \bigletter V
-  \item validate\_time() (in module timetracker.utils.calendar\_utils), \hyperpage{10}
+  \item validate\_time() (in module timetracker.utils.calendar\_utils), \hyperpage{13}
 
 \end{theindex}

@@ -151,3 +151,8 @@ doctest:
 	$(SPHINXBUILD) -b doctest $(ALLSPHINXOPTS) $(BUILDDIR)/doctest
 	@echo "Testing of doctests in the sources finished, look at the " \
 	      "results in $(BUILDDIR)/doctest/output.txt."
+
+coverage: build
+	mkdir -p build/coverage build/doctrees
+	$(SPHINXBUILD) -b coverage $(ALLSPHINXOPTS) build/coverage
+	@echo "Coverage finished; see c.txt and python.txt in build/coverage"

@@ -1,0 +1,243 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>timetracker.utils.datemaps &mdash; Timetracker 1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="Timetracker 1 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">Timetracker 1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for timetracker.utils.datemaps</h1><div class="highlight"><pre>
+<span class="sd">&#39;&#39;&#39;Maps of useful data</span>
+
+<span class="sd">Django has several of these built-in but they are annoying to use.</span>
+
+<span class="sd">:attr:`WEEK_MAP_MID`: This is a map of the days of the week along with the</span>
+<span class="sd">mid-length string for that value. For example:</span>
+
+<span class="sd">.. code-block:: python</span>
+
+<span class="sd">   WEEK_MAP_MID = {</span>
+<span class="sd">       0: &#39;Mon&#39;,</span>
+<span class="sd">       1: &#39;Tue&#39;,</span>
+<span class="sd">       ...</span>
+<span class="sd">   }</span>
+
+<span class="sd">:attr:`WEEK_MAP_SHORT`: This is similar except using a longer string.</span>
+<span class="sd">:attr:`MONTH_MAP`: This is a map of the months which refer to a two-element</span>
+<span class="sd">tuple which has the short code for the month and the long string for that</span>
+<span class="sd">month. I.e. &#39;JAN&#39; and &#39;January&#39;.</span>
+<span class="sd">:attr:`WORKING_CHOICES`: This is a tuple of two-element tuples which contain</span>
+<span class="sd">the only possible working day possibilites.</span>
+<span class="sd">:attr:`ABSENT_CHOICES`: This is a tuple of two-element tuples which contain</span>
+<span class="sd">the only possible absent day possibilities.</span>
+<span class="sd">:attr:`DAYTYPE_CHOICES`: This is both :attr:`WORKING_CHOICES` and</span>
+<span class="sd">:attr:`ABSENT_CHOICES` joined together to give all the daytype possibilities.</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="kn">import</span> <span class="nn">datetime</span>
+
+<span class="n">WEEK_MAP_MID</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="mi">0</span><span class="p">:</span> <span class="s">&#39;Mon&#39;</span><span class="p">,</span>
+    <span class="mi">1</span><span class="p">:</span> <span class="s">&#39;Tue&#39;</span><span class="p">,</span>
+    <span class="mi">2</span><span class="p">:</span> <span class="s">&#39;Wed&#39;</span><span class="p">,</span>
+    <span class="mi">3</span><span class="p">:</span> <span class="s">&#39;Thu&#39;</span><span class="p">,</span>
+    <span class="mi">4</span><span class="p">:</span> <span class="s">&#39;Fri&#39;</span><span class="p">,</span>
+    <span class="mi">5</span><span class="p">:</span> <span class="s">&#39;Sat&#39;</span><span class="p">,</span>
+    <span class="mi">6</span><span class="p">:</span> <span class="s">&#39;Sat&#39;</span>
+<span class="p">}</span>
+
+<span class="n">WEEK_MAP_SHORT</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="mi">0</span><span class="p">:</span> <span class="s">&#39;Mo&#39;</span><span class="p">,</span>
+    <span class="mi">1</span><span class="p">:</span> <span class="s">&#39;Tu&#39;</span><span class="p">,</span>
+    <span class="mi">2</span><span class="p">:</span> <span class="s">&#39;We&#39;</span><span class="p">,</span>
+    <span class="mi">3</span><span class="p">:</span> <span class="s">&#39;Th&#39;</span><span class="p">,</span>
+    <span class="mi">4</span><span class="p">:</span> <span class="s">&#39;Fr&#39;</span><span class="p">,</span>
+    <span class="mi">5</span><span class="p">:</span> <span class="s">&#39;Sa&#39;</span><span class="p">,</span>
+    <span class="mi">6</span><span class="p">:</span> <span class="s">&#39;Su&#39;</span>
+<span class="p">}</span>
+
+<span class="n">MONTH_MAP</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="mi">0</span><span class="p">:</span> <span class="p">(</span><span class="s">&#39;JAN&#39;</span><span class="p">,</span> <span class="s">&#39;January&#39;</span><span class="p">),</span>
+    <span class="mi">1</span><span class="p">:</span> <span class="p">(</span><span class="s">&#39;FEB&#39;</span><span class="p">,</span> <span class="s">&#39;February&#39;</span><span class="p">),</span>
+    <span class="mi">2</span><span class="p">:</span> <span class="p">(</span><span class="s">&#39;MAR&#39;</span><span class="p">,</span> <span class="s">&#39;March&#39;</span><span class="p">),</span>
+    <span class="mi">3</span><span class="p">:</span> <span class="p">(</span><span class="s">&#39;APR&#39;</span><span class="p">,</span> <span class="s">&#39;April&#39;</span><span class="p">),</span>
+    <span class="mi">4</span><span class="p">:</span> <span class="p">(</span><span class="s">&#39;MAY&#39;</span><span class="p">,</span> <span class="s">&#39;May&#39;</span><span class="p">),</span>
+    <span class="mi">5</span><span class="p">:</span> <span class="p">(</span><span class="s">&#39;JUN&#39;</span><span class="p">,</span> <span class="s">&#39;June&#39;</span><span class="p">),</span>
+    <span class="mi">6</span><span class="p">:</span> <span class="p">(</span><span class="s">&#39;JUL&#39;</span><span class="p">,</span> <span class="s">&#39;July&#39;</span><span class="p">),</span>
+    <span class="mi">7</span><span class="p">:</span> <span class="p">(</span><span class="s">&#39;AUG&#39;</span><span class="p">,</span> <span class="s">&#39;August&#39;</span><span class="p">),</span>
+    <span class="mi">8</span><span class="p">:</span> <span class="p">(</span><span class="s">&#39;SEP&#39;</span><span class="p">,</span> <span class="s">&#39;September&#39;</span><span class="p">),</span>
+    <span class="mi">9</span><span class="p">:</span> <span class="p">(</span><span class="s">&#39;OCT&#39;</span><span class="p">,</span> <span class="s">&#39;October&#39;</span><span class="p">),</span>
+    <span class="mi">10</span><span class="p">:</span> <span class="p">(</span><span class="s">&#39;NOV&#39;</span><span class="p">,</span> <span class="s">&#39;November&#39;</span><span class="p">),</span>
+    <span class="mi">11</span><span class="p">:</span> <span class="p">(</span><span class="s">&#39;DEC&#39;</span><span class="p">,</span> <span class="s">&#39;December&#39;</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="n">WORKING_CHOICES</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="p">(</span><span class="s">&#39;WKDAY&#39;</span><span class="p">,</span> <span class="s">&#39;Work Day&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;SATUR&#39;</span><span class="p">,</span> <span class="s">&#39;Work on Saturday&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;WKHOM&#39;</span><span class="p">,</span> <span class="s">&#39;Work at home&#39;</span><span class="p">),</span>
+<span class="p">)</span>
+
+<span class="n">ABSENT_CHOICES</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="p">(</span><span class="s">&#39;HOLIS&#39;</span><span class="p">,</span> <span class="s">&#39;Vacation&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;SICKD&#39;</span><span class="p">,</span> <span class="s">&#39;Sickness Absence&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;PUABS&#39;</span><span class="p">,</span> <span class="s">&#39;Public Holiday&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;SPECI&#39;</span><span class="p">,</span> <span class="s">&#39;Special Leave&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;RETRN&#39;</span><span class="p">,</span> <span class="s">&#39;Return for Public Holiday&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;TRAIN&#39;</span><span class="p">,</span> <span class="s">&#39;Training&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;DAYOD&#39;</span><span class="p">,</span> <span class="s">&#39;Day on demand&#39;</span><span class="p">),</span>
+<span class="p">)</span>
+
+<span class="n">DAYTYPE_CHOICES</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="p">(</span><span class="s">&#39;WKDAY&#39;</span><span class="p">,</span> <span class="s">&#39;Work Day&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;HOLIS&#39;</span><span class="p">,</span> <span class="s">&#39;Vacation&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;SICKD&#39;</span><span class="p">,</span> <span class="s">&#39;Sickness Absence&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;PUABS&#39;</span><span class="p">,</span> <span class="s">&#39;Public Holiday&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;RETRN&#39;</span><span class="p">,</span> <span class="s">&#39;Return for Public Holiday&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;SPECI&#39;</span><span class="p">,</span> <span class="s">&#39;Special Leave&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;TRAIN&#39;</span><span class="p">,</span> <span class="s">&#39;Training&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;DAYOD&#39;</span><span class="p">,</span> <span class="s">&#39;Day on demand&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;SATUR&#39;</span><span class="p">,</span> <span class="s">&#39;Work on Saturday&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;WKHOM&#39;</span><span class="p">,</span> <span class="s">&#39;Work at home&#39;</span><span class="p">),</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="generate_select"><a class="viewcode-back" href="../../../timetracker.html#timetracker.utils.datemaps.generate_select">[docs]</a><span class="k">def</span> <span class="nf">generate_select</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generates a select box from a tuple of tuples</span>
+
+<span class="sd">    i.e.:</span>
+
+<span class="sd">    generate_select((</span>
+<span class="sd">         (&#39;val1&#39;, &#39;Value One&#39;),</span>
+<span class="sd">         (&#39;val2&#39;, &#39;Value Two&#39;),</span>
+<span class="sd">         (&#39;val3&#39;, &#39;Value Three&#39;)</span>
+<span class="sd">    ))</span>
+
+<span class="sd">    will return:-</span>
+
+<span class="sd">    &lt;select id=&#39;&#39;&gt;</span>
+<span class="sd">       &lt;option value=&quot;val1&quot;&gt;Value One&lt;/option&gt;</span>
+<span class="sd">       &lt;option value=&quot;val2&quot;&gt;Value Two&lt;/option&gt;</span>
+<span class="sd">       &lt;option value=&quot;val3&quot;&gt;Value Three&lt;/option&gt;</span>
+<span class="sd">    &lt;/select&gt;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">append</span>
+    <span class="n">out</span><span class="p">(</span><span class="s">&#39;&lt;select id=&quot;</span><span class="si">%s</span><span class="s">&quot;&gt;</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">%</span> <span class="nb">id</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">option</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+        <span class="n">out</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\t</span><span class="s">&lt;option value=&quot;</span><span class="si">%s</span><span class="s">&quot;&gt;</span><span class="si">%s</span><span class="s">&lt;/option&gt;</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">option</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">option</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="n">out</span><span class="p">(</span><span class="s">&#39;&lt;/select&gt;&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="pad"><a class="viewcode-back" href="../../../timetracker.html#timetracker.utils.datemaps.pad">[docs]</a><span class="k">def</span> <span class="nf">pad</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="n">padchr</span><span class="o">=</span><span class="s">&#39;0&#39;</span><span class="p">,</span> <span class="n">amount</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Pads a string</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">string</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">string</span><span class="p">))</span> <span class="o">&lt;</span> <span class="n">amount</span><span class="p">:</span>
+        <span class="n">pre</span> <span class="o">=</span> <span class="n">padchr</span> <span class="o">*</span> <span class="p">(</span><span class="n">amount</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">string</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">pre</span> <span class="o">+</span> <span class="n">string</span>
+
+    <span class="k">return</span> <span class="n">string</span>
+
+</div>
+<div class="viewcode-block" id="float_to_time"><a class="viewcode-back" href="../../../timetracker.html#timetracker.utils.datemaps.float_to_time">[docs]</a><span class="k">def</span> <span class="nf">float_to_time</span><span class="p">(</span><span class="n">timefloat</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Takes a float and returns the same representation of time</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">prefix</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">timefloat</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">timefloat</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">-</span> <span class="n">timefloat</span>
+        <span class="n">prefix</span> <span class="o">=</span> <span class="s">&#39;-&#39;</span>
+
+    <span class="n">seconds</span> <span class="o">=</span> <span class="n">timefloat</span> <span class="o">*</span> <span class="mi">3600</span>
+    <span class="n">time</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="n">seconds</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">pad</span><span class="p">(</span><span class="n">time</span><span class="p">[:</span><span class="o">-</span><span class="mi">3</span><span class="p">],</span> <span class="n">amount</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">Timetracker 1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, HP - Created by Aaron France.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
