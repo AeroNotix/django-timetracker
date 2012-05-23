@@ -19,17 +19,17 @@ class EntryForm(forms.Form):
     start_time = forms.TimeField(label="Start Time:")
     start_time.widget.attrs.update({'class': 'change-el',
                                     'id': 'change_starttime',
-                                    'maxlength': '5'})
+                                    'readonly': 'readonly'})
 
     end_time = forms.TimeField(label="End Time:")
     end_time.widget.attrs.update({'class': 'change-el',
                                   'id': 'change_endtime',
-                                'maxlength': '5'})
+                                  'readonly': 'readonly'})
 
     breaks = forms.TimeField(label="Breaks:")
     breaks.widget.attrs.update({'class': 'change-el',
                                 'id': 'change_breaks',
-                                'maxlength': '5'})
+                                'readonly': 'readonly'})
 
     daytype = forms.ChoiceField(label="Day Type:", choices=DAYTYPE_CHOICES)
     daytype.widget.attrs.update({'class': 'change-el',
@@ -49,22 +49,21 @@ class AddForm(forms.Form):
     start_time = forms.TimeField(label="Start Time:")
     start_time.widget.attrs.update({'class': 'change-el',
                                     'id': 'add_starttime',
-                                    'maxlength': '5'})
+                                    'readonly': 'readonly'})
 
     end_time = forms.TimeField(label="End Time:")
     end_time.widget.attrs.update({'class': 'change-el',
-                                    'id': 'add_endtime',
-                                  'maxlength': '5'})
+                                  'id': 'add_endtime',
+                                  'readonly': 'readonly'})
 
     breaks = forms.TimeField(label="Breaks:")
     breaks.widget.attrs.update({'class': 'change-el',
                                 'id': 'add_breaks',
-                                'maxlength': '5'})
+                                'readonly': 'readonly'})
 
     daytype = forms.ChoiceField(label="Day Type:", choices=DAYTYPE_CHOICES)
     daytype.widget.attrs.update({'class': 'change-el',
-                                    'id': 'add_daytype',
-                                 'maxlength': '5'})
+                                 'id': 'add_daytype'})
 
 
 class Login(forms.Form):
