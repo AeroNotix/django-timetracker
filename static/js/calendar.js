@@ -3,7 +3,6 @@
   automatically created server-side.
 */
 
-
 function ajaxCall(form) {
     /*
       Creates an ajax call depending on what
@@ -27,13 +26,16 @@ function ajaxCall(form) {
     "use strict";
 
     $.ajaxSetup({type: 'POST'});
-
     var pre = '';
-
     if (form === "delete") {
         pre = "#change_";
     } else {
         pre = "#" + form + "_";
+    }
+
+    if (!validateTimePair(pre+'starttime', pre+'endtime')) {
+        alert("Start Time before End Time");
+        return false;
     }
 
     if (  $(pre + 'daytype').val() !== "WKDAY" ) {
