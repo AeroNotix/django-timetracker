@@ -1,7 +1,32 @@
-'''
-Maps of useful data
+'''Maps of useful data
 
-Django has this built-in but it is annoying to use
+Django has several of these built-in but they are annoying to use.
+
+:attr:`WEEK_MAP_MID`: This is a map of the days of the week along with the
+mid-length string for that value. For example:
+
+.. code-block:: python
+
+   WEEK_MAP_MID = {
+       0: 'Mon',
+       1: 'Tue',
+       ...
+   }
+
+:attr:`WEEK_MAP_SHORT`: This is similar except using a longer string.
+
+:attr:`MONTH_MAP`: This is a map of the months which refer to a two-element
+tuple which has the short code for the month and the long string for that
+month. I.e. 'JAN' and 'January'.
+
+:attr:`WORKING_CHOICES`: This is a tuple of two-element tuples which contain
+the only possible working day possibilites.
+
+:attr:`ABSENT_CHOICES`: This is a tuple of two-element tuples which contain
+the only possible absent day possibilities.
+
+:attr:`DAYTYPE_CHOICES`: This is both :attr:`WORKING_CHOICES` and
+:attr:`ABSENT_CHOICES` joined together to give all the daytype possibilities.
 '''
 
 import datetime
@@ -72,24 +97,31 @@ DAYTYPE_CHOICES = (
 
 
 def generate_select(data, id=''):
-    """
-    Generates a select box from a tuple of tuples
+    """Generates a select box from a tuple of tuples
 
-    i.e.:
+    .. code-block:: python
 
-    generate_select((
-         ('val1', 'Value One'),
-         ('val2', 'Value Two'),
-         ('val3', 'Value Three')
-    ))
+       generate_select((
+           ('val1', 'Value One'),
+           ('val2', 'Value Two'),
+           ('val3', 'Value Three')
+       ))
 
     will return:-
 
-    <select id=''>
-       <option value="val1">Value One</option>
-       <option value="val2">Value Two</option>
-       <option value="val3">Value Three</option>
-    </select>
+    .. code-block:: html
+
+       <select id=''>
+          <option value="val1">Value One</option>
+          <option value="val2">Value Two</option>
+          <option value="val3">Value Three</option>
+       </select>
+
+    :param data: This is a tuple of tuples (can also be a list of lists. But
+                 tuples will behave more efficiently than lists and who likes
+                 mutation anyway?
+    :rtype: :class:`str`/HTML
+
     """
 
     output = []
@@ -102,8 +134,13 @@ def generate_select(data, id=''):
 
 
 def pad(string, padchr='0', amount=2):
-    """
-    Pads a string
+    """Pads a string
+
+    :param string: This is the string you want to pad.
+    :param padchr: This is the character you want to pad the string with.
+    :param amount: This is the length of the string you want the input end up.
+    :rtype: :class:`str`
+
     """
     string = str(string)
 
@@ -115,9 +152,12 @@ def pad(string, padchr='0', amount=2):
 
 
 def float_to_time(timefloat):
+    """Takes a float and returns the same representation of time.
 
-    """
-    Takes a float and returns the same representation of time
+    :param timefloat: This is a :class:`float` which needs to be represented
+                      as a timestring.
+    :rtype: :class:`str` such as '00:12' or '09:15'
+
     """
     prefix = ''
     if timefloat < 0:

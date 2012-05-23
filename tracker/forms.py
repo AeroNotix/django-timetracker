@@ -5,7 +5,6 @@ them into HTML templates, which would couple our output with the view
 functions which simply isn't good MVC practice.
 
 Module Overview
-+++++++++++++++
 
 =========================  ========================
 ..                         ..
