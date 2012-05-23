@@ -17,19 +17,19 @@ timetracker.utils.calendar_utils
    :members:
 
 timetracker.utils.datemaps
---------------------------------
+--------------------------
 
 .. automodule:: timetracker.utils.datemaps
    :members:
 
 timetracker.utils.error_codes
---------------------------------
+-----------------------------
 
 .. automodule:: timetracker.utils.error_codes
    :members:
 
 timetracker.utils.decorators
---------------------------------
+----------------------------
 
 .. automodule:: timetracker.utils.decorators
    :members:
