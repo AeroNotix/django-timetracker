@@ -25,6 +25,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="Timetracker 1 documentation" href="index.html" />
+    <link rel="next" title="Client-side Javascript modules" href="javascript-files.html" />
     <link rel="prev" title="Settings files" href="settings.html" /> 
   </head>
   <body>
@@ -37,6 +38,9 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+        <li class="right" >
+          <a href="javascript-files.html" title="Client-side Javascript modules"
+             accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="settings.html" title="Settings files"
              accesskey="P">previous</a> |</li>
@@ -352,7 +356,7 @@ the current day</li>
 
 </div>
 <div class="section" id="module-timetracker.tracker.models">
-<span id="timetracker-models"></span><h2>timetracker.models<a class="headerlink" href="#module-timetracker.tracker.models" title="Permalink to this headline">¶</a></h2>
+<span id="timetracker-tracker-models"></span><h2>timetracker.tracker.models<a class="headerlink" href="#module-timetracker.tracker.models" title="Permalink to this headline">¶</a></h2>
 <p>Definition of the models used in the timetracker app</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -631,6 +635,68 @@ application. It directly links users with the time-spent at work and the
 the type of day that was.</p>
 </dd></dl>
 
+</div>
+<div class="section" id="module-timetracker.tracker.forms">
+<span id="timetracker-tracker-forms"></span><h2>timetracker.tracker.forms<a class="headerlink" href="#module-timetracker.tracker.forms" title="Permalink to this headline">¶</a></h2>
+<p>Forms used for user input for the tracker app</p>
+<p>Several forms are extremely simple and thus it&#8217;s not required to &#8216;hard-code&#8217;
+them into HTML templates, which would couple our output with the view
+functions which simply isn&#8217;t good MVC practice.</p>
+<div class="section" id="module-overview">
+<h3>Module Overview<a class="headerlink" href="#module-overview" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="docutils">
+<colgroup>
+<col width="51%" />
+<col width="49%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head"></th>
+<th class="head"></th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><a class="reference internal" href="#timetracker.tracker.forms.EntryForm" title="timetracker.tracker.forms.EntryForm"><tt class="xref py py-class docutils literal"><span class="pre">EntryForm</span></tt></a></td>
+<td><a class="reference internal" href="#timetracker.tracker.forms.AddForm" title="timetracker.tracker.forms.AddForm"><tt class="xref py py-class docutils literal"><span class="pre">AddForm</span></tt></a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#timetracker.tracker.forms.Login" title="timetracker.tracker.forms.Login"><tt class="xref py py-class docutils literal"><span class="pre">Login</span></tt></a></td>
+<td>&nbsp;</td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="timetracker.tracker.forms.AddForm">
+<em class="property">class </em><tt class="descclassname">timetracker.tracker.forms.</tt><tt class="descname">AddForm</tt><big>(</big><em>data=None</em>, <em>files=None</em>, <em>auto_id='id_%s'</em>, <em>prefix=None</em>, <em>initial=None</em>, <em>error_class=&lt;class 'django.forms.util.ErrorList'&gt;</em>, <em>label_suffix=':'</em>, <em>empty_permitted=False</em><big>)</big><a class="reference internal" href="_modules/timetracker/tracker/forms.html#AddForm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.tracker.forms.AddForm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add entry form</p>
+<p>This Class creates a form which allows users to add an entry into the
+timetracking portion of the app. See <tt class="xref py py-class docutils literal"><span class="pre">ChangeEntry</span></tt> for a detailed
+description of these two classes as they have a high coupling factor.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="timetracker.tracker.forms.EntryForm">
+<em class="property">class </em><tt class="descclassname">timetracker.tracker.forms.</tt><tt class="descname">EntryForm</tt><big>(</big><em>data=None</em>, <em>files=None</em>, <em>auto_id='id_%s'</em>, <em>prefix=None</em>, <em>initial=None</em>, <em>error_class=&lt;class 'django.forms.util.ErrorList'&gt;</em>, <em>label_suffix=':'</em>, <em>empty_permitted=False</em><big>)</big><a class="reference internal" href="_modules/timetracker/tracker/forms.html#EntryForm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.tracker.forms.EntryForm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change entry form</p>
+<p>This Class creates a form which allows users to change an existing entry
+which they have added to the timetracking portion of the site. The fields
+match up precisely to the <a class="reference internal" href="#timetracker.tracker.forms.AddForm" title="timetracker.tracker.forms.AddForm"><tt class="xref py py-class docutils literal"><span class="pre">AddForm</span></tt></a> because the data will be the
+same. We have duplicated the code here because we need to explicitly set
+the id values using the widget.attrs.update on the widget dict. This is so
+that each widget could be styled individually and so that we have
+something easily accessbile by front-end javascript code.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="timetracker.tracker.forms.Login">
+<em class="property">class </em><tt class="descclassname">timetracker.tracker.forms.</tt><tt class="descname">Login</tt><big>(</big><em>data=None</em>, <em>files=None</em>, <em>auto_id='id_%s'</em>, <em>prefix=None</em>, <em>initial=None</em>, <em>error_class=&lt;class 'django.forms.util.ErrorList'&gt;</em>, <em>label_suffix=':'</em>, <em>empty_permitted=False</em><big>)</big><a class="reference internal" href="_modules/timetracker/tracker/forms.html#Login"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.tracker.forms.Login" title="Permalink to this definition">¶</a></dt>
+<dd><p>Basic login form</p>
+<p>This form renders into a very simple login field, with fields identified
+differently, both for styling and the optional javascript by-name
+handling. Whilst this form is extremely simple, coding one each and
+every time we wish to use one is just dumb and it&#8217;s much easier to code it
+once and import it into our project.</p>
+</dd></dl>
+
+</div>
 </div>
 <div class="section" id="module-timetracker.utils.calendar_utils">
 <span id="timetracker-utils-calendar-utils"></span><h2>timetracker.utils.calendar_utils<a class="headerlink" href="#module-timetracker.utils.calendar_utils" title="Permalink to this headline">¶</a></h2>
@@ -1316,7 +1382,11 @@ browser to see if there are any errors.</td>
   <ul>
 <li><a class="reference internal" href="#">Timetracker API and code</a><ul>
 <li><a class="reference internal" href="#module-timetracker.views">timetracker.views</a></li>
-<li><a class="reference internal" href="#module-timetracker.tracker.models">timetracker.models</a></li>
+<li><a class="reference internal" href="#module-timetracker.tracker.models">timetracker.tracker.models</a></li>
+<li><a class="reference internal" href="#module-timetracker.tracker.forms">timetracker.tracker.forms</a><ul>
+<li><a class="reference internal" href="#module-overview">Module Overview</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#module-timetracker.utils.calendar_utils">timetracker.utils.calendar_utils</a><ul>
 <li><a class="reference internal" href="#module-functions">Module Functions</a></li>
 </ul>
@@ -1328,6 +1398,9 @@ browser to see if there are any errors.</td>
   <h4>Previous topic</h4>
   <p class="topless"><a href="settings.html"
                         title="previous chapter">Settings files</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="javascript-files.html"
+                        title="next chapter">Client-side Javascript modules</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/timetracker.txt"
@@ -1359,6 +1432,9 @@ browser to see if there are any errors.</td>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+        <li class="right" >
+          <a href="javascript-files.html" title="Client-side Javascript modules"
+             >next</a> |</li>
         <li class="right" >
           <a href="settings.html" title="Settings files"
              >previous</a> |</li>
