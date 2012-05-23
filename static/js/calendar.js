@@ -33,13 +33,17 @@ function ajaxCall(form) {
         pre = "#" + form + "_";
     }
 
+    if (  $(pre + 'daytype').val() !== "WKDAY" ) {
+        return;
+    }
+
+    if ($(pre+'starttime').val() === $(pre+'endtime').val() {
+        alert("Length of working time invalid")
+    }
+
     if (!validateTimePair(pre+'starttime', pre+'endtime')) {
         alert("Start Time before End Time");
         return false;
-    }
-
-    if (  $(pre + 'daytype').val() !== "WKDAY" ) {
-        return;
     }
 
     var formData = {
