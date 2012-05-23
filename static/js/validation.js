@@ -24,6 +24,45 @@ function validateDate (field) {
     }
 }
 
+function validateTimePair(fieldA, fieldB) {
+    /*
+       Validates two time fields against each other.
+    */
+    var fieldA_matches = $(fieldA).val().split( /\:/ );
+    var fieldB_matches = $(fieldB).val().split( /\:/ );
+
+    function verifyAll(match_group) {
+        /*
+           Validates that the group matches are both
+           valid time portions.
+
+           i.e. 04 or 12.
+        */
+        for (idx in match_group) {
+            if (!match_group[idx].match( /\d{1,2}/ )) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    if (!verifyAll(fieldA_matches) && !verifyAll(fieldB_matches)){
+        return false;
+    }
+
+    var min_diff = fieldB_matches[1] - fieldA_matches[1];
+    var hour_diff = fieldB_matches[0] - fieldA_matches[0];
+    if (min_diff < 0) {
+        min_diff = min_diff + 60;
+        hour_diff--;
+    }
+
+    if (hour_diff < 0) {
+        return false;
+    } else {
+        return true;
+    }
+}
 
 function validateTime (field) {
 
@@ -82,7 +121,7 @@ function checkStringLengths (stringArray, len) {
 function emailValidate (element_name) {
     /*
        Validates an email address
-       
+
        Takes a element tag and returns boolean if the
        value matches or not.
     */
