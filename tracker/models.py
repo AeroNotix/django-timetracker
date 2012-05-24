@@ -132,6 +132,7 @@ class Tbluser(models.Model):
         db_table = u'tbluser'
         verbose_name = "User"
         verbose_name_plural = "Users"
+        ordering = ['user_id']
 
     def __unicode__(self):
 
@@ -497,7 +498,8 @@ class TrackingEntry(models.Model):
         verbose_name = 'Daily Tracking Log'
         verbose_name_plural = 'Daily Tracking Logs'
         unique_together = ('user', 'entry_date')
-
+        ordering = ['user']
+        
     def __unicode__(self):
 
         """
