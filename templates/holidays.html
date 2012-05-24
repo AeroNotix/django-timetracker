@@ -25,6 +25,9 @@ Holiday Page - Timetracker
             <td onclick="applyClass('empty')" class="empty holiday-button"></td><td>Empty</td>
           </tr>
           <tr>
+            <td onclick="applyClass('WKDAY')" class="WKDAY holiday-button"></td><td>Empty</td>
+          </tr>
+          <tr>
             <td onclick="applyClass('SICKD')" class="SICKD holiday-button"></td><td>Sickness</td>
           </tr>
           <tr>
@@ -58,9 +61,9 @@ Holiday Page - Timetracker
       </div>
     </td>
     <td>
-      <div id="holiday-wrapper">
-        {{ holiday_table|safe }}
-      </div>
+        <div id="holiday-wrapper">
+          {{ holiday_table|safe }}
+        </div>
     </td>
 </table>
 {% if is_team_leader %}
@@ -70,6 +73,25 @@ Holiday Page - Timetracker
 </div>
 <![endif]-->
 {% endblock content %}
+
+{% block extra_content %}
+<table border="1" id="comments-field">
+  <tr>
+    <td valign="top">
+      {{ employee_select|safe }}
+    </td>
+    <td valign="top">
+      <select id="day_options">
+        {% for day in days_this_month %}
+        <option value="{{ day }}">{{ day }}</option>
+        {% endfor %}
+      </select>
+    </td>
+    <td>
+      <textarea id="comments-field-comment"></textarea>
+    </td>
+</table>
+{% endblock extra_content %}
 {% block additional_javascript %}
 <script type="text/javascript" src="{{ STATIC_URL }}js/holiday_page.js"></script>
 {% endblock additional_javascript %}
