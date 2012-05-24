@@ -18,11 +18,14 @@ from timetracker.tracker.models import Tblauthorization as tblauth
 from timetracker.tracker.forms import EntryForm, AddForm, Login
 
 from timetracker.utils.calendar_utils import (gen_calendar, gen_holiday_list,
-                                              ajax_add_entry, ajax_change_entry,
+                                              ajax_add_entry,
+                                              ajax_change_entry,
                                               ajax_delete_entry, ajax_error,
-                                              get_user_data, delete_user, useredit,
-                                              mass_holidays, profile_edit, gen_datetime_cal
-                                              )
+                                              get_user_data, delete_user,
+                                              useredit, mass_holidays,
+                                              profile_edit, gen_datetime_cal,
+                                              get_comments, add_comment,
+                                              remove_comment)
 
 from timetracker.utils.datemaps import generate_select
 from timetracker.utils.decorators import admin_check, loggedin
@@ -207,8 +210,12 @@ def ajax(request):
     if not request.is_ajax():
         raise Http404
 
-    # see which form we're dealing with
+    # see which form we're dealing with and if it's in the POST
     form_type = request.POST.get('form_type', None)
+
+    # if not, try the GET
+    if not form_type:
+        form_type = request.GET.get('form_type', None)
 
     #if there isn't one, we'll send an error back
     if not form_type:
@@ -225,12 +232,14 @@ def ajax(request):
         'useredit': useredit,
         'delete_user': delete_user,
         'mass_holidays': mass_holidays,
-        'profileedit': profile_edit
+        'profileedit': profile_edit,
+        'get_comments': get_comments,
+        'add_comment': add_comment,
+        'remove_comment': remove_comment
     }
     return ajax_funcs.get(form_type,
                           ajax_error("Form not found")
                           )(request)
-
 
 @admin_check
 def admin_view(request):
@@ -391,7 +400,7 @@ def holiday_planning(request,
     # calculate the days in the month, this is inefficient.
     # It creates a list of datetime objects and gets the len
     # of that. Being lazy.
-    days_this_month = range(len(gen_datetime_cal(year, month))+1)
+    days_this_month = range(1, len(gen_datetime_cal(year, month))+1)
 
     auth_table = tblauth.objects.get(admin=user)
     employees = [(emp.id, emp.name()) for emp in auth_table.manager_view()]

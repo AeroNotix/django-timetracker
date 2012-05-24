@@ -178,6 +178,9 @@ function addFunctions () {
 
     $("#year_select").val($("#holiday-table").attr("year"));
     $("#month_select").val($("#holiday-table").attr("month"));
+    $("#employees-select, #day_options").change(function () {
+        retrieveComments();
+    });
     $("#year_select, #month_select").change(function () {
         change_table_data();
     });
@@ -202,18 +205,21 @@ function change_table_data () {
 
     var year = $("#year_select").val();
     var month = $("#month_select").val();
-    $("#holiday-wrapper").fadeTo(500, 0, function() {
+    $("#holiday-wrapper, #comments-wrapper").fadeTo(500, 0, function() {
+        $("#comments-wrapper").load(
+            "/holiday_planning/" + year + "/" + month + " #com-field"
+        );
         $("#holiday-wrapper").load(
             "/holiday_planning/" + year + "/" + month + " #holiday-table",
             function () {
-                $("#holiday-wrapper").fadeTo(500, 1);
+                $("#holiday-wrapper, #comments-wrapper").fadeTo(500, 1);
                 addFunctions();
                 $("#holiday-table")
                     .find(".job_code").each( function () {
                         if ( is_team_leader ) {
                             $(this).text('');
                         }
-                        $(this).css("color", "white")
+                        $(this).css("color", "black")
                     });
             });
     });
@@ -221,11 +227,115 @@ function change_table_data () {
     return true;
 }
 
+function removeComment() {
+    "use strict";
+
+    /*
+      Function which inserts a comment into the database for a specific
+      tracking entry.
+    */
+
+    $.ajaxSetup({
+        type: "POST",
+        dataType: "json",
+    });
+
+    $.ajax({
+        url: '/ajax/',
+        data: {
+            form_type: 'remove_comment',
+            year: $("#holiday-table").attr("year"),
+            month: $("#holiday-table").attr("month"),
+            user: $("#employees-select").val(),
+            day: $("#day_options").val(),
+        },
+        success: function (data) {
+            retrieveComments();
+        },
+        error: function (data) {
+            alert(data.error);
+        }
+    });
+
+}
+
+function insertComment() {
+
+    "use strict";
+
+    /*
+      Function which inserts a comment into the database for a specific
+      tracking entry.
+    */
+
+    $.ajaxSetup({
+        type: "POST",
+        dataType: "json",
+    });
+
+    $.ajax({
+        url: '/ajax/',
+        data: {
+            form_type: 'add_comment',
+            year: $("#holiday-table").attr("year"),
+            month: $("#holiday-table").attr("month"),
+            user: $("#employees-select").val(),
+            day: $("#day_options").val(),
+            comment: $("#comments-field-comment").text()
+        },
+        success: function (data) {
+            retrieveComments();
+        },
+        error: function (data) {
+            alert(data.error);
+        }
+    });
+
+}
+
+function retrieveComments() {
+
+    "use strict";
+
+    /*
+      Function which retrieves the comment associated with a tracking entry,
+      this allows managers to apply a comment onto a field and edit the
+      comments that they have already added onto a field by selecting the
+      dates that they used it on.
+    */
+
+    $.ajaxSetup({
+        type: "GET",
+        dataType: "json"
+    });
+
+    $.ajax({
+        url: '/ajax/',
+        data: {
+            form_type: 'get_comments',
+            year: $("#holiday-table").attr("year"),
+            month: $("#holiday-table").attr("month"),
+            user: $("#employees-select").val(),
+            day: $("#day_options").val()
+        },
+        success: function (data) {
+            $("#comments-field-comment").text(data.comment);
+
+        },
+        error: function(data) {
+            alert(data.error);
+        }
+    });
+
+    return true;
+
+}
+
 $(function () {
     addFunctions();
     change_table_data();
     $("#holiday-table")
         .find(".job_code").each( function () {
-            $(this).css("color", "white");
+            $(this).css("color", "black");
         });
 });

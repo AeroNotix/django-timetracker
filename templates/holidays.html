@@ -61,11 +61,12 @@ Holiday Page - Timetracker
       </div>
     </td>
     <td>
-        <div id="holiday-wrapper">
-          {{ holiday_table|safe }}
-        </div>
+      <div id="holiday-wrapper">
+        {{ holiday_table|safe }}
+      </div>
     </td>
 </table>
+</div>
 {% if is_team_leader %}
 <div id="is_team_leader" hidden="hidden" value="true"></div>
 {% endif %}
@@ -73,24 +74,32 @@ Holiday Page - Timetracker
 </div>
 <![endif]-->
 {% endblock content %}
-
 {% block extra_content %}
-<table border="1" id="comments-field">
-  <tr>
-    <td valign="top">
-      {{ employee_select|safe }}
-    </td>
-    <td valign="top">
-      <select id="day_options">
-        {% for day in days_this_month %}
-        <option value="{{ day }}">{{ day }}</option>
-        {% endfor %}
-      </select>
-    </td>
-    <td>
-      <textarea id="comments-field-comment"></textarea>
-    </td>
-</table>
+<div id="comments-wrapper">
+  <table id="com-field">
+    <tr>
+      <td valign="top">
+        {{ employee_select|safe }}
+      </td>
+      <td valign="top">
+        <select id="day_options">
+          {% for day in days_this_month %}
+          <option value="{{ day }}">{{ day }}</option>
+          {% endfor %}
+        </select>
+      </td>
+      <td>
+        <textarea id="comments-field-comment"></textarea>
+      </td>
+    </tr>
+    <tr><td></td><td></td>
+      <td align="right">
+        <button onclick="removeComment()">Remove</button>
+        <button onclick="insertComment()">Add</button>
+      </td>
+    </tr>
+  </table>
+</div>
 {% endblock extra_content %}
 {% block additional_javascript %}
 <script type="text/javascript" src="{{ STATIC_URL }}js/holiday_page.js"></script>

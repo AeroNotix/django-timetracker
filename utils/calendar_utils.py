@@ -1325,3 +1325,119 @@ def gen_datetime_cal(year, month):
     # filter out zeroed days
     days = filter((lambda x: x > 0), days)
     return [dt.datetime(year=year, month=month, day=day) for day in days]
+
+@admin_check
+@json_response
+def get_comments(request):
+    """
+    Function which gets the comments from a user's tracking entry
+    """
+
+    json_data = {
+        'success': False,
+        'error': '',
+        'comment': ''
+    }
+
+    form_data = {
+        'user': None,
+        'year': None,
+        'month': None,
+        'day': None
+    }
+
+    for key in form_data:
+        try:
+            form_data[key] = pad(request.GET[key])
+        except KeyError:
+            json_data['error'] = 'Missing data: %s' % str(key)
+
+    entry_date = "{year}-{month}-{day}".format(**form_data)
+    try:
+        entry = TrackingEntry.objects.get(entry_date=entry_date,
+                                          user_id=form_data['user'])
+    except TrackingEntry.DoesNotExist:
+        json_data['success'] = True
+        return json_data
+
+    json_data['success'] = True
+    json_data['comment'] = entry.comments
+    return json_data
+
+
+@admin_check
+@json_response
+def add_comment(request):
+    """
+    Function which adds a comment to a tracking entry field.
+    """
+
+    json_data = {
+        'success': False,
+        'error': '',
+    }
+
+    form_data = {
+        'user': None,
+        'year': None,
+        'month': None,
+        'day': None,
+        'comment': None
+    }
+
+    for key in form_data:
+        try:
+            form_data[key] = pad(request.POST[key])
+        except KeyError:
+            json_data['error'] = 'Missing data: %s' % str(key)
+    entry_date = "{year}-{month}-{day}".format(**form_data)
+    try:
+        entry = TrackingEntry.objects.get(entry_date=entry_date,
+                                          user_id=form_data['user'])
+    except TrackingEntry.DoesNotExist:
+        json_data['success'] = False
+        json_data['error'] = "No entry to add a comment to!"
+        return json_data
+
+    entry.comments = form_data['comment']
+    entry.save()
+    debug_log.debug(entry.comments)
+    json_data['success'] = True
+    return json_data
+
+
+@admin_check
+@json_response
+def remove_comment(request):
+    """
+    Function which removes a comment from a tracking field
+    """
+
+    json_data = {
+        'success': False,
+        'error': '',
+    }
+
+    form_data = {
+        'user': None,
+        'year': None,
+        'month': None,
+        'day': None,
+    }
+
+    for key in form_data:
+        try:
+            form_data[key] = pad(request.POST[key])
+        except KeyError:
+            json_data['error'] = 'Missing data: %s' % str(key)
+    entry_date = "{year}-{month}-{day}".format(**form_data)
+    try:
+        entry = TrackingEntry.objects.get(entry_date=entry_date,
+                                          user_id=form_data['user'])
+    except TrackingEntry.DoesNotExist:
+        json_data['success'] = True
+        return json_data
+
+    entry.delete()
+    json_data['success'] = True
+    return json_data
