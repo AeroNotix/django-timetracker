@@ -142,9 +142,9 @@ def pad(string, padchr='0', amount=2):
     :rtype: :class:`str`
 
     """
-    string = str(string)
+    string = unicode(string)
 
-    if len(str(string)) < amount:
+    if len(string) < amount:
         pre = padchr * (amount - len(string))
         return pre + string
 
