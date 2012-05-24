@@ -18,10 +18,11 @@ from timetracker.tracker.models import Tblauthorization as tblauth
 from timetracker.tracker.forms import EntryForm, AddForm, Login
 
 from timetracker.utils.calendar_utils import (gen_calendar, gen_holiday_list,
-                                  ajax_add_entry, ajax_change_entry,
-                                  ajax_delete_entry, ajax_error,
-                                  get_user_data, delete_user, useredit,
-                                  mass_holidays, profile_edit)
+                                              ajax_add_entry, ajax_change_entry,
+                                              ajax_delete_entry, ajax_error,
+                                              get_user_data, delete_user, useredit,
+                                              mass_holidays, profile_edit, gen_datetime_cal
+                                              )
 
 from timetracker.utils.datemaps import generate_select
 from timetracker.utils.decorators import admin_check, loggedin
@@ -33,9 +34,9 @@ def index(request):
 
     """ This function serves the base login page. TODO: Make this view check
     to see if the user is already logged in and if so, redirect.
-    
+
     This function shouldn't be directly called, it's invocation is automatic
-    
+
     :param request: Automatically passed. Contains a map of the httprequest
     :return: A HttpResponse object which is then passed to the browser
     """
@@ -57,7 +58,7 @@ def login(request):
 
     This function shouldn't be directly called, it's invocation is automatic
     from the url mappings.
-    
+
     :param request: Automatically passed. Contains a map of the httprequest
     :return: A HttpResponse object which is then passed to the browser
     """
@@ -134,7 +135,7 @@ def user_view(request,
                 the current day
 
     :returns: A HttpResponse object which is passed to the browser.
-    
+
     """
 
     user_id = request.session['user_id']
@@ -195,7 +196,7 @@ def ajax(request):
     3) The form type is detected in the json data sent along with the call.
     4) This string is then pulled out of the dict, executed and it's response
        sent back to the browser.
-       
+
     :param request: Automatically passed contains a map of the httprequest
     :return: HttpResponse object back to the browser.
 
@@ -357,7 +358,7 @@ def holiday_planning(request,
     leader or not. If they are a team leader, which set a boolean flag to show
     the template what kind of user is logged in. This is so that the team
     leaders are not able to view certain things (e.g. Job Codes).
-    
+
     If the admin/tl tries to access the holiday page before any users have
     been assigned to them, then we just throw them back to the main page. This
     is doubly ensuring that they can't access what would otherwise be a
@@ -384,6 +385,15 @@ def holiday_planning(request,
         except tblauth.DoesNotExist:
             return HttpResponseRedirect("/admin_view/")
 
+    # calculate the days in the month, this is inefficient.
+    # It creates a list of datetime objects and gets the len
+    # of that. Being lazy.
+    days_this_month = range(len(gen_datetime_cal(year, month))+1)
+
+    auth_table = tblauth.objects.get(admin=user)
+    employees = [(emp.id, emp.name()) for emp in auth_table.manager_view()]
+    employee_select = generate_select(employees)
+
     return render_to_response(
         "holidays.html",
         {
@@ -391,7 +401,9 @@ def holiday_planning(request,
                                           int(year),
                                           int(month)),
         'welcome_name': request.session['firstname'],
-        'is_team_leader': is_team_leader
+        'is_team_leader': is_team_leader,
+        'days_this_month': days_this_month,
+        'employee_select': employee_select
         },
         RequestContext(request))
 
@@ -435,7 +447,7 @@ def explain(request):
     days in the database so that the user has an idea of how many days they
     have tracked altogether. Then it calculates their total balance and pushes
     all these strings into the template.
-    
+
     :param request: Automatically passed contains a map of the httprequest
     :return: HttpResponse object back to the browser.
     """
