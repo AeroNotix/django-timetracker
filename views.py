@@ -368,6 +368,9 @@ def holiday_planning(request,
     :return: HttpResponse object back to the browser.
     """
 
+    # django urls parse to unicode objects
+    year, month = int(year), int(month)
+
     try:
         user = Tbluser.objects.get(
             id=request.session.get('user_id')
@@ -392,14 +395,15 @@ def holiday_planning(request,
 
     auth_table = tblauth.objects.get(admin=user)
     employees = [(emp.id, emp.name()) for emp in auth_table.manager_view()]
-    employee_select = generate_select(employees)
+    employee_select = generate_select(employees, id="employees-select")
 
+    print gen_holiday_list(user, year, month)
     return render_to_response(
         "holidays.html",
         {
         "holiday_table": gen_holiday_list(user,
-                                          int(year),
-                                          int(month)),
+                                          year,
+                                          month),
         'welcome_name': request.session['firstname'],
         'is_team_leader': is_team_leader,
         'days_this_month': days_this_month,
