@@ -393,7 +393,7 @@ def holiday_planning(request,
     if user.user_type == "TEAML":
         is_team_leader = True
         try:
-            user.get_administrator()
+            user = user.get_administrator()
         except tblauth.DoesNotExist:
             return HttpResponseRedirect("/admin_view/")
 
