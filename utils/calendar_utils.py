@@ -217,7 +217,7 @@ def gen_holiday_list(admin_user,
         for entry in user.tracking_entries(year, month):
             day_classes[entry.entry_date.day] = entry.daytype
             if entry.comments:
-                comment_string = map(str, [entry.entry_date, entry.user.name(), entry.comments])
+                comment_string = map(unicode, [entry.entry_date, entry.user.name(), entry.comments])
                 comments_list.append(' '.join(comment_string))
 
         # output the table row title, which contains:-
