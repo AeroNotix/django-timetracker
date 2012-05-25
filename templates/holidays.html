@@ -25,9 +25,6 @@ Holiday Page - Timetracker
             <td onclick="applyClass('empty')" class="empty holiday-button"></td><td>Empty</td>
           </tr>
           <tr>
-            <td onclick="applyClass('WKDAY')" class="WKDAY holiday-button"></td><td>Empty</td>
-          </tr>
-          <tr>
             <td onclick="applyClass('SICKD')" class="SICKD holiday-button"></td><td>Sickness</td>
           </tr>
           <tr>
@@ -88,14 +85,21 @@ Holiday Page - Timetracker
           {% endfor %}
         </select>
       </td>
-      <td>
+      <td valign="top">
         <textarea id="comments-field-comment"></textarea>
+      </td>
+      <td>
+        <ul>
+          {% for comment in comments_list %}
+          <li> {{ comment }} </li>
+          {% endfor %}
+        </ul>
       </td>
     </tr>
     <tr><td></td><td></td>
       <td align="right">
         <button onclick="removeComment()">Remove</button>
-        <button onclick="insertComment()">Add</button>
+        <button onclick="insertComment()">Change/Add</button>
       </td>
     </tr>
   </table>

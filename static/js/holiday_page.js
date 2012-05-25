@@ -214,6 +214,7 @@ function change_table_data () {
             function () {
                 $("#holiday-wrapper, #comments-wrapper").fadeTo(500, 1);
                 addFunctions();
+                retrieveComments();
                 $("#holiday-table")
                     .find(".job_code").each( function () {
                         if ( is_team_leader ) {
@@ -223,7 +224,6 @@ function change_table_data () {
                     });
             });
     });
-
     return true;
 }
 
@@ -250,7 +250,12 @@ function removeComment() {
             day: $("#day_options").val(),
         },
         success: function (data) {
-            retrieveComments();
+            if (data.success) {
+                retrieveComments();
+                change_table_data();
+            } else {
+                alert(data.error)
+            }
         },
         error: function (data) {
             alert(data.error);
@@ -281,10 +286,15 @@ function insertComment() {
             month: $("#holiday-table").attr("month"),
             user: $("#employees-select").val(),
             day: $("#day_options").val(),
-            comment: $("#comments-field-comment").text()
+            comment: $("#comments-field-comment").val()
         },
         success: function (data) {
-            retrieveComments();
+            if (data.success) {
+                retrieveComments();
+                change_table_data();
+            } else {
+                alert(data.error)
+            }
         },
         error: function (data) {
             alert(data.error);
@@ -309,6 +319,8 @@ function retrieveComments() {
         dataType: "json"
     });
 
+    $("#comments-field-comment").val('');
+
     $.ajax({
         url: '/ajax/',
         data: {
@@ -319,8 +331,11 @@ function retrieveComments() {
             day: $("#day_options").val()
         },
         success: function (data) {
-            $("#comments-field-comment").text(data.comment);
-
+            if (data.success) {
+                $("#comments-field-comment").val(data.comment);
+            } else {
+                alert(data.error)
+            }
         },
         error: function(data) {
             alert(data.error);

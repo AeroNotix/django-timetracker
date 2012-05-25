@@ -156,7 +156,6 @@ def calendar_wrapper(function):
 def gen_holiday_list(admin_user,
                      year=datetime.datetime.today().year,
                      month=datetime.datetime.today().month):
-
     """
     Outputs a holiday calendar for that month.
 
@@ -206,6 +205,7 @@ def gen_holiday_list(admin_user,
     else:
         user_list = [admin_user] + list(auth_user.users.all())
 
+    comments_list = []
     for user in user_list:
         day_classes = {
             num: 'empty' for num in calendar_array
@@ -216,6 +216,9 @@ def gen_holiday_list(admin_user,
         # entries and apply the daytype from that.
         for entry in user.tracking_entries(year, month):
             day_classes[entry.entry_date.day] = entry.daytype
+            if entry.comments:
+                comment_string = map(str, [entry.entry_date, entry.user.name(), entry.comments])
+                comments_list.append(' '.join(comment_string))
 
         # output the table row title, which contains:-
         # Full name, Holiday Balance and the User's
@@ -272,8 +275,8 @@ def gen_holiday_list(admin_user,
                onclick="submit_all()" />
       </td>
      </tr>""".format(year_select, month_select))
-
-    return ''.join(str_output)
+    debug_log.debug(comments_list)
+    return ''.join(str_output), comments_list
 
 
 @calendar_wrapper
@@ -1371,7 +1374,6 @@ def add_comment(request):
     """
     Function which adds a comment to a tracking entry field.
     """
-
     json_data = {
         'success': False,
         'error': '',
@@ -1387,7 +1389,10 @@ def add_comment(request):
 
     for key in form_data:
         try:
-            form_data[key] = pad(request.POST[key])
+            if key in {'month', 'day'}:
+                form_data[key] = pad(request.POST[key])
+            else:
+                form_data[key] = request.POST[key]
         except KeyError:
             json_data['error'] = 'Missing data: %s' % str(key)
     entry_date = "{year}-{month}-{day}".format(**form_data)
@@ -1401,7 +1406,8 @@ def add_comment(request):
 
     entry.comments = form_data['comment']
     entry.save()
-    debug_log.debug(entry.comments)
+    entry = TrackingEntry.objects.get(entry_date=entry_date,
+                                      user_id=form_data['user'])
     json_data['success'] = True
     return json_data
 
@@ -1438,6 +1444,7 @@ def remove_comment(request):
         json_data['success'] = True
         return json_data
 
-    entry.delete()
+    entry.comments = ''
+    entry.save()
     json_data['success'] = True
     return json_data

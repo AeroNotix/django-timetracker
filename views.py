@@ -405,18 +405,18 @@ def holiday_planning(request,
     auth_table = tblauth.objects.get(admin=user)
     employees = [(emp.id, emp.name()) for emp in auth_table.manager_view()]
     employee_select = generate_select(employees, id="employees-select")
-
-    print gen_holiday_list(user, year, month)
+    holiday_table, comments_list = gen_holiday_list(user,
+                                                    year,
+                                                    month)
     return render_to_response(
         "holidays.html",
         {
-        "holiday_table": gen_holiday_list(user,
-                                          year,
-                                          month),
-        'welcome_name': request.session['firstname'],
-        'is_team_leader': is_team_leader,
-        'days_this_month': days_this_month,
-        'employee_select': employee_select
+            'holiday_table': holiday_table,
+            'comments_list': comments_list,
+            'welcome_name': request.session['firstname'],
+            'is_team_leader': is_team_leader,
+            'days_this_month': days_this_month,
+            'employee_select': employee_select
         },
         RequestContext(request))
 
