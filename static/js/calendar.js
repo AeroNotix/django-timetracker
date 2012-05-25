@@ -37,7 +37,7 @@ function ajaxCall(form) {
         return;
     }
 
-    if ($(pre+'starttime').val() === $(pre+'endtime').val() {
+    if ($(pre+'starttime').val() === $(pre+'endtime').val()) {
         alert("Length of working time invalid")
     }
 
