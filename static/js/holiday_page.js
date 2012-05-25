@@ -237,7 +237,7 @@ function removeComment() {
 
     $.ajaxSetup({
         type: "POST",
-        dataType: "json",
+        dataType: "json"
     });
 
     $.ajax({
@@ -247,7 +247,7 @@ function removeComment() {
             year: $("#holiday-table").attr("year"),
             month: $("#holiday-table").attr("month"),
             user: $("#employees-select").val(),
-            day: $("#day_options").val(),
+            day: $("#day_options").val()
         },
         success: function (data) {
             if (data.success) {
@@ -275,7 +275,7 @@ function insertComment() {
 
     $.ajaxSetup({
         type: "POST",
-        dataType: "json",
+        dataType: "json"
     });
 
     $.ajax({
