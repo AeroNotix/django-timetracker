@@ -14,6 +14,7 @@ Holiday Page - Timetracker
 {% endblock title %}
 {% block content %}
 <!--[If IE]>
+<div id="isie" isie="true"></div>
 <div id=IEFix>
   <![endif]-->
 <table id="full-table-wrapper">
@@ -100,8 +101,7 @@ Holiday Page - Timetracker
       <td align="right">
         <button onclick="removeComment()">Remove</button>
         <button onclick="insertComment()">Change/Add</button>
-      </td>
-    </tr>
+
   </table>
 </div>
 {% endblock extra_content %}

@@ -205,24 +205,39 @@ function change_table_data () {
 
     var year = $("#year_select").val();
     var month = $("#month_select").val();
-    $("#holiday-wrapper, #comments-wrapper").fadeTo(500, 0, function() {
-        $("#comments-wrapper").load(
-            "/holiday_planning/" + year + "/" + month + " #com-field"
-        );
-        $("#holiday-wrapper").load(
-            "/holiday_planning/" + year + "/" + month + " #holiday-table",
-            function () {
-                $("#holiday-wrapper, #comments-wrapper").fadeTo(500, 1);
+
+    $.ajax({
+        type: "GET",
+        dataType: "HTML",
+        url: "/holiday_planning/" + year + "/" + month,
+        success: function(data) {
+            var holiday_html = $(data).find("#holiday-wrapper").html();
+            var comments_html = $(data).find("#comments-wrapper").html();
+            var table_year = $(data).find("#holiday-table").attr("year");
+            var table_month = $(data).find("#holiday-table").attr("month");
+            $("#holiday-wrapper, #comments-wrapper").fadeTo(500, 0, function() {
+                if ( $("#isie").attr("isie") === "true" ) {
+                    $("#com-field").append(comments_html);
+                    $("#holiday-table").append(holiday_html);
+                } else {
+                    $("#com-field").html(comments_html);
+                    $("#holiday-table").html(holiday_html);
+                }
+                $("#holiday-table").attr("year", table_year);
+                $("#holiday-table").attr("month", table_month);
                 addFunctions();
-                retrieveComments();
-                $("#holiday-table")
-                    .find(".job_code").each( function () {
-                        if ( is_team_leader ) {
-                            $(this).text('');
-                        }
-                        $(this).css("color", "black")
-                    });
+                $("#year_select").val(year);
+                $("#month_select").val(month);
+                $("#holiday-wrapper, #comments-wrapper").fadeTo(500, 1);
             });
+            $("#holiday-table")
+                .find(".job_code").each( function () {
+                    if ( is_team_leader ) {
+                        $(this).text('');
+                    }
+                    $(this).css("color", "black")
+                });
+        }
     });
     return true;
 }
@@ -348,9 +363,8 @@ function retrieveComments() {
 
 $(function () {
     addFunctions();
-    change_table_data();
     $("#holiday-table")
         .find(".job_code").each( function () {
-            $(this).css("color", "black");
+            $(this).css("color", "white");
         });
 });

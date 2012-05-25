@@ -265,17 +265,23 @@ def gen_holiday_list(admin_user,
     # generate submit all button
     to_out("""
     <tr>
-      <td colspan="100" align="right">
-        <input id="btn_change_td" value="Reload"
-               type="button"
+      <td colspan="100">
+        <table>
+          <tr>
+            <td align="right">
+              <input id="btn_change_td" value="Reload" type="button"
                onclick="change_table_data()" />
-          {0} {1}
-        <input id="submit_all" value="Submit All"
-               type="button"
+            </td>
+            <td>{0}</td>
+            <td>{1}</td>
+            <td>
+              <input id="submit_all" value="Submit All" type="button"
                onclick="submit_all()" />
+            </td>
+          </tr>
+        </table>
       </td>
      </tr>""".format(year_select, month_select))
-    debug_log.debug(comments_list)
     return ''.join(str_output), comments_list
 
 
@@ -293,6 +299,7 @@ def gen_calendar(year=datetime.datetime.today().year,
     How this works is that, we iterate through each of the entries found in the
     TrackingEntry QuerySet for {year}/{month}. Create the table>td for that entry
     then attach the CSS class to that td. This means that each different type of
+
     day can be individually styled per the front-end style that is required.
     The choice to use a custom calendar table is precisely *because of* this fact
     the jQueryUI calendar doesn't support the individual styling of days, nor does
