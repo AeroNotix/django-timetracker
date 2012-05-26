@@ -13,16 +13,17 @@ from django.db import IntegrityError
 from django.test import TestCase
 from django.http import HttpResponse, Http404
 
-from timetracker.tracker.models import (Tbluser,
-                                        TrackingEntry,
-                                        Tblauthorization)
-from timetracker.utils.calendar_utils import (validate_time, parse_time,
+from tracker.models import (Tbluser,
+                            TrackingEntry,
+                            Tblauthorization)
+
+from utils.calendar_utils import (validate_time, parse_time,
                                               delete_user, useredit,
                                               mass_holidays, ajax_delete_entry,
                                               gen_calendar, ajax_change_entry,
                                               ajax_error)
-from timetracker.utils.datemaps import pad, float_to_time, generate_select, ABSENT_CHOICES
-from timetracker.utils.error_codes import DUPLICATE_ENTRY
+from utils.datemaps import pad, float_to_time, generate_select, ABSENT_CHOICES
+from utils.error_codes import DUPLICATE_ENTRY
 
 class BaseUserTest(TestCase):
 

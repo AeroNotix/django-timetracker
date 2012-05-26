@@ -170,7 +170,8 @@ def gen_holiday_list(admin_user,
     :param month: :class:`int` of the month required to be output, defaults to
                  the current month.
     :returns: A partially pretty printed html string.
-    :rtype: :class:`str`
+    :returns: A list of comment strings
+    :rtype: :class:`str` & :class:`List`
     """
 
     # we convert the arguments to ints because
