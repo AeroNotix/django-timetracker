@@ -16,6 +16,7 @@ then build a list of module level variable names which we want
 to import, set up both dicts to insert them from/to then put it
 into the name space of _mod_.
 '''
+
 settings_module = os.environ.get("DJANGO_SETTINGS_MODULE")
 fromset = ["ROOT_LOG_DIR", "LOGLEVEL"]
 _mod_ = __import__(settings_module, globals(), locals(), fromset, -1)
