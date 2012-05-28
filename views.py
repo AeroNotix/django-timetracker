@@ -43,6 +43,14 @@ def index(request):
     :param request: Automatically passed. Contains a map of the httprequest
     :return: A HttpResponse object which is then passed to the browser
     """
+    
+    if request.session.get("user_id"):
+        user = Tbluser.objects.get(id=request.session.get("user_id"))
+    if user.is_admin():
+        return HttpResponseRedirect("/admin_view/")
+    else:
+        return HttpResponseRedirect("/calendar/")
+
     return render_to_response('index.html',
                               {'login': Login()},
                               RequestContext(request))
@@ -65,7 +73,7 @@ def login(request):
     :param request: Automatically passed. Contains a map of the httprequest
     :return: A HttpResponse object which is then passed to the browser
     """
-
+   
     # if this somehow gets requested via Ajax, then
     # send back a 404.
     if request.is_ajax():
@@ -145,10 +153,16 @@ def user_view(request,
     calendar_table = gen_calendar(year, month, day,
                                   user=user_id)
 
-    balance = Tbluser.objects.get(id=user_id).get_total_balance(ret='int')
+    user_object = Tbluser.objects.get(id=user_id)
+
+    is_admin = user_object.user_type == "ADMIN"
+    is_team_leader = user_object.user_type == "TEAML"
+    
+    balance = user_object.get_total_balance(ret='int')
     return render_to_response(
         'calendar.html',
-        {
+        {'is_admin': is_admin,
+         'is_team_leader': is_team_leader,
          'calendar': calendar_table,
          'changeform': EntryForm(),
          'addform': AddForm(),
@@ -262,9 +276,12 @@ def admin_view(request):
         id=request.session.get("user_id", None)
     )
 
+    is_admin = auth.user_type == "ADMIN"
+    is_team_leader = False
     # if the user is actually a TeamLeader, they can
     # view the team assigned to their manager
     if auth.user_type == "TEAML":
+        is_team_leader = True
         auth = auth.get_administrator()
     try:
         employees = tblauth.objects.get(admin=auth)
@@ -283,9 +300,11 @@ def admin_view(request):
     return render_to_response(
         "admin_view.html",
         {
-        "employees": employees,
-        'welcome_name': request.session['firstname'],
-        'employee_option_list': employees_select
+            "is_admin": is_admin,
+            "is_team_leader": is_team_leader,
+            "employees": employees,
+            'welcome_name': request.session['firstname'],
+            'employee_option_list': employees_select
         },
         RequestContext(request)
     )
@@ -387,6 +406,7 @@ def holiday_planning(request,
     except Tbluser.DoesNotExist:
         raise Http404
 
+    is_admin = user.user_type == "ADMIN"
     # if the user is actually a TeamLeader, they can
     # view the team assigned to their manager
     is_team_leader = False
@@ -411,6 +431,7 @@ def holiday_planning(request,
     return render_to_response(
         "holidays.html",
         {
+            'is_admin': is_admin,
             'holiday_table': holiday_table,
             'comments_list': comments_list,
             'welcome_name': request.session['firstname'],
@@ -435,14 +456,16 @@ def edit_profile(request):
     """
 
     user = Tbluser.objects.get(id=request.session.get("user_id"))
-
+    is_admin = user.user_type == "ADMIN"
+    is_team_leader = user.user_type == "TEAML"
     balance = user.get_total_balance(ret='int')
     return render_to_response("editprofile.html",
                               {'firstname': user.firstname,
                                'lastname': user.lastname,
                                'welcome_name': request.session['firstname'],
                                'balance': balance,
-                               'adminrequest': user.is_admin()
+                               'is_admin': is_admin,
+                               'is_team_leader': is_team_leader
                                },
                               RequestContext(request))
 
