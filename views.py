@@ -43,18 +43,20 @@ def index(request):
     :param request: Automatically passed. Contains a map of the httprequest
     :return: A HttpResponse object which is then passed to the browser
     """
-    
+
+    try:
+        user = Tbluser.objects.get(id=request.session.get("user_id"))
+    except Tbluser.DoesNotExist:
+        return render_to_response('index.html',
+                                  {'login': Login()},
+                                  RequestContext(request))
+
     if request.session.get("user_id"):
         user = Tbluser.objects.get(id=request.session.get("user_id"))
     if user.is_admin():
         return HttpResponseRedirect("/admin_view/")
     else:
         return HttpResponseRedirect("/calendar/")
-
-    return render_to_response('index.html',
-                              {'login': Login()},
-                              RequestContext(request))
-
 
 def login(request):
 
