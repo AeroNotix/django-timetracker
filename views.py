@@ -332,13 +332,8 @@ def add_change_user(request):
     user = Tbluser.objects.get(
         id=request.session.get("user_id", None)
     )
-
-    # if the user is actually a TeamLeader, they can
-    # view the team assigned to their manager
-    is_team_leader = False
-    if user.user_type == "TEAML":
-        is_team_leader = True
-
+    is_admin = user.user_type == "ADMIN"
+    is_team_leader = user.user_type == "TEAML"
     # get the admin for this user.
     auth = user.get_administrator()
     # since we now will have a manage either way,
@@ -370,7 +365,8 @@ def add_change_user(request):
         "user_form": UserForm(),
         'welcome_name': request.session['firstname'],
         'employee_option_list': employees_select,
-        'is_team_leader': is_team_leader
+        'is_team_leader': is_team_leader,
+        'is_admin': is_admin
         },
         RequestContext(request)
     )
