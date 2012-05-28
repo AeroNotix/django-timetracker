@@ -1,10 +1,6 @@
 {% extends "base.html" %}
 {% block menubar %}
-{% if adminrequest %}
-  {% include "includes/admin-nav.html" %}
-{% else %}
-  {% include "includes/user-nav.html" %}
-{% endif %}
+{% include "includes/get_nav.html" %}
 {% endblock menubar %}
 {% block header %}
 <link href="{{ STATIC_URL }}editprofile.css" type="text/css" rel="stylesheet" />
