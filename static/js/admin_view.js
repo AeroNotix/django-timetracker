@@ -77,7 +77,7 @@ function toggleChangeEntries(st_hour, st_min, full_st,
 }
 
 function hideEntries() {
-    $("#day_information").fadeTo(200, 0.1);
+    $("#day_information").fadeTo(200, 0);
 }
 
 $(function () {
