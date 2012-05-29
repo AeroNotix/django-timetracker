@@ -57,40 +57,9 @@
 <h1>Settings files<a class="headerlink" href="#settings-files" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="module-timetracker.settings">
 <span id="basic-server-settings-module"></span><h2>Basic Server Settings module<a class="headerlink" href="#module-timetracker.settings" title="Permalink to this headline">¶</a></h2>
-<p>This module is used for the DJANGO_SETTINGS_MODULE when the development server
-is being used. This is because there are different levels of logging and the
-location of the logs is completely different from when the production server
-is being used.</p>
-<p>Another reason is that usually (and you should be) the production server is
-being run as a daemon user (http user in the case of Apache) and this causes
-problems for certain portions of code, particularly logging or anything that
-requires write access to the filesystem, thus, the separation of production
-settings and the development one.</p>
-<p>TODO: Create a base settings module and import attributes from there,
-overriding when we need to.</p>
 </div>
 <div class="section" id="module-timetracker.apache_settings">
 <span id="apache-settings-module"></span><h2>Apache Settings module<a class="headerlink" href="#module-timetracker.apache_settings" title="Permalink to this headline">¶</a></h2>
-<p>This module is used for the DJANGO_SETTINGS_MODULE for when apache is being
-used. This is because there are different levels of logging when using the dev
-server and when using the apache server. They also are running under different
-user profiles and therefore have different filesystem access rights. On
-Windows this isn&#8217;t a problem but on Linux it makes it a lot easier to use two
-separate settings files.</p>
-<p>TODO: Create a base settings module and import attributes from there,
-overriding when we need to.</p>
-<blockquote>
-<div><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">platform:</th><td class="field-body">All</td>
-</tr>
-<tr class="field-even field"><th class="field-name">synopsis:</th><td class="field-body">Module which contains settings for running the app on Apache</td>
-</tr>
-</tbody>
-</table>
-</div></blockquote>
 </div>
 </div>
 

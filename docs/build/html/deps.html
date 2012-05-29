@@ -151,6 +151,32 @@ directory.</p>
 module:</p>
 <div class="highlight-python"><pre>LoadModule wsgi_module &lt;path_to_modules_dir&gt;/mod_wsgi.so</pre>
 </div>
+<p>You will then need to head to the wsgi file in your django source directory
+and fill in some details. This is the same on all platforms as this file
+is a simple Python file.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="o">&lt;</span><span class="n">path</span>\<span class="n">to</span>\<span class="n">source</span>\<span class="n">directory</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s">&quot;DJANGO_SETTINGS_MODULE&quot;</span><span class="p">,</span> <span class="s">&quot;timetracker.settings&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This will be enough for this file.</p>
+<p>Next, we need to set up apache to serve the pages to the external network.
+In your httpd.conf, somewhere near the bottom, at the following.</p>
+<div class="highlight-bash"><div class="highlight"><pre>WSGIScriptAlias / <span class="s2">&quot;path/to/wsgi/file&quot;</span>
+&lt;Directory <span class="s2">&quot;path/to/base/source/dir&quot;</span>&gt;
+    Order Allow,Deny
+    Allow from all
+&lt;/Directory&gt;
+</pre></div>
+</div>
+<p>These settings might require some special attention. The WSGIScriptAlias is an
+Apache configuration statement to say, &#8220;Everything under / should be ran through
+the path on the right&#8221;. This means that all requests made under / will be routed
+through Django and it&#8217;s urls.py file.</p>
+<p>The directory is a staple of Apache&#8217;s config and should be widely known. If not,
+a small description. In order for Apache to use a directory you need to tell it
+how to deal with permissions on that folder. There is a myriad of settings but
+for our simple case - &#8220;Order Allow,Deny&#8221; means Allow access. Then &#8220;Allow from all&#8221;
+means what it sounds like - allow access for all requests.</p>
 </div>
 </div>
 

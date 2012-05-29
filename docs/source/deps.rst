@@ -132,9 +132,8 @@ This will be enough for this file.
 Next, we need to set up apache to serve the pages to the external network.
 In your httpd.conf, somewhere near the bottom, at the following.
 
-.. code-block::
-
-   
+.. code-block:: bash
+  
    WSGIScriptAlias / "path/to/wsgi/file"
    <Directory "path/to/base/source/dir">
        Order Allow,Deny

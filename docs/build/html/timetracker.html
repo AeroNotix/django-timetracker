@@ -399,6 +399,12 @@ tasks, processing dates and creating time-based code.</p>
 </tbody>
 </table>
 <dl class="function">
+<dt id="timetracker.utils.calendar_utils.add_comment">
+<tt class="descclassname">timetracker.utils.calendar_utils.</tt><tt class="descname">add_comment</tt><big>(</big><em>request</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#timetracker.utils.calendar_utils.add_comment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function which adds a comment to a tracking entry field.</p>
+</dd></dl>
+
+<dl class="function">
 <dt id="timetracker.utils.calendar_utils.ajax_add_entry">
 <tt class="descclassname">timetracker.utils.calendar_utils.</tt><tt class="descname">ajax_add_entry</tt><big>(</big><em>request</em><big>)</big><a class="reference internal" href="_modules/timetracker/utils/calendar_utils.html#ajax_add_entry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.utils.calendar_utils.ajax_add_entry" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds a calendar entry asynchronously.</p>
@@ -609,8 +615,8 @@ entries and gives each day a special CSS class so that days can be styled
 individually.</p>
 <p>How this works is that, we iterate through each of the entries found in the
 TrackingEntry QuerySet for {year}/{month}. Create the table&gt;td for that entry
-then attach the CSS class to that td. This means that each different type of
-day can be individually styled per the front-end style that is required.
+then attach the CSS class to that td. This means that each different type of</p>
+<p>day can be individually styled per the front-end style that is required.
 The choice to use a custom calendar table is precisely <em>because of</em> this fact
 the jQueryUI calendar doesn&#8217;t support the individual styling of days, nor does
 it support event handling with the level of detail which we require.</p>
@@ -724,11 +730,20 @@ the current month.</li>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A partially pretty printed html string.</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><tt class="xref py py-class docutils literal"><span class="pre">str</span></tt></p>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A list of comment strings</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><tt class="xref py py-class docutils literal"><span class="pre">str</span></tt> &amp; <tt class="xref py py-class docutils literal"><span class="pre">List</span></tt></p>
 </td>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="function">
+<dt id="timetracker.utils.calendar_utils.get_comments">
+<tt class="descclassname">timetracker.utils.calendar_utils.</tt><tt class="descname">get_comments</tt><big>(</big><em>request</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#timetracker.utils.calendar_utils.get_comments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function which gets the comments from a user&#8217;s tracking entry</p>
 </dd></dl>
 
 <dl class="function">
@@ -890,6 +905,12 @@ we&#8217;ve been supplied here.</p>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="function">
+<dt id="timetracker.utils.calendar_utils.remove_comment">
+<tt class="descclassname">timetracker.utils.calendar_utils.</tt><tt class="descname">remove_comment</tt><big>(</big><em>request</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#timetracker.utils.calendar_utils.remove_comment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function which removes a comment from a tracking field</p>
 </dd></dl>
 
 <dl class="function">
