@@ -208,8 +208,8 @@ function change_table_data () {
                 if ( $("#isie").attr("isie") === "true" ) {
                     $("#com-field").html('');
                     $("#holiday-table").html('');
-                    $("#com-field").append(comments_html);
-                    $("#holiday-table").append(holiday_html);
+                    $("#com-field").html(comments_html);
+                    $("#holiday-table").html(holiday_html);
                 } else {
                     $("#com-field").html(comments_html);
                     $("#holiday-table").html(holiday_html);
