@@ -205,15 +205,13 @@ function change_table_data () {
             var table_year = $(data).find("#holiday-table").attr("year");
             var table_month = $(data).find("#holiday-table").attr("month");
             $("#holiday-wrapper, #comments-wrapper").fadeTo(500, 0, function() {
-                if ( $("#isie").attr("isie") === "true" ) {
+//                if ( $("#isie").attr("isie") === "true" ) {
                     $("#com-field").html('');
                     $("#holiday-table").html('');
-                    $("#com-field").append(comments_html);
-                    $("#holiday-table").append(holiday_html);
-                } else {
+//                } else {
                     $("#com-field").html(comments_html);
                     $("#holiday-table").html(holiday_html);
-                }
+//                }
                 $("#holiday-table").attr("year", table_year);
                 $("#holiday-table").attr("month", table_month);
                 addFunctions();
@@ -221,13 +219,7 @@ function change_table_data () {
                 $("#month_select").val(month);
                 $("#holiday-wrapper, #comments-wrapper").fadeTo(500, 1);
             });
-            $("#holiday-table")
-                .find(".job_code").each( function () {
-                    if ( is_team_leader ) {
-                        $(this).text('');
-                    }
-                    $(this).css("color", "black")
-                });
+            checkTeamLeader();
         }
     });
     return true;
@@ -237,7 +229,7 @@ function removeComment() {
     "use strict";
 
     /*
-      Function which inserts a comment into the database for a specific
+      Function which removes a comment from the database for a specific
       tracking entry.
     */
 
@@ -352,10 +344,26 @@ function retrieveComments() {
 
 }
 
-$(function () {
-    addFunctions();
+function checkTeamLeader() {
+
+    /*
+      Function which checks if the user is a team leader.
+
+      If so, the field is removed
+    */
+
     $("#holiday-table")
         .find(".job_code").each( function () {
-            $(this).css("color", "white");
+            if ( is_team_leader ) {
+                $(this).text('');
+            }
+            $(this).css("color", "black")
         });
+
+    return true;
+}
+
+$(function () {
+    addFunctions();
+    checkTeamLeader();
 });
