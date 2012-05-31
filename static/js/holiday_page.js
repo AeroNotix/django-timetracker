@@ -206,6 +206,8 @@ function change_table_data () {
             var table_month = $(data).find("#holiday-table").attr("month");
             $("#holiday-wrapper, #comments-wrapper").fadeTo(500, 0, function() {
                 if ( $("#isie").attr("isie") === "true" ) {
+                    $("#com-field").html('');
+                    $("#holiday-table").html('');
                     $("#com-field").append(comments_html);
                     $("#holiday-table").append(holiday_html);
                 } else {
