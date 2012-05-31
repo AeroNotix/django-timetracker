@@ -421,7 +421,8 @@ def holiday_planning(request,
     days_this_month = range(1, len(gen_datetime_cal(year, month))+1)
 
     auth_table = tblauth.objects.get(admin=user)
-    employees = [(emp.id, emp.name()) for emp in auth_table.manager_view()]
+    people = list(auth_table.manager_view()) + [user]
+    employees = [(emp.id, emp.name()) for emp in people]
     employee_select = generate_select(employees, id="employees-select")
     holiday_table, comments_list = gen_holiday_list(user,
                                                     year,
