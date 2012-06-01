@@ -201,12 +201,10 @@ function change_table_data () {
 
             $("#holiday-wrapper, #comments-wrapper").fadeTo(500, 0, function() {
                 if ( $("#isie7").attr("isie7") === "true" ) {
-                    alert("Here");
                     $("#comments-wrapper").load(
                         "/holiday_planning/" + year + "/" + month + " #com-field");
                     $("#holiday-wrapper").load(
                         "/holiday_planning/" + year + "/" + month + " #holiday-table");
-                    $("#holiday-wrapper, #comments-wrapper").fadeTo(500, 1);
                 } else {
                     var holiday_html = $(data).find("#holiday-wrapper").html();
                     var comments_html = $(data).find("#comments-wrapper").html();
