@@ -202,13 +202,10 @@ function change_table_data () {
             $("#holiday-wrapper, #comments-wrapper").fadeTo(500, 0, function() {
                 if ( $("#isie").attr("isie/") === "true" ) {
                     $("#comments-wrapper").load(
-                        "/holiday_planning/" + year + "/" + month + " #com-field");
+                        "/holiday_planning/" + year + "/" + month + " #com-field"
+                    );
                     $("#holiday-wrapper").load(
-                        "/holiday_planning/" + year + "/" + month + " #holiday-table",
-                        function() {
-                            addFunctions();
-                            retrieveComments();
-                        }
+                        "/holiday_planning/" + year + "/" + month + " #holiday-table"
                     );
                 } else {
                     var holiday_html = $(data).find("#holiday-wrapper").html();
