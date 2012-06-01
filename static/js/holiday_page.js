@@ -200,11 +200,16 @@ function change_table_data () {
         success: function(data) {
 
             $("#holiday-wrapper, #comments-wrapper").fadeTo(500, 0, function() {
-                if ( $("#isie").attr("isie") === "true" ) {
+                if ( $("#isie").attr("isie/") === "true" ) {
                     $("#comments-wrapper").load(
                         "/holiday_planning/" + year + "/" + month + " #com-field");
                     $("#holiday-wrapper").load(
-                        "/holiday_planning/" + year + "/" + month + " #holiday-table");
+                        "/holiday_planning/" + year + "/" + month + " #holiday-table",
+                        function() {
+                            addFunctions();
+                            retrieveComments();
+                        }
+                    );
                 } else {
                     var holiday_html = $(data).find("#holiday-wrapper").html();
                     var comments_html = $(data).find("#comments-wrapper").html();
