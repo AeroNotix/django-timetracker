@@ -190,8 +190,6 @@ function change_table_data () {
        the table with the data returned from the ajax call
     */
 
-    var is_team_leader = $("#is_team_leader").attr("value")
-
     var year = $("#year_select").val();
     var month = $("#month_select").val();
 
@@ -205,13 +203,15 @@ function change_table_data () {
             var table_year = $(data).find("#holiday-table").attr("year");
             var table_month = $(data).find("#holiday-table").attr("month");
             $("#holiday-wrapper, #comments-wrapper").fadeTo(500, 0, function() {
-//                if ( $("#isie").attr("isie") === "true" ) {
+                if ( $("#isie").attr("isie") === "true" ) {
                     $("#com-field").html('');
                     $("#holiday-table").html('');
-//                } else {
+                    $("#com-field").append(comments_html);
+                    $("#holiday-table").append(holiday_html);
+                } else {
                     $("#com-field").html(comments_html);
                     $("#holiday-table").html(holiday_html);
-//                }
+                }
                 $("#holiday-table").attr("year", table_year);
                 $("#holiday-table").attr("month", table_month);
                 addFunctions();
@@ -351,6 +351,10 @@ function checkTeamLeader() {
 
       If so, the field is removed
     */
+
+    "use strict";
+
+    var is_team_leader = $("#is_team_leader").attr("value");
 
     $("#holiday-table")
         .find(".job_code").each( function () {
