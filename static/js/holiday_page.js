@@ -200,7 +200,7 @@ function change_table_data () {
         success: function(data) {
 
             $("#holiday-wrapper, #comments-wrapper").fadeTo(500, 0, function() {
-                if ( $("#isie").attr("isie/") === "true" ) {
+                if ( $("#isie").attr("isie") === "true" ) {
                     $("#comments-wrapper").load(
                         "/holiday_planning/" + year + "/" + month + " #com-field"
                     );
