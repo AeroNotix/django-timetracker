@@ -205,7 +205,11 @@ function change_table_data () {
                         "/holiday_planning/" + year + "/" + month + " #com-field"
                     );
                     $("#holiday-wrapper").load(
-                        "/holiday_planning/" + year + "/" + month + " #holiday-table"
+                        "/holiday_planning/" + year + "/" + month + " #holiday-table",
+                        function() {
+                            addFunctions();
+                            retrieveComments();
+                        }
                     );
                 } else {
                     var holiday_html = $(data).find("#holiday-wrapper").html();
