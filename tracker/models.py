@@ -516,4 +516,4 @@ class TrackingEntry(models.Model):
                  ])
             )
 
-        return unicode(self.user) + ' - ' + date
+        return unicode(self.user + ' - ' + date)
