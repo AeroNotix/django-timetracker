@@ -35,8 +35,8 @@ from timetracker.loggers import suspicious_log, email_log, error_log
 
 def index(request):
 
-    """ This function serves the base login page. TODO: Make this view check
-    to see if the user is already logged in and if so, redirect.
+    """ This function serves the base login page. This view detects if the
+    user is logged in. If so, redirects, else, serves them the login page.
 
     This function shouldn't be directly called, it's invocation is automatic
 
@@ -477,7 +477,7 @@ def explain(request):
     This page renders a simple template to show the users how their balance is
     calculated. This view takes the user object, retrieves a couple of fields,
     which are user.shiftlength and the associated values with that datetime
-    objects, constructs a string with them and passes it to the template as
+    object, constructs a string with them and passes it to the template as
     the users 'shiftlength' attribute. It then takes the count of working
     days in the database so that the user has an idea of how many days they
     have tracked altogether. Then it calculates their total balance and pushes
