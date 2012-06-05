@@ -193,7 +193,7 @@ edit their name and their password.</p>
 <p>This page renders a simple template to show the users how their balance is
 calculated. This view takes the user object, retrieves a couple of fields,
 which are user.shiftlength and the associated values with that datetime
-objects, constructs a string with them and passes it to the template as
+object, constructs a string with them and passes it to the template as
 the users &#8216;shiftlength&#8217; attribute. It then takes the count of working
 days in the database so that the user has an idea of how many days they
 have tracked altogether. Then it calculates their total balance and pushes
@@ -263,8 +263,8 @@ completely borked page.</p>
 <dl class="function">
 <dt id="timetracker.views.index">
 <tt class="descclassname">timetracker.views.</tt><tt class="descname">index</tt><big>(</big><em>request</em><big>)</big><a class="reference internal" href="_modules/timetracker/views.html#index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.views.index" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function serves the base login page. TODO: Make this view check
-to see if the user is already logged in and if so, redirect.</p>
+<dd><p>This function serves the base login page. This view detects if the
+user is logged in. If so, redirects, else, serves them the login page.</p>
 <p>This function shouldn&#8217;t be directly called, it&#8217;s invocation is automatic</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -708,7 +708,7 @@ another setting make sure this is passed.</li>
 
 <dl class="function">
 <dt id="timetracker.utils.calendar_utils.gen_holiday_list">
-<tt class="descclassname">timetracker.utils.calendar_utils.</tt><tt class="descname">gen_holiday_list</tt><big>(</big><em>admin_user</em>, <em>year=2012</em>, <em>month=5</em><big>)</big><a class="reference internal" href="_modules/timetracker/utils/calendar_utils.html#gen_holiday_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.utils.calendar_utils.gen_holiday_list" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">timetracker.utils.calendar_utils.</tt><tt class="descname">gen_holiday_list</tt><big>(</big><em>admin_user</em>, <em>year=2012</em>, <em>month=6</em><big>)</big><a class="reference internal" href="_modules/timetracker/utils/calendar_utils.html#gen_holiday_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.utils.calendar_utils.gen_holiday_list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Outputs a holiday calendar for that month.</p>
 <p>For each user we get their tracking entries, then iterate over each of
 their entries checking if it is a holiday or not, if it is then we change
@@ -1484,7 +1484,7 @@ and or when we are displaying users on the front-end.</p>
 
 <dl class="method">
 <dt id="timetracker.tracker.models.Tbluser.tracking_entries">
-<tt class="descname">tracking_entries</tt><big>(</big><em>year=2012</em>, <em>month=5</em><big>)</big><a class="reference internal" href="_modules/timetracker/tracker/models.html#Tbluser.tracking_entries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.tracker.models.Tbluser.tracking_entries" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">tracking_entries</tt><big>(</big><em>year=2012</em>, <em>month=6</em><big>)</big><a class="reference internal" href="_modules/timetracker/tracker/models.html#Tbluser.tracking_entries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timetracker.tracker.models.Tbluser.tracking_entries" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns all the tracking entries associated with
 this user.</p>
 <p>This is particularly useful when required to make a report or generate
