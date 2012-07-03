@@ -153,9 +153,7 @@ def calendar_wrapper(function):
     return inner
 
 
-def gen_holiday_list(admin_user,
-                     year=datetime.datetime.today().year,
-                     month=datetime.datetime.today().month):
+def gen_holiday_list(admin_user, year=None, month=None):
     """
     Outputs a holiday calendar for that month.
 
@@ -174,6 +172,11 @@ def gen_holiday_list(admin_user,
     :rtype: :class:`str` & :class:`List`
     """
 
+    if year is None:
+        year = datetime.datetime.today().year
+    if month is None:
+        month = datetime.datetime.today().month
+    
     # we convert the arguments to ints because
     # we get given unicode objects
     year, month = int(year), int(month)
@@ -287,11 +290,7 @@ def gen_holiday_list(admin_user,
 
 
 @calendar_wrapper
-def gen_calendar(year=datetime.datetime.today().year,
-                 month=datetime.datetime.today().month,
-                 day=datetime.datetime.today().day,
-                 user=None):
-
+def gen_calendar(year=None, month=None, day=None, user=None):
     """
     Returns a HTML calendar, calling a database user to get their day-by-day
     entries and gives each day a special CSS class so that days can be styled
@@ -359,6 +358,14 @@ def gen_calendar(year=datetime.datetime.today().year,
                  another setting make sure this is passed.
     :returns: HTML String
     """
+
+    if year is None:
+        year = datetime.datetime.today().year
+    if month is None:
+        month = datetime.datetime.today().month
+    if day is None:
+        day = datetime.datetime.today().day
+
 
     # django passes us Unicode strings
     year, month, day = int(year), int(month), int(day)

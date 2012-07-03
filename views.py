@@ -126,11 +126,7 @@ def logout(request):
 
 
 @loggedin
-def user_view(request,
-             year=datetime.date.today().year,
-             month=datetime.date.today().month,
-             day=datetime.date.today().day,
-             ):
+def user_view(request, year=None, month=None, day=None):
     """Generates a calendar based on the URL it receives.
     For example: domain.com/calendar/{year}/{month}/{day},
     also takes a day just in case you want to add a particular
@@ -150,6 +146,13 @@ def user_view(request,
     :returns: A HttpResponse object which is passed to the browser.
 
     """
+    if year is None:
+        year = datetime.datetime.today().year
+    if month is None:
+        month = datetime.datetime.today().month
+    if day is None:
+        day = datetime.datetime.today().day
+
 
     user_id = request.session['user_id']
     calendar_table = gen_calendar(year, month, day,
@@ -375,8 +378,8 @@ def add_change_user(request):
 @loggedin
 @admin_check
 def holiday_planning(request,
-                     year=datetime.datetime.today().year,
-                     month=datetime.datetime.today().month):
+                     year=None,
+                     month=None):
     """
     Generates the full holiday table for all employees under a manager
 
@@ -393,6 +396,10 @@ def holiday_planning(request,
     :param request: Automatically passed contains a map of the httprequest
     :return: HttpResponse object back to the browser.
     """
+    if year is None:
+        year = datetime.datetime.today().year
+    if month is None:
+        month = datetime.datetime.today().month
 
     # django urls parse to unicode objects
     year, month = int(year), int(month)

@@ -184,8 +184,8 @@ class Tbluser(models.Model):
         return self.firstname + ' ' + self.lastname
 
     def tracking_entries(self,
-                         year=dt.datetime.today().year,
-                         month=dt.datetime.today().month):
+                         year=None,
+                         month=None):
         """Returns all the tracking entries associated with
         this user.
 
@@ -198,6 +198,11 @@ class Tbluser(models.Model):
                      by. Defaults to the current month.
         :rtype: :class:`QuerySet`
         """
+
+        if year is None:
+            year = dt.datetime.today().year
+        if month is None:
+            month = dt.datetime.today().month
 
         return TrackingEntry.objects.filter(user_id=self.id,
                                             entry_date__year=year,
