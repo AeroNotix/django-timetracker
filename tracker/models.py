@@ -246,7 +246,8 @@ class Tbluser(models.Model):
         holiday_value_map = {
             'HOLIS': -1,
             'PUWRK': 2,
-            'RETRN': -1
+            'RETRN': -1,
+            'DAYOD': -1
             }
 
         holiday_balance = self.holiday_balance
