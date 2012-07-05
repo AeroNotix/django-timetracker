@@ -281,7 +281,7 @@ class Tbluser(models.Model):
 
         ret = ret.lower()
         # if the argument isn't supported'
-        if ret not in {'html', 'int', 'dbg'}:
+        if ret not in set(['html', 'int', 'dbg']):
             raise Exception("Unsupported Argument. Must be html, int or dbg")
 
         # we'll use augmented assignment
