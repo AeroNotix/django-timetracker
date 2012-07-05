@@ -1404,7 +1404,7 @@ def add_comment(request):
 
     for key in form_data:
         try:
-            if key in {'month', 'day'}:
+            if key in set(['month', 'day']):
                 form_data[key] = pad(request.POST[key])
             else:
                 form_data[key] = request.POST[key]
