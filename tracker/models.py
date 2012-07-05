@@ -461,7 +461,7 @@ class Tblauthorization(models.Model):
 
         :rtype: :class:`QuerySet`
         """
-        return self.users.exclude(user_type__in={"TEAML", "ADMIN"})
+        return self.users.exclude(user_type__in=set(["TEAML", "ADMIN"]))
 
     display_users.allow_tags = True
     display_users.short_discription = "Subordinate Users"
