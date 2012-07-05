@@ -211,9 +211,9 @@ def gen_holiday_list(admin_user, year=None, month=None):
 
     comments_list = []
     for user in user_list:
-        day_classes = {
-            num: 'empty' for num in calendar_array
-        }
+        day_classes = dict( [
+            (num, 'empty') for num in calendar_array
+        ] )
 
         # We have a dict with each day as currently
         # empty, we iterate through the tracking
