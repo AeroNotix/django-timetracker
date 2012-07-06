@@ -48,6 +48,15 @@
    color: black;
 }
 
+.ROVER {
+   background-color: #CCFFFF;
+}
+
+.ROVER:hover {
+   background-color: orange;
+   color: black;
+}
+
 .SICKD {
 
    background-color: #33FF00;

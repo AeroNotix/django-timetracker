@@ -93,6 +93,7 @@ DAYTYPE_CHOICES = (
     ('DAYOD', 'Day on demand'),
     ('SATUR', 'Work on Saturday'),
     ('WKHOM', 'Work at home'),
+    ('ROVER', 'Return for overtime'),
 )
 
 
@@ -167,3 +168,17 @@ def float_to_time(timefloat):
     seconds = timefloat * 3600
     time = prefix + str(datetime.timedelta(seconds=seconds))
     return pad(time[:-3], amount=5)
+
+def datetime_to_timestring(dt):
+    """
+    Returns a pretty formatting string from a datetime object.
+
+    For example,
+    >>>datetime.time(hour=9, minute=10, second=30)
+    ..."09:10:30"
+
+    :param dt: :class:`datetime.datetime` or :class:`datetime.time`
+    :returns: :class:`str`
+    """
+
+    return pad(dt.hour)+':'+pad(dt.minute)+':'+pad(dt.second)

@@ -1236,13 +1236,17 @@ def mass_holidays(request):
                 # mass uploads are non-working days
                 # so the admin doesn't need to assign
                 # tonnes of time data to each entry
-                time_str = "00:00:00"
+                if entry[1] == "ROVER":
+                    user = Tbluser.objects.get(id=form_data['user_id'])
+                    time_str = user.get_shiftlength_list()
+                else:
+                    time_str = ("00:00:00","00:00:00","00:00:00")
                 new_entry = TrackingEntry(
                     user_id=form_data['user_id'],
                     entry_date=date,
-                    start_time=time_str,
-                    end_time=time_str,
-                    breaks=time_str,
+                    start_time=time_str[0],
+                    end_time=time_str[1],
+                    breaks=time_str[2],
                     daytype=entry[1]
                     )
                 new_entry.save()

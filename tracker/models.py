@@ -14,8 +14,9 @@ from django.db import models
 from django.forms import ModelForm
 
 from timetracker.utils.datemaps import (
-    WORKING_CHOICES, DAYTYPE_CHOICES, float_to_time
+    WORKING_CHOICES, DAYTYPE_CHOICES, float_to_time, datetime_to_timestring
     )
+
 
 class Tbluser(models.Model):
 
@@ -28,13 +29,13 @@ class Tbluser(models.Model):
     table this is a design choice because there is only a minimal set of
     things to have permissions *over*, so it would be overkill to take full
     advantage of the MVC pattern.
-    
+
     User\n
     The most general and base type of a User is the *RUSER*, which is
     shorthand (and what actually gets stored in the database) for Regular
     User. A regular user will only be able to access a specific section of the
     site.
-    
+
     Team Leader\n
     The second type of User is the *TEAML*, this user has very similar level
     access as the administrator type but has only a limited subset of their
@@ -147,11 +148,36 @@ class Tbluser(models.Model):
                                 self.firstname,
                                 self.lastname)
 
+    def get_shiftlength_list(self):
+        """
+        Returns the users' timestring formatted neatly
+
+        :returns: :class:`tuple` of :class:`str` such as ("08:00:00", "17:00:00", "00:15:00")
+                  depending on the user's shiftlength
+        """
+
+        start_time = dt.datetime(
+            year=1980,
+            month=1,
+            day=1,
+            hour=9,
+            minute=0,
+            second=0,
+            )
+
+        end_time = start_time + dt.timedelta(
+            hours=self.shiftlength.hour,
+            minutes=self.shiftlength.minute,
+            seconds=self.shiftlength.second
+            )
+
+        return map(datetime_to_timestring, [start_time, end_time, self.breaklength])
+
     def get_administrator(self):
 
         """
         Returns the :class:`Tbluser` who is this instances Authorization link
-        
+
         :returns: A :class:`Tbluser` instance
         :rtype: :class:`Tbluser`
         """
@@ -227,11 +253,11 @@ class Tbluser(models.Model):
         day_type and looking that up in a value map.
 
         Values can be:
-        
+
         1) Holiday: Remove a day
-        
+
         2) Work on Public Holiday: Add two days
-        
+
         2) Return for working Public Holiday: Remove a day
 
         :param year: The year in which the holiday balance should be
@@ -267,7 +293,7 @@ class Tbluser(models.Model):
 
         The return type of this function is different depending on the
         argument supplied.
-        
+
         :note: To customize how the CSS class is determined when using the
                html mode you will need to change the ranges in the
                tracking_class_map attribute.
@@ -308,6 +334,12 @@ class Tbluser(models.Model):
                 - item.start_time.minute
                 - item.breaks.minute
                 )
+
+        return_days = TrackingEntry.objects.filter(user_id=self.id,
+                                                     daytype="ROVER")
+        for item in return_days:
+            shift_hours += self.shiftlength.hour
+            shift_minutes += self.shiftlength.minute
 
         trackingnumber = 0 - (add(shift_hours, (shift_minutes / 60.0))
                            - add(total_hours, (total_mins / 60.0)))
@@ -370,7 +402,7 @@ class Tblauthorization(models.Model):
 
     In future, and time, I would like to make it so that the .save() method is
     overloaded and then we can check if a :class:`Tblauthorization` link
-    already exists and if so, save to that instead.    
+    already exists and if so, save to that instead.
     """
 
     admin = models.ForeignKey(
@@ -505,7 +537,7 @@ class TrackingEntry(models.Model):
         verbose_name_plural = 'Daily Tracking Logs'
         unique_together = ('user', 'entry_date')
         ordering = ['user']
-        
+
     def __unicode__(self):
 
         """
@@ -522,4 +554,4 @@ class TrackingEntry(models.Model):
                  ])
             )
 
-        return unicode(self.user + ' - ' + date)
+        return unicode(self.user) + ' - ' + date
