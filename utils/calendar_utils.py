@@ -44,8 +44,6 @@ from timetracker.utils.datemaps import (MONTH_MAP, WEEK_MAP_SHORT,
 from timetracker.utils.decorators import (admin_check, json_response,
                                           request_check)
 
-
-
 def get_request_data(form, request):
 
     """
@@ -1089,6 +1087,9 @@ def useredit(request):
                 Hi {0},
                 \tYour account has been created with the timetracker.
                 Please use the following password to login: {1}.\n
+
+                Below is the link to the timetracker:\n
+                http://16.55.133.115:55/
                 Regards,
                 {2}
                 """.format(user.firstname, password, auth_user.firstname)
