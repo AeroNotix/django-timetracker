@@ -338,8 +338,8 @@ class Tbluser(models.Model):
         return_days = TrackingEntry.objects.filter(user_id=self.id,
                                                      daytype="ROVER")
         for item in return_days:
-            shift_hours += self.shiftlength.hour
-            shift_minutes += self.shiftlength.minute
+            shift_hours += self.shiftlength.hour + self.breaklength.hour
+            shift_minutes += self.shiftlength.minute + self.breaklength.minute
 
         trackingnumber = 0 - (add(shift_hours, (shift_minutes / 60.0))
                            - add(total_hours, (total_mins / 60.0)))
