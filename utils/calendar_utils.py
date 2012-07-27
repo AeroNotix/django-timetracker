@@ -730,7 +730,7 @@ def ajax_error(error):
 
     return {
         'success': False,
-        'error': error
+        'error': str(error)
         }
 
 
@@ -1203,16 +1203,23 @@ def mass_holidays(request):
 
     for key in form_data:
         form_data[key] = request.POST.get(key, None)
-
-    holiday_data = simplejson.loads(request.POST.get('holiday_data'))
+    try:
+        holiday_data = simplejson.loads(request.POST.get('holiday_data'))
+    except Exception as err:
+        json_data['error'] = str(err)
+        return json_data
 
     for entry in holiday_data.items():
 
         # conversion to int->str removes newlines easier
-        day = str(int(entry[0]))
-        year = form_data['year']
-        month = form_data['month']
-        date = '-'.join([year, month, day])
+        try:
+            day = str(int(entry[0]))
+            year = form_data['year']
+            month = form_data['month']
+            date = '-'.join([year, month, day])
+        except Exception as err:
+            json_data['error'] = str(err)
+            return json_data
 
         if entry[1] == "empty" or (not len(entry[1])):
             try:
@@ -1232,6 +1239,8 @@ def mass_holidays(request):
                 anything
                 """
                 pass
+            except:
+                continue
         else:
             try:
                 # mass uploads are non-working days

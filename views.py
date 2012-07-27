@@ -256,9 +256,9 @@ def ajax(request):
         'add_comment': add_comment,
         'remove_comment': remove_comment
     }
-    return ajax_funcs.get(form_type,
-                          ajax_error("Form not found")
-                          )(request)
+    return ajax_funcs.get(
+        form_type,ajax_error
+        )(request)
 
 @admin_check
 def admin_view(request):
