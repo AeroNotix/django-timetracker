@@ -379,7 +379,8 @@ def add_change_user(request):
 @admin_check
 def holiday_planning(request,
                      year=None,
-                     month=None):
+                     month=None,
+                     process=None):
     """
     Generates the full holiday table for all employees under a manager
 
@@ -433,7 +434,8 @@ def holiday_planning(request,
     employee_select = generate_select(employees, id="employees-select")
     holiday_table, comments_list = gen_holiday_list(user,
                                                     year,
-                                                    month)
+                                                    month,
+                                                    process)
     return render_to_response(
         "holidays.html",
         {

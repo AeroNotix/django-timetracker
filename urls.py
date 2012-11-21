@@ -12,6 +12,7 @@ admin.autodiscover()
 YEAR = '(?P<year>\d{4})'
 MONTH = '(?P<month>\d{1,2})'
 DAY = '(?P<day>\d{1,2})'
+PROCESS = '/?(?P<process>AP|AR|AO)?'
 
 # todo: tracker app needs to be made into it's own
 #       app and then the main views in here will
@@ -24,8 +25,8 @@ urlpatterns = patterns('',
     url(r'^calendar/%s/%s/?$' % (YEAR, MONTH), views.user_view),
     url(r'^calendar/%s/%s/%s/?$' % (YEAR, MONTH, DAY), views.user_view),
                        
-    url(r'^holiday_planning/?$', views.holiday_planning),
-    url(r'^holiday_planning/%s/%s/?$' % (YEAR, MONTH), views.holiday_planning),
+    url(r'^holiday_planning%s$' % PROCESS, views.holiday_planning),
+    url(r'^holiday_planning/%s/%s%s$' % (YEAR, MONTH, PROCESS), views.holiday_planning),
                        
     url(r'^admin_view/?$', views.admin_view),
     url(r'^ajax/?$', views.ajax),

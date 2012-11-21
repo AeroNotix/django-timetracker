@@ -151,7 +151,7 @@ def calendar_wrapper(function):
     return inner
 
 
-def gen_holiday_list(admin_user, year=None, month=None):
+def gen_holiday_list(admin_user, year=None, month=None, process=None):
     """
     Outputs a holiday calendar for that month.
 
@@ -181,7 +181,7 @@ def gen_holiday_list(admin_user, year=None, month=None):
 
     str_output = []
     to_out = str_output.append
-    to_out('<table year=%s month=%s id="holiday-table">' % (year, month))
+    to_out('<table year=%s month=%s process=%s id="holiday-table">' % (year, month, process))
     to_out("""<tr>
                  <th align="centre" colspan="100">{0}</th>
               </tr>""".format(MONTH_MAP[month - 1][1]))
@@ -203,9 +203,9 @@ def gen_holiday_list(admin_user, year=None, month=None):
     # their own holidays
     auth_user = Tblauth.objects.get(admin=admin_user.get_administrator())
     if admin_user.user_type == "TEAML":
-        user_list = list(auth_user.users.all())
+        user_list = list(auth_user.users.filter(process=process) if process else auth_user.users.all())
     else:
-        user_list = [admin_user] + list(auth_user.users.all())
+        user_list = [admin_user] + list(auth_user.users.filter(process=process) if process else auth_user.users.all())
 
     comments_list = []
     for user in user_list:
@@ -262,8 +262,10 @@ def gen_holiday_list(admin_user, year=None, month=None):
 
     # generate the select box for the years
     year_select = generate_select(year_select_data, id="year_select")
-    # generate the selecte box for the months
+    # generate the select box for the months
     month_select = generate_select(month_select_data, id="month_select")
+    # generate the select box for the process type
+    process_select = generate_select( (("ALL","All"),) + Tbluser.PROCESS_CHOICES, id="process_select")
     # generate submit all button
     to_out("""
     <tr>
@@ -276,6 +278,7 @@ def gen_holiday_list(admin_user, year=None, month=None):
             </td>
             <td>{0}</td>
             <td>{1}</td>
+            <td>{2}</td>
             <td>
               <input id="submit_all" value="Submit All" type="button"
                onclick="submit_all()" />
@@ -283,7 +286,7 @@ def gen_holiday_list(admin_user, year=None, month=None):
           </tr>
         </table>
       </td>
-     </tr>""".format(year_select, month_select))
+     </tr>""".format(year_select, month_select, process_select))
     return ''.join(str_output), comments_list
 
 
