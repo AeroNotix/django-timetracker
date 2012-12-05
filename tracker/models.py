@@ -61,13 +61,15 @@ class Tbluser(models.Model):
     MARKET_CHOICES = (
         ('BG', 'Germany'),
         ('BK', 'Kirchberg'),
-        ('CZ', 'Czech')
+        ('CZ', 'Czech'),
+        ('EN', 'MCBC'),
     )
 
     PROCESS_CHOICES = (
         ('AP', 'Accounts Payable'),
         ('AR', 'Accounts Receivable'),
-        ('AO', 'Accounting Operations')
+        ('AO', 'Accounting Operations'),
+        ('HR', 'HRO'),
     )
 
     JOB_CODES = (
