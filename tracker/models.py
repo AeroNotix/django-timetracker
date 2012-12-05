@@ -70,6 +70,7 @@ class Tbluser(models.Model):
         ('AR', 'Accounts Receivable'),
         ('AO', 'Accounting Operations'),
         ('HR', 'HRO'),
+        ('FA', 'F&A'),
     )
 
     JOB_CODES = (
