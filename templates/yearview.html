@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block menubar %}
+{% include "includes/get_nav.html" %}
+{% endblock menubar %}
+{% block title %}
+Year View - Timetracker
+{% endblock title %}
+
+{% block content %}
+{{ yearview_table }}
+{% endblock content %}

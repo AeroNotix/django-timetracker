@@ -451,10 +451,30 @@ def holiday_planning(request,
 
 
 @admin_check
-def yearview(request, who=None):
+def yearview(request, who=None, year=None):
+
+    if not year:
+        year = str(datetime.datetime.now().year)
     if not who:
-        pass
-    return HttpResponse("Not implemented")
+        userid = tblauth.objects.get(
+            admin=17#request.session.get('user_id')
+            ).users.all()[0].id
+        return HttpResponseRedirect("/yearview/%s/%s/" % (userid, year))
+
+    try:
+        user = Tbluser.objects.get(
+            id=request.session.get('user_id')
+        )
+    except Tbluser.DoesNotExist:
+        raise Http404
+
+    return render_to_response(
+        "yearview.html",
+        {
+            "yearview_table": Tbluser.objects.get(id=who).yearview(year),
+            "is_admin": user.user_type == "ADMIN",
+            "is_team_leader": user.user_type == "TEAML",
+        }, RequestContext(request))
 
 
 @loggedin
