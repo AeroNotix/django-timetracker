@@ -53,7 +53,11 @@ function validateTimePair(fieldA, fieldB) {
         hour_diff--;
     }
 
-    return hour_diff < 0;
+    if (hour_diff < 0) {
+        return false;
+    } else {
+        return true;
+    }
 }
 
 function validateTime (field) {
