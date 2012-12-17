@@ -402,7 +402,6 @@ def holiday_planning(request,
     except Tbluser.DoesNotExist:
         raise Http404
 
-    is_admin = user.user_type == "ADMIN"
     # if the user is actually a TeamLeader, they can
     # view the team assigned to their manager
     is_team_leader = False
@@ -428,7 +427,7 @@ def holiday_planning(request,
     return render_to_response(
         "holidays.html",
         {
-            'is_admin': is_admin,
+            'is_admin': user.user_type == "ADMIN",
             'holiday_table': holiday_table,
             'comments_list': comments_list,
             'welcome_name': request.session['firstname'],
