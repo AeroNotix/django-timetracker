@@ -178,10 +178,11 @@ function addFunctions () {
 
     $("#year_select").val($("#holiday-table").attr("year"));
     $("#month_select").val($("#holiday-table").attr("month"));
+    $("#process_select").val($("#holiday-table").attr("process"));
     $("#employees-select, #day_options").change(function () {
         retrieveComments();
     });
-    $("#year_select, #month_select").change(function () {
+    $("#year_select, #month_select, #process_select").change(function () {
         change_table_data();
     });
 
@@ -203,11 +204,16 @@ function change_table_data () {
 
     var year = $("#year_select").val();
     var month = $("#month_select").val();
+    var process = $("#process_select").val();
+
+    if (process === "ALL") {
+        process = "";
+    }
 
     $.ajax({
         type: "GET",
         dataType: "HTML",
-        url: "/holiday_planning/" + year + "/" + month,
+        url: "/holiday_planning/" + year + "/" + month + "/" + process,
         success: function(data) {
 
             $("#holiday-wrapper, #comments-wrapper").fadeTo(500, 0, function() {
@@ -237,6 +243,7 @@ function change_table_data () {
                 addFunctions();
                 $("#year_select").val(year);
                 $("#month_select").val(month);
+                $("#process_select").val(process);
                 $("#holiday-wrapper, #comments-wrapper").fadeTo(500, 1);
             });
             checkTeamLeader();
