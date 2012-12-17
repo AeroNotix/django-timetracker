@@ -14,7 +14,8 @@ from django.db import models
 from django.forms import ModelForm
 
 from timetracker.utils.datemaps import (
-    WORKING_CHOICES, DAYTYPE_CHOICES, float_to_time, datetime_to_timestring
+    WORKING_CHOICES, DAYTYPE_CHOICES, float_to_time, datetime_to_timestring,
+    MONTH_MAP
     )
 
 
@@ -252,9 +253,14 @@ class Tbluser(models.Model):
     def yearview(self, year):
         entries = TrackingEntry.objects.filter(user_id=self.id,
                                                entry_date__year=year)
-        out = ''
-        for item in entries:
-            out+= str(item) + '\n'
+
+        out = "<table>"
+        for x in range(0,12):
+            out += "<tr><th>%s</th>" % MONTH_MAP[x][1]
+            for z in range(1,32):
+                out += "<td>%d</td>" % z
+            out += "</tr>"
+        out += "</table>"
         return out
 
     def is_admin(self):
