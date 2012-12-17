@@ -41,6 +41,8 @@ urlpatterns = patterns('',
                        
     url(r'^holiday_planning%s$' % PROCESS, views.holiday_planning),
     url(r'^holiday_planning/%s/%s%s$' % (YEAR, MONTH, PROCESS), views.holiday_planning),
+
+    url(r'^yearview/?$', views.yearview),
                        
     url(r'^admin_view/?$', views.admin_view),
     url(r'^ajax/?$', views.ajax),

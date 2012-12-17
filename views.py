@@ -450,6 +450,13 @@ def holiday_planning(request,
         RequestContext(request))
 
 
+@admin_check
+def yearview(request, who=None):
+    if not who:
+        pass
+    return HttpResponse("Not implemented")
+
+
 @loggedin
 def edit_profile(request):
 
