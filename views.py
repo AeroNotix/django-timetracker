@@ -275,6 +275,8 @@ def admin_view(request):
     is_team_leader = False
     # if the user is actually a TeamLeader, they can
     # view the team assigned to their manager
+    is_team_leader = auth.user_type == "TEAML"
+    is_admin = auth.user_type == "ADMIN"
     if auth.user_type == "TEAML":
         is_team_leader = True
         auth = auth.get_administrator()
@@ -295,7 +297,7 @@ def admin_view(request):
     return render_to_response(
         "admin_view.html",
         {
-            "is_admin": auth.user_type == "ADMIN",
+            "is_admin": is_admin,
             "is_team_leader": is_team_leader,
             "employees": employees,
             'welcome_name': request.session['firstname'],
@@ -406,6 +408,7 @@ def holiday_planning(request,
     # if the user is actually a TeamLeader, they can
     # view the team assigned to their manager
     is_team_leader = False
+    is_admin = user.user_type == "ADMIN"
     if user.user_type == "TEAML":
         is_team_leader = True
         try:
@@ -424,7 +427,7 @@ def holiday_planning(request,
     return render_to_response(
         "holidays.html",
         {
-            'is_admin': user.user_type == "ADMIN",
+            'is_admin': is_admin,
             'holiday_table': holiday_table,
             'comments_list': comments_list,
             'welcome_name': request.session['firstname'],
