@@ -347,6 +347,7 @@ def add_change_user(request):
         auth_links = tblauth.objects.get(admin_id=auth)
         if not is_team_leader:
             ees = auth_links.manager_view()
+            ees = list(ees) + [auth]
         else:
             ees = auth_links.teamleader_view()
         ees_tuple = [(user.id, user.name()) for user in ees]
