@@ -454,14 +454,14 @@ class Tblauthorization(models.Model):
         :rtype: :class:`string`
         """
 
-        table_header = """
+        table_header = u"""
                        <table>
                          <tr>
                           <th>Name</th>
                          </tr>
                        """
 
-        table_data_string = """
+        table_data_string = u"""
                             <tr>
                               <td>{0}</td>
                             </tr>
@@ -472,9 +472,9 @@ class Tblauthorization(models.Model):
             for user in self.users.all()
         ]
 
-        return ''.join([
+        return u''.join([
             table_header,
-            ''.join([table_entry for table_entry in table_inner_list]),
+            u''.join([table_entry for table_entry in table_inner_list]),
             '</table>']
         )
 
