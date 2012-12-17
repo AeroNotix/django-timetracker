@@ -59,18 +59,21 @@ class Tbluser(models.Model):
     )
 
     MARKET_CHOICES = (
-        ('BG', 'Germany'),
-        ('BK', 'Kirchberg'),
-        ('CZ', 'Czech'),
+        ('BF', 'BPO Factory'),
+        ('BG', 'Behr Germany'),
+        ('BK', 'Behr Kirchberg'),
+        ('CZ', 'Behr Czech'),
         ('EN', 'MCBC'),
     )
 
     PROCESS_CHOICES = (
+        ('AO', 'Accounting Operations'),
         ('AP', 'Accounts Payable'),
         ('AR', 'Accounts Receivable'),
-        ('AO', 'Accounting Operations'),
-        ('HR', 'HRO'),
         ('FA', 'F&A'),
+        ('HR', 'HRO'),
+        ('SC', 'Scanning'),
+        ('TE', 'Travel & Expenses'),
     )
 
     JOB_CODES = (
@@ -80,7 +83,9 @@ class Tbluser(models.Model):
         ('00F20D', '00F20D'),
         ('00F20E', '00F20E'),
         ('00F20F', '00F20F'),
-        ('00F20G', '00F20G')
+        ('00F20G', '00F20G'),
+        ('00000A', 'Holi A'),
+        ('00000B', 'Holi B'),
     )
 
     user_id = models.EmailField(max_length=105,
