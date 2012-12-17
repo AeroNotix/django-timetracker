@@ -76,15 +76,6 @@ def login(request):
     :return: A HttpResponse object which is then passed to the browser
     """
    
-    # if this somehow gets requested via Ajax, then
-    # send back a 404.
-    if request.is_ajax():
-        raise Http404
-
-    # if the csrf token is missing, that's a 404
-    if not request.POST.get('csrfmiddlewaretoken', None):
-        raise Http404
-
     try:
         # pull out the user from the POST and
         # match it against our db
