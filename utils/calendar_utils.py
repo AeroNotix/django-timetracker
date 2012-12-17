@@ -40,7 +40,8 @@ from timetracker.tracker.models import TrackingEntry, Tbluser
 from timetracker.tracker.models import Tblauthorization as Tblauth
 from timetracker.utils.error_codes import DUPLICATE_ENTRY, CONNECTION_REFUSED
 from timetracker.utils.datemaps import (MONTH_MAP, WEEK_MAP_SHORT,
-                                        generate_select, pad)
+                                        generate_select, generate_year_box,
+                                        pad)
 from timetracker.utils.decorators import (admin_check, json_response,
                                           request_check)
 
@@ -250,17 +251,12 @@ def gen_holiday_list(admin_user, year=None, month=None, process=None):
                   </td>""".format(user.id))
         to_out('</tr>')
 
-    # generate the data for the year select box
-    year_select_data = [(y, y) for y in range(year, year - 3, -1)]
-    year_select_data.extend([(y, y) for y in range(year + 1, year + 3)])
-    year_select_data.sort()
-
     # generate the data for the month select box
     month_select_data = [(month_num + 1, month[1])
                          for month_num, month in MONTH_MAP.items()]
 
     # generate the select box for the years
-    year_select = generate_select(year_select_data, id="year_select")
+    year_select = generate_year_box(year, id="year_select")
     # generate the select box for the months
     month_select = generate_select(month_select_data, id="month_select")
     # generate the select box for the process type

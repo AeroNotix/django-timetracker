@@ -69,5 +69,9 @@ Year View - Timetracker
       </div>
     </td>
 </table>
+<div id="hidden_year" hidden=true>{{year}}</div>
 </div>
 {% endblock content %}
+{% block additional_javascript %}
+<script type="text/javascript" src="{{ STATIC_URL }}js/yearview.js"></script>
+{% endblock additional_javascript %}

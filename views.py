@@ -457,24 +457,46 @@ def yearview(request, who=None, year=None):
         year = str(datetime.datetime.now().year)
     if not who:
         userid = tblauth.objects.get(
-            admin=17#request.session.get('user_id')
+            admin=request.session.get('user_id')
             ).users.all()[0].id
         return HttpResponseRedirect("/yearview/%s/%s/" % (userid, year))
 
+    auth_user = Tbluser.objects.get(
+        id=request.session.get('user_id')
+        ).get_administrator()
+    is_team_leader = auth_user.user_type == "TEAML"
+    is_admin = auth_user.user_type == "ADMIN"
+    auth_links = tblauth.objects.get(admin_id=auth_user)
+
+    # stop people from editing the URL to access agents outside their
+    # span of control.
     try:
-        user = Tbluser.objects.get(
-            id=request.session.get('user_id')
-        )
+        auth_links.users.get(id=who)
     except Tbluser.DoesNotExist:
         raise Http404
 
-    return render_to_response(
-        "yearview.html",
-        {
-            "yearview_table": Tbluser.objects.get(id=who).yearview(year),
-            "is_admin": user.user_type == "ADMIN",
-            "is_team_leader": user.user_type == "TEAML",
-        }, RequestContext(request))
+    if not is_team_leader:
+        ees = auth_links.manager_view()
+    else:
+        ees = auth_links.teamleader_view()
+
+    ees_tuple = [(user.id, user.name()) for user in ees]
+    ees_tuple.append(("null", "----------"))
+    employees_select = generate_select(
+        ees_tuple,
+        id="user_select"
+        )
+
+    yeartable = Tbluser.objects.get(id=who).yearview(year)
+    yeartable = yeartable.format(employees_select=employees_select, c="EMPTY")
+    return render_to_response("yearview.html",
+                              {"yearview_table": yeartable,
+                               "is_admin": user.user_type == "ADMIN",
+                               "welcome_name": request.session['firstname'],
+                               "is_team_leader": is_team_leader,
+                               "is_admin": True,
+                               "year": year,
+                               }, RequestContext(request))
 
 
 @loggedin

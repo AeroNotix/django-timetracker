@@ -15,7 +15,7 @@ from django.forms import ModelForm
 
 from timetracker.utils.datemaps import (
     WORKING_CHOICES, DAYTYPE_CHOICES, float_to_time, datetime_to_timestring,
-    MONTH_MAP
+    MONTH_MAP, generate_year_box
     )
 
 
@@ -267,7 +267,13 @@ class Tbluser(models.Model):
         for entry in entries:
             final[entry.entry_date.month-1][entry.entry_date.day] = \
                 final[entry.entry_date.month-1][entry.entry_date.day].format(c=entry.daytype)
-        return ''.join([''.join(subrow) for subrow in final])
+        table_string = ''.join([''.join(subrow) for subrow in final])
+        table_string += ''.join([
+                "</table><table>",
+                "<tr><th>Year</th><td>%s</td></tr>" % generate_year_box(int(year), id="cmb_yearbox"),
+                "<tr><th>Agent</th><td colspan=999>{employees_select}</td></tr>",
+                "</table>"])
+        return table_string
 
     def is_admin(self):
         """

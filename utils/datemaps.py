@@ -96,6 +96,11 @@ DAYTYPE_CHOICES = (
     ('ROVER', 'Return for overtime'),
 )
 
+def generate_year_box(year, id=''):
+    year_select_data = [(y, y) for y in range(year, year - 3, -1)]
+    year_select_data.extend([(y, y) for y in range(year + 1, year + 3)])
+    year_select_data.sort()
+    return generate_select(year_select_data, id)
 
 def generate_select(data, id=''):
     """Generates a select box from a tuple of tuples
