@@ -456,10 +456,13 @@ def yearview(request, who=None, year=None):
     if not year:
         year = str(datetime.datetime.now().year)
     if not who:
-        userid = tblauth.objects.get(
-            admin=request.session.get('user_id')
-            ).users.all()[0].id
-        return HttpResponseRedirect("/yearview/%s/%s/" % (userid, year))
+        try:
+            userid = tblauth.objects.get(
+                admin=request.session.get('user_id')
+                ).users.all()[0].id
+            return HttpResponseRedirect("/yearview/%s/%s/" % (userid, year))
+        except IndexError:
+            return HttpResponse("You have no team members.")
 
     auth_user = Tbluser.objects.get(
         id=request.session.get('user_id')
