@@ -470,7 +470,7 @@ def yearview(request, who=None, year=None):
     # stop people from editing the URL to access agents outside their
     # span of control.
     try:
-        auth_links.users.get(id=who)
+        tblauth.objects.get(admin_id=auth_user).users.get(id=who)
     except Tbluser.DoesNotExist:
         raise Http404
 
@@ -478,10 +478,9 @@ def yearview(request, who=None, year=None):
     yeartable = yeartable.format(employees_select=generate_employee_box(auth_user), c="EMPTY")
     return render_to_response("yearview.html",
                               {"yearview_table": yeartable,
-                               "is_admin": user.user_type == "ADMIN",
                                "welcome_name": request.session['firstname'],
                                "is_team_leader": is_team_leader,
-                               "is_admin": True,
+                               "is_admin": is_admin,
                                "year": year,
                                }, RequestContext(request))
 
