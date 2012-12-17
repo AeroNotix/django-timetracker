@@ -17,7 +17,7 @@ function validateDate (field) {
 
     */
 
-    return $(field).val().match( /\d{4}\-\d{1,2}\-\d{1,2}/ );
+    return /\d{4}\-\d{1,2}\-\d{1,2}/g.test($(field).val());
 }
 
 function validateTimePair(fieldA, fieldB) {
@@ -48,6 +48,7 @@ function validateTimePair(fieldA, fieldB) {
 
     var min_diff = fieldB_matches[1] - fieldA_matches[1];
     var hour_diff = fieldB_matches[0] - fieldA_matches[0];
+
     if (min_diff < 0) {
         min_diff = min_diff + 60;
         hour_diff--;
@@ -76,7 +77,7 @@ function validateTime (field) {
 
     */
 
-    return $(field).val().match( /\d{1,2}\:\d{1,2}(\:\d{1,2})?/ );
+    return /\d{1,2}\:\d{1,2}(\:\d{1,2})?/g.test($(field).val());
 }
 
 function stringMatch (fieldA, fieldB) {
@@ -117,9 +118,9 @@ function emailValidate (element_name) {
     var email = $(element_name).val();
 
     /*
-      [A-Za-z0-9_.]+ = matches all alphanumeric characters with _ and .
+      [A-Za-z0-9_.\-]+ = matches all alphanumeric characters with -, _ and .
       @ = matches @
       \.[A-Za-z]+ = matches . with any length alphanumeric string after
     */
-    return email.match( /^[A-Za-z0-9_.]+@[A-Za-z0-9_.]+\.[A-Za-z]+$/ );
+    return /^[A-Za-z0-9_.\-]+@[A-Za-z0-9_.\-]+\.[A-Za-z]+$/g.test(email);
 }
