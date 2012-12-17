@@ -17,11 +17,7 @@ function validateDate (field) {
 
     */
 
-    if ( $(field).val().match( /\d{4}\-\d{1,2}\-\d{1,2}/ ) ) {
-        return true;
-    } else {
-        return false;
-    }
+    return $(field).val().match( /\d{4}\-\d{1,2}\-\d{1,2}/ );
 }
 
 function validateTimePair(fieldA, fieldB) {
@@ -46,7 +42,7 @@ function validateTimePair(fieldA, fieldB) {
         return true;
     }
 
-    if (!verifyAll(fieldA_matches) && !verifyAll(fieldB_matches)){
+    if (!verifyAll(fieldA_matches) && !verifyAll(fieldB_matches)) {
         return false;
     }
 
@@ -57,11 +53,7 @@ function validateTimePair(fieldA, fieldB) {
         hour_diff--;
     }
 
-    if (hour_diff < 0) {
-        return false;
-    } else {
-        return true;
-    }
+    return hour_diff < 0;
 }
 
 function validateTime (field) {
@@ -80,11 +72,7 @@ function validateTime (field) {
 
     */
 
-    if ( $(field).val().match( /\d{1,2}\:\d{1,2}(\:\d{1,2})?/ ) ) {
-        return true;
-    } else {
-        return false;
-    }
+    return $(field).val().match( /\d{1,2}\:\d{1,2}(\:\d{1,2})?/ );
 }
 
 function stringMatch (fieldA, fieldB) {
@@ -93,11 +81,7 @@ function stringMatch (fieldA, fieldB) {
        String matching function
     */
 
-    if ($(fieldA).val() === $(fieldB).val()) {
-        return true;
-    } else {
-        return false;
-    }
+    return $(fieldA).val() === $(fieldB).val();
 }
 
 function checkStringLengths (stringArray, len) {
@@ -133,9 +117,5 @@ function emailValidate (element_name) {
       @ = matches @
       \.[A-Za-z]+ = matches . with any length alphanumeric string after
     */
-    if (email.match( /^[A-Za-z0-9_.]+@[A-Za-z0-9_.]+\.[A-Za-z]+$/ ) ) {
-        return true;
-    } else {
-        return false;
-    }
+    return email.match( /^[A-Za-z0-9_.]+@[A-Za-z0-9_.]+\.[A-Za-z]+$/ );
 }
