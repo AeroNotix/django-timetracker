@@ -203,9 +203,9 @@ def gen_holiday_list(admin_user, year=None, month=None):
     # their own holidays
     auth_user = Tblauth.objects.get(admin=admin_user.get_administrator())
     if admin_user.user_type == "TEAML":
-        user_list = list(auth_user.users.all())
+        user_list = list(auth_user.users.all().order_by('lastname'))
     else:
-        user_list = [admin_user] + list(auth_user.users.all())
+        user_list = [admin_user] + list(auth_user.users.all().order_by('lastname'))
 
     comments_list = []
     for user in user_list:

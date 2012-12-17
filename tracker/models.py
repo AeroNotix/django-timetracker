@@ -474,7 +474,7 @@ class Tblauthorization(models.Model):
 
         table_inner_list = [
             table_data_string.format(user.name())
-            for user in self.users.all()
+            for user in self.users.all().order_by('lastname')
         ]
 
         return u''.join([
@@ -491,7 +491,7 @@ class Tblauthorization(models.Model):
 
         :rtype: :class:`QuerySet`
         """
-        return self.users.all()
+        return self.users.all().order_by('lastname')
 
     def teamleader_view(self):
         """
@@ -501,7 +501,7 @@ class Tblauthorization(models.Model):
 
         :rtype: :class:`QuerySet`
         """
-        return self.users.exclude(user_type__in=set(["TEAML", "ADMIN"]))
+        return self.users.exclude(user_type__in=set(["TEAML", "ADMIN"])).order_by('lastname')
 
     display_users.allow_tags = True
     display_users.short_discription = "Subordinate Users"
