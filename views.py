@@ -272,7 +272,6 @@ def admin_view(request):
         id=request.session.get("user_id", None)
     )
 
-    is_admin = auth.user_type == "ADMIN"
     is_team_leader = False
     # if the user is actually a TeamLeader, they can
     # view the team assigned to their manager
@@ -296,7 +295,7 @@ def admin_view(request):
     return render_to_response(
         "admin_view.html",
         {
-            "is_admin": is_admin,
+            "is_admin": auth.user_type == "ADMIN",
             "is_team_leader": is_team_leader,
             "employees": employees,
             'welcome_name': request.session['firstname'],
@@ -421,7 +420,6 @@ def holiday_planning(request,
     auth_table = tblauth.objects.get(admin=user)
     people = list(auth_table.manager_view()) + [user]
     employees = [(emp.id, emp.name()) for emp in people]
-    employee_select = generate_select(employees, id="employees-select")
     holiday_table, comments_list = gen_holiday_list(user,
                                                     year,
                                                     month)
@@ -434,7 +432,7 @@ def holiday_planning(request,
             'welcome_name': request.session['firstname'],
             'is_team_leader': is_team_leader,
             'days_this_month': days_this_month,
-            'employee_select': employee_select
+            'employee_select': generate_select(employees, id="employees-select")
         },
         RequestContext(request))
 
@@ -453,16 +451,13 @@ def edit_profile(request):
     """
 
     user = Tbluser.objects.get(id=request.session.get("user_id"))
-    is_admin = user.user_type == "ADMIN"
-    is_team_leader = user.user_type == "TEAML"
-    balance = user.get_total_balance(ret='int')
     return render_to_response("editprofile.html",
                               {'firstname': user.firstname,
                                'lastname': user.lastname,
                                'welcome_name': request.session['firstname'],
-                               'balance': balance,
-                               'is_admin': is_admin,
-                               'is_team_leader': is_team_leader
+                               'balance': user.get_total_balance(ret='int'),
+                               'is_admin': user.user_type == "ADMIN",
+                               'is_team_leader': user.user_type == "TEAML"
                                },
                               RequestContext(request))
 
@@ -486,17 +481,13 @@ def explain(request):
     """
 
     user = Tbluser.objects.get(id=request.session.get("user_id"))
-    shift = str(user.shiftlength.hour) + ': ' + str(user.shiftlength.minute)
-    working_days = TrackingEntry.objects.filter(user=user.id).count()
-
-    balance = user.get_total_balance(ret='int')
     return render_to_response("balance.html",
                               {'firstname': user.firstname,
                                'lastname': user.lastname,
                                'welcome_name': request.session['firstname'],
-                               'balance': balance,
-                               'shiftlength': shift,
-                               'working_days': working_days
+                               'balance': user.get_total_balance(ret='int'),
+                               'shiftlength': str(user.shiftlength.hour) + ': ' + str(user.shiftlength.minute),
+                               'working_days': TrackingEntry.objects.filter(user=user.id).count()
                                },
                               RequestContext(request))
 
