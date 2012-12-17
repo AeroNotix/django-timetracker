@@ -1,8 +1,8 @@
 var mouseState = false;
-document.onmousedown = function(e){
+document.onmousedown = function(e) {
     mouseState = true;
 }
-document.onmouseup = function(e){
+document.onmouseup = function(e) {
     mouseState = false;
 }
 
@@ -12,7 +12,7 @@ function flushThis(id){
    var elementOnShow = document.getElementById(id);
    if (navigator.appName == msie){
       tmp = elementOnShow.parentNode.offsetTop  +  'px';
-   }else{
+   } else {
       tmp = elementOnShow.offsetTop;
    }
 }
@@ -32,7 +32,6 @@ function applyClass(klass) {
             if ($(this).hasClass("selected")) {
                 $(this).removeClass();
                 $(this).addClass(klass);
-
             }
         });
     return true;
@@ -52,16 +51,10 @@ function submit_all() {
         .find(":button")
         .not("#submit_all, #btn_change_td")
         .each(function () {
-            var call = submit_holidays($(this).attr("user_id"), true)
-            if (call === true) {
-                successfully_completed = true;
-            } else {
-                successfully_completed = false;
-            }
+            successfully_completed = submit_holidays($(this).attr("user_id"), true)
         });
     // refresh the table data
     setTimeout("change_table_data()", 1000);
-
     return successfully_completed;
 }
 
@@ -93,7 +86,7 @@ function submit_holidays(user_id, mass) {
             // get the bg colour of the td
             var current_class = $(this).attr('class');
             // this check is redundant but it helps if there
-            // are any changed to the selection methods
+            // are any changes to the selection methods
             if (current_class !== "selected") {
                 holiday_map[$(this).text()] = current_class;
             }
