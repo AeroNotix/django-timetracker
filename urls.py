@@ -6,13 +6,27 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 
 from timetracker import views
+from timetracker.tracker.models import Tbluser
+
+'''
+Generates the regex for the process list
+'''
+def gen_process_list():
+    out = ''
+    for i, process in enumerate(Tbluser.PROCESS_CHOICES):
+        out += process[0]
+        if i + 1 != len(Tbluser.PROCESS_CHOICES):
+            out += '|'
+    return out
 
 admin.autodiscover()
 
 YEAR = '(?P<year>\d{4})'
 MONTH = '(?P<month>\d{1,2})'
 DAY = '(?P<day>\d{1,2})'
-PROCESS = '/?(?P<process>AP|AR|AO)?'
+PROCESS = '/?(?P<process>%s)?'
+
+PROCESS = PROCESS % gen_process_list()
 
 # todo: tracker app needs to be made into it's own
 #       app and then the main views in here will
