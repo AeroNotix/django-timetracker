@@ -202,13 +202,13 @@ $(function () {
 
     $("#add_breaks")
         .timepicker({
-            showHour: false
+            showHour: true
         })
         .val('');
 
     $("#change_breaks")
         .timepicker({
-            showHour: false
+            showHour: true
         })
         .val('');
 
