@@ -27,7 +27,7 @@ from timetracker.utils.calendar_utils import (gen_calendar, gen_holiday_list,
                                               get_comments, add_comment,
                                               remove_comment)
 
-from timetracker.utils.datemaps import generate_select
+from timetracker.utils.datemaps import generate_select, generate_employee_box
 from timetracker.utils.decorators import admin_check, loggedin
 from timetracker.utils.error_codes import CONNECTION_REFUSED
 from timetracker.loggers import suspicious_log, email_log, error_log
@@ -428,10 +428,6 @@ def holiday_planning(request,
     # of that. Being lazy.
     days_this_month = range(1, len(gen_datetime_cal(year, month))+1)
 
-    auth_table = tblauth.objects.get(admin=user)
-    people = list(auth_table.manager_view()) + [user]
-    employees = [(emp.id, emp.name()) for emp in people]
-    employee_select = generate_select(employees, id="employees-select")
     holiday_table, comments_list = gen_holiday_list(user,
                                                     year,
                                                     month,
@@ -445,7 +441,7 @@ def holiday_planning(request,
             'welcome_name': request.session['firstname'],
             'is_team_leader': is_team_leader,
             'days_this_month': days_this_month,
-            'employee_select': employee_select
+            'employee_select': generate_employee_box(user)
         },
         RequestContext(request))
 
@@ -466,11 +462,10 @@ def yearview(request, who=None, year=None):
 
     auth_user = Tbluser.objects.get(
         id=request.session.get('user_id')
-        ).get_administrator()
+        )
     is_team_leader = auth_user.user_type == "TEAML"
     is_admin = auth_user.user_type == "ADMIN"
-    auth_links = tblauth.objects.get(admin_id=auth_user)
-
+    auth_user = auth_user.get_administrator()
     # stop people from editing the URL to access agents outside their
     # span of control.
     try:
@@ -478,20 +473,8 @@ def yearview(request, who=None, year=None):
     except Tbluser.DoesNotExist:
         raise Http404
 
-    if not is_team_leader:
-        ees = auth_links.manager_view()
-    else:
-        ees = auth_links.teamleader_view()
-
-    ees_tuple = [(user.id, user.name()) for user in ees]
-    ees_tuple.append(("null", "----------"))
-    employees_select = generate_select(
-        ees_tuple,
-        id="user_select"
-        )
-
     yeartable = Tbluser.objects.get(id=who).yearview(year)
-    yeartable = yeartable.format(employees_select=employees_select, c="EMPTY")
+    yeartable = yeartable.format(employees_select=generate_employee_box(auth_user), c="EMPTY")
     return render_to_response("yearview.html",
                               {"yearview_table": yeartable,
                                "is_admin": user.user_type == "ADMIN",

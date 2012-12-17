@@ -102,6 +102,23 @@ def generate_year_box(year, id=''):
     year_select_data.sort()
     return generate_select(year_select_data, id)
 
+def generate_employee_box(admin_user):
+    from timetracker.tracker.models import Tblauthorization as tblauth
+    is_team_leader = admin_user.user_type == "TEAML"
+    is_admin = admin_user.user_type == "ADMIN"
+    auth_links = tblauth.objects.get(admin_id=admin_user)
+    if not is_team_leader:
+        ees = auth_links.manager_view()
+    else:
+        ees = auth_links.teamleader_view()
+
+    ees_tuple = [(user.id, user.name()) for user in ees]
+    ees_tuple.append(("null", "----------"))
+    return generate_select(
+        ees_tuple,
+        id="user_select"
+        )
+
 def generate_select(data, id=''):
     """Generates a select box from a tuple of tuples
 
