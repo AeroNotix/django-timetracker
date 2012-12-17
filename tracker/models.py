@@ -253,15 +253,21 @@ class Tbluser(models.Model):
     def yearview(self, year):
         entries = TrackingEntry.objects.filter(user_id=self.id,
                                                entry_date__year=year)
-
-        out = "<table>"
+        final = []
+        out = []
+        out.append('<table id="holiday-table"><th colspan=999>%s</th>' % self.name())
         for x in range(0,12):
-            out += "<tr><th>%s</th>" % MONTH_MAP[x][1]
+            out.append("<tr><th>%s</th>" % MONTH_MAP[x][1])
             for z in range(1,32):
-                out += "<td>%d</td>" % z
-            out += "</tr>"
-        out += "</table>"
-        return out
+                out.append('<td class={c}>%d</td>' % z)
+            out.append("</tr>")
+            final.append(out)
+            out = []
+
+        for entry in entries:
+            final[entry.entry_date.month-1][entry.entry_date.day] = \
+                final[entry.entry_date.month-1][entry.entry_date.day].format(c=entry.daytype)
+        return ''.join([''.join(subrow) for subrow in final])
 
     def is_admin(self):
         """
