@@ -114,9 +114,7 @@ function emailValidate (element_name) {
        Takes a element tag and returns boolean if the
        value matches or not.
     */
-
     var email = $(element_name).val();
-
     /*
       [A-Za-z0-9_.\-]+ = matches all alphanumeric characters with -, _ and .
       @ = matches @
