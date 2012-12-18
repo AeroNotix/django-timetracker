@@ -1,0 +1,65 @@
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script> 
+<script src="validation.js"></script>
+
+<script type="text/javascript">
+function test(num, value, expected) {
+    document.write(num);
+    document.write(":  ");                                      
+    document.write(value === expected ? "pass" : "fail");
+    document.write("<br />");
+}
+</script>
+
+<html>
+  <body>
+    <input hidden=true id="num1" value="aaron.france@hp.com" />
+    <input hidden=true id="num2" value="aaron.france-wat@hp.com" />
+    <input hidden=true id="num3" value="aaron.francehp.com" />
+    <input hidden=true id="num4" value="aaron.france@hp.com" />
+
+    <input hidden=true id="num5" value="00:00" />
+    <input hidden=true id="num6" value="00:00:00" />
+    <input hidden=true id="num7" value="0s:00:00" />
+    <input hidden=true id="num8" value="0s:0s:00" />
+    <input hidden=true id="num9" value="0s:0s:0s" />
+    <input hidden=true id="num10" value="banana" />
+
+    <input hidden=true id="num11" value="00:00" />
+    <input hidden=true id="num12" value="00:01" />
+    <input hidden=true id="num13" value="banana" />
+
+    <input hidden=true id="num14" value="2012-11-18" />
+    <input hidden=true id="num15" value="20121118" />
+    <input hidden=true id="num16" value="banana" />
+
+    <script type="text/javascript">
+
+      test(1, emailValidate("#num1"), true);
+      test(2, emailValidate("#num2"), true);
+      test(3, emailValidate("#num3"), false);
+
+      test(4, checkStringLengths(["Javascript", "undefined!"], 9), true);
+      test(5, checkStringLengths(["not","the","s"], 2), false);
+
+      test(6, stringMatch("#num1", "#num2"), false);
+      test(7, stringMatch("#num1", "#num4"), true);
+
+      test(8, validateTime("#num5"), true);
+      test(9, validateTime("#num6"), true);
+      test(10, validateTime("#num7"), false);
+      test(11, validateTime("#num8"), false);
+      test(12, validateTime("#num9"), false);
+      test(13, validateTime("#num10"), false);
+
+      test(14, validateTimePair("#num11", "#num12"), true);
+      test(15, validateTimePair("#num12", "#num11"), false);
+      test(16, validateTimePair("#num11", "#num11"), true);
+      test(17, validateTimePair("#num13", "#num11"), false);
+
+      test(18, validateDate("#num14"), true);
+      test(19, validateDate("#num15"), false);
+      test(20, validateDate("#num16"), false);
+
+    </script>
+  </body>
+</html>
