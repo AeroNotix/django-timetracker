@@ -69,8 +69,15 @@ Year View - Timetracker
       </div>
     </td>
 </table>
-<div id="hidden_year" hidden=true>{{year}}</div>
+<!--[if IE]>
+    </div id=IEFix>
+<![endif]-->
+
+<div id="hidden_year" style="{display:none}" hidden=true>{{year}}</div>
 </div>
+<div id="hidden_ee" style="{display:none}" hidden=true>{{eeid}}</div>
+</div>
+
 {% endblock content %}
 {% block additional_javascript %}
 <script type="text/javascript" src="{{ STATIC_URL }}js/yearview.js"></script>

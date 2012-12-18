@@ -473,6 +473,7 @@ def yearview(request, who=None, year=None):
                                "is_team_leader": is_team_leader,
                                "is_admin": is_admin,
                                "year": year,
+                               "eeid": who,
                                }, RequestContext(request))
 
 

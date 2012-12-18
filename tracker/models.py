@@ -269,10 +269,10 @@ class Tbluser(models.Model):
                 final[entry.entry_date.month-1][entry.entry_date.day].format(c=entry.daytype)
         table_string = ''.join([''.join(subrow) for subrow in final])
         table_string += ''.join([
-                "</table><table>",
+                "<tr><td colspan=100><table>",
                 "<tr><th>Year</th><td>%s</td></tr>" % generate_year_box(int(year), id="cmb_yearbox"),
-                "<tr><th>Agent</th><td colspan=999>{employees_select}</td></tr>",
-                "</table>"])
+                "<tr><th>Agent</th><td>{employees_select}</td></tr>",
+                "</table></td></tr></table>"])
         return table_string
 
     def is_admin(self):
