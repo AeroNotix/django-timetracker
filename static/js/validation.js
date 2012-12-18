@@ -27,6 +27,10 @@ function validateTimePair(fieldA, fieldB) {
     var fieldA_matches = $(fieldA).val().split( /\:/ );
     var fieldB_matches = $(fieldB).val().split( /\:/ );
 
+    if (!validateTime(fieldA) || !validateTime(fieldB)) {
+        return false;
+    }
+
     function verifyAll(match_group) {
         /*
            Validates that the group matches are both
@@ -77,7 +81,7 @@ function validateTime (field) {
 
     */
 
-    return /\d{1,2}\:\d{1,2}(\:\d{1,2})?/g.test($(field).val());
+    return /^\d{1,2}\:\d{1,2}(\:\d{1,2})?/g.test($(field).val());
 }
 
 function stringMatch (fieldA, fieldB) {
