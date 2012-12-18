@@ -73,10 +73,16 @@ Year View - Timetracker
     </div id=IEFix>
 <![endif]-->
 
-<div id="hidden_year" style="{display:none}" hidden=true>{{year}}</div>
-</div>
-<div id="hidden_ee" style="{display:none}" hidden=true>{{eeid}}</div>
-</div>
+<style>
+  #hidden_year {
+     display: none;
+ }
+  #hidden_ee {
+     display: none;
+  }
+</style>
+<div id="hidden_year" hidden=true>{{year}}</div>
+<div id="hidden_ee" hidden=true>{{eeid}}</div>
 
 {% endblock content %}
 {% block additional_javascript %}
