@@ -285,7 +285,7 @@ def admin_view(request):
         auth = auth.get_administrator()
     try:
         employees = tblauth.objects.get(admin=auth)
-        ees_tuple = [(user.id, user.name()) for user in employees.users.filter(disabled=False)]
+        ees_tuple = [(user.id, user.name()) for user in employees.users.filter(disabled=False).order_by("lastname")]
         ees_tuple.append(("null", "----------"))
         employees_select = generate_select(
             ees_tuple,
