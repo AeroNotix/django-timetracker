@@ -9,6 +9,7 @@ TODO
   are as optimal as they can be.
 
 * Write more tests for the new features:
+
    - Enable/Disable users.
    - YearView
    - Anything else since commit 76cf2d3bd343158c5aa20017047ab5edab367487
