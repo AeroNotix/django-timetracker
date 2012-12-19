@@ -235,7 +235,7 @@ def gen_holiday_list(admin_user, year=None, month=None, process=None):
                    <td class="job_code">%s</td>""" % (
             user.name(),
             user.get_holiday_balance(year),
-            user.job_code
+            user.get_job_code_display()
             )
         )
 

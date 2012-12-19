@@ -85,8 +85,8 @@ class Tbluser(models.Model):
         ('00F20E', '00F20E'),
         ('00F20F', '00F20F'),
         ('00F20G', '00F20G'),
-        ('00000A', 'Holi A'),
-        ('00000B', 'Holi B'),
+        ('00000A', 'A'),
+        ('00000B', 'B'),
     )
 
     user_id = models.EmailField(max_length=105,
