@@ -54,6 +54,8 @@ urlpatterns = patterns('',
     url(r'^explain/?$', views.explain),
     url(r'^forgot_my_password/?$', views.forgot_pass),
 
+    url(r'^reports/?$', views.reports),
+
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/', include(admin.site.urls)),
 )

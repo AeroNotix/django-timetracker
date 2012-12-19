@@ -590,3 +590,11 @@ def forgot_pass(request):
         else:
             error_log.critical(str(error))
     return HttpResponseRedirect("/")
+
+def reports(request):
+    return render_to_response(
+        'reports.html',
+        {},
+        RequestContext(request)
+        )
+
