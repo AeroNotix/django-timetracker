@@ -5,13 +5,18 @@
     :platform: All
     :synopsis: Module which contains view functions that are mapped from urls
 '''
-
+import os
 import datetime as dt
 
 from operator import add
 
 from django.db import models
 from django.forms import ModelForm
+
+settings_module = os.environ.get("DJANGO_SETTINGS_MODULE")
+fromset = ["DAY_ON_DEMAND_ALLOWANCE"]
+_mod_ = __import__(settings_module, globals(), locals(), fromset, -1)
+
 
 from timetracker.utils.datemaps import (
     WORKING_CHOICES, DAYTYPE_CHOICES, float_to_time, datetime_to_timestring,
@@ -332,7 +337,7 @@ class Tbluser(models.Model):
         days = TrackingEntry.objects.filter(user_id=self.id,
                                             entry_date__year=year,
                                             daytype="DAYOD")
-        return 4 - len(days)
+        return _mod_.DAY_ON_DEMAND_ALLOWANCE - len(days)
 
     def get_total_balance(self, ret='html'):
 
