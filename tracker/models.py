@@ -328,6 +328,12 @@ class Tbluser(models.Model):
 
         return holiday_balance
 
+    def get_dod_balance(self, year):
+        days = TrackingEntry.objects.filter(user_id=self.id,
+                                            entry_date__year=year,
+                                            daytype="DAYOD")
+        return 4 - len(days)
+
     def get_total_balance(self, ret='html'):
 
         """ Calculates the total balance for the user.

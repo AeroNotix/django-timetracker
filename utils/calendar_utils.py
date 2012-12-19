@@ -195,7 +195,7 @@ def gen_holiday_list(admin_user, year=None, month=None, process=None):
 
     # generate the top row, with day names
     day_names = [WEEK_MAP_SHORT[day.weekday()] for day in datetime_cal]
-    to_out("""<tr id="theader"><td>Name</td><td>Balance</td><td>Code</td>""")
+    to_out("""<tr id="theader"><td>Name</td><td>Balance</td><td>DOD</td><td>Code</td>""")
     [to_out("<td>%s</td>\n" % day) for day in day_names]
     to_out("</tr>")
 
@@ -232,9 +232,11 @@ def gen_holiday_list(admin_user, year=None, month=None, process=None):
                <tr>
                  <th class="user-td">%s</th>
                    <td>%s</td>
+                   <td>%s</td>
                    <td class="job_code">%s</td>""" % (
             user.name(),
             user.get_holiday_balance(year),
+            user.get_dod_balance(year),
             user.get_job_code_display()
             )
         )
