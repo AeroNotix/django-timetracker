@@ -275,17 +275,17 @@ def admin_view(request):
         id=request.session.get("user_id", None)
     )
 
-    is_team_leader = False
     # if the user is actually a TeamLeader, they can
     # view the team assigned to their manager
     is_team_leader = auth.user_type == "TEAML"
     is_admin = auth.user_type == "ADMIN"
-    if auth.user_type == "TEAML":
-        is_team_leader = True
+    if is_team_leader:
         auth = auth.get_administrator()
+
     try:
         employees = tblauth.objects.get(admin=auth)
-        ees_tuple = [(user.id, user.name()) for user in employees.users.filter(disabled=False).order_by("lastname")]
+        employees = employees.users.filter(disabled=False).order_by("lastname")
+        ees_tuple = [(user.id, user.name()) for user in employees]
         ees_tuple.append(("null", "----------"))
         employees_select = generate_select(
             ees_tuple,
