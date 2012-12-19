@@ -108,9 +108,9 @@ def generate_employee_box(admin_user):
     is_admin = admin_user.user_type == "ADMIN"
     auth_links = tblauth.objects.get(admin_id=admin_user)
     if not is_team_leader:
-        ees = auth_links.manager_view()
+        ees = auth_links.manager_view().filter(disabled=False)
     else:
-        ees = auth_links.teamleader_view()
+        ees = auth_links.teamleader_view().filter(disabled=False)
 
     ees_tuple = [(user.id, user.name()) for user in ees]
     ees_tuple.append(("null", "----------"))

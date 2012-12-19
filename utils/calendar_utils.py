@@ -203,7 +203,10 @@ def gen_holiday_list(admin_user, year=None, month=None, process=None):
     # this means that administrator accounts can view/change
     # their own holidays
     auth_user = Tblauth.objects.get(admin=admin_user.get_administrator())
-    user_list = list(auth_user.users.filter(process=process).order_by('lastname') if process else auth_user.users.all().order_by('lastname'))
+    user_list = list(
+        auth_user.users.filter(process=process).order_by('lastname').filter(disabled=False) if process \
+            else auth_user.users.all().order_by('lastname').filter(disabled=False)
+        )
     if admin_user.user_type != "TEAML":
         user_list = [admin_user] + user_list
 
@@ -856,7 +859,8 @@ def get_user_data(request):
             'breaklength': str(user.breaklength),
             'shiftlength': str(user.shiftlength),
             'job_code': user.job_code,
-            'holiday_balance': user.holiday_balance
+            'holiday_balance': user.holiday_balance,
+            'disabled': user.disabled
         }
         json_data['success'] = True
 
@@ -964,6 +968,7 @@ def useredit(request):
                'shiftlength': "00:07:45"
                'job_code': "ABC123"
                'holiday_balance': 20,
+               'disabled': "false",
                'mode': "false"
            }
        });
@@ -1103,6 +1108,10 @@ def useredit(request):
             # attributes with what was on the form
             user = Tbluser.objects.get(id__exact=request.POST.get("mode"))
             for key, value in data.items():
+                if value == "false":
+                    value = False
+                if value == "true":
+                    value = True
                 if key != 'password':
                     setattr(user, key, value)
             user.save()

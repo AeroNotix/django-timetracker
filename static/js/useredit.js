@@ -43,6 +43,7 @@ function onOptionChange() {
                 $("#id_shiftlength").val(data.shiftlength);
                 $("#id_job_code").val(data.job_code);
                 $("#id_holiday_balance").val(data.holiday_balance);
+                $("#id_disabled").prop("checked", data.disabled);
 
             } else {
                 alert(data.error);
@@ -155,7 +156,8 @@ function addChangeEntry(entryType) {
         'breaklength',
         'shiftlength',
         'job_code',
-        'holiday_balance'
+        'holiday_balance',
+        'disabled'
     ]
 
     /*
@@ -185,8 +187,12 @@ function addChangeEntry(entryType) {
     // vals easy
     $("#user-edit-form").find(":input").not(":button").each(
         function () {
-            form_data[data[index]] = $(this).val();
-            index++
+            if (data[index] === "disabled") {
+                form_data[data[index]] = $(this).is(":checked");
+            } else {
+                form_data[data[index]] = $(this).val();
+            }
+            index++;
         }
     );
 

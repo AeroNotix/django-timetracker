@@ -132,6 +132,8 @@ class Tbluser(models.Model):
     holiday_balance = models.IntegerField(db_column='Holiday_Balance',
                                           verbose_name=('Holiday Balance'))
 
+    disabled = models.BooleanField(db_column='disabled',
+                                   verbose_name=('Disabled'))
 
     class Meta:
 
@@ -156,6 +158,9 @@ class Tbluser(models.Model):
         return '%s - %s %s ' % (self.user_id,
                                 self.firstname,
                                 self.lastname)
+
+    def isdisabled(self):
+        return self.disabled
 
     def get_shiftlength_list(self):
         """

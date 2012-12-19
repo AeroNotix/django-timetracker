@@ -84,6 +84,9 @@ def login(request):
     except Tbluser.DoesNotExist:
         return HttpResponse("Username and Password don't match")
 
+    if user.isdisabled():
+        raise Http404
+
     if user.password == request.POST['password']:
 
         # if all goes well, send to the tracker
@@ -282,7 +285,7 @@ def admin_view(request):
         auth = auth.get_administrator()
     try:
         employees = tblauth.objects.get(admin=auth)
-        ees_tuple = [(user.id, user.name()) for user in employees.users.all()]
+        ees_tuple = [(user.id, user.name()) for user in employees.users.filter(disabled=False)]
         ees_tuple.append(("null", "----------"))
         employees_select = generate_select(
             ees_tuple,
@@ -447,7 +450,7 @@ def yearview(request, who=None, year=None):
         try:
             userid = tblauth.objects.get(
                 admin=request.session.get('user_id')
-                ).users.all()[0].id
+                ).users.filter(disabled=False)[0].id
             return HttpResponseRedirect("/yearview/%s/%s/" % (userid, year))
         except IndexError:
             return HttpResponse("You have no team members.")
