@@ -1,4 +1,7 @@
 function onchanger() {
+    if ($("#user_select").val() === "null") {
+        return;
+    }
     window.location.href = "/yearview/" + $("#user_select").val() + "/" + $("#cmb_yearbox").val() + "/";
 }
 
