@@ -412,21 +412,18 @@ def holiday_planning(request,
     # view the team assigned to their manager
     is_team_leader = False
     is_admin = user.user_type == "ADMIN"
+    holiday_table, comments_list = gen_holiday_list(user,
+                                                    year,
+                                                    month,
+                                                    process)
     if user.user_type == "TEAML":
         is_team_leader = True
-        try:
-            user = user.get_administrator()
-        except tblauth.DoesNotExist:
-            return HttpResponseRedirect("/admin_view/")
 
     # calculate the days in the month, this is inefficient.
     # It creates a list of datetime objects and gets the len
     # of that. Being lazy.
     days_this_month = range(1, len(gen_datetime_cal(year, month))+1)
-    holiday_table, comments_list = gen_holiday_list(user,
-                                                    year,
-                                                    month,
-                                                    process)
+
     return render_to_response(
         "holidays.html",
         {

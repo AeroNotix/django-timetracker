@@ -241,7 +241,7 @@ def gen_holiday_list(admin_user, year=None, month=None, process=None):
             user.name(),
             user.get_holiday_balance(year),
             user.get_dod_balance(year),
-            user.get_job_code_display()
+            user.get_job_code_display() if admin_user.user_type == "ADMIN" else ""
             )
         )
 
