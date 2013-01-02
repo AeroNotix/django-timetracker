@@ -69,13 +69,13 @@ function submit_all() {
             } else {
                 alert(data.error);
             }
+			change_table_data();
         },
         error: function(ajaxObj, textStatus, error) {
             alert(error);
         }
     });
 
-    setTimeout("change_table_data()", 1000);
     return successfully_completed;
 }
 
