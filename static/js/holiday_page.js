@@ -78,19 +78,10 @@ function submit_holidays(user_id, mass) {
     // iterate through the table and check if it's
     // selected or not, if it's selected, ignore it.
     // else, add the number and the class to the map.
-    $("#holiday-table")
-        .find("td[usrid='"+user_id+"']")
-        .each(function () {
-            // remove the selected class off the element
-            $(this).removeClass("selected");
-            // get the bg colour of the td
-            var current_class = $(this).attr('class');
-            // this check is redundant but it helps if there
-            // are any changes to the selection methods
-            if (current_class !== "selected") {
-                holiday_map[$(this).text()] = current_class;
-            }
-        });
+	var x;
+	for (x = 0; x < js_calendar[user_id].length; x++) {
+		holiday_map[x] = js_calendar[user_id][x];
+	}
 
     // setup our ajax properties
     $.ajaxSetup({

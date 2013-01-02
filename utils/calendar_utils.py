@@ -265,7 +265,10 @@ def gen_holiday_list(admin_user, year=None, month=None, process=None):
         to_js('"%s":[' % user.id)
         entries = day_classes.items()
         for iidx, (klass, day) in enumerate(entries):
-            to_js('"%s"%s' % (day, "," if iidx+1 != len(entries) else "]"))
+            to_js('"%s"%s' % (
+                    day if day != "WKEND" else "empty",
+                    "," if iidx+1 != len(entries) else "]")
+                  )
             to_out('<td usrid=%s class=%s>%s\n' % (user.id, day, klass))
         # user_id is added as attr to make mass calls
         to_out("""<td>

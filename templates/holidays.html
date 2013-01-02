@@ -115,8 +115,7 @@ Holiday Page - Timetracker
 {% endblock extra_content %}
 {% block additional_javascript %}
 <script type="text/javascript">
-  {{ js_calendar|safe }}
-  alert(js_calendar["441"][4]);
+  {{ js_calendar|safe }};
 </script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/holiday_page.js"></script>
 {% endblock additional_javascript %}
