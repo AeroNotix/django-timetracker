@@ -39,6 +39,15 @@
    color: black;
 }
 
+.WKEND {
+   background-color: #DCDCDC;
+}
+
+.WKEND:hover {
+   background-color: orange;
+   color: black;
+}
+
 .WKDAY {
    background-color: #EDEDED;
 }

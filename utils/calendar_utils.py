@@ -213,10 +213,21 @@ def gen_holiday_list(admin_user, year=None, month=None, process=None):
 
     user_list = [admin_user.get_administrator()] + user_list
 
+    def isweekend(n):
+        return {
+            1: 'empty',
+            2: 'empty',
+            3: 'empty',
+            4: 'empty',
+            5: 'empty',
+            6: 'WKEND',
+            7: 'WKEND',
+            }[datetime.date(year=year,month=month,day=num).isoweekday()]
+
     comments_list = []
     for user in user_list:
         day_classes = dict( [
-            (num, 'empty') for num in calendar_array
+            (num, isweekend(num)) for num in calendar_array
         ] )
 
         # We have a dict with each day as currently

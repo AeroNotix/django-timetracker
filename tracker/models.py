@@ -269,7 +269,14 @@ class Tbluser(models.Model):
         for x in range(0,12):
             out.append("<tr><th>%s</th>" % MONTH_MAP[x][1])
             for z in range(1,32):
-                out.append('<td class={c}>%d</td>' % z)
+                try:
+                    if dt.date(int(year),x+1,z-1).isoweekday() in [5,6]:
+                        out.append('<td class="WKEND">%d</td>' % z)
+                    else:
+                        out.append('<td class={c}>%d</td>' % z)
+                except ValueError:
+                    out.append('<td class={c}>%d</td>' % z)
+
             out.append("</tr>")
             final.append(out)
             out = []
