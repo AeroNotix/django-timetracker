@@ -331,7 +331,8 @@ class Tbluser(models.Model):
             'HOLIS': -1,
             'PUWRK': 2,
             'RETRN': -1,
-            'DAYOD': -1
+            'DAYOD': -1,
+            'SATUR': 1
             }
 
         holiday_balance = self.holiday_balance
