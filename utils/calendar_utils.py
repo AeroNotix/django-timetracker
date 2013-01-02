@@ -227,7 +227,7 @@ def gen_holiday_list(admin_user, year=None, month=None, process=None):
     comments_list = []
     js_calendar = ["var js_calendar = {\n"]
     to_js = js_calendar.append
-    for user in user_list:
+    for idx, user in enumerate(user_list):
         day_classes = dict( [
             (num, isweekend(num)) for num in calendar_array
         ] )
@@ -264,8 +264,8 @@ def gen_holiday_list(admin_user, year=None, month=None, process=None):
         # shows what number we're on.
         to_js('"%s":[' % user.id)
         entries = day_classes.items()
-        for idx, (klass, day) in enumerate(entries):
-            to_js('"%s"%s' % (day, "," if idx+1 != len(entries) else "]"))
+        for iidx, (klass, day) in enumerate(entries):
+            to_js('"%s"%s' % (day, "," if iidx+1 != len(entries) else "]"))
             to_out('<td usrid=%s class=%s>%s\n' % (user.id, day, klass))
         # user_id is added as attr to make mass calls
         to_out("""<td>
@@ -273,8 +273,8 @@ def gen_holiday_list(admin_user, year=None, month=None, process=None):
                            onclick="submit_holidays({0})" />
                   </td>""".format(user.id))
         to_out('</tr>')
+        to_js(",\n" if idx+1 != len(user_list) else "")
     to_js("\n}")
-    print ''.join(js_calendar)
 
     # generate the data for the month select box
     month_select_data = [(month_num + 1, month[1])
@@ -307,7 +307,7 @@ def gen_holiday_list(admin_user, year=None, month=None, process=None):
         </table>
       </td>
      </tr>""".format(year_select, month_select, process_select))
-    return ''.join(str_output), comments_list
+    return ''.join(str_output), comments_list, ''.join(js_calendar)
 
 
 @calendar_wrapper
