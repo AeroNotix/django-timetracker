@@ -100,7 +100,7 @@ function submit_holidays(user_id, mass) {
     // selected or not, if it's selected, ignore it.
     // else, add the number and the class to the map.
 	var x;
-	for (x = 0; x < js_calendar[user_id].length; x++) {
+	for (x = 1; x < js_calendar[user_id].length; x++) {
 		daytypes[x] = js_calendar[user_id][x];
 	}
 
