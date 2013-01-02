@@ -225,6 +225,8 @@ def gen_holiday_list(admin_user, year=None, month=None, process=None):
             }[datetime.date(year=year,month=month,day=num).isoweekday()]
 
     comments_list = []
+    js_calendar = ["var js_calendar = {\n"]
+    to_js = js_calendar.append
     for user in user_list:
         day_classes = dict( [
             (num, isweekend(num)) for num in calendar_array
@@ -260,15 +262,19 @@ def gen_holiday_list(admin_user, year=None, month=None, process=None):
         # table data and also the dayclass for styling,
         # also, the current day number so that the table
         # shows what number we're on.
-        for klass, day in day_classes.items():
+        to_js('"%s":[' % user.id)
+        entries = day_classes.items()
+        for idx, (klass, day) in enumerate(entries):
+            to_js('"%s"%s' % (day, "," if idx+1 != len(entries) else "]"))
             to_out('<td usrid=%s class=%s>%s\n' % (user.id, day, klass))
-
         # user_id is added as attr to make mass calls
         to_out("""<td>
                     <input value="submit" type="button" user_id="{0}"
                            onclick="submit_holidays({0})" />
                   </td>""".format(user.id))
         to_out('</tr>')
+    to_js("\n}")
+    print ''.join(js_calendar)
 
     # generate the data for the month select box
     month_select_data = [(month_num + 1, month[1])
