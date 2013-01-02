@@ -452,7 +452,7 @@ def yearview(request, who=None, year=None):
                 admin=request.session.get('user_id')
                 ).users.filter(disabled=False)[0].id
             return HttpResponseRedirect("/yearview/%s/%s/" % (userid, year))
-        except IndexError:
+        except (IndexError, tblauth.DoesNotExist):
             return HttpResponse("You have no team members.")
 
     auth_user = Tbluser.objects.get(

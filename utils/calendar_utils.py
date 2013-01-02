@@ -202,11 +202,15 @@ def gen_holiday_list(admin_user, year=None, month=None, process=None):
     # here we add the administrator to their list of employees
     # this means that administrator accounts can view/change
     # their own holidays
-    auth_user = Tblauth.objects.get(admin=admin_user.get_administrator())
-    user_list = list(
-        auth_user.users.filter(process=process).order_by('lastname').filter(disabled=False) if process \
-            else auth_user.users.all().order_by('lastname').filter(disabled=False)
-        )
+    try:
+        auth_user = Tblauth.objects.get(admin=admin_user.get_administrator())
+        user_list = list(
+            auth_user.users.filter(process=process).order_by('lastname').filter(disabled=False) if process \
+                else auth_user.users.all().order_by('lastname').filter(disabled=False)
+            )
+    except Tblauth.DoesNotExist:
+        user_list = []
+
     if admin_user.user_type != "TEAML":
         user_list = [admin_user] + user_list
 
