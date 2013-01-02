@@ -13,3 +13,4 @@ settings.py
 tt.wsgi
 eproject.cfg
 *.log
+docs/
