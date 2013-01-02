@@ -212,10 +212,10 @@ function change_table_data () {
             $("#holiday-wrapper, #comments-wrapper").fadeTo(500, 0, function() {
                 if ( $("#isie").attr("isie") === "true" ) {
                     $("#comments-wrapper").load(
-                        "/holiday_planning/" + year + "/" + month + " #com-field"
+                        "/holiday_planning/" + year + "/" + month + "/" + process + " #com-field"
                     );
                     $("#holiday-wrapper").load(
-                        "/holiday_planning/" + year + "/" + month + " #holiday-table",
+                        "/holiday_planning/" + year + "/" + month + "/" + process + " #holiday-table",
                         function() {
                             addFunctions();
                             retrieveComments();
@@ -236,12 +236,17 @@ function change_table_data () {
                 addFunctions();
                 $("#year_select").val(year);
                 $("#month_select").val(month);
-                $("#process_select").val(process);
+                if (process === "") {
+                    $("#process_select").val("ALL");
+                } else {
+                    $("#process_select").val(process);
+                }
                 $("#holiday-wrapper, #comments-wrapper").fadeTo(500, 1);
             });
             checkTeamLeader();
         }
     });
+
     return true;
 }
 

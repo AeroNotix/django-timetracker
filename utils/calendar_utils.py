@@ -211,8 +211,7 @@ def gen_holiday_list(admin_user, year=None, month=None, process=None):
     except Tblauth.DoesNotExist:
         user_list = []
 
-    if admin_user.user_type != "TEAML":
-        user_list = [admin_user] + user_list
+    user_list = [admin_user.get_administrator()] + user_list
 
     comments_list = []
     for user in user_list:
