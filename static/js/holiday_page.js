@@ -264,7 +264,7 @@ function removeComment() {
             form_type: 'remove_comment',
             year: $("#holiday-table").attr("year"),
             month: $("#holiday-table").attr("month"),
-            user: $("#employees-select").val(),
+            user: $("#user_select").val(),
             day: $("#day_options").val()
         },
         success: function (data) {
@@ -345,7 +345,7 @@ function retrieveComments() {
             form_type: 'get_comments',
             year: $("#holiday-table").attr("year"),
             month: $("#holiday-table").attr("month"),
-            user: $("#employees-select").val(),
+            user: $("#user_select").val(),
             day: $("#day_options").val()
         },
         success: function (data) {
