@@ -1,8 +1,8 @@
 var mouseState = false;
-document.onmousedown = function(e) {
+document.onmousedown = function (e) {
     mouseState = true;
 }
-document.onmouseup = function(e) {
+document.onmouseup = function (e) {
     mouseState = false;
 }
 
