@@ -302,7 +302,7 @@ function insertComment() {
             form_type: 'add_comment',
             year: $("#holiday-table").attr("year"),
             month: $("#holiday-table").attr("month"),
-            user: $("#employees-select").val(),
+            user: $("#user_select").val(),
             day: $("#day_options").val(),
             comment: $("#comments-field-comment").val()
         },
