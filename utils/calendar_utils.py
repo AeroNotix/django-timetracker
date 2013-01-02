@@ -1271,7 +1271,6 @@ def mass_holidays(request):
                         end_time=time_str[1],
                         breaks=time_str[2],
                         daytype=daytype)
-                    print 'saving...'
                     new_entry.save()
     except Exception as e:
         json_data['error'] = str(e)
