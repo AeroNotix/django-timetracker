@@ -1221,103 +1221,63 @@ def mass_holidays(request):
     :raises: :class:`IntegrityError` :class:`DoesNotExist`
              :class:`ValidationError` :class:`Exception`
     """
-
-    json_data = {
-        'success': False,
-        'error': ''
-    }
-
-    form_data = {
-        'year': None,
-        'month': None,
-        'user_id': None
-    }
-
-    for key in form_data:
-        form_data[key] = request.POST.get(key, None)
     try:
-        holiday_data = simplejson.loads(request.POST.get('holiday_data'))
-    except Exception as err:
-        json_data['error'] = str(err)
-        return json_data
+        json_data = {
+            'success': False,
+            'error': ''
+            }
+        
+        form_data = {
+            'year': None,
+            'month': None,
+            }
+        
+        for key in form_data:
+            form_data[key] = str(request.POST[key])
 
-    for entry in holiday_data.items():
-
-        # conversion to int->str removes newlines easier
         try:
-            day = str(int(entry[0]))
-            year = form_data['year']
-            month = form_data['month']
-            date = '-'.join([year, month, day])
+            holidays = simplejson.loads(request.POST.get('mass_data'))
         except Exception as err:
             json_data['error'] = str(err)
             return json_data
-
-        if entry[1] == "empty" or (not len(entry[1])):
-            try:
-                removal_entry = TrackingEntry.objects.get(
-                    entry_date=date,
-                    user_id=form_data['user_id']
-                    )
-                removal_entry.delete()
-            except TrackingEntry.DoesNotExist:
-                """
-                because we're sending all data
-                with each ajax request, we delete
-                ones that are in the database, but
-                not in the ajax data, therefore,
-                if we get a DoesNotExist it just
-                means that we don't need to do
-                anything
-                """
-                pass
-            except:
-                continue
-        else:
-            try:
-                # mass uploads are non-working days
-                # so the admin doesn't need to assign
-                # tonnes of time data to each entry
-                if entry[1] == "ROVER":
-                    user = Tbluser.objects.get(id=form_data['user_id'])
-                    time_str = user.get_shiftlength_list()
-                else:
-                    time_str = ("00:00:00","00:00:00","00:00:00")
-                new_entry = TrackingEntry(
-                    user_id=form_data['user_id'],
-                    entry_date=date,
-                    start_time=time_str[0],
-                    end_time=time_str[1],
-                    breaks=time_str[2],
-                    daytype=entry[1]
-                    )
-                new_entry.save()
-            except IntegrityError as error:
-                """
-                if we find that it's an existant
-                entry, it means that we're in change
-                mode, so assign the new daytype and save
-                """
-                if error[0] == DUPLICATE_ENTRY:
-                    change_entry = TrackingEntry.objects.get(
-                        user_id=form_data['user_id'],
-                        entry_date=date
+        
+        for entry in holidays.items():
+            for (day, daytype) in enumerate(entry[1]):
+                if day == 0:
+                    continue
+                datestr = '-'.join([form_data['year'], form_data['month'], str(day)])
+                try:
+                    current_entry = TrackingEntry.objects.get(
+                        entry_date=datestr,
+                        user_id=entry[0]
                         )
-                    change_entry.daytype = entry[1]
-                    change_entry.save()
-                else:
-                    # if we're here, something real bad has happened
-                    # don't send this error to the user
-                    error_log.critical(str(error))
-                    raise Exception(error)
-            except Exception as error:
-                # I know this is bad but, we can't allow errors to bubble
-                error_log.critical(str(error))
-                json_data['error'] = str(error)
-                return json_data
+                    if daytype == "empty":
+                        current_entry.delete()
+                    else:
+                        current_entry.daytype = daytype
+                        current_entry.save()
+                except TrackingEntry.DoesNotExist:
+                    if daytype == "empty":
+                        continue
+                    if entry[1] == "ROVER":
+                        user = Tbluser.objects.get(id=form_data['user_id'])
+                        time_str = user.get_shiftlength_list()
+                    else:
+                        time_str = ("00:00:00","00:00:00","00:00:00")
+                    new_entry = TrackingEntry(
+                        entry_date=datestr,
+                        user_id=entry[0],
+                        start_time=time_str[0],
+                        end_time=time_str[1],
+                        breaks=time_str[2],
+                        daytype=daytype)
+                    print 'saving...'
+                    new_entry.save()
+    except Exception as e:
+        json_data['error'] = str(e)
+        return json_data
     json_data['success'] = True
     return json_data
-
 
 @request_check
 @json_response

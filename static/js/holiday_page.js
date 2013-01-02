@@ -32,6 +32,7 @@ function applyClass(klass) {
             if ($(this).hasClass("selected")) {
                 $(this).removeClass();
                 $(this).addClass(klass);
+				js_calendar[parseInt($(this).attr("usrid"))][parseInt($(this).text())] = klass;
             }
         });
     return true;
@@ -47,13 +48,33 @@ function submit_all() {
     */
 
     var successfully_completed = false;
-    $("#holiday-table")
-        .find(":button")
-        .not("#submit_all, #btn_change_td")
-        .each(function () {
-            successfully_completed = submit_holidays($(this).attr("user_id"), true)
-        });
-    // refresh the table data
+
+    // setup our ajax properties
+    $.ajaxSetup({
+        type: 'POST',
+        dataType: 'json'
+    });
+	console.log(js_calendar);
+    $.ajax({
+        url: '/ajax/',
+        data: {
+            'form_type': 'mass_holidays',
+            'year': $("#holiday-table").attr("year"), // from the table header
+            'month': $("#holiday-table").attr("month"),
+            'mass_data': JSON.stringify(js_calendar),            
+        },
+        success: function(data) {
+            if (data.success === true) {
+                alert("Holidays updated successfully");
+            } else {
+                alert(data.error);
+            }
+        },
+        error: function(ajaxObj, textStatus, error) {
+            alert(error);
+        }
+    });
+
     setTimeout("change_table_data()", 1000);
     return successfully_completed;
 }
@@ -73,14 +94,14 @@ function submit_holidays(user_id, mass) {
     }
 
     // create a map to hold the holidays
-    var holiday_map = JSON;
+    var daytypes = new Array()
 
     // iterate through the table and check if it's
     // selected or not, if it's selected, ignore it.
     // else, add the number and the class to the map.
 	var x;
 	for (x = 0; x < js_calendar[user_id].length; x++) {
-		holiday_map[x] = js_calendar[user_id][x];
+		daytypes[x] = js_calendar[user_id][x];
 	}
 
     // setup our ajax properties
@@ -88,15 +109,16 @@ function submit_holidays(user_id, mass) {
         type: 'POST',
         dataType: 'json'
     });
-
+	var holiday_map = JSON;
+	holiday_map[user_id] = daytypes;
+	console.log(holiday_map);
     $.ajax({
         url: '/ajax/',
         data: {
             'form_type': 'mass_holidays',
             'year': $("#holiday-table").attr("year"), // from the table header
             'month': $("#holiday-table").attr("month"),
-            'holiday_data': JSON.stringify(holiday_map),
-            'user_id': user_id
+            'mass_data': JSON.stringify(holiday_map),
         },
         success: function(data) {
             if (data.success === true) {
