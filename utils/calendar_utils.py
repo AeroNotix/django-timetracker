@@ -1182,10 +1182,10 @@ def mass_holidays(request):
 
     .. code-block:: javascript
 
-       holidays = {
-           1: daytype,
-           2: daytype,
-           3: daytype
+       mass_data = {
+           user_id1 : ["array", "of", "daytypes"],
+           user_id2 : ["array", "of", "daytypes"],
+           user_id3 : ["array", "of", "daytypes"],
            ...
         }
 
@@ -1209,12 +1209,6 @@ def mass_holidays(request):
     not supplied with start/end times, nor a break time. This is because the
     holiday page only deals with *non-working-days* therefore we can track
     these days with zeroed times.
-
-    If at this point an IntegrityError is raised, it means one of two things:
-    we can either have a duplicate entry, in which case we retrieve that entry
-    and change it's daytype, or we can have a different error, in which case
-    we wrap up working with this set of data and return an error to the
-    browser.
 
     If all goes well, we mark the return object's success attribute with True
     and return.
