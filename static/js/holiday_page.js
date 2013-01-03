@@ -231,7 +231,7 @@ function change_table_data () {
                     $("#com-field").html(comments_html);
                     $("#holiday-table").html(holiday_html);
                 }
-                flushThis("holiday-wrapper");
+             //   flushThis("holiday-wrapper");
                 $("#holiday-table").attr("year", table_year);
                 $("#holiday-table").attr("month", table_month);
                 addFunctions();
