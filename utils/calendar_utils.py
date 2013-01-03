@@ -262,7 +262,7 @@ def gen_holiday_list(admin_user, year=None, month=None, process=None):
         # table data and also the dayclass for styling,
         # also, the current day number so that the table
         # shows what number we're on.
-        to_js('"%s":[' % user.id)
+        to_js('"%s":["empty",' % user.id)
         entries = day_classes.items()
         for iidx, (klass, day) in enumerate(entries):
             to_js('"%s"%s' % (
