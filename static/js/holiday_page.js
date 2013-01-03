@@ -123,9 +123,7 @@ function submit_holidays(user_id) {
         },
         success: function(data) {
             if (data.success === true) {
-                if (!mass) {
-                    alert("Holidays updated successfully");
-                }
+                alert("Holidays updated successfully");
             } else {
                 alert(data.error);
             }
