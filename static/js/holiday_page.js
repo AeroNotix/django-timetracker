@@ -47,8 +47,6 @@ function submit_all() {
        depending on success.
     */
 
-    var successfully_completed = false;
-
     // setup our ajax properties
     $.ajaxSetup({
         type: 'POST',
