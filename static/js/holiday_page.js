@@ -52,7 +52,7 @@ function submit_all() {
         type: 'POST',
         dataType: 'json'
     });
-	console.log(js_calendar);
+
     $.ajax({
         url: '/ajax/',
         data: {
