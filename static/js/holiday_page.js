@@ -7,7 +7,7 @@ document.onmouseup = function (e) {
 }
 
 function applyClass(klass) {
-
+    "use strict";
     /*
        Checks all the table elements,
        if they are selected, it removes the
@@ -28,7 +28,7 @@ function applyClass(klass) {
 }
 
 function submit_all() {
-
+    "use strict";
     /*
        Submits all entries on the form
 
@@ -66,6 +66,7 @@ function submit_all() {
 }
 
 function submit_holidays(user_id) {
+    "use strict";
     /*
        En masse changes a set of holidays and
        takes a user_id as a parameter.
@@ -125,7 +126,6 @@ function submit_holidays(user_id) {
 }
 
 function addFunctions () {
-
     "use strict";
 
     $("#holiday-table")
@@ -185,7 +185,6 @@ function addFunctions () {
 }
 
 function change_table_data () {
-
     "use strict";
 
     /*
@@ -293,7 +292,6 @@ function removeComment() {
 }
 
 function insertComment() {
-
     "use strict";
 
     /*
@@ -332,7 +330,6 @@ function insertComment() {
 }
 
 function retrieveComments() {
-
     "use strict";
 
     /*
@@ -375,5 +372,6 @@ function retrieveComments() {
 }
 
 $(function () {
+    "use strict";
     addFunctions();
 });
