@@ -267,7 +267,7 @@ def gen_holiday_list(admin_user, year=None, month=None, process=None):
         # also, the current day number so that the table
         # shows what number we're on.
         to_js('"%s":["empty",' % user.id)
-        entries = day_classes.items()
+        entries = sorted(day_classes.items())
         for iidx, (klass, day) in enumerate(entries):
             to_js('"%s"%s' % (
                     day if day != "WKEND" else "empty",
