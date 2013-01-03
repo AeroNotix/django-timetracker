@@ -6,17 +6,6 @@ document.onmouseup = function (e) {
     mouseState = false;
 }
 
-function flushThis(id){
-   var msie = 'Microsoft Internet Explorer';
-   var tmp = 0;
-   var elementOnShow = document.getElementById(id);
-   if (navigator.appName == msie){
-      tmp = elementOnShow.parentNode.offsetTop  +  'px';
-   } else {
-      tmp = elementOnShow.offsetTop;
-   }
-}
-
 function applyClass(klass) {
 
     /*
