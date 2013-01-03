@@ -212,20 +212,30 @@ function change_table_data () {
     if (process === "ALL") {
         process = "";
     }
+    if (process == null) {
+        process = "";
+    }
+
+    var url = [
+        "/holiday_planning/", year,
+        "/", month, "/", process
+    ].join('');
 
     $.ajax({
         type: "GET",
         dataType: "HTML",
-        url: "/holiday_planning/" + year + "/" + month + "/" + process,
+        url: url,
         success: function(data) {
-
             $("#holiday-wrapper, #comments-wrapper").fadeTo(500, 0, function() {
-                if ( $("#isie").attr("isie") === "true" ) {
-                    $("#comments-wrapper").load(
-                        "/holiday_planning/" + year + "/" + month + "/" + process + " #com-field"
+                /*
+                  IE7 doesn't work with .html('<htmlstring>') so we use
+                  the .load() function instead.
+                */
+                   $("#comments-wrapper").load(
+                        url + " #com-field"
                     );
                     $("#holiday-wrapper").load(
-                        "/holiday_planning/" + year + "/" + month + "/" + process + " #holiday-table",
+                        url + " #holiday-table",
                         function() {
                             addFunctions();
                             retrieveComments();
@@ -236,7 +246,6 @@ function change_table_data () {
                     var comments_html = $(data).find("#comments-wrapper").html();
                     var table_year = $(data).find("#holiday-table").attr("year");
                     var table_month = $(data).find("#holiday-table").attr("month");
-
                     $("#com-field").html(comments_html);
                     $("#holiday-table").html(holiday_html);
                 }
@@ -254,7 +263,6 @@ function change_table_data () {
             });
         }
     });
-
     return true;
 }
 
