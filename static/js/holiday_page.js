@@ -61,7 +61,7 @@ function submit_all() {
             'form_type': 'mass_holidays',
             'year': $("#holiday-table").attr("year"), // from the table header
             'month': $("#holiday-table").attr("month"),
-            'mass_data': JSON.stringify(js_calendar),            
+            'mass_data': JSON.stringify(js_calendar)
         },
         success: function(data) {
             if (data.success === true) {
@@ -118,7 +118,7 @@ function submit_holidays(user_id, mass) {
             'form_type': 'mass_holidays',
             'year': $("#holiday-table").attr("year"), // from the table header
             'month': $("#holiday-table").attr("month"),
-            'mass_data': JSON.stringify(holiday_map),
+            'mass_data': JSON.stringify(holiday_map)
         },
         success: function(data) {
             if (data.success === true) {
