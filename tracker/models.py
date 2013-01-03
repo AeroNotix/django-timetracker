@@ -252,15 +252,17 @@ class Tbluser(models.Model):
         return TrackingEntry.objects.filter(user_id=self.id,
                                             entry_date__year=year,
                                             entry_date__month=month)
-    """
-    Generates the HTML table for the yearview page. It iterates through
-    the entire set of tracking entries for a given year.
 
-    :param year: The year in which the yearview should be generated from.
-    :type year: :class:`int`
-    :rtype :class:`str`
-    """
+
     def yearview(self, year):
+        """
+        Generates the HTML table for the yearview page. It iterates through
+        the entire set of tracking entries for a given year.
+
+        :param year: The year in which the yearview should be generated from.
+        :type year: :class:`int`
+        :rtype :class:`str`
+        """
         entries = TrackingEntry.objects.filter(user_id=self.id,
                                                entry_date__year=year)
         final = []
