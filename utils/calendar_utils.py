@@ -161,6 +161,10 @@ def gen_holiday_list(admin_user, year=None, month=None, process=None):
     the class entry for that number in the day class' dict. Adds a submit
     button along with passing the user_id to it.
 
+    We also create a javascript datastructure string to store the holiday
+    daytypes. We do this to minimize interactions with the DOM when querying
+    which cells have which daytype.
+
     :param admin_user: :class:`timetracker.tracker.models.Tbluser` instance.
     :param year: :class:`int` of the year required to be output, defaults to
                  the current year.
