@@ -114,6 +114,7 @@ function submit_holidays(user_id) {
             } else {
                 alert(data.error);
             }
+            change_table_data();
         },
         error: function(ajaxObj, textStatus, error) {
             alert(error);
