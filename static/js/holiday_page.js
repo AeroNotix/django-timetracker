@@ -43,7 +43,7 @@ function submit_all() {
     /*
        Submits all entries on the form
 
-       Takes no parameters and returns true/false
+       Takes no parameters and returns true
        depending on success.
     */
 
