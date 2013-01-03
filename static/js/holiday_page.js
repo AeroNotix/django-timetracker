@@ -255,7 +255,6 @@ function change_table_data () {
                 }
                 $("#holiday-wrapper, #comments-wrapper").fadeTo(500, 1);
             });
-            checkTeamLeader();
         }
     });
 
@@ -381,30 +380,6 @@ function retrieveComments() {
 
 }
 
-function checkTeamLeader() {
-
-    /*
-      Function which checks if the user is a team leader.
-
-      If so, the field is removed
-    */
-
-    "use strict";
-
-    var is_team_leader = $("#is_team_leader").attr("value");
-
-    $("#holiday-table")
-        .find(".job_code").each( function () {
-            if ( is_team_leader ) {
-                $(this).text('');
-            }
-            $(this).css("color", "black")
-        });
-
-    return true;
-}
-
 $(function () {
     addFunctions();
-    checkTeamLeader();
 });
