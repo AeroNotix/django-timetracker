@@ -37,6 +37,27 @@ def send_password_reminder(modeladmin, request, queryset):
             if error[0] == CONNECTION_REFUSED:
                 print email_message.format(**info),
 
+def create_100_random_users(modeladmin, request, queryset):
+    import random
+    import datetime
+
+    for x in range(100):
+        randstr = ''.join(chr(random.choice(range(65,91))) for x in range(5))
+        models.Tbluser.objects.create(
+            user_id="%s@test.com" %  randstr,
+            firstname=randstr,
+            lastname=randstr,
+            password=randstr,
+            user_type="RUSER",
+            market="BG",
+            process="AP",
+            start_date=datetime.datetime.today(),
+            breaklength="00:15:00",
+            shiftlength="08:00:00",
+            job_code="00F20G",
+            holiday_balance=20
+            )
+
 
 class UserAdmin(admin.ModelAdmin):
     """Creates access to and customizes the admin interface to the tbluser
@@ -50,7 +71,7 @@ class UserAdmin(admin.ModelAdmin):
     above.   
     """
     list_display = ('__unicode__', 'display_user_type')
-    actions = [send_password_reminder]
+    actions = [send_password_reminder, create_100_random_users]
 
 
 class AuthAdmin(admin.ModelAdmin):
