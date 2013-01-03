@@ -79,7 +79,7 @@ function submit_all() {
     return successfully_completed;
 }
 
-function submit_holidays(user_id, mass) {
+function submit_holidays(user_id) {
     /*
        En masse changes a set of holidays and
        takes a user_id as a parameter.
