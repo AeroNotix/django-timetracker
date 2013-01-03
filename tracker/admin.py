@@ -38,6 +38,7 @@ def send_password_reminder(modeladmin, request, queryset):
                 print email_message.format(**info),
 
 def create_100_random_users(modeladmin, request, queryset):
+    '''Creates 100 random users for testing purposes.'''
     import random
     import datetime
 
