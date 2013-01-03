@@ -253,6 +253,18 @@ class Tbluser(models.Model):
                                             entry_date__year=year,
                                             entry_date__month=month)
 
+    def get_comments(self, year):
+        entries =  TrackingEntry.objects.filter(
+            user_id=self.id,
+            entry_date__year=year
+            )
+        comments_list = []
+        for entry in entries:
+            if entry.comments:
+                comment_string = map(unicode, [entry.entry_date, entry.user.name(), entry.comments])
+                comments_list.append(' '.join(comment_string))
+        return comments_list
+
 
     def yearview(self, year):
         """
@@ -290,6 +302,9 @@ class Tbluser(models.Model):
                 "<tr><td colspan=100><table>",
                 "<tr><th>Year</th><td>%s</td></tr>" % generate_year_box(int(year), id="cmb_yearbox"),
                 "<tr><th>Agent</th><td>{employees_select}</td></tr>",
+                "<tr><th>Comments</th><td><ul>",
+                ''.join([("<li>%s</li>" % entry) for entry in self.get_comments(year)]),
+                "</ul></td></tr>",
                 "</table></td></tr></table>"])
         return '<table id="holiday-table"><th colspan=999>%s</th>' % self.name() + table_string
 

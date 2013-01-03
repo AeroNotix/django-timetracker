@@ -75,7 +75,7 @@ def login(request):
     :param request: Automatically passed. Contains a map of the httprequest
     :return: A HttpResponse object which is then passed to the browser
     """
-   
+
     try:
         # pull out the user from the POST and
         # match it against our db
@@ -156,7 +156,7 @@ def user_view(request, year=None, month=None, day=None):
 
     is_admin = user_object.user_type == "ADMIN"
     is_team_leader = user_object.user_type == "TEAML"
-    
+
     balance = user_object.get_total_balance(ret='int')
     return render_to_response(
         'calendar.html',
@@ -466,7 +466,11 @@ def yearview(request, who=None, year=None):
     except Tbluser.DoesNotExist:
         raise Http404
 
-    yeartable = Tbluser.objects.get(id=who).yearview(year)
+    targetuser = Tbluser.objects.get(id=who)
+
+    # generate our year table.
+    yeartable = targetuser.yearview(year)
+    # interpolate our values into it.
     yeartable = yeartable.format(employees_select=generate_employee_box(auth_user), c="EMPTY")
     return render_to_response("yearview.html",
                               {"yearview_table": yeartable,
