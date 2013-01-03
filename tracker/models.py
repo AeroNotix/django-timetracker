@@ -265,12 +265,11 @@ class Tbluser(models.Model):
                                                entry_date__year=year)
         final = []
         out = []
-        out.append('<table id="holiday-table"><th colspan=999>%s</th>' % self.name())
-        for x in range(0,12):
-            out.append("<tr><th>%s</th>" % MONTH_MAP[x][1])
+        for x in range(1,13):
+            out.append("<tr><th>%s</th>" % MONTH_MAP[x-1][1])
             for z in range(1,32):
                 try:
-                    if dt.date(int(year),x+1,z).isoweekday() in [6,7]:
+                    if dt.date(int(year),x,z).isoweekday() in [6,7]:
                         out.append('<td class="WKEND">%d</td>' % z)
                     else:
                         out.append('<td class={c}>%d</td>' % z)
@@ -290,7 +289,7 @@ class Tbluser(models.Model):
                 "<tr><th>Year</th><td>%s</td></tr>" % generate_year_box(int(year), id="cmb_yearbox"),
                 "<tr><th>Agent</th><td>{employees_select}</td></tr>",
                 "</table></td></tr></table>"])
-        return table_string
+        return '<table id="holiday-table"><th colspan=999>%s</th>' % self.name() + table_string
 
     def is_admin(self):
         """
