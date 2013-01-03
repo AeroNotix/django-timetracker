@@ -231,7 +231,8 @@ function change_table_data () {
                   IE7 doesn't work with .html('<htmlstring>') so we use
                   the .load() function instead.
                 */
-                   $("#comments-wrapper").load(
+                if ( $("#isie").attr("isie") === "true" ) {
+                    $("#comments-wrapper").load(
                         url + " #com-field"
                     );
                     $("#holiday-wrapper").load(
@@ -239,8 +240,7 @@ function change_table_data () {
                         function() {
                             addFunctions();
                             retrieveComments();
-                        }
-                    );
+                        });
                 } else {
                     var holiday_html = $(data).find("#holiday-wrapper").html();
                     var comments_html = $(data).find("#comments-wrapper").html();
