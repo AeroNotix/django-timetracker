@@ -412,10 +412,10 @@ def holiday_planning(request,
     # view the team assigned to their manager
     is_team_leader = False
     is_admin = user.user_type == "ADMIN"
-    holiday_table, comments_list = gen_holiday_list(user,
-                                                    year,
-                                                    month,
-                                                    process)
+    holiday_table, comments_list, js_calendar = gen_holiday_list(user,
+                                                                 year,
+                                                                 month,
+                                                                 process)
     if user.user_type == "TEAML":
         is_team_leader = True
 
@@ -433,7 +433,8 @@ def holiday_planning(request,
             'welcome_name': request.session['firstname'],
             'is_team_leader': is_team_leader,
             'days_this_month': days_this_month,
-            'employee_select': generate_employee_box(user)
+            'employee_select': generate_employee_box(user),
+            'js_calendar': js_calendar,
         },
         RequestContext(request))
 

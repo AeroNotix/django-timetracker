@@ -161,6 +161,10 @@ def gen_holiday_list(admin_user, year=None, month=None, process=None):
     the class entry for that number in the day class' dict. Adds a submit
     button along with passing the user_id to it.
 
+    We also create a javascript datastructure string to store the holiday
+    daytypes. We do this to minimize interactions with the DOM when querying
+    which cells have which daytype.
+
     :param admin_user: :class:`timetracker.tracker.models.Tbluser` instance.
     :param year: :class:`int` of the year required to be output, defaults to
                  the current year.
@@ -225,7 +229,9 @@ def gen_holiday_list(admin_user, year=None, month=None, process=None):
             }[datetime.date(year=year,month=month,day=num).isoweekday()]
 
     comments_list = []
-    for user in user_list:
+    js_calendar = ["var js_calendar = {\n"]
+    to_js = js_calendar.append
+    for idx, user in enumerate(user_list):
         day_classes = dict( [
             (num, isweekend(num)) for num in calendar_array
         ] )
@@ -260,15 +266,22 @@ def gen_holiday_list(admin_user, year=None, month=None, process=None):
         # table data and also the dayclass for styling,
         # also, the current day number so that the table
         # shows what number we're on.
-        for klass, day in day_classes.items():
+        to_js('"%s":["empty",' % user.id)
+        entries = sorted(day_classes.items())
+        for iidx, (klass, day) in enumerate(entries):
+            to_js('"%s"%s' % (
+                    day if day != "WKEND" else "empty",
+                    "," if iidx+1 != len(entries) else "]")
+                  )
             to_out('<td usrid=%s class=%s>%s\n' % (user.id, day, klass))
-
         # user_id is added as attr to make mass calls
         to_out("""<td>
                     <input value="submit" type="button" user_id="{0}"
                            onclick="submit_holidays({0})" />
                   </td>""".format(user.id))
         to_out('</tr>')
+        to_js(",\n" if idx+1 != len(user_list) else "")
+    to_js("\n}")
 
     # generate the data for the month select box
     month_select_data = [(month_num + 1, month[1])
@@ -301,7 +314,7 @@ def gen_holiday_list(admin_user, year=None, month=None, process=None):
         </table>
       </td>
      </tr>""".format(year_select, month_select, process_select))
-    return ''.join(str_output), comments_list
+    return ''.join(str_output), comments_list, ''.join(js_calendar)
 
 
 @calendar_wrapper
@@ -1169,10 +1182,10 @@ def mass_holidays(request):
 
     .. code-block:: javascript
 
-       holidays = {
-           1: daytype,
-           2: daytype,
-           3: daytype
+       mass_data = {
+           user_id1 : ["array", "of", "daytypes"],
+           user_id2 : ["array", "of", "daytypes"],
+           user_id3 : ["array", "of", "daytypes"],
            ...
         }
 
@@ -1197,12 +1210,6 @@ def mass_holidays(request):
     holiday page only deals with *non-working-days* therefore we can track
     these days with zeroed times.
 
-    If at this point an IntegrityError is raised, it means one of two things:
-    we can either have a duplicate entry, in which case we retrieve that entry
-    and change it's daytype, or we can have a different error, in which case
-    we wrap up working with this set of data and return an error to the
-    browser.
-
     If all goes well, we mark the return object's success attribute with True
     and return.
 
@@ -1212,103 +1219,62 @@ def mass_holidays(request):
     :raises: :class:`IntegrityError` :class:`DoesNotExist`
              :class:`ValidationError` :class:`Exception`
     """
-
-    json_data = {
-        'success': False,
-        'error': ''
-    }
-
-    form_data = {
-        'year': None,
-        'month': None,
-        'user_id': None
-    }
-
-    for key in form_data:
-        form_data[key] = request.POST.get(key, None)
     try:
-        holiday_data = simplejson.loads(request.POST.get('holiday_data'))
-    except Exception as err:
-        json_data['error'] = str(err)
-        return json_data
+        json_data = {
+            'success': False,
+            'error': ''
+            }
+        
+        form_data = {
+            'year': None,
+            'month': None,
+            }
+        
+        for key in form_data:
+            form_data[key] = str(request.POST[key])
 
-    for entry in holiday_data.items():
-
-        # conversion to int->str removes newlines easier
         try:
-            day = str(int(entry[0]))
-            year = form_data['year']
-            month = form_data['month']
-            date = '-'.join([year, month, day])
+            holidays = simplejson.loads(request.POST.get('mass_data'))
         except Exception as err:
             json_data['error'] = str(err)
             return json_data
-
-        if entry[1] == "empty" or (not len(entry[1])):
-            try:
-                removal_entry = TrackingEntry.objects.get(
-                    entry_date=date,
-                    user_id=form_data['user_id']
-                    )
-                removal_entry.delete()
-            except TrackingEntry.DoesNotExist:
-                """
-                because we're sending all data
-                with each ajax request, we delete
-                ones that are in the database, but
-                not in the ajax data, therefore,
-                if we get a DoesNotExist it just
-                means that we don't need to do
-                anything
-                """
-                pass
-            except:
-                continue
-        else:
-            try:
-                # mass uploads are non-working days
-                # so the admin doesn't need to assign
-                # tonnes of time data to each entry
-                if entry[1] == "ROVER":
-                    user = Tbluser.objects.get(id=form_data['user_id'])
-                    time_str = user.get_shiftlength_list()
-                else:
-                    time_str = ("00:00:00","00:00:00","00:00:00")
-                new_entry = TrackingEntry(
-                    user_id=form_data['user_id'],
-                    entry_date=date,
-                    start_time=time_str[0],
-                    end_time=time_str[1],
-                    breaks=time_str[2],
-                    daytype=entry[1]
-                    )
-                new_entry.save()
-            except IntegrityError as error:
-                """
-                if we find that it's an existant
-                entry, it means that we're in change
-                mode, so assign the new daytype and save
-                """
-                if error[0] == DUPLICATE_ENTRY:
-                    change_entry = TrackingEntry.objects.get(
-                        user_id=form_data['user_id'],
-                        entry_date=date
+        
+        for entry in holidays.items():
+            for (day, daytype) in enumerate(entry[1]):
+                if day == 0:
+                    continue
+                datestr = '-'.join([form_data['year'], form_data['month'], str(day)])
+                try:
+                    current_entry = TrackingEntry.objects.get(
+                        entry_date=datestr,
+                        user_id=entry[0]
                         )
-                    change_entry.daytype = entry[1]
-                    change_entry.save()
-                else:
-                    # if we're here, something real bad has happened
-                    # don't send this error to the user
-                    error_log.critical(str(error))
-                    raise Exception(error)
-            except Exception as error:
-                # I know this is bad but, we can't allow errors to bubble
-                error_log.critical(str(error))
-                json_data['error'] = str(error)
-                return json_data
+                    if daytype == "empty":
+                        current_entry.delete()
+                    else:
+                        current_entry.daytype = daytype
+                        current_entry.save()
+                except TrackingEntry.DoesNotExist:
+                    if daytype == "empty":
+                        continue
+                    if entry[1] == "ROVER":
+                        user = Tbluser.objects.get(id=form_data['user_id'])
+                        time_str = user.get_shiftlength_list()
+                    else:
+                        time_str = ("00:00:00","00:00:00","00:00:00")
+                    new_entry = TrackingEntry(
+                        entry_date=datestr,
+                        user_id=entry[0],
+                        start_time=time_str[0],
+                        end_time=time_str[1],
+                        breaks=time_str[2],
+                        daytype=daytype)
+                    new_entry.save()
+    except Exception as e:
+        json_data['error'] = str(e)
+        return json_data
     json_data['success'] = True
     return json_data
-
 
 @request_check
 @json_response

@@ -518,3 +518,26 @@ class UtilitiesTest(TestCase):
 \t<option value="val3">Value Three</option>
 </select>'''
         self.assertEquals(output, string)
+
+class PerformanceTest(TestCase):
+
+    def setUp(self):
+        for user in range(5000):
+            randstring = ''.join(chr(random.choice(range(65,91))) for _ in range(10))
+            Tbluser.objects.create(
+                user_id="%s@test.com" % randstring,
+                firstname="test",
+                lastname="case",
+                password="password",
+                user_type="RUSER",
+                market="BG",
+                process="AP",
+                start_date=datetime.datetime.today(),
+                breaklength="00:15:00",
+                shiftlength="08:00:00",
+                job_code="00F20G",
+                holiday_balance=20
+                )        
+
+    def testSomething(self):
+        print 1123
