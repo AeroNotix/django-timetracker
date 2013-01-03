@@ -109,9 +109,10 @@ function submit_holidays(user_id) {
         type: 'POST',
         dataType: 'json'
     });
+
 	var holiday_map = JSON;
 	holiday_map[user_id] = daytypes;
-	console.log(holiday_map);
+
     $.ajax({
         url: '/ajax/',
         data: {
