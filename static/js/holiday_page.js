@@ -129,13 +129,6 @@ function submit_holidays(user_id) {
 function addFunctions () {
     "use strict";
 
-    $("#holiday-table")
-        .find(".job_code").each( function () {
-            if ( $("#is_team_leader").attr("value") ) {
-                $(this).text('');
-            }
-        });
-
     // all the daytype classes
     // are assigned a click handler which
     // swaps the colour depending on what
