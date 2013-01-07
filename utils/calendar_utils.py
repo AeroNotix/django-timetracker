@@ -1219,49 +1219,58 @@ def mass_holidays(request):
     :raises: :class:`IntegrityError` :class:`DoesNotExist`
              :class:`ValidationError` :class:`Exception`
     """
-    try:
-        json_data = {
-            'success': False,
-            'error': ''
-            }
-        
-        form_data = {
-            'year': None,
-            'month': None,
-            }
-        
-        for key in form_data:
-            form_data[key] = str(request.POST[key])
 
-        try:
-            holidays = simplejson.loads(request.POST.get('mass_data'))
-        except Exception as err:
-            json_data['error'] = str(err)
-            return json_data
+    json_data = {
+        'success': False,
+        'error': ''
+        }
         
-        for entry in holidays.items():
-            for (day, daytype) in enumerate(entry[1]):
-                if day == 0:
+    form_data = {
+        'year': None,
+        'month': None,
+        }
+        
+    for key in form_data:
+        form_data[key] = str(request.POST[key])
+
+    try:
+        holidays = simplejson.loads(request.POST.get('mass_data'))
+    except Exception as err:
+        json_data['error'] = str(err)
+        return json_data
+        
+    for entry in holidays.items():
+        for (day, daytype) in enumerate(entry[1]):
+            if day == 0:
+                continue
+            # we check if the date is valid by trying to create a dt
+            # object and catching ValueError.
+            try:
+                datetime.datetime(
+                    int(form_data['year']), int(form_data['month']), day
+                    )
+            except ValueError:
+                # if it's an invalid date, just ignore it.
+                continue
+            datestr = '-'.join([form_data['year'], form_data['month'], str(day)])
+            try:
+                current_entry = TrackingEntry.objects.get(
+                    entry_date=datestr,
+                    user_id=entry[0]
+                    )
+                if daytype == "empty":
+                    current_entry.delete()
+                else:
+                    current_entry.daytype = daytype
+                    current_entry.save()
+            except TrackingEntry.DoesNotExist:
+                if daytype == "empty":
                     continue
-                datestr = '-'.join([form_data['year'], form_data['month'], str(day)])
-                try:
-                    current_entry = TrackingEntry.objects.get(
-                        entry_date=datestr,
-                        user_id=entry[0]
-                        )
-                    if daytype == "empty":
-                        current_entry.delete()
-                    else:
-                        current_entry.daytype = daytype
-                        current_entry.save()
-                except TrackingEntry.DoesNotExist:
-                    if daytype == "empty":
-                        continue
-                    if entry[1] == "ROVER":
-                        user = Tbluser.objects.get(id=form_data['user_id'])
-                        time_str = user.get_shiftlength_list()
-                    else:
-                        time_str = ("00:00:00","00:00:00","00:00:00")
+                if entry[1] == "ROVER":
+                    user = Tbluser.objects.get(id=form_data['user_id'])
+                    time_str = user.get_shiftlength_list()
+                else:
+                    time_str = ("00:00:00","00:00:00","00:00:00")
                     new_entry = TrackingEntry(
                         entry_date=datestr,
                         user_id=entry[0],
@@ -1270,9 +1279,6 @@ def mass_holidays(request):
                         breaks=time_str[2],
                         daytype=daytype)
                     new_entry.save()
-    except Exception as e:
-        json_data['error'] = str(e)
-        return json_data
     json_data['success'] = True
     return json_data
 
