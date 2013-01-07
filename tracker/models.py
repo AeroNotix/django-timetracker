@@ -209,7 +209,7 @@ class Tbluser(models.Model):
         return Tblauthorization.objects.get(
             admin=self.get_administrator()
             ).users.filter(
-            disabled=False, user_type=self.user_type
+            disabled=False, process=self.process
             ).order_by('lastname')
 
     def display_user_type(self):
