@@ -438,6 +438,7 @@ def holiday_planning(request,
         },
         RequestContext(request))
 
+
 def team_planning(request,
                   year=None,
                   month=None):
