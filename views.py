@@ -438,6 +438,43 @@ def holiday_planning(request,
         },
         RequestContext(request))
 
+def team_planning(request,
+                  year=None,
+                  month=None):
+
+    if year is None:
+        year = datetime.datetime.today().year
+    if month is None:
+        month = datetime.datetime.today().month
+
+    # django urls parse to unicode objects
+    year, month = int(year), int(month)
+
+    try:
+        user = Tbluser.objects.get(
+            id=request.session.get('user_id')
+        )
+    except Tbluser.DoesNotExist:
+        raise Http404
+
+    holiday_table = gen_holiday_list(user,
+                                     year,
+                                     month)[0]
+
+    # calculate the days in the month, this is inefficient.
+    # It creates a list of datetime objects and gets the len
+    # of that. Being lazy.
+    days_this_month = range(1, len(gen_datetime_cal(year, month))+1)
+    return render_to_response(
+        "team_planning.html",
+        {
+            'holiday_table': holiday_table,
+            'balance': user.get_total_balance(ret='int'),
+            'welcome_name': request.session['firstname'],
+            'days_this_month': days_this_month,
+        },
+        RequestContext(request))
+
 
 @admin_check
 def yearview(request, who=None, year=None):

@@ -205,6 +205,13 @@ class Tbluser(models.Model):
         except Tblauthorization.DoesNotExist:
             return self
 
+    def get_teammates(self):
+        return Tblauthorization.objects.get(
+            admin=self.get_administrator()
+            ).users.filter(
+            disabled=False, user_type=self.user_type
+            ).order_by('lastname')
+
     def display_user_type(self):
 
         """

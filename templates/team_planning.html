@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block header %}
+<link href="{{ STATIC_URL }}calendar.css" type="text/css"
+      rel="stylesheet" />
+<link href="{{ STATIC_URL }}holidays.css" type="text/css"
+      rel="stylesheet" />
+{% endblock header %}
+{% block menubar %}
+{% include "includes/get_nav.html" %}
+{% endblock menubar %}
+{% block title %}
+Holiday Page - Timetracker
+{% endblock title %}
+{% block content %}
+<!--[if IE 7]>
+<div id="isie" isie="true"></div>
+<![endif]-->
+<!--[if IE]>
+<div id=IEFix>
+  <![endif]-->
+
+<table id="full-table-wrapper">
+  <tr>
+    <td valign="top">
+      <div id="holiday-buttons">
+        <table>
+          <tr>
+            <td onclick="applyClass('empty')" class="empty holiday-button"></td><td>Empty</td>
+          </tr>
+          <tr>
+            <td onclick="applyClass('ROVER')" class="ROVER holiday-button"></td><td>Return for overtime</td>
+          </tr>
+          <tr>
+            <td onclick="applyClass('SICKD')" class="SICKD holiday-button"></td><td>Sickness</td>
+          </tr>
+          <tr>
+            <td onclick="applyClass('HOLIS')" class="HOLIS holiday-button"></td><td>Holiday</td>
+          </tr>
+          <tr>
+            <td onclick="applyClass('PUABS')" class="PUABS holiday-button"></td><td>Public Hol</td>
+          </tr>
+          <tr>
+            <td onclick="applyClass('PUWRK')" class="PUWRK holiday-button"></td><td>Work on holiday</td>
+          </tr>
+          <tr>
+            <td onclick="applyClass('SATUR')" class="SATUR holiday-button"></td><td>Saturday</td>
+          </tr>
+          <tr>
+            <td onclick="applyClass('RETRN')" class="RETRN holiday-button"></td><td>Returned day</td>
+          </tr>
+          <tr>
+            <td onclick="applyClass('WKHOM')" class="WKHOM holiday-button"></td><td>Home</td>
+          </tr>
+          <tr>
+            <td onclick="applyClass('TRAIN')" class="TRAIN holiday-button"></td><td>Training</td>
+          </tr>
+          <tr>
+            <td onclick="applyClass('DAYOD')" class="DAYOD holiday-button"></td><td>Day on demand</td>
+          </tr>
+          <tr>
+            <td onclick="applyClass('OTHER')" class="OTHER holiday-button"></td><td>Other</td>
+          </tr>
+          <tr>
+            <td class="WKEND holiday-button"></td><td>Weekend</td>
+          </tr>
+        </table>
+      </div>
+    </td>
+    <td>
+      <div id="holiday-wrapper">
+        {{ holiday_table|safe }}
+      </div>
+    </td>
+</table>
+</div>
+<!--[If IE]>
+</div>
+<![endif]-->
+{% endblock content %}
+{% block additional_javascript %}
+<script type="text/javascript" src="{{ STATIC_URL }}js/team_planning.js"></script>
+{% endblock additional_javascript %}

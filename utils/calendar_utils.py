@@ -179,7 +179,7 @@ def gen_holiday_list(admin_user, year=None, month=None, process=None):
         year = datetime.datetime.today().year
     if month is None:
         month = datetime.datetime.today().month
-    
+
     # we convert the arguments to ints because
     # we get given unicode objects
     year, month = int(year), int(month)
@@ -206,16 +206,18 @@ def gen_holiday_list(admin_user, year=None, month=None, process=None):
     # here we add the administrator to their list of employees
     # this means that administrator accounts can view/change
     # their own holidays
-    try:
-        auth_user = Tblauth.objects.get(admin=admin_user.get_administrator())
-        user_list = list(
-            auth_user.users.filter(process=process).order_by('lastname').filter(disabled=False) if process \
-                else auth_user.users.all().order_by('lastname').filter(disabled=False)
-            )
-    except Tblauth.DoesNotExist:
-        user_list = []
-
-    user_list = [admin_user.get_administrator()] + user_list
+    if admin_user.user_type == "RUSER":
+        user_list = admin_user.get_teammates()
+    else:
+        try:
+            auth_user = Tblauth.objects.get(admin=admin_user.get_administrator())
+            user_list = list(
+                auth_user.users.filter(process=process).order_by('lastname').filter(disabled=False) if process \
+                    else auth_user.users.all().order_by('lastname').filter(disabled=False)
+                )
+            user_list = [admin_user.get_administrator()] + user_list
+        except Tblauth.DoesNotExist:
+            user_list = []
 
     def isweekend(n):
         return {
@@ -275,11 +277,12 @@ def gen_holiday_list(admin_user, year=None, month=None, process=None):
                   )
             to_out('<td usrid=%s class=%s>%s\n' % (user.id, day, klass))
         # user_id is added as attr to make mass calls
-        to_out("""<td>
+        if admin_user.user_type != "RUSER":
+            to_out("""<td>
                     <input value="submit" type="button" user_id="{0}"
                            onclick="submit_holidays({0})" />
                   </td>""".format(user.id))
-        to_out('</tr>')
+            to_out('</tr>')
         to_js(",\n" if idx+1 != len(user_list) else "")
     to_js("\n}")
 
@@ -292,8 +295,13 @@ def gen_holiday_list(admin_user, year=None, month=None, process=None):
     # generate the select box for the months
     month_select = generate_select(month_select_data, id="month_select")
     # generate the select box for the process type
-    process_select = generate_select( (("ALL","All"),) + Tbluser.PROCESS_CHOICES, id="process_select")
+    process_select = "<td>%s</td>" % generate_select( (("ALL","All"),) + Tbluser.PROCESS_CHOICES, id="process_select") \
+        if admin_user.user_type != "RUSER" else ""
     # generate submit all button
+    submit_all = '''<td>
+                      <input id="submit_all" value="Submit All" type="button"
+                       onclick="submit_all()" />
+                    </td>''' if admin_user.user_type != "RUSER" else ""
     to_out("""
     <tr>
       <td colspan="100">
@@ -305,15 +313,15 @@ def gen_holiday_list(admin_user, year=None, month=None, process=None):
             </td>
             <td>{0}</td>
             <td>{1}</td>
-            <td>{2}</td>
-            <td>
-              <input id="submit_all" value="Submit All" type="button"
-               onclick="submit_all()" />
-            </td>
+            {2}
+            {3}
           </tr>
         </table>
       </td>
-     </tr>""".format(year_select, month_select, process_select))
+     </tr>""".format(year_select,
+                     month_select,
+                     process_select,
+                     submit_all))
     return ''.join(str_output), comments_list, ''.join(js_calendar)
 
 
@@ -1224,12 +1232,12 @@ def mass_holidays(request):
         'success': False,
         'error': ''
         }
-        
+
     form_data = {
         'year': None,
         'month': None,
         }
-        
+
     for key in form_data:
         form_data[key] = str(request.POST[key])
 
@@ -1238,7 +1246,7 @@ def mass_holidays(request):
     except Exception as err:
         json_data['error'] = str(err)
         return json_data
-        
+
     for entry in holidays.items():
         for (day, daytype) in enumerate(entry[1]):
             if day == 0:
