@@ -23,6 +23,7 @@ from utils.error_codes import DUPLICATE_ENTRY
 try:
     from selenium.webdriver.firefox.webdriver import WebDriver
     from selenium.common.exceptions import NoSuchElementException
+    from selenium.webdriver.common.keys import Keys
     SELENIUM_AVAILABLE = True
 except ImportError:
     SELENIUM_AVAILABLE = False
@@ -571,7 +572,7 @@ class FrontEndTest(LiveServerTestCase):
 
     @classmethod
     def tearDownClass(cls):
-        super(FrontEndTest, cls).tearDownClass()
+        super(FrontEndTest, cls).tearDownClass() 
         delete_users(cls)
         cls.driver.quit()
 
@@ -581,14 +582,11 @@ class FrontEndTest(LiveServerTestCase):
 
         # selenium doesn't give direct access to the response
         # code so we look for some element.
-        self.accessURL("/admin_view/")
-        self.assertRaises(NoSuchElementException, self.driver.find_element_by_id, "logout-btn")
-        self.accessURL("/yearview/")
-        self.assertRaises(NoSuchElementException, self.driver.find_element_by_id, "logout-btn")
-        self.accessURL("/user_edit/")
-        self.assertRaises(NoSuchElementException, self.driver.find_element_by_id, "logout-btn")
-        self.accessURL("/holiday_planning/")
-        self.assertRaises(NoSuchElementException, self.driver.find_element_by_id, "logout-btn")
+
+        for url in ["/admin_view/", "/yearview/", "/user_edit/", "/holiday_planning/"]:
+            self.accessURL(url)
+            time.sleep(1)
+            self.assertRaises(NoSuchElementException, self.driver.find_element_by_id, "logout-btn")
 
     @check_selenium
     def test_WeekendButtonHasNoFunction(self):
@@ -618,6 +616,33 @@ class FrontEndTest(LiveServerTestCase):
                 button.click()
         for cell in clicked_cells:
             self.assertFalse("WKEND" in cell.get_attribute("class"))
+
+    @check_selenium
+    def test_SubmitHolidays(self):
+        self.manager_login()
+        # wait to be logged in
+        time.sleep(2)
+
+        self.accessURL("/holiday_planning/")
+        holiday_table = self.driver.find_element_by_id("holiday-table")
+        cells = holiday_table.find_elements_by_tag_name("td")
+
+        count = 0
+        for cell in cells:
+            if cell.get_attribute("usrid"):
+                if cell.get_attribute("class") != "WKEND":
+                    cell.click()
+                    count += 1
+
+        holiday_buttons = self.driver.find_element_by_id("holiday-buttons")
+        buttons = holiday_buttons.find_elements_by_tag_name("td")
+        for button in buttons:
+            if "HOLIS" in button.get_attribute("class"):
+                button.click()
+        self.driver.find_element_by_id("submit_all").click()
+        time.sleep(5)
+        self.driver.switch_to_alert().accept()
+        self.assertEquals(len(TrackingEntry.objects.all()), count)
 
     @check_selenium
     def test_Logins(self):
