@@ -1086,7 +1086,12 @@ def useredit(request):
     # get the data off the request object
     for item in request.POST:
         if item not in ["form_type", "mode"]:
-            data[item] = request.POST[item]
+            value = request.POST[item]
+            if value == "false":
+                value = False
+            if value == "true":
+                value = True
+            data[item] = value
 
     json_data = {
         'success': False,
