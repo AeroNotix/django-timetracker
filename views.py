@@ -82,7 +82,11 @@ def login(request):
         user = Tbluser.objects.get(user_id__exact=request.POST['user_name'])
     # if the user doesn't match anything, notify
     except Tbluser.DoesNotExist:
-        return HttpResponse("Username and Password don't match")
+        return HttpResponse('''<html>
+ <body>
+  <h3 id="error">Username and Password don't match!<h3>
+ </body>
+</html>''')
 
     if user.isdisabled():
         raise Http404
