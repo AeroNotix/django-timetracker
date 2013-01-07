@@ -138,11 +138,19 @@ class BaseUserTest(TestCase):
         }
 
         # create some random holiday data
-        holidays = {}
-        holidays_empty = {}
+        holidays = {
+            self.linked_manager.id: list(),
+            self.linked_user.id: list(),
+            }
+        holidays_empty = {
+            self.linked_manager.id: list(),
+            self.linked_user.id: list(),
+            }
         for day in range(1, 32):
-            holidays[day] = random.choice(ABSENT_CHOICES)[0]
-            holidays[day] = "empty"
+            holidays[self.linked_manager.id].append(random.choice(ABSENT_CHOICES)[0])
+            holidays[self.linked_user.id].append(random.choice(ABSENT_CHOICES)[0])
+            holidays_empty[self.linked_manager.id].append("empty")
+            holidays_empty[self.linked_user.id].append("empty")
         self.holiday_data = simplejson.dumps(holidays)
         self.holiday_data_empty = simplejson.dumps(holidays_empty)
 
@@ -380,7 +388,7 @@ class AjaxTestCase(BaseUserTest):
             'user_id': self.linked_user.id,
             'year': '2012',
             'month': '1',
-            'holiday_data': self.holiday_data
+            'mass_data': self.holiday_data
             }
 
         # the first time should be a virgin entry
@@ -394,7 +402,7 @@ class AjaxTestCase(BaseUserTest):
             'user_id': self.linked_user.id,
             'year': '2012',
             'month': '1',
-            'holiday_data': self.holiday_data_empty
+            'mass_data': self.holiday_data_empty
             }
 
         # the 2nd time should still work, but silently pass
@@ -409,7 +417,7 @@ class AjaxTestCase(BaseUserTest):
             'user_id': self.linked_user.id,
             'year': '2012',
             'month': '1',
-            'holiday_data': self.holiday_data
+            'mass_data': self.holiday_data
             }
 
         # the last time
@@ -540,4 +548,4 @@ class PerformanceTest(TestCase):
                 )        
 
     def testSomething(self):
-        print 1123
+        pass
