@@ -1,9 +1,11 @@
 import datetime
 import simplejson
 import random
+import functools
+import time
 
 from django.db import IntegrityError
-from django.test import TestCase
+from django.test import TestCase, LiveServerTestCase
 from django.http import HttpResponse, Http404
 
 from tracker.models import (Tbluser,
@@ -18,108 +20,129 @@ from utils.calendar_utils import (validate_time, parse_time,
 from utils.datemaps import pad, float_to_time, generate_select, ABSENT_CHOICES
 from utils.error_codes import DUPLICATE_ENTRY
 
+try:
+    from selenium.webdriver.firefox.webdriver import WebDriver
+    from selenium.common.exceptions import NoSuchElementException
+    SELENIUM_AVAILABLE = True
+except ImportError:
+    SELENIUM_AVAILABLE = False
+
+def check_selenium(f):
+    if not SELENIUM_AVAILABLE:
+        return
+    @functools.wraps(f)
+    def inner(args):
+        f(args)
+    return inner
+
+def create_users(cls):
+    # we create users which will be linked,
+    # to test how the automatic retrieval
+    # of the links works
+    cls.linked_manager = Tbluser.objects.create(
+        user_id="test.manager@test.com",
+        firstname="test",
+        lastname="case",
+        password="password",
+        user_type="ADMIN",
+        market="BG",
+        process="AP",
+        start_date=datetime.datetime.today(),
+        breaklength="00:15:00",
+        shiftlength="08:00:00",
+        job_code="00F20G",
+        holiday_balance=20
+        )
+
+    cls.linked_user = Tbluser.objects.create(
+        user_id="test.user@test.com",
+        firstname="test",
+        lastname="case",
+        password="password",
+        user_type="RUSER",
+        market="BG",
+        process="AP",
+        start_date=datetime.datetime.today(),
+        breaklength="00:15:00",
+        shiftlength="08:00:00",
+        job_code="00F20G",
+        holiday_balance=20
+        )
+
+    cls.linked_teamlead = Tbluser.objects.create(
+        user_id="test.teamlead@test.com",
+        firstname="test",
+        lastname="case",
+        password="password",
+        user_type="TEAML",
+        market="BG",
+        process="AP",
+        start_date=datetime.datetime.today(),
+        breaklength="00:15:00",
+        shiftlength="08:00:00",
+        job_code="00F20G",
+        holiday_balance=20
+        )
+
+    # create the links for the linked users
+    cls.authorization = Tblauthorization.objects.create(admin=cls.linked_manager)
+    cls.authorization.save()
+    cls.authorization.users.add(cls.linked_user, cls.linked_teamlead)
+    cls.authorization.save()
+
+    cls.unlinked_manager = Tbluser.objects.create(
+        user_id="test.unlinkedmanager@test.com",
+        firstname="test",
+        lastname="case",
+        password="password",
+        user_type="ADMIN",
+        market="BG",
+        process="AP",
+        start_date=datetime.datetime.today(),
+        breaklength="00:15:00",
+        shiftlength="08:00:00",
+        job_code="00F20G",
+        holiday_balance=20
+        )
+
+    cls.unlinked_user = Tbluser.objects.create(
+        user_id="test.unlinkeduser@test.com",
+        firstname="test",
+        lastname="case",
+        password="password",
+        user_type="RUSER",
+        market="BG",
+        process="AP",
+        start_date=datetime.datetime.today(),
+        breaklength="00:15:00",
+        shiftlength="08:00:00",
+        job_code="00F20G",
+        holiday_balance=20
+        )
+
+    cls.unlinked_teamlead = Tbluser.objects.create(
+        user_id="test.unlinkedteamlead@test.com",
+        firstname="test",
+        lastname="case",
+        password="password",
+        user_type="TEAML",
+        market="BG",
+        process="AP",
+        start_date=datetime.datetime.today(),
+        breaklength="00:15:00",
+        shiftlength="08:00:00",
+        job_code="00F20G",
+        holiday_balance=20
+        )
+
+def delete_users(cls):
+    [user.delete() for user in Tbluser.objects.all()]
+
 class BaseUserTest(TestCase):
 
     def setUp(self):
 
-        # we create users which will be linked,
-        # to test how the automatic retrieval
-        # of the links works
-        self.linked_manager = Tbluser.objects.create(
-            user_id="test.manager@test.com",
-            firstname="test",
-            lastname="case",
-            password="password",
-            user_type="ADMIN",
-            market="BG",
-            process="AP",
-            start_date=datetime.datetime.today(),
-            breaklength="00:15:00",
-            shiftlength="08:00:00",
-            job_code="00F20G",
-            holiday_balance=20
-        )
-
-        self.linked_user = Tbluser.objects.create(
-            user_id="test.user@test.com",
-            firstname="test",
-            lastname="case",
-            password="password",
-            user_type="RUSER",
-            market="BG",
-            process="AP",
-            start_date=datetime.datetime.today(),
-            breaklength="00:15:00",
-            shiftlength="08:00:00",
-            job_code="00F20G",
-            holiday_balance=20
-        )
-
-        self.linked_teamlead = Tbluser.objects.create(
-            user_id="test.teamlead@test.com",
-            firstname="test",
-            lastname="case",
-            password="password",
-            user_type="TEAML",
-            market="BG",
-            process="AP",
-            start_date=datetime.datetime.today(),
-            breaklength="00:15:00",
-            shiftlength="08:00:00",
-            job_code="00F20G",
-            holiday_balance=20
-        )
-
-        # create the links for the linked users
-        self.authorization = Tblauthorization.objects.create(admin=self.linked_manager)
-        self.authorization.save()
-        self.authorization.users.add(self.linked_user, self.linked_teamlead)
-        self.authorization.save()
-
-        self.unlinked_manager = Tbluser.objects.create(
-            user_id="test.unlinkedmanager@test.com",
-            firstname="test",
-            lastname="case",
-            password="password",
-            user_type="ADMIN",
-            market="BG",
-            process="AP",
-            start_date=datetime.datetime.today(),
-            breaklength="00:15:00",
-            shiftlength="08:00:00",
-            job_code="00F20G",
-            holiday_balance=20
-        )
-
-        self.unlinked_user = Tbluser.objects.create(
-            user_id="test.unlinkeduser@test.com",
-            firstname="test",
-            lastname="case",
-            password="password",
-            user_type="RUSER",
-            market="BG",
-            process="AP",
-            start_date=datetime.datetime.today(),
-            breaklength="00:15:00",
-            shiftlength="08:00:00",
-            job_code="00F20G",
-            holiday_balance=20
-        )
-
-        self.unlinked_teamlead = Tbluser.objects.create(
-            user_id="test.unlinkedteamlead@test.com",
-            firstname="test",
-            lastname="case",
-            password="password",
-            user_type="TEAML",
-            market="BG",
-            process="AP",
-            start_date=datetime.datetime.today(),
-            breaklength="00:15:00",
-            shiftlength="08:00:00",
-            job_code="00F20G",
-            holiday_balance=20
-        )
+        create_users(self)
 
         # create a new_user dict to share among tests
         self.new_user = {
@@ -175,7 +198,7 @@ class BaseUserTest(TestCase):
 
     def tearDown(self):
         del(self.linked_manager_request)
-        [user.delete() for user in Tbluser.objects.all()]
+        delete_users(self)
         [holiday.delete() for holiday in TrackingEntry.objects.all()]
 
 class UserTestCase(BaseUserTest):
@@ -527,25 +550,31 @@ class UtilitiesTest(TestCase):
 </select>'''
         self.assertEquals(output, string)
 
-class PerformanceTest(TestCase):
+class FrontEndTest(LiveServerTestCase):
 
     def setUp(self):
-        for user in range(5000):
-            randstring = ''.join(chr(random.choice(range(65,91))) for _ in range(10))
-            Tbluser.objects.create(
-                user_id="%s@test.com" % randstring,
-                firstname="test",
-                lastname="case",
-                password="password",
-                user_type="RUSER",
-                market="BG",
-                process="AP",
-                start_date=datetime.datetime.today(),
-                breaklength="00:15:00",
-                shiftlength="08:00:00",
-                job_code="00F20G",
-                holiday_balance=20
-                )        
+        create_users(self)
 
-    def testSomething(self):
-        pass
+    def tearDown(self):
+        delete_users(self)
+
+    @classmethod
+    def setUpClass(cls):
+        cls.driver = WebDriver()
+        super(FrontEndTest, cls).setUpClass()
+
+    @classmethod
+    def tearDownClass(cls):
+        super(FrontEndTest, cls).tearDownClass()
+        delete_users(cls)
+        cls.driver.quit()
+
+    @check_selenium
+    def test_Loginself(self):
+        # login
+        self.driver.get(self.live_server_url)
+        self.driver.find_element_by_id("login-user").send_keys(self.linked_user.user_id)
+        self.driver.find_element_by_id("login-password").send_keys(self.linked_user.password)
+        self.driver.find_element_by_id("add_button").click()
+        # if this raises it means we're logged in!
+        self.assertRaises(NoSuchElementException, self.driver.find_element_by_id, "error")
