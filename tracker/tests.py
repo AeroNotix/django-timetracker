@@ -570,11 +570,69 @@ class FrontEndTest(LiveServerTestCase):
         cls.driver.quit()
 
     @check_selenium
-    def test_Loginself(self):
+    def test_AccessRights(self):
+        self.user_login()
+
+        # selenium doesn't give direct access to the response
+        # code so we look for some element.
+        self.accessURL("/admin_view/")
+        self.assertRaises(NoSuchElementException, self.driver.find_element_by_id, "logout-btn")
+        self.accessURL("/yearview/")
+        self.assertRaises(NoSuchElementException, self.driver.find_element_by_id, "logout-btn")
+        self.accessURL("/user_edit/")
+        self.assertRaises(NoSuchElementException, self.driver.find_element_by_id, "logout-btn")
+        self.accessURL("/holiday_planning/")
+        self.assertRaises(NoSuchElementException, self.driver.find_element_by_id, "logout-btn")
+
+    @check_selenium
+    def test_WeekendButtonHasNoFunction(self):
+        '''
+        This ensures that the weekend button simply servers to show the
+        user what the element represents. We don't want the element to
+        have any use other than that, otherwise we could end up with
+        weekends ending up being stored in the database.
+        '''
+        self.manager_login()
+        # wait to be logged in
+        time.sleep(2)
+        self.accessURL("/holiday_planning/")
+        holiday_table = self.driver.find_element_by_id("holiday-table")
+        cells = holiday_table.find_elements_by_tag_name("td")
+
+        clicked_cells = []
+        for cell in cells:
+            if cell.get_attribute("usrid") == "1":
+                if cell.get_attribute("class") != "WKEND":
+                    clicked_cells.append(cell)
+                    cell.click()
+        holiday_buttons = self.driver.find_element_by_id("holiday-buttons")
+        buttons = holiday_buttons.find_elements_by_tag_name("td")
+        for button in buttons:
+            if "WKEND" in button.get_attribute("class"):
+                button.click()
+        for cell in clicked_cells:
+            self.assertFalse("WKEND" in cell.get_attribute("class"))
+
+    @check_selenium
+    def test_Logins(self):
         # login
-        self.driver.get(self.live_server_url)
-        self.driver.find_element_by_id("login-user").send_keys(self.linked_user.user_id)
-        self.driver.find_element_by_id("login-password").send_keys(self.linked_user.password)
-        self.driver.find_element_by_id("add_button").click()
-        # if this raises it means we're logged in!
+        self.user_login()
+        # if this raises it means we're logged in.
         self.assertRaises(NoSuchElementException, self.driver.find_element_by_id, "error")
+        self.driver.find_element_by_id("logout-btn").click()
+        # once again with a manager
+        self.manager_login()
+        self.assertRaises(NoSuchElementException, self.driver.find_element_by_id, "error")
+
+    def login(self, who):
+        self.driver.get(self.live_server_url)
+        self.driver.find_element_by_id("login-user").send_keys(who.user_id)
+        self.driver.find_element_by_id("login-password").send_keys(who.password)
+        self.driver.find_element_by_id("add_button").click()
+    def user_login(self):
+        self.login(self.linked_user)
+    def manager_login(self):
+        self.login(self.linked_manager)
+
+    def accessURL(self, url):
+        self.driver.get("%s%s" % (self.live_server_url, url))
