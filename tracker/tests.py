@@ -554,9 +554,15 @@ class FrontEndTest(LiveServerTestCase):
 
     def setUp(self):
         create_users(self)
-
+        
     def tearDown(self):
         delete_users(self)
+        try:
+            self.accessURL("/edit_profile/")
+            self.driver.get_element_by_id("logout-btn").click()
+            self.accessURL("")
+        except:
+            pass
 
     @classmethod
     def setUpClass(cls):
