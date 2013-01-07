@@ -241,6 +241,12 @@ function change_table_data () {
                 } else {
                     $("#process_select").val(process);
                 }
+                $(data).find("div").each(function() {
+                    if ($(this).attr("id") === "newjs") {
+                        eval($(this).text());
+                    }
+                });
+                console.log(js_calendar);
                 $("#holiday-wrapper, #comments-wrapper").fadeTo(500, 1);
             });
         }

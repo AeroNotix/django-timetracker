@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-
 {% block header %}
 <link href="{{ STATIC_URL }}calendar.css" type="text/css"
       rel="stylesheet" />
@@ -19,6 +18,7 @@ Holiday Page - Timetracker
 <!--[if IE]>
 <div id=IEFix>
   <![endif]-->
+
 <table id="full-table-wrapper">
   <tr>
     <td valign="top">
@@ -115,7 +115,13 @@ Holiday Page - Timetracker
 {% endblock extra_content %}
 {% block additional_javascript %}
 <script type="text/javascript">
-  {{ js_calendar|safe }};
+  var js_calendar = {{ js_calendar|safe }};
 </script>
+
+<div id="newjs" style="display:none" hidden="hidden">
+  var newjs = {{ js_calendar|safe }};
+  js_calendar = newjs;
+</div>
+
 <script type="text/javascript" src="{{ STATIC_URL }}js/holiday_page.js"></script>
 {% endblock additional_javascript %}

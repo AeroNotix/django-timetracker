@@ -229,7 +229,7 @@ def gen_holiday_list(admin_user, year=None, month=None, process=None):
             }[datetime.date(year=year,month=month,day=num).isoweekday()]
 
     comments_list = []
-    js_calendar = ["var js_calendar = {\n"]
+    js_calendar = ["{\n"]
     to_js = js_calendar.append
     for idx, user in enumerate(user_list):
         day_classes = dict( [
