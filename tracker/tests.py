@@ -738,6 +738,9 @@ class FrontEndTest(LiveServerTestCase):
                 if cell.get_attribute("class") != "WKEND":
                     cell.click()
                     count += 1
+                    # we don't need that many to test
+                    if count == 30:
+                        break
 
         holiday_buttons = self.driver.find_element_by_id("holiday-buttons")
         buttons = holiday_buttons.find_elements_by_tag_name("td")
@@ -745,8 +748,8 @@ class FrontEndTest(LiveServerTestCase):
             if "HOLIS" in button.get_attribute("class"):
                 button.click()
         self.driver.find_element_by_id("submit_all").click()
-        time.sleep(5)
         self.driver.switch_to_alert().accept()
+        time.sleep(5)
         self.assertEquals(len(TrackingEntry.objects.all()), count)
 
     @skipUnless(SELENIUM_AVAILABLE, "These tests require Selenium to be installed.")
