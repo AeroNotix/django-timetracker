@@ -199,7 +199,7 @@ class Tbluser(models.Model):
         try:
             if self.is_user():
                 return self.get_teammates()
-            if self.sup_tl_admin():
+            if self.sup_tl_or_admin():
                 if self.is_tl():
                     admin = self.get_administrator()
                 else:
