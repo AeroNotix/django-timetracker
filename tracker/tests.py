@@ -40,6 +40,23 @@ def create_users(cls):
     # we create users which will be linked,
     # to test how the automatic retrieval
     # of the links works
+
+    cls.linked_super_user = Tbluser.objects.create(
+        user_id="test.super@test.com",
+        firstname="test",
+        lastname="case",
+        password="password",
+        user_type="SUPER",
+        market="BG",
+        process="AP",
+        start_date=datetime.datetime.today(),
+        breaklength="00:15:00",
+        shiftlength="08:00:00",
+        job_code="00F20G",
+        holiday_balance=20
+        )
+
+
     cls.linked_manager = Tbluser.objects.create(
         user_id="test.manager@test.com",
         firstname="test",
@@ -70,6 +87,39 @@ def create_users(cls):
         holiday_balance=20
         )
 
+    users = [
+    Tbluser.objects.create(
+            user_id="test.user%d@test.com" % userid,
+            firstname="test",
+            lastname="case",
+            password="password",
+            user_type="RUSER",
+            market="BG",
+            process="AP",
+            start_date=datetime.datetime.today(),
+            breaklength="00:15:00",
+            shiftlength="08:00:00",
+            job_code="00F20G",
+            holiday_balance=20
+            )
+    for userid in range(5)]
+    users.append(
+        Tbluser.objects.create(
+            user_id="test.user7@test.com",
+            firstname="test",
+            lastname="case",
+            password="password",
+            user_type="RUSER",
+            market="BG",
+            process="AO",
+            start_date=datetime.datetime.today(),
+            breaklength="00:15:00",
+            shiftlength="08:00:00",
+            job_code="00F20G",
+            holiday_balance=20
+            )
+        )
+
     cls.linked_teamlead = Tbluser.objects.create(
         user_id="test.teamlead@test.com",
         firstname="test",
@@ -89,7 +139,27 @@ def create_users(cls):
     cls.authorization = Tblauthorization.objects.create(admin=cls.linked_manager)
     cls.authorization.save()
     cls.authorization.users.add(cls.linked_user, cls.linked_teamlead)
+    [cls.authorization.users.add(user) for user in users]
     cls.authorization.save()
+
+    cls.supauthorization = Tblauthorization.objects.create(admin=cls.linked_super_user)
+    cls.supauthorization.users.add(cls.linked_manager, cls.linked_teamlead, cls.linked_user)
+    cls.supauthorization.save()
+
+    cls.unlinked_super_user = Tbluser.objects.create(
+        user_id="test.unlinkedsuper@test.com",
+        firstname="test",
+        lastname="case",
+        password="password",
+        user_type="SUPER",
+        market="BG",
+        process="AP",
+        start_date=datetime.datetime.today(),
+        breaklength="00:15:00",
+        shiftlength="08:00:00",
+        job_code="00F20G",
+        holiday_balance=20
+        )
 
     cls.unlinked_manager = Tbluser.objects.create(
         user_id="test.unlinkedmanager@test.com",
@@ -207,14 +277,53 @@ class UserTestCase(BaseUserTest):
     Tests the methods attached to user instances
     '''
 
-    def testIsAdmin(self):
-        '''
-        Only managers and team leaders are admins
-        '''
+    def test_Sup_TL_or_Admin(self):
+        self.assertEquals(self.linked_super_user.sup_tl_or_admin(), True)
+        self.assertEquals(self.linked_manager.sup_tl_or_admin(), True)
+        self.assertEquals(self.linked_teamlead.sup_tl_or_admin(), True)
+        self.assertEquals(self.linked_user.sup_tl_or_admin(), False)
+
+    def test_IsSuper(self):
+        self.assertEquals(self.linked_super_user.is_super(), True)
+        self.assertEquals(self.linked_manager.is_super(), False)
+        self.assertEquals(self.linked_teamlead.is_super(), False)
+        self.assertEquals(self.linked_user.is_super(), False)
+
+    def test_Super_Or_Admin(self):
+        self.assertEquals(self.linked_super_user.super_or_admin(), True)
+        self.assertEquals(self.linked_manager.super_or_admin(), True)
+        self.assertEquals(self.linked_teamlead.super_or_admin(), False)
+        self.assertEquals(self.linked_user.super_or_admin(), False)
+
+    def test_IsAdmin(self):
+        self.assertEquals(self.linked_super_user.is_admin(), False)
         self.assertEquals(self.linked_manager.is_admin(), True)
-        self.assertNotEquals(self.linked_manager.is_admin(), False)
+        self.assertEquals(self.linked_teamlead.is_admin(), False)
         self.assertEquals(self.linked_user.is_admin(), False)
-        self.assertNotEquals(self.linked_user.is_admin(), True)
+
+    def test_Admin_or_TL(self):
+        self.assertEquals(self.linked_super_user.admin_or_tl(), False)
+        self.assertEquals(self.linked_manager.admin_or_tl(), True)
+        self.assertEquals(self.linked_teamlead.admin_or_tl(), True)
+        self.assertEquals(self.linked_user.admin_or_tl(), False)
+
+    def test_IsTL(self):
+        self.assertEquals(self.linked_super_user.is_tl(), False)
+        self.assertEquals(self.linked_manager.is_tl(), False)
+        self.assertEquals(self.linked_teamlead.is_tl(), True)
+        self.assertEquals(self.linked_user.is_tl(), False)
+
+    def test_IsUSER(self):
+        self.assertEquals(self.linked_super_user.is_user(), False)
+        self.assertEquals(self.linked_manager.is_user(), False)
+        self.assertEquals(self.linked_teamlead.is_user(), False)
+        self.assertEquals(self.linked_user.is_user(), True)
+
+    def test_get_subordinates(self):
+        self.assertEquals(len(self.linked_super_user.get_subordinates()), 3)
+        self.assertEquals(len(self.linked_manager.get_subordinates()), 8)
+        self.assertEquals(len(self.linked_teamlead.get_subordinates()), 8)
+        self.assertEquals(len(self.linked_user.get_subordinates()), 7)
 
     def testName(self):
         '''
@@ -227,8 +336,10 @@ class UserTestCase(BaseUserTest):
         '''
         Make sure our types return what we set them up as
         '''
-        self.assertEquals(self.linked_manager.display_user_type(), "ADMIN")
-        self.assertEquals(self.linked_user.display_user_type(), "RUSER")
+        self.assertEquals(self.linked_super_user.user_type, "SUPER")
+        self.assertEquals(self.linked_manager.user_type, "ADMIN")
+        self.assertEquals(self.linked_teamlead.user_type, "TEAML")
+        self.assertEquals(self.linked_user.user_type, "RUSER")
 
     def testHolidayBalanceMix(self):
         '''
