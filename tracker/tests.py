@@ -3,6 +3,7 @@ import simplejson
 import random
 import functools
 import time
+from unittest import skipUnless
 
 from django.db import IntegrityError
 from django.test import TestCase, LiveServerTestCase
@@ -28,13 +29,6 @@ try:
 except ImportError:
     SELENIUM_AVAILABLE = False
 
-def check_selenium(f):
-    if not SELENIUM_AVAILABLE:
-        return
-    @functools.wraps(f)
-    def inner(args):
-        f(args)
-    return inner
 
 def create_users(cls):
     # we create users which will be linked,
@@ -687,7 +681,7 @@ class FrontEndTest(LiveServerTestCase):
         delete_users(cls)
         cls.driver.quit()
 
-    @check_selenium
+    @skipUnless(SELENIUM_AVAILABLE, "These tests require Selenium to be installed.")
     def test_AccessRights(self):
         self.user_login()
 
@@ -699,7 +693,7 @@ class FrontEndTest(LiveServerTestCase):
             time.sleep(1)
             self.assertRaises(NoSuchElementException, self.driver.find_element_by_id, "logout-btn")
 
-    @check_selenium
+    @skipUnless(SELENIUM_AVAILABLE, "These tests require Selenium to be installed.")
     def test_WeekendButtonHasNoFunction(self):
         '''
         This ensures that the weekend button simply servers to show the
@@ -728,7 +722,7 @@ class FrontEndTest(LiveServerTestCase):
         for cell in clicked_cells:
             self.assertFalse("WKEND" in cell.get_attribute("class"))
 
-    @check_selenium
+    @skipUnless(SELENIUM_AVAILABLE, "These tests require Selenium to be installed.")
     def test_SubmitHolidays(self):
         self.manager_login()
         # wait to be logged in
@@ -755,7 +749,7 @@ class FrontEndTest(LiveServerTestCase):
         self.driver.switch_to_alert().accept()
         self.assertEquals(len(TrackingEntry.objects.all()), count)
 
-    @check_selenium
+    @skipUnless(SELENIUM_AVAILABLE, "These tests require Selenium to be installed.")
     def test_Logins(self):
         # login
         self.user_login()
