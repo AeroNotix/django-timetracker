@@ -70,6 +70,7 @@ class Tbluser(models.Model):
         ('BK', 'Behr Kirchberg'),
         ('CZ', 'Behr Czech'),
         ('EN', 'MCBC'),
+        ('AD', 'Administration'),
     )
 
     PROCESS_CHOICES = (
