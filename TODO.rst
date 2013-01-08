@@ -17,4 +17,4 @@ COMPLETED GOALS
 
 * Refactor the user retrieval. This should be a method on the User class which gets all child objects.
   Similarly, this should automagically work for Administrators/Team Leaders/Users alike. This would
-  simplify a great deal of requests and population of tables etc.
+  simplify a great deal of requests and population of tables etc. fdbe32f21c3935dbf9189e3945bc1d3b850bce3c
