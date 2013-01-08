@@ -81,6 +81,7 @@ class Tbluser(models.Model):
         ('HR', 'HRO'),
         ('SC', 'Scanning'),
         ('TE', 'Travel & Expenses'),
+        ('AD', 'Administration'),
     )
 
     JOB_CODES = (
