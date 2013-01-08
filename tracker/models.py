@@ -195,6 +195,18 @@ class Tbluser(models.Model):
 
         return map(datetime_to_timestring, [start_time, end_time, self.breaklength])
 
+    def get_subordinates(self):
+        if self.is_user():
+            return self.get_teammates()
+        if self.super_or_admin():
+            return Tblauthorization.objects.get(
+                admin=self
+                ).users.filter(disabled=False).order_by("lastname")
+        if self.is_tl():
+            return Tblauthorization.objects.get(
+                admin=self.get_administrator()
+                ).users.filter(disabled=False).order_by("lastname")
+
     def get_administrator(self):
 
         """
