@@ -320,9 +320,9 @@ class UserTestCase(BaseUserTest):
         self.assertEquals(self.linked_user.is_user(), True)
 
     def test_get_subordinates(self):
-        self.assertEquals(len(self.linked_super_user.get_subordinates()), 3)
-        self.assertEquals(len(self.linked_manager.get_subordinates()), 8)
-        self.assertEquals(len(self.linked_teamlead.get_subordinates()), 8)
+        self.assertEquals(len(self.linked_super_user.get_subordinates()), 4)
+        self.assertEquals(len(self.linked_manager.get_subordinates()), 9)
+        self.assertEquals(len(self.linked_teamlead.get_subordinates()), 9)
         self.assertEquals(len(self.linked_user.get_subordinates()), 7)
 
     def testName(self):
