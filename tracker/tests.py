@@ -660,7 +660,7 @@ class FrontEndTest(LiveServerTestCase):
 
     def setUp(self):
         create_users(self)
-        
+
     def tearDown(self):
         delete_users(self)
         try:
@@ -677,7 +677,7 @@ class FrontEndTest(LiveServerTestCase):
 
     @classmethod
     def tearDownClass(cls):
-        super(FrontEndTest, cls).tearDownClass() 
+        super(FrontEndTest, cls).tearDownClass()
         delete_users(cls)
         cls.driver.quit()
 
@@ -731,7 +731,6 @@ class FrontEndTest(LiveServerTestCase):
         self.accessURL("/holiday_planning/")
         holiday_table = self.driver.find_element_by_id("holiday-table")
         cells = holiday_table.find_elements_by_tag_name("td")
-
         count = 0
         for cell in cells:
             if cell.get_attribute("usrid"):
@@ -741,16 +740,49 @@ class FrontEndTest(LiveServerTestCase):
                     # we don't need that many to test
                     if count == 30:
                         break
-
-        holiday_buttons = self.driver.find_element_by_id("holiday-buttons")
-        buttons = holiday_buttons.find_elements_by_tag_name("td")
-        for button in buttons:
-            if "HOLIS" in button.get_attribute("class"):
-                button.click()
+        self.click_daytype("HOLIS")
         self.driver.find_element_by_id("submit_all").click()
-        self.driver.switch_to_alert().accept()
         time.sleep(5)
+        self.driver.switch_to_alert().accept()
         self.assertEquals(len(TrackingEntry.objects.all()), count)
+
+    @skipUnless(SELENIUM_AVAILABLE, "These tests require Selenium to be installed.")
+    def test_HolidayPageStateCheck(self):
+        self.manager_login()
+        time.sleep(2)
+
+        self.accessURL("/holiday_planning/")
+        self.goto_month("2")
+        time.sleep(3)
+        holiday_table = self.driver.find_element_by_id("holiday-table")
+        cells = holiday_table.find_elements_by_tag_name("td")
+        count = 0
+        for cell in cells:
+            if cell.get_attribute("usrid"):
+                if cell.get_attribute("class") != "WKEND":
+                    cell.click()
+                    count += 1
+                    # we don't need that many to test
+                    if count == 10:
+                        break
+        self.click_daytype("HOLIS")
+        inputs = self.driver.find_elements_by_tag_name("input")
+        for input_ in inputs:
+            if "button_2" in input_.get_attribute("id"):
+                input_.click()
+                time.sleep(2)
+                self.driver.switch_to_alert().accept()
+                break
+        self.goto_month("3")
+        time.sleep(2)
+        inputs = self.driver.find_elements_by_tag_name("input")
+        for input_ in inputs:
+            if "button_" in input_.get_attribute("id"):
+                input_.click()
+                time.sleep(2)
+                self.driver.switch_to_alert().accept()
+                break
+        self.assertEquals(len(TrackingEntry.objects.all(), count))
 
     @skipUnless(SELENIUM_AVAILABLE, "These tests require Selenium to be installed.")
     def test_Logins(self):
@@ -775,3 +807,18 @@ class FrontEndTest(LiveServerTestCase):
 
     def accessURL(self, url):
         self.driver.get("%s%s" % (self.live_server_url, url))
+
+    def click_daytype(self, daytype):
+        holiday_buttons = self.driver.find_element_by_id("holiday-buttons")
+        buttons = holiday_buttons.find_elements_by_tag_name("td")
+        for button in buttons:
+            if daytype in button.get_attribute("class"):
+                button.click()
+
+    def goto_month(self, num):
+        select = self.driver.find_element_by_id("month_select")
+        options = select.find_elements_by_tag_name("option")
+        for option in options:
+            if option.get_attribute("value") == num:
+                option.click()
+                break
