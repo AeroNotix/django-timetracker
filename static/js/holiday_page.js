@@ -97,9 +97,8 @@ function submit_holidays(user_id) {
         dataType: 'json'
     });
 
-	var holiday_map = JSON;
-	holiday_map[user_id] = daytypes;
-
+	var holiday_map = {};
+    holiday_map[user_id] = daytypes;
     $.ajax({
         url: '/ajax/',
         data: {
@@ -246,7 +245,6 @@ function change_table_data () {
                         eval($(this).text());
                     }
                 });
-                console.log(js_calendar);
                 $("#holiday-wrapper, #comments-wrapper").fadeTo(500, 1);
             });
         }
