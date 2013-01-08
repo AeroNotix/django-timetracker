@@ -61,7 +61,8 @@ class Tbluser(models.Model):
     USER_TYPE = (
         ('ADMIN', 'Administrator'),
         ('TEAML', 'Team Leader'),
-        ('RUSER', 'Regular User')
+        ('RUSER', 'Regular User'),
+        ('SUPER', 'Super User'),
     )
 
     MARKET_CHOICES = (
@@ -202,8 +203,24 @@ class Tbluser(models.Model):
         :returns: A :class:`Tbluser` instance
         :rtype: :class:`Tbluser`
         """
+
+        if self.super_or_admin():
+            return self
+
         try:
-            return Tblauthorization.objects.get(users=self).admin
+            auth_links = Tblauthorization.objects.all().filter(users=self)
+            if len(auth_links) == 1:
+                return auth_links[0].admin
+            if len(auth_links) == 2:
+                for link in auth_links:
+                    if link.admin.user_type == "SUPER":
+                        continue
+                    else:
+                        return link.admin
+            # if we're here we're in a bad state.
+            # we use objects.get() due to it throwing
+            # the correct Exception.
+            Tblauthorization.objects.get(users=self)
         except Tblauthorization.DoesNotExist:
             return self
 
@@ -317,15 +334,32 @@ class Tbluser(models.Model):
                 "</table></td></tr></table>"])
         return '<table id="holiday-table"><th colspan=999>%s</th>' % self.name() + table_string
 
-    def is_admin(self):
+    def sup_tl_or_admin(self):
+        return self.user_type in ["SUPER", "ADMIN", "TEAML"]
+
+    def super_or_admin(self):
+        return self.user_type in ["SUPER", "ADMIN"]
+
+    def admin_or_tl(self):
         """
         Returns whether or not the user instance is an admin type user. The
         two types of 'admin'-y user_types are ADMIN and TEAML.
 
         :rtype: :class:`boolean`
         """
-
         return self.user_type in ["ADMIN", "TEAML"]
+
+    def is_super(self):
+        return self.user_type == "SUPER"
+
+    def is_admin(self):
+        return self.user_type == "ADMIN"
+
+    def is_tl(self):
+        return self.user_type == "TEAML"
+
+    def is_user(self):
+        return self.user_type == "RUSER"
 
     def get_holiday_balance(self, year):
         """
@@ -498,7 +532,7 @@ class Tblauthorization(models.Model):
     admin = models.ForeignKey(
         Tbluser,
         limit_choices_to={
-        'user_type': 'ADMIN'
+            'user_type__in': ['SUPER', 'ADMIN']
         },
         related_name="admin_foreign"
     )
@@ -506,7 +540,7 @@ class Tblauthorization(models.Model):
     users = models.ManyToManyField(
         Tbluser,
         limit_choices_to={
-        'user_type__in': ['TEAML', 'RUSER']
+            'user_type__in': ['TEAML', 'RUSER', 'ADMIN']
         },
         related_name="subordinates",
         verbose_name=("Additional Users")

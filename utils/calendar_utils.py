@@ -206,7 +206,7 @@ def gen_holiday_list(admin_user, year=None, month=None, process=None):
     # here we add the administrator to their list of employees
     # this means that administrator accounts can view/change
     # their own holidays
-    if admin_user.user_type == "RUSER":
+    if admin_user.is_user():
         user_list = admin_user.get_teammates()
     else:
         try:
@@ -259,7 +259,7 @@ def gen_holiday_list(admin_user, year=None, month=None, process=None):
             user.name(),
             user.get_holiday_balance(year),
             user.get_dod_balance(year),
-            user.get_job_code_display() if admin_user.user_type == "ADMIN" else ""
+            user.get_job_code_display() if admin_user.super_or_admin() else ""
             )
         )
 
@@ -1113,7 +1113,7 @@ def useredit(request):
                 # table auth instances assigned to them, their
                 # manager is the one with the table auth, but
                 # the TEAML is assigned the same team.
-                if auth_user.user_type == "TEAML":
+                if auth_user.is_tl():
 
                     # we find the Tblauth instance with the TEAML user
                     # assigned to it, so we can pull that team
@@ -1150,6 +1150,8 @@ def useredit(request):
             # attributes with what was on the form
             user = Tbluser.objects.get(id__exact=request.POST.get("mode"))
             for key, value in data.items():
+                if key == "user_type" and user.is_super():
+                    continue
                 if value == "false":
                     value = False
                 if value == "true":

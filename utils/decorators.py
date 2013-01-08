@@ -62,7 +62,7 @@ def admin_check(func):
         except Tbluser.DoesNotExist:
             info_log.info("Non-logged in user accessing @loggedin page")
             raise Http404
-        if not user.is_admin():
+        if not user.sup_tl_or_admin():
             suspicious_log.info("Non-admin user accessing @admin_check page")
             raise Http404
         else:

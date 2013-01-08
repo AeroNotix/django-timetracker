@@ -53,7 +53,7 @@ def index(request):
 
     if request.session.get("user_id"):
         user = Tbluser.objects.get(id=request.session.get("user_id"))
-    if user.is_admin():
+    if user.sup_tl_or_admin():
         return HttpResponseRedirect("/admin_view/")
     else:
         return HttpResponseRedirect("/calendar/")
@@ -97,7 +97,7 @@ def login(request):
         request.session['user_id'] = user.id
         request.session['firstname'] = user.firstname
 
-        if user.is_admin():
+        if user.sup_tl_or_admin():
             return HttpResponseRedirect("/admin_view/")
         else:
             return HttpResponseRedirect("/calendar/")
@@ -158,8 +158,8 @@ def user_view(request, year=None, month=None, day=None):
 
     user_object = Tbluser.objects.get(id=user_id)
 
-    is_admin = user_object.user_type == "ADMIN"
-    is_team_leader = user_object.user_type == "TEAML"
+    is_admin = user_object.super_or_admin()
+    is_team_leader = user_object.is_tl()
 
     balance = user_object.get_total_balance(ret='int')
     return render_to_response(
@@ -281,8 +281,8 @@ def admin_view(request):
 
     # if the user is actually a TeamLeader, they can
     # view the team assigned to their manager
-    is_team_leader = auth.user_type == "TEAML"
-    is_admin = auth.user_type == "ADMIN"
+    is_team_leader = auth.is_tl()
+    is_admin = auth.super_or_admin()
     if is_team_leader:
         auth = auth.get_administrator()
 
@@ -334,8 +334,8 @@ def add_change_user(request):
     user = Tbluser.objects.get(
         id=request.session.get("user_id", None)
     )
-    is_admin = user.user_type == "ADMIN"
-    is_team_leader = user.user_type == "TEAML"
+    is_admin = user.super_or_admin()
+    is_team_leader = user.is_tl()
     # get the admin for this user.
     auth = user.get_administrator()
     # since we now will have a manage either way,
@@ -415,12 +415,12 @@ def holiday_planning(request,
     # if the user is actually a TeamLeader, they can
     # view the team assigned to their manager
     is_team_leader = False
-    is_admin = user.user_type == "ADMIN"
+    is_admin = user.super_or_admin()
     holiday_table, comments_list, js_calendar = gen_holiday_list(user,
                                                                  year,
                                                                  month,
                                                                  process)
-    if user.user_type == "TEAML":
+    if user.is_tl():
         is_team_leader = True
 
     # calculate the days in the month, this is inefficient.
@@ -498,8 +498,8 @@ def yearview(request, who=None, year=None):
     auth_user = Tbluser.objects.get(
         id=request.session.get('user_id')
         )
-    is_team_leader = auth_user.user_type == "TEAML"
-    is_admin = auth_user.user_type == "ADMIN"
+    is_team_leader = auth_user.is_tl()
+    is_admin = auth_user.super_or_admin()
     auth_user = auth_user.get_administrator()
     # stop people from editing the URL to access agents outside their
     # span of control.
