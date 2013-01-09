@@ -484,34 +484,31 @@ def team_planning(request,
 @admin_check
 def yearview(request, who=None, year=None):
 
+    auth_user = Tbluser.objects.get(
+        id=request.session.get('user_id')
+        )
+
     if not year:
         year = str(datetime.datetime.now().year)
     if not who:
         try:
-            userid = tblauth.objects.get(
-                admin=request.session.get('user_id')
-                ).users.filter(disabled=False)[0].id
+            userid = auth_user.get_subordinates()[0].id
             return HttpResponseRedirect("/yearview/%s/%s/" % (userid, year))
-        except (IndexError, tblauth.DoesNotExist):
+        except (tblauth.DoesNotExist):
             return HttpResponse("You have no team members.")
 
-    auth_user = Tbluser.objects.get(
-        id=request.session.get('user_id')
-        )
     is_team_leader = auth_user.is_tl()
     is_admin = auth_user.super_or_admin()
     auth_user = auth_user.get_administrator()
     # stop people from editing the URL to access agents outside their
     # span of control.
     try:
-        tblauth.objects.get(admin_id=auth_user).users.get(id=who)
+        target_user = auth_user.get_subordinates().get(id=who)
     except Tbluser.DoesNotExist:
         raise Http404
 
-    targetuser = Tbluser.objects.get(id=who)
-
     # generate our year table.
-    yeartable = targetuser.yearview(year)
+    yeartable = target_user.yearview(year)
     # interpolate our values into it.
     yeartable = yeartable.format(employees_select=generate_employee_box(auth_user), c="EMPTY")
     return render_to_response("yearview.html",

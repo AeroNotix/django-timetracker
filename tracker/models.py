@@ -204,15 +204,15 @@ class Tbluser(models.Model):
                     admin = self.get_administrator()
                 else:
                     admin = self
+                # find the subordinates
                 result = Tblauthorization.objects.get(
                     admin=admin
-                    ).users.filter(disabled=False).order_by("lastname")
-                # evaluate the queryset so the _result_cache appears
-                len(result)
-                # add this instance to it.
-                if admin != self:
-                    result._result_cache.insert(0, admin)
-                return result
+                    ).users.filter(disabled=False)
+                ids = [user.id for user in result]
+                # find whether we need to append this user to it.
+                if self != admin or self.super_or_admin():
+                   ids.append(admin.id)
+                return Tbluser.objects.filter(id__in=ids).order_by("lastname")
         except Tblauthorization.DoesNotExist:
             return []
 
