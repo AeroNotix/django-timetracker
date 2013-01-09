@@ -195,6 +195,26 @@ class Tbluser(models.Model):
 
         return map(datetime_to_timestring, [start_time, end_time, self.breaklength])
 
+    def get_subordinates(self):
+        try:
+            if self.is_user():
+                return self.get_teammates()
+            if self.sup_tl_or_admin():
+                if self.is_tl():
+                    admin = self.get_administrator()
+                else:
+                    admin = self
+                result = Tblauthorization.objects.get(
+                    admin=admin
+                    ).users.filter(disabled=False).order_by("lastname")
+                # evaluate the queryset so the _result_cache appears
+                len(result)
+                # add this instance to it.
+                result._result_cache.insert(0, self)
+                return result
+        except Tblauthorization.DoesNotExist:
+            return []
+
     def get_administrator(self):
 
         """

@@ -105,17 +105,9 @@ def generate_year_box(year, id=''):
 def generate_employee_box(admin_user):
     from timetracker.tracker.models import Tblauthorization as tblauth
     admin_user = admin_user.get_administrator()
-    is_team_leader = admin_user.user_type == "TEAML"
-    is_admin = admin_user.user_type == "ADMIN"
-    try:
-        auth_links = tblauth.objects.get(admin_id=admin_user)
-        if not is_team_leader:
-            ees = auth_links.manager_view().filter(disabled=False)
-        else:
-            ees = auth_links.teamleader_view().filter(disabled=False)
-    except tblauth.DoesNotExist:
-        ees = []
-
+    is_team_leader = admin_user.is_tl()
+    is_admin = admin_user.is_admin()
+    ees = admin_user.get_subordinates()
     ees_tuple = [(user.id, user.name()) for user in ees]
     ees_tuple.append(("null", "----------"))
     return generate_select(

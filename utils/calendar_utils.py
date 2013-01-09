@@ -203,21 +203,8 @@ def gen_holiday_list(admin_user, year=None, month=None, process=None):
     [to_out("<td>%s</td>\n" % day) for day in day_names]
     to_out("</tr>")
 
-    # here we add the administrator to their list of employees
-    # this means that administrator accounts can view/change
-    # their own holidays
-    if admin_user.is_user():
-        user_list = admin_user.get_teammates()
-    else:
-        try:
-            auth_user = Tblauth.objects.get(admin=admin_user.get_administrator())
-            user_list = list(
-                auth_user.users.filter(process=process).order_by('lastname').filter(disabled=False) if process \
-                    else auth_user.users.all().order_by('lastname').filter(disabled=False)
-                )
-            user_list = [admin_user.get_administrator()] + user_list
-        except Tblauth.DoesNotExist:
-            user_list = []
+    user_list = admin_user.get_subordinates().filter(process=process) if process else \
+        admin_user.get_subordinates()
 
     def isweekend(n):
         return {
