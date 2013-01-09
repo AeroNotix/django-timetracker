@@ -178,7 +178,6 @@ function addFunctions () {
 }
 
 function change_table_data () {
-    "use strict";
 
     /*
        Function which takes the values of the select boxes
