@@ -275,28 +275,15 @@ def admin_view(request):
     """
 
     # retrieve and assign user object
-    auth = Tbluser.objects.get(
+    user = Tbluser.objects.get(
         id=request.session.get("user_id", None)
     )
 
-    # if the user is actually a TeamLeader, they can
-    # view the team assigned to their manager
-    is_team_leader = auth.is_tl()
-    is_admin = auth.super_or_admin()
-    if is_team_leader:
-        auth = auth.get_administrator()
-
     try:
-        employees = tblauth.objects.get(admin=auth)
-        employees = employees.users.filter(disabled=False).order_by("lastname")
-        ees_tuple = [(user.id, user.name()) for user in employees]
-        ees_tuple.append(("null", "----------"))
-        employees_select = generate_select(
-            ees_tuple,
-            id="user_select"
-        )
+        ees = user.get_subordinates()
+        employees_select = generate_employee_box(user)
     except tblauth.DoesNotExist:
-        employees = []
+        ees = []
         employees_select = """<select id=user_select>
                                 <option id="null">----------</option>
                               </select>"""
@@ -304,9 +291,9 @@ def admin_view(request):
     return render_to_response(
         "admin_view.html",
         {
-            "is_admin": is_admin,
-            "is_team_leader": is_team_leader,
-            "employees": employees,
+            "is_admin": user.is_admin(),
+            "is_team_leader": user.is_tl(),
+            "employees": ees,
             'welcome_name': request.session['firstname'],
             'employee_option_list': employees_select
         },
@@ -334,27 +321,10 @@ def add_change_user(request):
     user = Tbluser.objects.get(
         id=request.session.get("user_id", None)
     )
-    is_admin = user.super_or_admin()
-    is_team_leader = user.is_tl()
-    # get the admin for this user.
-    auth = user.get_administrator()
-    # since we now will have a manage either way,
-    # via the team leader or the actual manager,
-    # we get all the users and generate a select
-    # option box.
+
     try:
-        auth_links = tblauth.objects.get(admin_id=auth)
-        if not is_team_leader:
-            ees = auth_links.manager_view()
-            ees = list(ees) + [auth]
-        else:
-            ees = auth_links.teamleader_view()
-        ees_tuple = [(user.id, user.name()) for user in ees]
-        ees_tuple.append(("null", "----------"))
-        employees_select = generate_select(
-            ees_tuple,
-            id="user_select"
-        )
+        ees = user.get_subordinates()
+        employees_select = generate_employee_box(user)
     except tblauth.DoesNotExist:
         ees = []
         employees_select = """<select id=user_select>
@@ -368,8 +338,8 @@ def add_change_user(request):
         "user_form": UserForm(),
         'welcome_name': request.session['firstname'],
         'employee_option_list': employees_select,
-        'is_team_leader': is_team_leader,
-        'is_admin': is_admin
+        'is_team_leader': user.is_tl(),
+        'is_admin': user.is_admin()
         },
         RequestContext(request)
     )
@@ -412,16 +382,10 @@ def holiday_planning(request,
     except Tbluser.DoesNotExist:
         raise Http404
 
-    # if the user is actually a TeamLeader, they can
-    # view the team assigned to their manager
-    is_team_leader = False
-    is_admin = user.super_or_admin()
     holiday_table, comments_list, js_calendar = gen_holiday_list(user,
                                                                  year,
                                                                  month,
                                                                  process)
-    if user.is_tl():
-        is_team_leader = True
 
     # calculate the days in the month, this is inefficient.
     # It creates a list of datetime objects and gets the len
@@ -431,11 +395,11 @@ def holiday_planning(request,
     return render_to_response(
         "holidays.html",
         {
-            'is_admin': is_admin,
+            'is_admin': user.is_admin(),
             'holiday_table': holiday_table,
             'comments_list': comments_list,
             'welcome_name': request.session['firstname'],
-            'is_team_leader': is_team_leader,
+            'is_team_leader': user.is_tl(),
             'days_this_month': days_this_month,
             'employee_select': generate_employee_box(user),
             'js_calendar': js_calendar,
