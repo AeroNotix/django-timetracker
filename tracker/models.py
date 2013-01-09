@@ -210,7 +210,8 @@ class Tbluser(models.Model):
                 # evaluate the queryset so the _result_cache appears
                 len(result)
                 # add this instance to it.
-                result._result_cache.insert(0, admin)
+                if admin != self:
+                    result._result_cache.insert(0, admin)
                 return result
         except Tblauthorization.DoesNotExist:
             return []
