@@ -65,6 +65,13 @@ class Tbluser(models.Model):
         ('SUPER', 'Super User'),
     )
 
+    USER_LEVELS = {
+        'SUPER': 4,
+        'ADMIN': 3,
+        'TEAML': 2,
+        'RUSER': 1,
+        }
+
     MARKET_CHOICES = (
         ('BF', 'BPO Factory'),
         ('BG', 'Behr Germany'),

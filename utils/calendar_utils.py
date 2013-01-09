@@ -1137,8 +1137,15 @@ def useredit(request):
             # attributes with what was on the form
             user = Tbluser.objects.get(id__exact=request.POST.get("mode"))
             for key, value in data.items():
+                # Super Users cannot change their user_type
                 if key == "user_type" and user.is_super():
                     continue
+                # so users cannot elevate themselves to the same and
+                # above role.
+                if key == "user_type":
+                    if Tbluser.USER_LEVELS[user.user_type] < \
+                            Tbluser.USER_LEVELS[value]:
+                        continue
                 if value == "false":
                     value = False
                 if value == "true":
