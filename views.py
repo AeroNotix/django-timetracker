@@ -291,7 +291,7 @@ def admin_view(request):
     return render_to_response(
         "admin_view.html",
         {
-            "is_admin": user.is_admin(),
+            "is_admin": user.super_or_admin(),
             "is_team_leader": user.is_tl(),
             "employees": ees,
             'welcome_name': request.session['firstname'],
@@ -339,7 +339,7 @@ def add_change_user(request):
         'welcome_name': request.session['firstname'],
         'employee_option_list': employees_select,
         'is_team_leader': user.is_tl(),
-        'is_admin': user.is_admin()
+        'is_admin': user.super_or_admin()
         },
         RequestContext(request)
     )
@@ -395,7 +395,7 @@ def holiday_planning(request,
     return render_to_response(
         "holidays.html",
         {
-            'is_admin': user.is_admin(),
+            'is_admin': user.super_or_admin(),
             'holiday_table': holiday_table,
             'comments_list': comments_list,
             'welcome_name': request.session['firstname'],
@@ -504,8 +504,8 @@ def edit_profile(request):
                                'lastname': user.lastname,
                                'welcome_name': request.session['firstname'],
                                'balance': user.get_total_balance(ret='int'),
-                               'is_admin': user.user_type == "ADMIN",
-                               'is_team_leader': user.user_type == "TEAML"
+                               'is_admin': user.super_or_admin(),
+                               'is_team_leader': user.is_tl()
                                },
                               RequestContext(request))
 
