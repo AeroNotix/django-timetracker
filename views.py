@@ -155,17 +155,13 @@ def user_view(request, year=None, month=None, day=None):
     user_id = request.session['user_id']
     calendar_table = gen_calendar(year, month, day,
                                   user=user_id)
-
     user_object = Tbluser.objects.get(id=user_id)
-
-    is_admin = user_object.super_or_admin()
-    is_team_leader = user_object.is_tl()
 
     balance = user_object.get_total_balance(ret='int')
     return render_to_response(
         'calendar.html',
-        {'is_admin': is_admin,
-         'is_team_leader': is_team_leader,
+        {'is_admin': user_object.super_or_admin(),
+         'is_team_leader': user_object.is_tl(),
          'calendar': calendar_table,
          'changeform': EntryForm(),
          'addform': AddForm(),
