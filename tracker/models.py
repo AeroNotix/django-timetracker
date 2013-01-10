@@ -198,6 +198,19 @@ class Tbluser(models.Model):
         return map(datetime_to_timestring, [start_time, end_time, self.breaklength])
 
     def get_subordinates(self):
+        '''
+        get_subordinates will smartly find which Users are related to
+        this User instance.
+
+        In the case of a RUSER then the returned QuerySet will contain
+        only those who are under the same manager and have the same
+        process type.
+
+        TEAML will return a QuerySet containing their manager and their
+        manager's team.
+
+        SUPER and ADMIN will return their linked teams.
+        '''
         try:
             if self.is_user():
                 return self.get_teammates()
@@ -248,6 +261,10 @@ class Tbluser(models.Model):
             return self
 
     def get_teammates(self):
+        """
+        Get teammates will return a QuerySet of users which are the same
+        process type
+        """
         return Tblauthorization.objects.get(
             admin=self.get_administrator()
             ).users.filter(
@@ -255,18 +272,15 @@ class Tbluser(models.Model):
             ).order_by('lastname')
 
     def display_user_type(self):
-
         """
         Function for displaying the user_type in admin.
 
             :note: This method shouldn't be called directly.
             :rtype: :class:`string`
         """
-
         return self.user_type
 
     def name(self):
-
         """
         Utility method for returning users full name. This is useful for when
         we are pretty printing users and their names. For example in e-mails
@@ -274,7 +288,6 @@ class Tbluser(models.Model):
 
         :rtype: :class:`string`
         """
-
         return self.firstname + ' ' + self.lastname
 
     def tracking_entries(self,
@@ -303,6 +316,10 @@ class Tbluser(models.Model):
                                             entry_date__month=month)
 
     def get_comments(self, year):
+        """
+        Get Comments will return a formatted string of this users comments
+        for a given year.
+        """
         entries =  TrackingEntry.objects.filter(
             user_id=self.id,
             entry_date__year=year
@@ -376,6 +393,10 @@ class Tbluser(models.Model):
        )
         return '<table id="holiday-table"><th colspan=999>%s</th>' % self.name() + table_string
 
+    """
+    This group of functions are helper methods for querying whether
+    the user is contained with a certain set of user_types.
+    """
     def sup_tl_or_admin(self):
         return self.user_type in ["SUPER", "ADMIN", "TEAML"]
 
@@ -383,12 +404,6 @@ class Tbluser(models.Model):
         return self.user_type in ["SUPER", "ADMIN"]
 
     def admin_or_tl(self):
-        """
-        Returns whether or not the user instance is an admin type user. The
-        two types of 'admin'-y user_types are ADMIN and TEAML.
-
-        :rtype: :class:`boolean`
-        """
         return self.user_type in ["ADMIN", "TEAML"]
 
     def is_super(self):
