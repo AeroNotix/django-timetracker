@@ -430,10 +430,11 @@ class Tbluser(models.Model):
         Values can be:
 
         1) Holiday: Remove a day
-
         2) Work on Public Holiday: Add two days
+        3) Return for working Public Holiday: Remove a day
+        4) Day on Demand: Remove a day
+        5) Work on Saturday: Add a day
 
-        2) Return for working Public Holiday: Remove a day
 
         :param year: The year in which the holiday balance should be
                      calculated from
@@ -459,14 +460,25 @@ class Tbluser(models.Model):
         return holiday_balance
 
     def get_num_daytype_in_year(self, year, daytype):
+        """
+        Base method for retrieving the number of instances of a specific
+        daytype in a given year.
+        """
         return len(TrackingEntry.objects.filter(user_id=self.id,
                                             entry_date__year=year,
                                             daytype=daytype))
 
     def get_dod_balance(self, year):
+        """
+        Pass through method for retrieving the DAYOD number in a year
+        """
         return self.get_num_daytype_in_year(year, "DAYOD")
 
     def get_balances(self, year):
+        """
+        Get balances will return a dictionary of long daytype names
+        against their balances.
+        """
         daytype_dict = {
             daytype[1]: self.get_num_daytype_in_year(year, daytype[0]) \
                 for daytype in DAYTYPE_CHOICES
