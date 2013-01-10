@@ -102,10 +102,10 @@ def generate_year_box(year, id=''):
     year_select_data.sort()
     return generate_select(year_select_data, id)
 
-def generate_employee_box(admin_user):
+def generate_employee_box(admin_user, get_all=False):
     from timetracker.tracker.models import Tblauthorization as tblauth
     admin_user = admin_user.get_administrator()
-    ees = admin_user.get_subordinates()
+    ees = admin_user.get_subordinates(get_all=get_all)
     ees_tuple = [(user.id, user.name()) for user in ees]
     ees_tuple.append(("null", "----------"))
     return generate_select(

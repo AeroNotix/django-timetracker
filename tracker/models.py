@@ -197,7 +197,7 @@ class Tbluser(models.Model):
 
         return map(datetime_to_timestring, [start_time, end_time, self.breaklength])
 
-    def get_subordinates(self):
+    def get_subordinates(self, get_all=False):
         '''
         get_subordinates will smartly find which Users are related to
         this User instance.
@@ -220,9 +220,14 @@ class Tbluser(models.Model):
                 else:
                     admin = self
                 # find the subordinates
-                result = Tblauthorization.objects.get(
-                    admin=admin
-                    ).users.filter(disabled=False)
+                if get_all:
+                    result = Tblauthorization.objects.get(
+                        admin=admin
+                        ).users.all()
+                else:
+                    result = Tblauthorization.objects.get(
+                        admin=admin
+                        ).users.filter(disabled=False)
                 ids = [user.id for user in result]
                 # find whether we need to append this user to it.
                 if self != admin or self.super_or_admin():

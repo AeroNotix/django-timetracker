@@ -319,8 +319,8 @@ def add_change_user(request):
     )
 
     try:
-        ees = user.get_subordinates()
-        employees_select = generate_employee_box(user)
+        ees = user.get_subordinates(get_all=True)
+        employees_select = generate_employee_box(user, get_all=True)
     except tblauth.DoesNotExist:
         ees = []
         employees_select = """<select id=user_select>
