@@ -71,7 +71,7 @@ class UserAdmin(admin.ModelAdmin):
     automatically. We add here the send_password_reminder function defined
     above.   
     """
-    list_display = ('__unicode__', 'display_user_type')
+    list_display = ('__unicode__', 'display_user_type', 'disabled')
     actions = [send_password_reminder, create_100_random_users]
 
 
