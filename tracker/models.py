@@ -347,14 +347,33 @@ class Tbluser(models.Model):
             final[entry.entry_date.month-1][entry.entry_date.day] = \
                 final[entry.entry_date.month-1][entry.entry_date.day].format(c=entry.daytype)
         table_string = ''.join([''.join(subrow) for subrow in final])
-        table_string += ''.join([
-                "<tr><td colspan=100><table>",
-                "<tr><th>Year</th><td>%s</td></tr>" % generate_year_box(int(year), id="cmb_yearbox"),
-                "<tr><th>Agent</th><td>{employees_select}</td></tr>",
-                "<tr><th>Comments</th><td><ul>",
-                ''.join([("<li>%s</li>" % entry) for entry in self.get_comments(year)]),
-                "</ul></td></tr>",
-                "</table></td></tr></table>"])
+        table_string += '''
+<tr>
+  <td colspan=100>
+    <table>
+      <tr><th width="10%%">Year</th><td width="90%%">%s</td></tr>
+      <tr><th>Agent</th><td>{employees_select}</td></tr>
+      <tr>
+        <th>Comments</th>
+        <td>
+          <ul>%s</ul>
+        </td>
+      </tr>
+      <tr>
+        <th>Total Balances</th>
+        <td>
+         <table>
+          %s
+         </table>
+        </td>
+      </tr>
+    </table>
+  </td>
+</tr>
+''' % (generate_year_box(int(year), id="cmb_yearbox"),
+       ''.join([("<li>%s</li>" % entry) for entry in self.get_comments(year)]),
+       ''.join("<tr><th>%s</th><td>%s</td>" % (k, v) for k, v in sorted(self.get_balances(year).items()))
+       )
         return '<table id="holiday-table"><th colspan=999>%s</th>' % self.name() + table_string
 
     def sup_tl_or_admin(self):
@@ -423,11 +442,23 @@ class Tbluser(models.Model):
 
         return holiday_balance
 
-    def get_dod_balance(self, year):
-        days = TrackingEntry.objects.filter(user_id=self.id,
+    def get_num_daytype_in_year(self, year, daytype):
+        return len(TrackingEntry.objects.filter(user_id=self.id,
                                             entry_date__year=year,
-                                            daytype="DAYOD")
-        return len(days)
+                                            daytype=daytype))
+
+    def get_dod_balance(self, year):
+        return self.get_num_daytype_in_year(year, "DAYOD")
+
+    def get_balances(self, year):
+        daytype_dict = {
+            daytype[1]: self.get_num_daytype_in_year(year, daytype[0]) \
+                for daytype in DAYTYPE_CHOICES
+            }
+        daytype_dict.update({
+            "Holidays": self.get_holiday_balance(year),
+            })
+        return daytype_dict
 
     def get_total_balance(self, ret='html'):
 

@@ -457,9 +457,6 @@ def yearview(request, who=None, year=None):
         except (tblauth.DoesNotExist):
             return HttpResponse("You have no team members.")
 
-    is_team_leader = auth_user.is_tl()
-    is_admin = auth_user.super_or_admin()
-    auth_user = auth_user.get_administrator()
     # stop people from editing the URL to access agents outside their
     # span of control.
     try:
@@ -473,9 +470,10 @@ def yearview(request, who=None, year=None):
     yeartable = yeartable.format(employees_select=generate_employee_box(auth_user), c="EMPTY")
     return render_to_response("yearview.html",
                               {"yearview_table": yeartable,
+                               "balances": target_user.get_balances(year),
                                "welcome_name": request.session['firstname'],
-                               "is_team_leader": is_team_leader,
-                               "is_admin": is_admin,
+                               "is_team_leader": auth_user.is_tl(),
+                               "is_admin": auth_user.super_or_admin(),
                                "year": year,
                                "eeid": who,
                                }, RequestContext(request))
