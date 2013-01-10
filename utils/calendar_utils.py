@@ -1139,7 +1139,15 @@ def useredit(request):
             # get that user and update it's
             # attributes with what was on the form
             user = Tbluser.objects.get(id__exact=request.POST.get("mode"))
+            logged_in_user = Tbluser.objects.get(id=session_id)
             for key, value in data.items():
+                # Users cannot disable themselves, it would prevent them
+                # logging back in!
+                print key, value, user == logged_in_user
+                if key == "disabled" and value \
+                        and user == logged_in_user:
+                    json_data["error"] = "You cannot disable yourself."
+                    return json_data
                 # Super Users cannot change their user_type
                 if key == "user_type" and user.is_super():
                     continue
