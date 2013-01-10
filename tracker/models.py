@@ -484,7 +484,7 @@ class Tbluser(models.Model):
                 for daytype in DAYTYPE_CHOICES
             }
         daytype_dict.update({
-            "Holidays": self.get_holiday_balance(year),
+            "Calculated Holidays": self.get_holiday_balance(year)
             })
         return daytype_dict
 
