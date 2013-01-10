@@ -928,13 +928,16 @@ def delete_user(request):
     :returns: :class:`HttpResponse` mime/application JSON
     :rtype: :class:`HttpResponse`
     """
-
-    user_id = request.POST.get('user_id', None)
-
     json_data = {
         'success': False,
         'error': '',
     }
+
+    user_id = request.POST.get('user_id', None)
+    logged_in_user = request.session.get("user_id")
+    if str(user_id) == str(logged_in_user):
+        json_data['error'] = "You cannot delete yourself."
+        return json_data
 
     if user_id:
         try:
