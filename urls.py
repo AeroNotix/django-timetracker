@@ -40,9 +40,11 @@ urlpatterns = patterns('',
     url(r'^calendar/%s/%s/%s/?$' % (YEAR, MONTH, DAY), views.user_view),
 
     url(r'^holiday_planning%s$' % PROCESS,
-        views.view_with_holiday_list, {"template":"holidays.html"}),
+        views.view_with_holiday_list,
+        {"template":"holidays.html", "admin_required": True}),
     url(r'^holiday_planning/%s/%s%s$' % (YEAR, MONTH, PROCESS),
-        views.view_with_holiday_list, {"template":"holidays.html"}),
+        views.view_with_holiday_list,
+        {"template":"holidays.html", "admin_required": True}),
 
     url(r'^team_planning/?$', views.view_with_holiday_list,
         {"template":"team_planning.html"}),

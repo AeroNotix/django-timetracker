@@ -303,7 +303,8 @@ def view_with_holiday_list(request,
                            year=None,
                            month=None,
                            process=None,
-                           template=None):
+                           template=None,
+                           admin_required=False):
     """
     Generates the full holiday table for all employees under a manager
     or a user's teammates if they are a regular user.
@@ -318,7 +319,7 @@ def view_with_holiday_list(request,
     except Tbluser.DoesNotExist:
         raise Http404
 
-    if template == "holidays.html" and not user.sup_tl_or_admin():
+    if admin_required and not user.sup_tl_or_admin():
         raise Http404
 
     year = datetime.datetime.today().year if year is None else year
