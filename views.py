@@ -264,29 +264,14 @@ def ajax(request):
         )(request)
 
 @admin_check
-def admin_view(request):
-
-    """This view checks to see if the user logged in is either a team leader or
-    an administrator. If the user is an administrator, their authorization
-    table entry is found, iterated over to create a select box and it's HTML
-    markup, sent to the template. If the user is a team leader, then *their*
-    manager's authorization table entry is found and used instead. This is to
-    enable team leaders to view and edit the team in which they are on but
-    also make it so that we don't explicitly have to duplicate the
-    authorization table linking the team leader with their team.
-
-    :param request: Automatically passed contains a map of the httprequest
-    :return: HttpResponse object back to the browser.
-    """
-
-    # retrieve and assign user object
+def view_with_employee_list(request, template=None, get_all=False):
     user = Tbluser.objects.get(
         id=request.session.get("user_id", None)
     )
 
     try:
-        ees = user.get_subordinates()
-        employees_select = generate_employee_box(user)
+        ees = user.get_subordinates(get_all=get_all)
+        employees_select = generate_employee_box(user, get_all=get_all)
     except tblauth.DoesNotExist:
         ees = []
         employees_select = """<select id=user_select>
@@ -294,55 +279,14 @@ def admin_view(request):
                               </select>"""
 
     return render_to_response(
-        "admin_view.html",
+        template,
         {
             "employees": ees,
-            'employee_option_list': employees_select
+            "user_form": UserForm(),
+            "employee_option_list": employees_select
         },
         RequestContext(request)
     )
-
-
-@admin_check
-def add_change_user(request):
-
-    """Creates the view for changing/adding users
-
-    This is the view which generates the page to add/edit/change/remove users,
-    the view first gets the user object from the database, then checks it's
-    user_type. If it's an administrator, their authorization table entry is
-    found then used to create a select box and it's HTML markup. Then pushed
-    to the template. If it's a team leader, their manager's authorization
-    table is used instead.
-
-    :param request: Automatically passed contains a map of the httprequest
-    :return: HttpResponse object back to the browser.
-    """
-
-    # retrieve and assign user object
-    user = Tbluser.objects.get(
-        id=request.session.get("user_id", None)
-    )
-
-    try:
-        ees = user.get_subordinates(get_all=True)
-        employees_select = generate_employee_box(user, get_all=True)
-    except tblauth.DoesNotExist:
-        ees = []
-        employees_select = """<select id=user_select>
-                                <option id="null">----------</option>
-                              </select>"""
-
-    return render_to_response(
-        "useredit.html",
-        {
-        "employees": ees,
-        "user_form": UserForm(),
-        'employee_option_list': employees_select,
-        },
-        RequestContext(request)
-    )
-
 
 @loggedin
 @admin_check

@@ -33,12 +33,12 @@ PROCESS = PROCESS % gen_process_list()
 #       just point to that.
 urlpatterns = patterns('',
     url(r'^$', views.index),
-                       
+
     url(r'^calendar/?$', views.user_view),
     url(r'^calendar/%s/?$' % YEAR, views.user_view),
     url(r'^calendar/%s/%s/?$' % (YEAR, MONTH), views.user_view),
     url(r'^calendar/%s/%s/%s/?$' % (YEAR, MONTH, DAY), views.user_view),
-                       
+
     url(r'^holiday_planning%s$' % PROCESS, views.holiday_planning),
     url(r'^holiday_planning/%s/%s%s$' % (YEAR, MONTH, PROCESS), views.holiday_planning),
 
@@ -48,11 +48,13 @@ urlpatterns = patterns('',
     url(r'^yearview/?(?P<who>\d+)?$', views.yearview),
     url(r'^yearview/?(?P<who>\d+)/%s/?$' % YEAR, views.yearview),
 
-    url(r'^admin_view/?$', views.admin_view),
+    url(r'^admin_view/?$', views.view_with_employee_list,
+        {"template":"admin_view.html"}),
     url(r'^ajax/?$', views.ajax),
     url(r'^login/?$', views.login),
     url(r'^logout/?$', views.logout),
-    url(r'^user_edit/?$', views.add_change_user),
+    url(r'^user_edit/?$', views.view_with_employee_list,
+        {"template":"useredit.html","get_all":True}),
     url(r'^edit_profile/?$', views.edit_profile),
     url(r'^explain/?$', views.explain),
     url(r'^forgot_my_password/?$', views.forgot_pass),
