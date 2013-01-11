@@ -242,11 +242,6 @@ def ajax(request):
 
     """
 
-    # if the page is accessed via the browser (or other means)
-    # we don't serve requests
-    if not request.is_ajax():
-        raise Http404
-
     # see which form we're dealing with and if it's in the POST
     form_type = request.POST.get('form_type', None)
 
