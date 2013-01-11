@@ -290,22 +290,14 @@ def view_with_employee_list(request, template=None, get_all=False):
 
 @loggedin
 @admin_check
-def holiday_planning(request,
-                     year=None,
-                     month=None,
-                     process=None):
+def view_with_holiday_list(request,
+                           year=None,
+                           month=None,
+                           process=None,
+                           template=None):
     """
     Generates the full holiday table for all employees under a manager
-
-    First we find the user object and find whether or not that user is a team
-    leader or not. If they are a team leader, which set a boolean flag to show
-    the template what kind of user is logged in. This is so that the team
-    leaders are not able to view certain things (e.g. Job Codes).
-
-    If the admin/tl tries to access the holiday page before any users have
-    been assigned to them, then we just throw them back to the main page. This
-    is doubly ensuring that they can't access what would otherwise be a
-    completely borked page.
+    or a user's teammates if they are a regular user.
 
     :param request: Automatically passed contains a map of the httprequest
     :return: HttpResponse object back to the browser.
@@ -336,53 +328,16 @@ def holiday_planning(request,
     days_this_month = range(1, len(gen_datetime_cal(year, month))+1)
 
     return render_to_response(
-        "holidays.html",
+        template,
         {
             'holiday_table': holiday_table,
             'comments_list': comments_list,
+            'balance': user.get_total_balance(ret='int'),
             'days_this_month': days_this_month,
             'employee_select': generate_employee_box(user),
             'js_calendar': js_calendar,
         },
         RequestContext(request))
-
-
-def team_planning(request,
-                  year=None,
-                  month=None):
-
-    if year is None:
-        year = datetime.datetime.today().year
-    if month is None:
-        month = datetime.datetime.today().month
-
-    # django urls parse to unicode objects
-    year, month = int(year), int(month)
-
-    try:
-        user = Tbluser.objects.get(
-            id=request.session.get('user_id')
-        )
-    except Tbluser.DoesNotExist:
-        raise Http404
-
-    holiday_table = gen_holiday_list(user,
-                                     year,
-                                     month)[0]
-
-    # calculate the days in the month, this is inefficient.
-    # It creates a list of datetime objects and gets the len
-    # of that. Being lazy.
-    days_this_month = range(1, len(gen_datetime_cal(year, month))+1)
-    return render_to_response(
-        "team_planning.html",
-        {
-            'holiday_table': holiday_table,
-            'balance': user.get_total_balance(ret='int'),
-            'days_this_month': days_this_month,
-        },
-        RequestContext(request))
-
 
 @admin_check
 def yearview(request, who=None, year=None):
