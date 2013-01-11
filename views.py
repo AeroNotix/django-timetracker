@@ -288,7 +288,6 @@ def view_with_employee_list(request, template=None, get_all=False):
     )
 
 @loggedin
-@admin_check
 def view_with_holiday_list(request,
                            year=None,
                            month=None,
@@ -314,6 +313,9 @@ def view_with_holiday_list(request,
             id=request.session.get('user_id')
         )
     except Tbluser.DoesNotExist:
+        raise Http404
+
+    if template == "holidays.html" and not user.super_or_admin():
         raise Http404
 
     holiday_table, comments_list, js_calendar = gen_holiday_list(user,
