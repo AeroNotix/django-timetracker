@@ -174,7 +174,6 @@ def user_view(request, year=None, month=None, day=None):
          'calendar': calendar_table,
          'changeform': EntryForm(),
          'addform': AddForm(),
-         'welcome_name': request.session['firstname'],
          'balance': balance
         },
         RequestContext(request)
