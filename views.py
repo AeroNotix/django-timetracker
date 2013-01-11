@@ -315,7 +315,7 @@ def view_with_holiday_list(request,
     except Tbluser.DoesNotExist:
         raise Http404
 
-    if template == "holidays.html" and not user.super_or_admin():
+    if template == "holidays.html" and not user.sup_tl_or_admin():
         raise Http404
 
     holiday_table, comments_list, js_calendar = gen_holiday_list(user,
