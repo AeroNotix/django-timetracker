@@ -154,13 +154,9 @@ def user_view(request, year=None, month=None, day=None):
     :returns: A HttpResponse object which is passed to the browser.
 
     """
-    if year is None:
-        year = datetime.datetime.today().year
-    if month is None:
-        month = datetime.datetime.today().month
-    if day is None:
-        day = datetime.datetime.today().day
-
+    year = datetime.datetime.today().year if year is None else year
+    month = datetime.datetime.today().month if month is None else month
+    day = datetime.datetime.today().day if day is None else day
 
     user_id = request.session['user_id']
     calendar_table = gen_calendar(year, month, day,
@@ -310,10 +306,8 @@ def view_with_holiday_list(request,
     if template == "holidays.html" and not user.sup_tl_or_admin():
         raise Http404
 
-    if year is None:
-        year = datetime.datetime.today().year
-    if month is None:
-        month = datetime.datetime.today().month
+    year = datetime.datetime.today().year if year is None else year
+    month = datetime.datetime.today().month if month is None else month
 
     # django urls parse to unicode objects
     year, month = int(year), int(month)
