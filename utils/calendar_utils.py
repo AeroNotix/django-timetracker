@@ -1143,7 +1143,6 @@ def useredit(request):
             for key, value in data.items():
                 # Users cannot disable themselves, it would prevent them
                 # logging back in!
-                print key, value, user == logged_in_user
                 if key == "disabled" and value \
                         and user == logged_in_user:
                     json_data["error"] = "You cannot disable yourself."
