@@ -93,17 +93,29 @@ def login(request):
         user = Tbluser.objects.get(user_id__exact=request.POST['user_name'])
     # if the user doesn't match anything, notify
     except Tbluser.DoesNotExist:
-        return HttpResponse('''<html>
- <body>
-  <h3 id="error">Username and Password don't match!<h3>
- </body>
-</html>''')
+        return render_to_response(
+            "fail.html",
+            {
+                "fail": "Login failure",
+                "reason":"Non existent user.",
+                "helpfultext":"If you expect your account to be " + \
+                              "active please contact your manager " + \
+                              "or a site administrator."
+            },
+            RequestContext(request))
 
     if user.isdisabled():
-        raise Http404
+        return render_to_response(
+            "fail.html",
+            {
+                "fail": "Login failure",
+                "reason":"Your account is disabled.",
+                "helpfultext":"You will need to request " + \
+                              "re-activation from your manager."
+            },
+            RequestContext(request))
 
     if user.password == request.POST['password']:
-
         # if all goes well, send to the tracker
         request.session['user_id'] = user.id
 
@@ -112,7 +124,15 @@ def login(request):
         else:
             return HttpResponseRedirect("/calendar/")
     else:
-        return HttpResponse("Login failed!")
+        return render_to_response(
+            "fail.html",
+            {
+                "fail": "Login failure",
+                "reason":"Incorrect password",
+                "helpfultext":"You can receive a reminder <a href=\"/" + \
+                              "forgot_my_password/\">here</a>"
+            },
+            RequestContext(request))
 
 
 def logout(request):
