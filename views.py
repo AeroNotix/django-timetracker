@@ -300,14 +300,6 @@ def view_with_holiday_list(request,
     :param request: Automatically passed contains a map of the httprequest
     :return: HttpResponse object back to the browser.
     """
-    if year is None:
-        year = datetime.datetime.today().year
-    if month is None:
-        month = datetime.datetime.today().month
-
-    # django urls parse to unicode objects
-    year, month = int(year), int(month)
-
     try:
         user = Tbluser.objects.get(
             id=request.session.get('user_id')
@@ -317,6 +309,14 @@ def view_with_holiday_list(request,
 
     if template == "holidays.html" and not user.sup_tl_or_admin():
         raise Http404
+
+    if year is None:
+        year = datetime.datetime.today().year
+    if month is None:
+        month = datetime.datetime.today().month
+
+    # django urls parse to unicode objects
+    year, month = int(year), int(month)
 
     holiday_table, comments_list, js_calendar = gen_holiday_list(user,
                                                                  year,
