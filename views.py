@@ -33,6 +33,17 @@ from timetracker.utils.error_codes import CONNECTION_REFUSED
 from timetracker.loggers import suspicious_log, email_log, error_log
 
 
+def user_context_manager(request):
+    try:
+        user = Tbluser.objects.get(id=request.session.get("user_id"))
+    except Tbluser.DoesNotExist:
+        return {}
+    return {
+        "welcome_name": user.firstname,
+        "is_admin": user.super_or_admin(),
+        "is_team_leader": user.is_tl()
+        }
+
 def index(request):
 
     """ This function serves the base login page. This view detects if the
@@ -95,7 +106,6 @@ def login(request):
 
         # if all goes well, send to the tracker
         request.session['user_id'] = user.id
-        request.session['firstname'] = user.firstname
 
         if user.sup_tl_or_admin():
             return HttpResponseRedirect("/admin_view/")
@@ -160,8 +170,7 @@ def user_view(request, year=None, month=None, day=None):
     balance = user_object.get_total_balance(ret='int')
     return render_to_response(
         'calendar.html',
-        {'is_admin': user_object.super_or_admin(),
-         'is_team_leader': user_object.is_tl(),
+        {
          'calendar': calendar_table,
          'changeform': EntryForm(),
          'addform': AddForm(),
@@ -287,10 +296,7 @@ def admin_view(request):
     return render_to_response(
         "admin_view.html",
         {
-            "is_admin": user.super_or_admin(),
-            "is_team_leader": user.is_tl(),
             "employees": ees,
-            'welcome_name': request.session['firstname'],
             'employee_option_list': employees_select
         },
         RequestContext(request)
@@ -332,10 +338,7 @@ def add_change_user(request):
         {
         "employees": ees,
         "user_form": UserForm(),
-        'welcome_name': request.session['firstname'],
         'employee_option_list': employees_select,
-        'is_team_leader': user.is_tl(),
-        'is_admin': user.super_or_admin()
         },
         RequestContext(request)
     )
@@ -391,11 +394,8 @@ def holiday_planning(request,
     return render_to_response(
         "holidays.html",
         {
-            'is_admin': user.super_or_admin(),
             'holiday_table': holiday_table,
             'comments_list': comments_list,
-            'welcome_name': request.session['firstname'],
-            'is_team_leader': user.is_tl(),
             'days_this_month': days_this_month,
             'employee_select': generate_employee_box(user),
             'js_calendar': js_calendar,
@@ -435,7 +435,6 @@ def team_planning(request,
         {
             'holiday_table': holiday_table,
             'balance': user.get_total_balance(ret='int'),
-            'welcome_name': request.session['firstname'],
             'days_this_month': days_this_month,
         },
         RequestContext(request))
@@ -471,9 +470,6 @@ def yearview(request, who=None, year=None):
     return render_to_response("yearview.html",
                               {"yearview_table": yeartable,
                                "balances": target_user.get_balances(year),
-                               "welcome_name": request.session['firstname'],
-                               "is_team_leader": auth_user.is_tl(),
-                               "is_admin": auth_user.super_or_admin(),
                                "year": year,
                                "eeid": who,
                                }, RequestContext(request))
@@ -496,10 +492,7 @@ def edit_profile(request):
     return render_to_response("editprofile.html",
                               {'firstname': user.firstname,
                                'lastname': user.lastname,
-                               'welcome_name': request.session['firstname'],
                                'balance': user.get_total_balance(ret='int'),
-                               'is_admin': user.super_or_admin(),
-                               'is_team_leader': user.is_tl()
                                },
                               RequestContext(request))
 
@@ -526,7 +519,6 @@ def explain(request):
     return render_to_response("balance.html",
                               {'firstname': user.firstname,
                                'lastname': user.lastname,
-                               'welcome_name': request.session['firstname'],
                                'balance': user.get_total_balance(ret='int'),
                                'shiftlength': str(user.shiftlength.hour) + ': ' + str(user.shiftlength.minute),
                                'working_days': TrackingEntry.objects.filter(user=user.id).count()
