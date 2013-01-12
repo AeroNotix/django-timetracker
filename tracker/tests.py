@@ -250,7 +250,6 @@ class BaseUserTest(TestCase):
 
                 self.POST = {}
 
-
             def is_ajax(self):
                 return True
 
