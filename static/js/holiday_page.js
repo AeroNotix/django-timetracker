@@ -81,9 +81,7 @@ function submit_all() {
             'mass_data': JSON.stringify(js_calendar)
         },
         success: function(data) {
-            if (data.success === true) {
-                alert("Holidays updated successfully");
-            } else {
+            if (data.success !== true) {
                 alert(data.error);
             }
             change_table_data();
@@ -139,9 +137,7 @@ function submit_holidays(user_id) {
             'mass_data': JSON.stringify(holiday_map)
         },
         success: function(data) {
-            if (data.success === true) {
-                alert("Holidays updated successfully");
-            } else {
+            if (data.success !== true) {
                 alert(data.error);
             }
             change_table_data();
