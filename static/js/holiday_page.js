@@ -20,7 +20,7 @@ function dim () {
     });
 
     $("#pic").css({
-        position: "absolute",
+        position: "fixed",
         top: "30%",
         left: "40%"
     });
@@ -32,7 +32,7 @@ function undim() {
     $("#pic").hide();
     $('#screen').css({
         display: "none",
-        opacity: 0.0,
+        opacity: 0.0
     });
 }
 function applyClass(klass) {
