@@ -6,6 +6,35 @@ document.onmouseup = function (e) {
     mouseState = false;
 }
 
+function dim () {
+
+    $('#screen').css({
+        background: "#000",
+        display: "block",
+        position: "absolute",
+        top: 0,
+        left: 0,
+        opacity: 0.7,
+        'width':$(document).width(),
+        'height':$(document).height()
+    });
+
+    $("#pic").css({
+        position: "absolute",
+        top: "30%",
+        left: "40%"
+    });
+
+    $("#pic").show();
+};
+
+function undim() {
+    $("#pic").hide();
+    $('#screen').css({
+        display: "none",
+        opacity: 0.0,
+    });
+}
 function applyClass(klass) {
     "use strict";
     /*
@@ -21,7 +50,7 @@ function applyClass(klass) {
             if ($(this).hasClass("selected")) {
                 $(this).removeClass();
                 $(this).addClass(klass);
-				js_calendar[parseInt($(this).attr("usrid"))][parseInt($(this).text())] = klass;
+                js_calendar[parseInt($(this).attr("usrid"))][parseInt($(this).text())] = klass;
             }
         });
     return true;
@@ -29,6 +58,7 @@ function applyClass(klass) {
 
 function submit_all() {
     "use strict";
+    dim();
     /*
        Submits all entries on the form
 
@@ -56,7 +86,7 @@ function submit_all() {
             } else {
                 alert(data.error);
             }
-	        change_table_data();
+            change_table_data();
         },
         error: function(ajaxObj, textStatus, error) {
             alert(error);
@@ -67,6 +97,7 @@ function submit_all() {
 
 function submit_holidays(user_id) {
     "use strict";
+    dim();
     /*
        En masse changes a set of holidays and
        takes a user_id as a parameter.
@@ -86,10 +117,10 @@ function submit_holidays(user_id) {
     // iterate through the table and check if it's
     // selected or not, if it's selected, ignore it.
     // else, add the number and the class to the map.
-	var x;
-	for (x = 1; x < js_calendar[user_id].length; x++) {
-		daytypes[x] = js_calendar[user_id][x];
-	}
+    var x;
+    for (x = 1; x < js_calendar[user_id].length; x++) {
+        daytypes[x] = js_calendar[user_id][x];
+    }
 
     // setup our ajax properties
     $.ajaxSetup({
@@ -97,7 +128,7 @@ function submit_holidays(user_id) {
         dataType: 'json'
     });
 
-	var holiday_map = {};
+    var holiday_map = {};
     holiday_map[user_id] = daytypes;
     $.ajax({
         url: '/ajax/',
@@ -248,6 +279,7 @@ function change_table_data () {
             });
         }
     });
+    undim();
     return true;
 }
 
@@ -371,4 +403,5 @@ function retrieveComments() {
 $(function () {
     "use strict";
     addFunctions();
+    $("#pic").hide();
 });
