@@ -686,26 +686,6 @@ class Tblauthorization(models.Model):
             '</table>']
         )
 
-    def manager_view(self):
-        """
-        Method which negates needing to retrieve the users via the
-        Tblauthorization.objects.all() method which is, needless to say, a
-        mouthfull.
-
-        :rtype: :class:`QuerySet`
-        """
-        return self.users.all().order_by('lastname')
-
-    def teamleader_view(self):
-        """
-        Method which provides a shortcut to retrieving the set of users which
-        are available to the TeamLeader based upon the rules of what they can
-        access.
-
-        :rtype: :class:`QuerySet`
-        """
-        return self.users.exclude(user_type__in=set(["TEAML", "ADMIN"])).order_by('lastname')
-
     display_users.allow_tags = True
     display_users.short_discription = "Subordinate Users"
 

@@ -250,7 +250,6 @@ class BaseUserTest(TestCase):
 
                 self.POST = {}
 
-
             def is_ajax(self):
                 return True
 
@@ -782,7 +781,7 @@ class FrontEndTest(LiveServerTestCase):
                 time.sleep(2)
                 self.driver.switch_to_alert().accept()
                 break
-        self.assertEquals(len(TrackingEntry.objects.all(), count))
+        self.assertEquals(len(TrackingEntry.objects.all()), count)
 
     @skipUnless(SELENIUM_AVAILABLE, "These tests require Selenium to be installed.")
     def test_Logins(self):
@@ -794,6 +793,7 @@ class FrontEndTest(LiveServerTestCase):
         # once again with a manager
         self.manager_login()
         self.assertRaises(NoSuchElementException, self.driver.find_element_by_id, "error")
+        self.driver.find_element_by_id("logout-btn").click()
 
     def login(self, who):
         self.driver.get(self.live_server_url)
