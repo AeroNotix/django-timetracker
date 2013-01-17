@@ -1089,27 +1089,23 @@ def useredit(request):
     }
 
     session_id = request.session.get('user_id')
+    # get the user object from the database
+    base_user = Tbluser.objects.get(id=session_id)
+    auth_user = base_user.get_administrator()
+
     try:
         if request.POST.get("mode") == "false":
+            if Tbluser.USER_LEVELS[data["user_type"]] >= \
+                    Tbluser.USER_LEVELS[base_user.user_type]:
+                json_data["error"] = "Your access rights are not " + \
+                                     "sufficient to create a " + \
+                                     "user of this type."
+                return json_data
             # create the user
             user = Tbluser(**data)
             user.save()
             # link the user to the admin
             try:
-                # get the user object from the database
-                auth_user = Tbluser.objects.get(id=session_id)
-
-                # if the user is a team leader, they don't have
-                # table auth instances assigned to them, their
-                # manager is the one with the table auth, but
-                # the TEAML is assigned the same team.
-                if auth_user.is_tl():
-
-                    # we find the Tblauth instance with the TEAML user
-                    # assigned to it, so we can pull that team
-                    auth_user = Tblauth.objects.get(users=session_id).admin
-
-                # Now we have the user with the auth table, get their instance
                 auth = Tblauth.objects.get(admin=auth_user)
             except Tblauth.DoesNotExist:
                 auth = Tblauth(
@@ -1139,23 +1135,24 @@ def useredit(request):
             # get that user and update it's
             # attributes with what was on the form
             user = Tbluser.objects.get(id__exact=request.POST.get("mode"))
-            logged_in_user = Tbluser.objects.get(id=session_id)
             for key, value in data.items():
                 # Users cannot disable themselves, it would prevent them
                 # logging back in!
                 if key == "disabled" and value \
-                        and user == logged_in_user:
+                        and user == base_user:
                     json_data["error"] = "You cannot disable yourself."
                     return json_data
-                # Super Users cannot change their user_type
-                if key == "user_type" and user.is_super():
-                    continue
-                # so users cannot elevate themselves to the same and
-                # above role.
                 if key == "user_type":
-                    if Tbluser.USER_LEVELS[user.user_type] < \
-                            Tbluser.USER_LEVELS[value]:
+                    # Super Users cannot change their user_type
+                    # nor can users change themselves.
+                    if user == base_user or user.is_super():
                         continue
+                    else:
+                        # Users cannot elevate other users to a higher
+                        # or equal role than themselves.
+                        if Tbluser.USER_LEVELS[value] >= \
+                                Tbluser.USER_LEVELS[base_user.user_type]:
+                            continue
                 if value == "false":
                     value = False
                 if value == "true":
