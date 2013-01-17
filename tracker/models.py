@@ -73,6 +73,7 @@ class Tbluser(models.Model):
         ('BK', 'Behr Kirchberg'),
         ('CZ', 'Behr Czech'),
         ('EN', 'MCBC'),
+        ('NE', 'Newton'),
         ('AD', 'Administration'),
     )
 
