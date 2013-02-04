@@ -635,11 +635,6 @@ class RelatedUsers(models.Model):
 
         """
         Method which generates the HTML for the admin views
-
-        This method is depracated in favour of not actually using the admin
-        interface to interact with :class:`Tblauthorization` instances too
-        much. That and, it's not unicode-safe.
-
         :rtype: :class:`string`
         """
 
@@ -736,11 +731,6 @@ class Tblauthorization(models.Model):
 
         """
         Method which generates the HTML for the admin views
-
-        This method is depracated in favour of not actually using the admin
-        interface to interact with :class:`Tblauthorization` instances too
-        much. That and, it's not unicode-safe.
-
         :rtype: :class:`string`
         """
 
