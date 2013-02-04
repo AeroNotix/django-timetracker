@@ -74,6 +74,14 @@ class UserAdmin(admin.ModelAdmin):
     list_display = ('__unicode__', 'display_user_type', 'disabled')
     actions = [send_password_reminder, create_100_random_users]
 
+class RelatedAdmin(admin.ModelAdmin):
+    """Creates access to and customizes the admin interface to the
+    Tblauthorization instances. We add the __unicode__ and the display_users
+    functions so that the display allows us to view the team associated with
+    the administrator and the administrator's printed representation.
+    """
+    list_display = ('__unicode__', 'display_users')
+
 
 class AuthAdmin(admin.ModelAdmin):
     """Creates access to and customizes the admin interface to the
@@ -97,3 +105,4 @@ class TrackerAdmin(admin.ModelAdmin):
 admin.site.register(models.Tbluser, UserAdmin)
 admin.site.register(models.TrackingEntry, TrackerAdmin)
 admin.site.register(models.Tblauthorization, AuthAdmin)
+admin.site.register(models.RelatedUsers, RelatedAdmin)

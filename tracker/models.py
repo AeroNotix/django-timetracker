@@ -220,7 +220,7 @@ class Tbluser(models.Model):
                     admin = self.get_administrator()
                 else:
                     admin = self
-                # find the subordinates
+                # find the subordinates and the related users
                 if get_all:
                     result = Tblauthorization.objects.get(
                         admin=admin
@@ -229,7 +229,14 @@ class Tbluser(models.Model):
                     result = Tblauthorization.objects.get(
                         admin=admin
                         ).users.filter(disabled=False)
-                ids = [user.id for user in result]
+                try:
+                    extra= RelatedUsers.objects.get(
+                        admin=admin
+                        ).users.filter(disabled=False)
+                except RelatedUsers.DoesNotExist:
+                    extra = []
+
+                ids = [user.id for user in result] + [user.id for user in extra]
                 # find whether we need to append this user to it.
                 if self != admin or self.super_or_admin():
                    ids.append(admin.id)
@@ -588,6 +595,80 @@ class UserForm(ModelForm):
 
     class Meta:
         model = Tbluser
+
+class RelatedUsers(models.Model):
+    """
+    Related users offers similar functionality to the Tblauthorization
+    table except without the baggage of it being automatically populated
+    when users are created.
+    """
+
+    admin = models.ForeignKey(
+        Tbluser,
+        related_name="related_foreign"
+    )
+
+    users = models.ManyToManyField(
+        Tbluser,
+        related_name="related_view",
+        verbose_name=("Additional Users")
+    )
+
+    class Meta:
+
+        """
+        Metaclass gives access to additional options
+        """
+
+        db_table = u'tblrelatedusers'
+        verbose_name = "Related User"
+        verbose_name_plural = "Related Users"
+
+    def __unicode__(self):
+
+        """
+        Admin view uses this to display the entry
+        """
+        return unicode(self.admin)
+
+    def display_users(self):
+
+        """
+        Method which generates the HTML for the admin views
+
+        This method is depracated in favour of not actually using the admin
+        interface to interact with :class:`Tblauthorization` instances too
+        much. That and, it's not unicode-safe.
+
+        :rtype: :class:`string`
+        """
+
+        table_header = u"""
+                       <table>
+                         <tr>
+                          <th>Name</th>
+                         </tr>
+                       """
+
+        table_data_string = u"""
+                            <tr>
+                              <td>{0}</td>
+                            </tr>
+                            """
+
+        table_inner_list = [
+            table_data_string.format(user.name())
+            for user in self.users.all().order_by('lastname')
+        ]
+
+        return u''.join([
+            table_header,
+            u''.join([table_entry for table_entry in table_inner_list]),
+            '</table>']
+        )
+
+    display_users.allow_tags = True
+    display_users.short_discription = "Related Users"
 
 
 class Tblauthorization(models.Model):
