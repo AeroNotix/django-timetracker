@@ -78,14 +78,16 @@ class Tbluser(models.Model):
     )
 
     PROCESS_CHOICES = (
+        ('AD', 'Administration'),
         ('AO', 'Accounting Operations'),
         ('AP', 'Accounts Payable'),
         ('AR', 'Accounts Receivable'),
         ('FA', 'F&A'),
+        ('HL', 'HRO Lodz'),
         ('HR', 'HRO'),
+        ('HW', 'HRO Wro'),
         ('SC', 'Scanning'),
         ('TE', 'Travel & Expenses'),
-        ('AD', 'Administration'),
     )
 
     JOB_CODES = (
