@@ -6,6 +6,13 @@ document.onmouseup = function (e) {
     mouseState = false;
 }
 
+document.onmousemove = function(e) {
+    var e = window.event;
+    if (e.button === 0 && mouseState === true) {
+        mouseState = false;
+    }
+}
+
 function dim () {
 
     $('#screen').css({
