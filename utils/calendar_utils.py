@@ -1294,6 +1294,7 @@ def mass_holidays(request):
                         breaks=time_str[2],
                         daytype=daytype)
                 new_entry.save()
+                new_entry.send_notifications()
     json_data['success'] = True
     return json_data
 
