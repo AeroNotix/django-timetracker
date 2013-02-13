@@ -14,3 +14,4 @@ tt.wsgi
 eproject.cfg
 *.log
 docs/build/
+tracker/notifications.py
