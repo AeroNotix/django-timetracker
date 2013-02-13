@@ -18,9 +18,20 @@ from timetracker.utils.datemaps import (
     MONTH_MAP, generate_year_box
     )
 
-from timetracker.tracker.notifications import (
-    send_overtime_notification, send_pending_overtime_notification
-    )
+'''
+The modules which provide these functions should be provided for by
+the setup environment, this is due to the fact that some notifications
+may include business-specific details, we can override by simply incl-
+uding a local notifications.py in this directory with the required fu-
+nctions we need.
+'''
+try:
+    from timetracker.tracker.notifications import (
+        send_overtime_notification, send_pending_overtime_notification
+        )
+except ImportError:
+    send_overtime_notification = lambda x: x
+    send_pending_overtime_notification = lambda x: x
 
 class Tbluser(models.Model):
 
