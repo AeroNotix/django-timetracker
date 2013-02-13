@@ -35,7 +35,7 @@ except ImportError:
 
 class Tbluser(models.Model):
 
-    """Models the user table and provides the admin interface with the
+    '''Models the user table and provides the admin interface with the
     niceties it needs.
 
     This model is the central pillar to this entire application.
@@ -65,7 +65,7 @@ class Tbluser(models.Model):
     functions of the app. They can view/create/change/delete members of their
     team. They can view/create/add/change holidays of all members of their
     team and themselves. They can create users of any type.
-    """
+    '''
 
     USER_TYPE = (
         ('ADMIN', 'Administrator'),
@@ -164,9 +164,9 @@ class Tbluser(models.Model):
 
     class Meta:
 
-        """
+        '''
         Metaclass allows for additional options to be set on the model
-        """
+        '''
 
         db_table = u'tbluser'
         verbose_name = "User"
@@ -175,12 +175,12 @@ class Tbluser(models.Model):
 
     def __unicode__(self):
 
-        """
+        '''
         How the row is represented in admin
 
         :note: This method shouldn't be called directly.
         :rtype: :class:`string`
-        """
+        '''
 
         return '%s - %s %s ' % (self.user_id,
                                 self.firstname,
@@ -190,12 +190,12 @@ class Tbluser(models.Model):
         return self.disabled
 
     def get_shiftlength_list(self):
-        """
+        '''
         Returns the users' timestring formatted neatly
 
         :returns: :class:`tuple` of :class:`str` such as ("08:00:00", "17:00:00", "00:15:00")
                   depending on the user's shiftlength
-        """
+        '''
 
         start_time = dt.datetime(
             year=1980,
@@ -262,12 +262,12 @@ class Tbluser(models.Model):
 
     def get_administrator(self):
 
-        """
+        '''
         Returns the :class:`Tbluser` who is this instances Authorization link
 
         :returns: A :class:`Tbluser` instance
         :rtype: :class:`Tbluser`
-        """
+        '''
 
         if self.super_or_admin():
             return self
@@ -290,10 +290,10 @@ class Tbluser(models.Model):
             return self
 
     def get_teammates(self):
-        """
+        '''
         Get teammates will return a QuerySet of users which are the same
         process type
-        """
+        '''
         return Tblauthorization.objects.get(
             admin=self.get_administrator()
             ).users.filter(
@@ -301,28 +301,28 @@ class Tbluser(models.Model):
             ).order_by('lastname')
 
     def display_user_type(self):
-        """
+        '''
         Function for displaying the user_type in admin.
 
             :note: This method shouldn't be called directly.
             :rtype: :class:`string`
-        """
+        '''
         return self.user_type
 
     def name(self):
-        """
+        '''
         Utility method for returning users full name. This is useful for when
         we are pretty printing users and their names. For example in e-mails
         and or when we are displaying users on the front-end.
 
         :rtype: :class:`string`
-        """
+        '''
         return self.firstname + ' ' + self.lastname
 
     def tracking_entries(self,
                          year=None,
                          month=None):
-        """Returns all the tracking entries associated with
+        '''Returns all the tracking entries associated with
         this user.
 
         This is particularly useful when required to make a report or generate
@@ -333,7 +333,7 @@ class Tbluser(models.Model):
         :param month: The month in which the QuerySet should be filtered
                      by. Defaults to the current month.
         :rtype: :class:`QuerySet`
-        """
+        '''
 
         if year is None:
             year = dt.datetime.today().year
@@ -345,10 +345,10 @@ class Tbluser(models.Model):
                                             entry_date__month=month)
 
     def get_comments(self, year):
-        """
+        '''
         Get Comments will return a formatted string of this users comments
         for a given year.
-        """
+        '''
         entries =  TrackingEntry.objects.filter(
             user_id=self.id,
             entry_date__year=year
@@ -361,14 +361,14 @@ class Tbluser(models.Model):
         return comments_list
 
     def yearview(self, year):
-        """
+        '''
         Generates the HTML table for the yearview page. It iterates through
         the entire set of tracking entries for a given year.
 
         :param year: The year in which the yearview should be generated from.
         :type year: :class:`int`
         :rtype :class:`str`
-        """
+        '''
         entries = TrackingEntry.objects.filter(user_id=self.id,
                                                entry_date__year=year)
         final = []
@@ -422,10 +422,10 @@ class Tbluser(models.Model):
        )
         return '<table id="holiday-table"><th colspan=999>%s</th>' % self.name() + table_string
 
-    """
+    '''
     This group of functions are helper methods for querying whether
     the user is contained with a certain set of user_types.
-    """
+    '''
     def sup_tl_or_admin(self):
         return self.user_type in ["SUPER", "ADMIN", "TEAML"]
 
@@ -448,7 +448,7 @@ class Tbluser(models.Model):
         return self.user_type == "RUSER"
 
     def get_holiday_balance(self, year):
-        """
+        '''
         Calculates the holiday balance for the employee
 
         This method loops over all :class:`TrackingEntry` entries attached to
@@ -468,7 +468,7 @@ class Tbluser(models.Model):
                      calculated from
         :type year: :class:`int`
         :rtype: :class:`Integer`
-        """
+        '''
 
         tracking_days = TrackingEntry.objects.filter(user_id=self.id,
                                                      entry_date__year=year)
@@ -488,25 +488,25 @@ class Tbluser(models.Model):
         return holiday_balance
 
     def get_num_daytype_in_year(self, year, daytype):
-        """
+        '''
         Base method for retrieving the number of instances of a specific
         daytype in a given year.
-        """
+        '''
         return len(TrackingEntry.objects.filter(user_id=self.id,
                                             entry_date__year=year,
                                             daytype=daytype))
 
     def get_dod_balance(self, year):
-        """
+        '''
         Pass through method for retrieving the DAYOD number in a year
-        """
+        '''
         return self.get_num_daytype_in_year(year, "DAYOD")
 
     def get_balances(self, year):
-        """
+        '''
         Get balances will return a dictionary of long daytype names
         against their balances.
-        """
+        '''
         daytype_dict = {
             daytype[1]: self.get_num_daytype_in_year(year, daytype[0]) \
                 for daytype in DAYTYPE_CHOICES
@@ -518,7 +518,7 @@ class Tbluser(models.Model):
 
     def get_total_balance(self, ret='html'):
 
-        """ Calculates the total balance for the user.
+        ''' Calculates the total balance for the user.
 
         This method iterates through every :class:`TrackingEntry` attached to
         this user instance which is a working day, multiplies the user's
@@ -537,7 +537,7 @@ class Tbluser(models.Model):
                     string 'dbg' is passed then we output all the values used
                     to calculate and the final value.
         :rtype: :class:`string` or :class:`integer`
-        """
+        '''
 
         ret = ret.lower()
         # if the argument isn't supported'
@@ -622,11 +622,11 @@ class UserForm(ModelForm):
         model = Tbluser
 
 class RelatedUsers(models.Model):
-    """
+    '''
     Related users offers similar functionality to the Tblauthorization
     table except without the baggage of it being automatically populated
     when users are created.
-    """
+    '''
 
     admin = models.ForeignKey(
         Tbluser,
@@ -641,9 +641,9 @@ class RelatedUsers(models.Model):
 
     class Meta:
 
-        """
+        '''
         Metaclass gives access to additional options
-        """
+        '''
 
         db_table = u'tblrelatedusers'
         verbose_name = "Related User"
@@ -651,30 +651,30 @@ class RelatedUsers(models.Model):
 
     def __unicode__(self):
 
-        """
+        '''
         Admin view uses this to display the entry
-        """
+        '''
         return unicode(self.admin)
 
     def display_users(self):
 
-        """
+        '''
         Method which generates the HTML for the admin views
         :rtype: :class:`string`
-        """
+        '''
 
-        table_header = u"""
+        table_header = u'''
                        <table>
                          <tr>
                           <th>Name</th>
                          </tr>
-                       """
+                       '''
 
-        table_data_string = u"""
+        table_data_string = u'''
                             <tr>
                               <td>{0}</td>
                             </tr>
-                            """
+                            '''
 
         table_inner_list = [
             table_data_string.format(user.name())
@@ -693,7 +693,7 @@ class RelatedUsers(models.Model):
 
 class Tblauthorization(models.Model):
 
-    """Links Administrators (managers) with their team.
+    '''Links Administrators (managers) with their team.
 
     This table is a many-to-many relationship between Administrators and any
     other any user type in TEAML/RUSER.
@@ -716,7 +716,7 @@ class Tblauthorization(models.Model):
     In future, and time, I would like to make it so that the .save() method is
     overloaded and then we can check if a :class:`Tblauthorization` link
     already exists and if so, save to that instead.
-    """
+    '''
 
     admin = models.ForeignKey(
         Tbluser,
@@ -737,9 +737,9 @@ class Tblauthorization(models.Model):
 
     class Meta:
 
-        """
+        '''
         Metaclass gives access to additional options
-        """
+        '''
 
         db_table = u'tblauthorization'
         verbose_name = "Authorization Link"
@@ -747,30 +747,30 @@ class Tblauthorization(models.Model):
 
     def __unicode__(self):
 
-        """
+        '''
         Admin view uses this to display the entry
-        """
+        '''
         return unicode(self.admin)
 
     def display_users(self):
 
-        """
+        '''
         Method which generates the HTML for the admin views
         :rtype: :class:`string`
-        """
+        '''
 
-        table_header = u"""
+        table_header = u'''
                        <table>
                          <tr>
                           <th>Name</th>
                          </tr>
-                       """
+                       '''
 
-        table_data_string = u"""
+        table_data_string = u'''
                             <tr>
                               <td>{0}</td>
                             </tr>
-                            """
+                            '''
 
         table_inner_list = [
             table_data_string.format(user.name())
@@ -789,7 +789,7 @@ class Tblauthorization(models.Model):
 
 class TrackingEntry(models.Model):
 
-    """Model which is used to enter working logs into the database.
+    '''Model which is used to enter working logs into the database.
 
     A tracking entry consists of several fields:-
 
@@ -802,7 +802,7 @@ class TrackingEntry(models.Model):
     Again, the TrackingEntry model is a core component of the time tracking
     application. It directly links users with the time-spent at work and the
     the type of day that was.
-    """
+    '''
 
     user = models.ForeignKey(Tbluser, related_name="user_tracking")
 
@@ -817,9 +817,9 @@ class TrackingEntry(models.Model):
 
     class Meta:
 
-        """
+        '''
         Metaclass gives access to additional options
-        """
+        '''
 
         verbose_name = 'Daily Tracking Log'
         verbose_name_plural = 'Daily Tracking Logs'
@@ -828,11 +828,11 @@ class TrackingEntry(models.Model):
 
     def __unicode__(self):
 
-        """
+        '''
         Method to display entry in admin
 
         :rtype: :class:`string`
-        """
+        '''
 
         date = '/'.join(
             map(unicode,
