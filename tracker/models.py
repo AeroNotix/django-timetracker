@@ -867,5 +867,3 @@ class TrackingEntry(models.Model):
 
         if self.is_overtime():
             send_overtime_notification(self)
-        if self.is_undertime():
-            send_overtime_notification(self)
