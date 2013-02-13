@@ -1,5 +1,3 @@
- # -*- coding: utf-8 -*-
-
 '''Definition of the models used in the timetracker app
 
     .. moduleauthor:: Aaron France <aaron.france@hp.com>
@@ -14,21 +12,15 @@ from operator import add
 
 from django.db import models
 from django.forms import ModelForm
-from django.core.mail import send_mail, EmailMessage
 
 from timetracker.utils.datemaps import (
     WORKING_CHOICES, DAYTYPE_CHOICES, float_to_time, datetime_to_timestring,
     MONTH_MAP, generate_year_box
     )
 
-try:
-    from cStringIO import StringIO
-except ImportError:
-    from StringIO import StringIO
-from reportlab.lib.pagesizes import letter, A4
-from reportlab.lib.units import inch
-from reportlab.platypus import SimpleDocTemplate, Paragraph
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from timetracker.tracker.notifications import (
+    send_overtime_notification, send_pending_overtime_notification
+    )
 
 class Tbluser(models.Model):
 
@@ -357,7 +349,6 @@ class Tbluser(models.Model):
                 comments_list.append(' '.join(comment_string))
         return comments_list
 
-
     def yearview(self, year):
         """
         Generates the HTML table for the yearview page. It iterates through
@@ -608,6 +599,10 @@ class Tbluser(models.Model):
         shift_minutes = (self.shiftlength.minute + self.breaklength.minute) / 60.0
         return shift_hours + shift_minutes
 
+    def send_pending_overtime_notification(self):
+        if self.get_total_balance() > 0:
+            send_pending_overtime_notification(self)
+
 class UserForm(ModelForm):
 
     class Meta:
@@ -853,93 +848,11 @@ class TrackingEntry(models.Model):
     def undertime_difference(self):
         return self.user.shiftlength_as_float() - self.totalhours()
 
-    def send_overtime_notification(self):
-        email_message_manager = \
-            """
-Hi,
-
-A user under your control recently added an overtime entry into the
-timetracker. You can review the details below:
-
-User: %s
-Date: %s
-Hours OT: %s
-Start time: %s
-End Time: %s
-
-Regards,
-Timetracker team
-"""
-        email_message_manager = email_message_manager % (self.user,
-                                                         self.entry_date,
-                                                         self.overtime_difference(),
-                                                         self.start_time,
-                                                         self.end_time)
-        message_manager = EmailMessage(from_email='timetracker@unmonitored.com',)
-        message_manager.body = email_message_manager
-        message_manager.to = ['aaron.france@hp.com']#self.user.get_administrator().user_id]
-        message_manager.send()
-
-        message_emp = EmailMessage(from_email='timetracker@unmonitored.com',)
-        message_emp.body = \
-"""Hi,
-
-You recently entered a tracking (Date: %s) entry which is indicated to
-be overtime.
-
-In order to complete the tracking of this overtime you are required
-to read and fill out the attached form then send it back to your
-direct manager.
-
-If you believe you have received this e-mail in error then review
-your recent actions on the timetracker and correct any mistakes.
-
-Kind Regards,
-Timetracker team
-""" % self.entry_date
-        pdf = self.create_pdf()
-        message_emp.attach(
-            'OT_Form%s.pdf' % self.entry_date, pdf,
-            'application/pdf'
-            )
-        message_emp.to = ['aaron.france@hp.com']#self.user.user_id]
-        message_emp.send()
-
     def send_notifications(self):
         if self.daytype != "WKDAY":
             pass
 
         if self.is_overtime():
-            self.send_overtime_notification()
+            send_overtime_notification(self)
         if self.is_undertime():
-            self.send_overtime_notification()
-
-    def create_pdf(self):
-        buffer = StringIO()
-        p = SimpleDocTemplate(buffer, pagesize=letter,
-                              rightMargin=72, leftMargin=72,
-                              topMargin=-5, bottomMargin=18)
-        story = []
-        styles = getSampleStyleSheet()
-        heading_lines = [
-            "POLECENIE PRACY W NADGODZINACH W NIEDZIELĘ I ŚWIĘTO",
-            "Commission to work overtime on Sunday and Public Holiday",
-            "",
-            "GLOBAL E-BUSINESS OPERATIONS SP. Z O.O."
-            ]
-        for heading in heading_lines:
-            para = """<para alignment=centre>
-                         {0}
-                      </para>
-                   """.format(heading)
-            story.append(Paragraph(para, styles["Normal"]))
-        para = """<para alignment=centre>
-                         {0}
-                      </para>
-                   """.format(heading)
-        story.append(Paragraph(para, styles["Normal"]))
-
-        p.build(story)
-        pdf = buffer.getvalue()
-        buffer.close() 
-        return pdf
+            send_overtime_notification(self)
