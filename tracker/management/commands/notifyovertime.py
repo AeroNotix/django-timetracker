@@ -6,6 +6,6 @@ class Command(BaseCommand):
     help = 'Closes the specified poll for voting'
 
     def handle(self, *args, **options):
-        for i in TrackingEntry.objects.filter(user_id=1):
-            i.send_notifications()
+        for user in Tbluser.objects.filter(id=1):
+            user.send_pending_overtime_notification()
             break
