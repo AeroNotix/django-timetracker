@@ -541,7 +541,7 @@ class Tbluser(models.Model):
 
         ret = ret.lower()
         # if the argument isn't supported'
-        if ret not in set(['html', 'int', 'dbg']):
+        if ret not in set(['html', 'int', 'dbg', 'num']):
             raise Exception("Unsupported Argument. Must be html, int or dbg")
 
         # we'll use augmented assignment
@@ -599,6 +599,8 @@ class Tbluser(models.Model):
                 float_to_time(trackingnumber)
             )
 
+        elif ret == 'num':
+            return int(trackingnumber)
         elif ret == 'int':
             return float_to_time(trackingnumber)
         elif ret == 'dbg':
@@ -611,7 +613,7 @@ class Tbluser(models.Model):
         return shift_hours + shift_minutes
 
     def send_pending_overtime_notification(self):
-        if self.get_total_balance() > 0:
+        if self.get_total_balance(ret='num') > 0:
             send_pending_overtime_notification(self)
 
 class UserForm(ModelForm):
