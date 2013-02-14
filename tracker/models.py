@@ -612,9 +612,10 @@ class Tbluser(models.Model):
         shift_minutes = (self.shiftlength.minute + self.breaklength.minute) / 60.0
         return shift_hours + shift_minutes
 
-    def send_pending_overtime_notification(self):
+    def send_pending_overtime_notification(self, send=False):
         if self.get_total_balance(ret='num') > 0:
-            send_pending_overtime_notification(self)
+            return send_pending_overtime_notification(self, send)
+
 
 class UserForm(ModelForm):
 
