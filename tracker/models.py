@@ -851,10 +851,10 @@ class TrackingEntry(models.Model):
         return shift_hours + shift_minutes
 
     def is_overtime(self):
-        return self.time_difference() < 0
+        return self.time_difference() < 1
 
     def is_undertime(self):
-        return self.time_difference() > 0
+        return self.time_difference() > 1
 
     def time_difference(self):
         return self.totalhours() - self.user.shiftlength_as_float()
