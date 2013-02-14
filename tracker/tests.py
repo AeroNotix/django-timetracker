@@ -822,3 +822,5 @@ class FrontEndTest(LiveServerTestCase):
             if option.get_attribute("value") == num:
                 option.click()
                 break
+
+FrontEndTest = None
