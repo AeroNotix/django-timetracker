@@ -1283,6 +1283,8 @@ def mass_holidays(request):
                 else:
                     current_entry.daytype = daytype
                     current_entry.save()
+                    current_entry.full_clean()
+                    current_entry.send_notifications()
             except TrackingEntry.DoesNotExist:
                 if daytype == "empty":
                     continue
@@ -1298,6 +1300,8 @@ def mass_holidays(request):
                         breaks=time_str[2],
                         daytype=daytype)
                 new_entry.save()
+                new_entry.full_clean()
+                new_entry.send_notifications()
     json_data['success'] = True
     return json_data
 
