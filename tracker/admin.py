@@ -75,6 +75,7 @@ class UserAdmin(admin.ModelAdmin):
     actions = [send_password_reminder, create_100_random_users]
 
 class RelatedAdmin(admin.ModelAdmin):
+    filter_horizontal = ('users',)
     """Creates access to and customizes the admin interface to the
     Tblauthorization instances. We add the __unicode__ and the display_users
     functions so that the display allows us to view the team associated with
@@ -84,6 +85,7 @@ class RelatedAdmin(admin.ModelAdmin):
 
 
 class AuthAdmin(admin.ModelAdmin):
+    filter_horizontal = ('users',)
     """Creates access to and customizes the admin interface to the
     Tblauthorization instances. We add the __unicode__ and the display_users
     functions so that the display allows us to view the team associated with
