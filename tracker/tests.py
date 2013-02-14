@@ -583,7 +583,7 @@ class AjaxTestCase(BaseUserTest):
             'entry_date': '2012-01-01',
             'start_time': '09:00',
             'end_time': '17:00',
-            'daytype': 'WRKDY',
+            'daytype': 'WKDAY',
             'breaks': '00:15:00',
             'hidden-id': self.linked_user.id,
         }
