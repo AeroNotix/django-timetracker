@@ -68,7 +68,6 @@ MONTH_MAP = {
 
 WORKING_CHOICES = (
     ('WKDAY', 'Work Day'),
-    ('PUWRK', 'Work on Public Holiday'),
     ('SATUR', 'Work on Saturday'),
     ('WKHOM', 'Work at home'),
 )
