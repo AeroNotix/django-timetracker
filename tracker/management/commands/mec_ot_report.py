@@ -50,7 +50,9 @@ class Command(BaseCommand):
             )
         csvout.writerow(
             # write out the settlement period row.
-            ["Settlement Period"] + [user.job_code[-1] if user.job_code else "" for user in users]
+            ["Settlement Period"] + [user.job_code[-1]
+                                     if user.job_code else ""
+                                     for user in users]
             )
         csvout.writerow(
             # write out the e-mail row.
