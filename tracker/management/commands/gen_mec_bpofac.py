@@ -46,14 +46,18 @@ class Command(BaseCommand):
         
         csvout.writerow(
             # write out the top heading
-            ["Date"] + [', '.join([user.lastname, user.firstname]) for user in users]
+            ["Date"] + [user.rev_name() for user in users]
             )
         csvout.writerow(
-            # write out the top heading
+            # write out the settlement period row.
+            ["Settlement Period"] + [user.job_code[-1] if user.job_code else "" for user in users]
+            )
+        csvout.writerow(
+            # write out the e-mail row.
             ["EmployeeID"] + [user.user_id for user in users]
             )
         csvout.writerow(
-            # write out the top heading
+            # write out the total balances.
             ["Balance"] + [user.get_total_balance(ret='num') for user in users]
             )
         for date in dates:
@@ -76,11 +80,8 @@ class Command(BaseCommand):
         message.attach(
             "overtimereport.csv",
             csvfile,
-            "text/csv"
+            "application/octet-stream"
             )
-        message.to = ["aaron.france@hp.com", "gabriela.nierzwicka@hp.com"]
-#        message.send()
-
-                        
-                                        
-            
+        message.to = ["aaron.france@hp.com"]#, "ulrich.schroeder@hp.com"]
+        message.subject = "End of month Overtime Totals."
+        message.send()
