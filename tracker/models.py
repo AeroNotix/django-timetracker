@@ -893,5 +893,5 @@ class TrackingEntry(models.Model):
     def send_notifications(self):
         if self.daytype == "WKDAY" and self.is_overtime():
             send_overtime_notification(self)
-        if self.daytype in ["SATUR", "PUABS"]:
+        if self.daytype in ["PUWRK"]:
             send_overtime_notification(self)
