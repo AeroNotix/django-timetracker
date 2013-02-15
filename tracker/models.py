@@ -877,13 +877,13 @@ class TrackingEntry(models.Model):
 
     def is_overtime(self):
         if self.daytype == "WKDAY":
-            return self.time_difference() < 1
+            return self.time_difference() > 1
         else:
             return False
 
     def is_undertime(self):
         if self.daytype == "WKDAY":
-            return self.time_difference() > 1
+            return self.time_difference() < -1
         else:
             return False
 
