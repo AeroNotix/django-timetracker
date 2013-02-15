@@ -68,6 +68,7 @@ MONTH_MAP = {
 
 WORKING_CHOICES = (
     ('WKDAY', 'Work Day'),
+    ('PUWRK', 'Work on Public Holiday'),
     ('SATUR', 'Work on Saturday'),
     ('WKHOM', 'Work at home'),
 )
@@ -87,6 +88,7 @@ DAYTYPE_CHOICES = (
     ('HOLIS', 'Vacation'),
     ('SICKD', 'Sickness Absence'),
     ('PUABS', 'Public Holiday'),
+    ('PUWRK', 'Work on Public Holiday'),
     ('RETRN', 'Return for Public Holiday'),
     ('SPECI', 'Special Leave'),
     ('TRAIN', 'Training'),
