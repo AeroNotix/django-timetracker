@@ -319,6 +319,9 @@ class Tbluser(models.Model):
         '''
         return self.firstname + ' ' + self.lastname
 
+    def rev_name(self):
+        return '%s, %s' % (self.lastname, self.firstname)
+
     def tracking_entries(self,
                          year=None,
                          month=None):
@@ -616,6 +619,28 @@ class Tbluser(models.Model):
         if self.get_total_balance(ret='num') > 0:
             return send_pending_overtime_notification(self, send)
 
+    @staticmethod
+    def manager_emails_for_account(account):
+        admins = Tbluser.objects.filter(
+            user_type__in=["ADMIN", "TEAML"],
+            market=account
+            )
+        return [admin.user_id for admin in admins]
+
+    @staticmethod
+    def administrator_emails_for_account(account):
+        admins = Tbluser.objects.filter(
+            user_type="ADMIN",
+            market=account
+            )
+        return [admin.user_id for admin in admins]
+
+    @staticmethod
+    def all_emails_for_account(account):
+        users = Tbluser.objects.filter(
+            market=account
+            )
+        return [user.user_id for user in users]
 
 class UserForm(ModelForm):
 
