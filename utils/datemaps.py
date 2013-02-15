@@ -96,6 +96,7 @@ DAYTYPE_CHOICES = (
     ('SATUR', 'Work on Saturday'),
     ('WKHOM', 'Work at home'),
     ('ROVER', 'Return for overtime'),
+    ('OTHER', 'Other'),
 )
 
 def generate_year_box(year, id=''):
