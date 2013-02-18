@@ -421,7 +421,7 @@ class TrackingEntryTestCase(BaseUserTest):
             entry.full_clean()
             self.assertTrue(entry.is_overtime())
 
-    def testTimeDifference(self):
+    def testTimeDifferencePositive(self):
         for date, end in [
             ["2012-01-08", "18:00"],
             ["2012-01-09", "18:01"],
@@ -435,7 +435,41 @@ class TrackingEntryTestCase(BaseUserTest):
                 breaks="00:15",
                 daytype="WKDAY"
                 )
+            entry.full_clean()
             self.assertTrue(entry.time_difference() > 0)
+
+    def testTimeDifferenceNegative(self):
+        for date, end in [
+            ["2012-01-11", "14:00"],
+            ["2012-01-12", "16:59"],
+            ["2012-01-13", "09:01"],
+            ]:
+            entry = TrackingEntry(
+                entry_date=date,
+                user_id=self.linked_user.id,
+                start_time="09:00",
+                end_time=end,
+                breaks="00:15",
+                daytype="WKDAY"
+                )
+            entry.full_clean()
+            self.assertTrue(entry.time_difference() < 0)
+
+    def testTimeDifferenceZero(self):
+        for date, end in [
+            ["2012-01-11", "17:00"],
+            ]:
+            entry = TrackingEntry(
+                entry_date=date,
+                user_id=self.linked_user.id,
+                start_time="09:00",
+                end_time=end,
+                breaks="00:15",
+                daytype="WKDAY"
+                )
+            entry.full_clean()
+            self.assertTrue(entry.time_difference() == 0)
+
 
 class DatabaseTestCase(BaseUserTest):
     '''
