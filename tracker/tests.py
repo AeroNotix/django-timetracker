@@ -45,7 +45,7 @@ def create_users(cls):
         process="AP",
         start_date=datetime.datetime.today(),
         breaklength="00:15:00",
-        shiftlength="08:00:00",
+        shiftlength="07:45:00",
         job_code="00F20G",
         holiday_balance=20
         )
@@ -61,7 +61,7 @@ def create_users(cls):
         process="AP",
         start_date=datetime.datetime.today(),
         breaklength="00:15:00",
-        shiftlength="08:00:00",
+        shiftlength="07:45:00",
         job_code="00F20G",
         holiday_balance=20
         )
@@ -76,7 +76,7 @@ def create_users(cls):
         process="AP",
         start_date=datetime.datetime.today(),
         breaklength="00:15:00",
-        shiftlength="08:00:00",
+        shiftlength="07:45:00",
         job_code="00F20G",
         holiday_balance=20
         )
@@ -92,7 +92,7 @@ def create_users(cls):
             process="AP",
             start_date=datetime.datetime.today(),
             breaklength="00:15:00",
-            shiftlength="08:00:00",
+            shiftlength="07:45:00",
             job_code="00F20G",
             holiday_balance=20
             )
@@ -108,7 +108,7 @@ def create_users(cls):
             process="AO",
             start_date=datetime.datetime.today(),
             breaklength="00:15:00",
-            shiftlength="08:00:00",
+            shiftlength="07:45:00",
             job_code="00F20G",
             holiday_balance=20
             )
@@ -124,7 +124,7 @@ def create_users(cls):
         process="AP",
         start_date=datetime.datetime.today(),
         breaklength="00:15:00",
-        shiftlength="08:00:00",
+        shiftlength="07:45:00",
         job_code="00F20G",
         holiday_balance=20
         )
@@ -150,7 +150,7 @@ def create_users(cls):
         process="AP",
         start_date=datetime.datetime.today(),
         breaklength="00:15:00",
-        shiftlength="08:00:00",
+        shiftlength="07:45:00",
         job_code="00F20G",
         holiday_balance=20
         )
@@ -165,7 +165,7 @@ def create_users(cls):
         process="AP",
         start_date=datetime.datetime.today(),
         breaklength="00:15:00",
-        shiftlength="08:00:00",
+        shiftlength="07:45:00",
         job_code="00F20G",
         holiday_balance=20
         )
@@ -180,7 +180,7 @@ def create_users(cls):
         process="AP",
         start_date=datetime.datetime.today(),
         breaklength="00:15:00",
-        shiftlength="08:00:00",
+        shiftlength="07:45:00",
         job_code="00F20G",
         holiday_balance=20
         )
@@ -195,7 +195,7 @@ def create_users(cls):
         process="AP",
         start_date=datetime.datetime.today(),
         breaklength="00:15:00",
-        shiftlength="08:00:00",
+        shiftlength="07:45:00",
         job_code="00F20G",
         holiday_balance=20
         )
@@ -386,7 +386,41 @@ class UserTestCase(BaseUserTest):
         self.assertEquals(self.linked_user.get_holiday_balance(2012), 17)
 
 class TrackingEntryTestCase(BaseUserTest):
-    pass
+    def testIsNotOvertime(self):
+        for date, end in [
+            ["2012-01-01", "17:00"],
+            ["2012-01-02", "14:00"],
+            ["2012-01-03", "17:01"],
+            ["2012-01-04", "17:59"],
+            ]:
+            entry = TrackingEntry(
+                entry_date=date,
+                user_id=self.linked_user.id,
+                start_time="09:00",
+                end_time=end,
+                breaks="00:15",
+                daytype="WKDAY"
+                )
+            entry.full_clean()
+        self.assertFalse(entry.is_overtime())
+
+    def testIsOvertime(self):
+        for date, end in [
+            ["2012-01-05", "18:00"],
+            ["2012-01-06", "18:01"],
+            ["2012-01-07", "19:00"],
+            ]:
+            entry = TrackingEntry(
+                entry_date=date,
+                user_id=self.linked_user.id,
+                start_time="09:00",
+                end_time=end,
+                breaks="00:15",
+                daytype="WKDAY"
+                )
+            entry.full_clean()
+            self.assertTrue(entry.is_overtime())
+
 
 class DatabaseTestCase(BaseUserTest):
     '''
@@ -409,7 +443,7 @@ class DatabaseTestCase(BaseUserTest):
                 process="AP",
                 start_date=datetime.datetime.today(),
                 breaklength="00:15:00",
-                shiftlength="08:00:00",
+                shiftlength="07:45:00",
                 job_code="00F20G",
                 holiday_balance=20
                 )
