@@ -12,6 +12,7 @@ from operator import add
 
 from django.db import models
 from django.forms import ModelForm
+from django.conf import settings
 
 from timetracker.utils.datemaps import (
     WORKING_CHOICES, DAYTYPE_CHOICES, float_to_time, datetime_to_timestring,
@@ -870,20 +871,26 @@ class TrackingEntry(models.Model):
 
         return unicode(self.user) + ' - ' + date
 
+    def threshold(self):
+        return settings.OT_THRESHOLDS.get(self.user.market, 1.0)
+
     def totalhours(self):
         shift_hours = self.end_time.hour - self.start_time.hour
         shift_minutes = (self.end_time.minute + self.start_time.minute) / 60.0
         return shift_hours + shift_minutes
 
+    def nearest_half(self):
+        return int(round(self.totalhours() / 0.5)) * 0.5
+
     def is_overtime(self):
         if self.daytype == "WKDAY":
-            return self.time_difference() > 1
+            return self.time_difference() >= self.threshold()
         else:
             return False
 
     def is_undertime(self):
         if self.daytype == "WKDAY":
-            return self.time_difference() < -1
+            return self.time_difference() <= -self.threshold()
         else:
             return False
 
@@ -894,4 +901,4 @@ class TrackingEntry(models.Model):
         if self.daytype == "WKDAY" and self.is_overtime():
             send_overtime_notification(self)
         if self.daytype in ["PUWRK"]:
-            send_overtime_notification(self)
+            pass
