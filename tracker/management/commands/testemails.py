@@ -8,4 +8,3 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         for i in TrackingEntry.objects.filter(user_id=1):
             i.send_notifications()
-            break
