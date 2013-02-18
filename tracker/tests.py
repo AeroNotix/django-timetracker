@@ -220,7 +220,7 @@ class BaseUserTest(TestCase):
             'process': "AR",
             'start_date': "2012-01-01",
             'breaklength': "00:15:00",
-            'shiftlength': "08:00:00",
+            'shiftlength': "07:45:00",
             'job_code': "ABCDE",
             'holiday_balance': 20
         }
@@ -385,6 +385,8 @@ class UserTestCase(BaseUserTest):
 
         self.assertEquals(self.linked_user.get_holiday_balance(2012), 17)
 
+class TrackingEntryTestCase(BaseUserTest):
+    pass
 
 class DatabaseTestCase(BaseUserTest):
     '''
