@@ -406,7 +406,6 @@ class TrackingEntryTestCase(BaseUserTest):
 
     def testIsOvertime(self):
         for date, end in [
-            ["2012-01-05", "18:00"],
             ["2012-01-06", "18:01"],
             ["2012-01-07", "19:00"],
             ]:

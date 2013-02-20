@@ -885,8 +885,6 @@ class TrackingEntry(models.Model):
     def totalhours(self):
         td = dt.timedelta(hours=self.end_time.hour,
                           minutes=self.end_time.minute)
-        td += dt.timedelta(hours=self.breaks.hour,
-                           minutes=self.breaks.minute)
         td -= dt.timedelta(hours=self.start_time.hour,
                            minutes=self.start_time.minute)
         return (td.seconds / 60.0) / 60.0
