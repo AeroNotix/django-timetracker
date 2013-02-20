@@ -877,7 +877,10 @@ class TrackingEntry(models.Model):
         return unicode(self.user) + ' - ' + date
 
     def threshold(self):
-        return settings.OT_THRESHOLDS.get(self.user.market, 1.0)
+        return settings.OT_THRESHOLDS.get(
+            self.user.market,
+            settings.DEFAULT_OT_THRESHOLD
+            )
 
     def totalhours(self):
         shift_hours = self.end_time.hour - self.start_time.hour
