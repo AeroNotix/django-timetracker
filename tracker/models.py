@@ -843,11 +843,9 @@ class TrackingEntry(models.Model):
     comments = models.TextField(blank=True)
 
     class Meta:
-
         '''
         Metaclass gives access to additional options
         '''
-
         verbose_name = 'Daily Tracking Log'
         verbose_name_plural = 'Daily Tracking Logs'
         unique_together = ('user', 'entry_date')
