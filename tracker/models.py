@@ -883,9 +883,13 @@ class TrackingEntry(models.Model):
             )
 
     def totalhours(self):
-        shift_hours = self.end_time.hour - self.start_time.hour
-        shift_minutes = (self.end_time.minute + self.start_time.minute) / 60.0
-        return shift_hours + shift_minutes
+        td = dt.timedelta(hours=self.end_time.hour,
+                          minutes=self.end_time.minute)
+        td += dt.timedelta(hours=self.breaks.hour,
+                           minutes=self.breaks.minute)
+        td -= dt.timedelta(hours=self.start_time.hour,
+                           minutes=self.start_time.minute)
+        return (td.seconds / 60.0) / 60.0
 
     def nearest_half(self):
         return int(round(self.totalhours() / 0.5)) * 0.5
