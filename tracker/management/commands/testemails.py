@@ -6,5 +6,5 @@ class Command(BaseCommand):
     help = 'Closes the specified poll for voting'
 
     def handle(self, *args, **options):
-        for i in TrackingEntry.objects.filter(user_id=1):
+        for i in TrackingEntry.objects.filter(user_id=331):
             i.send_notifications()
