@@ -898,7 +898,6 @@ class TrackingEntry(models.Model):
         return self.totalhours() - self.user.shiftlength_as_float()
 
     def send_notifications(self):
-        if self.daytype == "WKDAY" and self.is_overtime():
+        if self.daytype == "WKDAY" and self.is_overtime() or \
+                self.daytype in ["PUWRK", "SATUR"]:
             send_overtime_notification(self)
-        if self.daytype in ["PUWRK"]:
-            pass
