@@ -852,11 +852,12 @@ class TrackingEntry(models.Model):
         ordering = ['user']
 
     def save(self, *args, **kwargs):
+        super(TrackingEntry, self).save(*args, **kwargs)
         self.full_clean()
         if self.daytype == "WKDAY" and \
                 self.entry_date.isoweekday() in [6, 7]:
             self.daytype = "SATUR"
-        super(TrackingEntry, self).save(*args, **kwargs)
+            super(TrackingEntry, self).save(*args, **kwargs)
 
     def __unicode__(self):
 
