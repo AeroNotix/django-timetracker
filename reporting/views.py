@@ -20,7 +20,7 @@ from timetracker.utils.writers import UnicodeWriter
 def reporting(request):
     user = Tbluser.objects.get(id=request.session.get("user_id"))
     return render_to_response(
-        "reporting.html", 
+        "reporting.html",
         {
             "employee_box": generate_employee_box(user),
             "yearbox_hol": datetime.datetime.now().year,
