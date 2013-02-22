@@ -117,5 +117,5 @@ def ot_by_year(request, year=None):
     csvfile.writerow(totalrow)
     response = HttpResponse(buf.getvalue(), mimetype="text/csv")
     response['Content-Disposition'] = \
-        'attachment;filename=OT_By_Month_%s_%s.csv' % (year, month)
+        'attachment;filename=OT_By_Year_%s_%s.csv' % (year, month)
     return response
