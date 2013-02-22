@@ -25,6 +25,8 @@ def reporting(request):
             "employee_box": generate_employee_box(user),
             "yearbox_hol": datetime.datetime.now().year,
             "monthbox_hol": generate_month_box("monthbox_hol"),
+            "monthbox_ot": generate_month_box("monthbox_ot"),
+            "monthbox_hr": generate_month_box("monthbox_hr"),
         },
         RequestContext(request))
 

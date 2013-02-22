@@ -31,7 +31,7 @@ function ot_by_month() {
         window.location.assign(
             ["/reporting/ot_by_month/",
              year + "/",
-             $("#monthbox_hol").val() + "/"].join("")
+             $("#monthbox_ot").val() + "/"].join("")
         );
     } else {
         $("#yearbox_hol").text("");
