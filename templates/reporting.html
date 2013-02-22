@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block header %}
+<link href="{{ STATIC_URL }}holidays.css" type="text/css"
+      rel="stylesheet" />
+{% endblock header %}
+{% block menubar %}
+{% include "includes/get_nav.html" %}
+{% endblock menubar %}
+{% block title %}
+Reporting
+{% endblock title %}
+
+{% block content %}
+<!--[if IE 7]>
+<div id="isie" isie="true"></div>
+<![endif]-->
+<!--[if IE]>
+<div id=IEFix>
+  <![endif]-->
+
+<div class="container" id="full-table-wrapper">
+  <h3> Under Construction </h3>
+  <form>
+    <input id="to_email" type="checkbox" >Send reports via E-mail (not implemented)</input>
+    <p>
+      All Holiday data for: {{ employee_box|safe }} 
+      <input onclick="all_holiday_data()" type="button" value="Download"/>
+    </p>
+    <p>
+      All Holidays in:
+      <input id="yearbox_hol" value="{{ yearbox_hol }}" />
+      {{ monthbox_hol|safe }}
+      <input onclick="yearmonth_holiday_data()" type="button" value="Download"/>
+    </p>
+    <p>
+      Overtime report for HR: {{ yearbox_ot }} {{ monthbox_ot }}
+      <input onclick="overtime_data()" type="button" value="Download"/>
+    </p>
+    <p>
+      Total Overtime Report by Month:
+      <input id="yearbox_ot_month" value="{{ yearbox_hol }}" />
+      <input onclick="ot_by_month()" type="button" value="Download"/>
+    </p>
+    <p>
+      Total Overtime Report by Year:
+      <input id="yearbox_ot_year" value="{{ yearbox_hol }}" />
+      <input onclick="ot_by_year()" type="button" value="Download"/>
+    </p>
+
+  </form>
+</div>
+
+<!--[if IE]>
+    </div id=IEFix>
+<![endif]-->
+{% endblock content %}
+{% block additional_javascript %}
+<script type="text/javascript" src="{{ STATIC_URL }}js/reporting.js"></script>
+{% endblock additional_javascript %}
