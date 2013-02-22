@@ -183,7 +183,7 @@ class Tbluser(models.Model):
         :rtype: :class:`string`
         '''
 
-        return '%s - %s %s ' % (self.user_id,
+        return u'%s - %s %s ' % (self.user_id,
                                 self.firstname,
                                 self.lastname)
 
