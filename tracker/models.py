@@ -851,6 +851,20 @@ class TrackingEntry(models.Model):
         unique_together = ('user', 'entry_date')
         ordering = ['user']
 
+    @staticmethod
+    def headings():
+        return [
+            "User", "Entry Date", "Start Time", "End Time", "Breaks",
+            "Daytype", "Comments"
+            ]
+
+    def display_as_csv(self):
+        return [
+            self.user.name(), self.entry_date, self.start_time,
+            self.end_time, self.breaks, self.get_daytype_display(),
+            self.comments
+            ]
+
     def save(self, *args, **kwargs):
         super(TrackingEntry, self).save(*args, **kwargs)
         self.full_clean()
