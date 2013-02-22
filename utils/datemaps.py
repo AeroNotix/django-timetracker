@@ -66,6 +66,22 @@ MONTH_MAP = {
     11: ('DEC', 'December')
 }
 
+MONTH_MAP_SHORT = (
+    (1, 'January'),
+    (2, 'February'),
+    (3, 'March'),
+    (4, 'April'),
+    (5, 'May'),
+    (6, 'June'),
+    (7, 'July'),
+    (8, 'August'),
+    (9, 'September'),
+    (10, 'October'),
+    (11, 'November'),
+    (12, 'December')
+)
+
+
 WORKING_CHOICES = (
     ('WKDAY', 'Work Day'),
     ('SATUR', 'Work on Saturday'),
@@ -103,6 +119,9 @@ def generate_year_box(year, id=''):
     year_select_data.extend([(y, y) for y in range(year + 1, year + 3)])
     year_select_data.sort()
     return generate_select(year_select_data, id)
+
+def generate_month_box(id=''):
+    return generate_select(MONTH_MAP_SHORT, id)
 
 def generate_employee_box(admin_user, get_all=False):
     from timetracker.tracker.models import Tblauthorization as tblauth
