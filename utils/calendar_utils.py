@@ -1281,14 +1281,10 @@ def mass_holidays(request):
                 else:
                     current_entry.daytype = daytype
                     current_entry.save()
-                    current_entry.send_notifications()
             except TrackingEntry.DoesNotExist:
                 if daytype == "empty":
                     continue
-                if daytype in ["ROVER", "WKHOM"]:
-                    time_str = Tbluser.objects.get(id=entry[0]).get_shiftlength_list()
-                else:
-                    time_str = ("00:00:00","00:00:00","00:00:00")
+                time_str = Tbluser.objects.get(id=entry[0]).get_shiftlength_list()
                 new_entry = TrackingEntry(
                         entry_date=datestr,
                         user_id=entry[0],
