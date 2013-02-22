@@ -883,6 +883,19 @@ class TrackingEntry(models.Model):
             settings.DEFAULT_OT_THRESHOLD
             )
 
+    @property
+    def worklength(self):
+        td = dt.timedelta(hours=self.end_time.hour,
+                          minutes=self.end_time.minute)
+        td += dt.timedelta(hours=self.breaks.hour,
+                           minutes=self.breaks.minute)
+        return td
+
+
+    def breaktime(self):
+        return (dt.timedelta(hours=self.breaks.hour,
+                             minutes=self.breaks.minute).seconds / 60.0) / 60.0
+
     def totalhours(self):
         td = dt.timedelta(hours=self.end_time.hour,
                           minutes=self.end_time.minute)
