@@ -520,7 +520,7 @@ class Tbluser(models.Model):
             })
         return daytype_dict
 
-    def get_total_balance(self, ret='html'):
+    def get_total_balance(self, ret='html', year=None, month=None):
 
         ''' Calculates the total balance for the user.
 
@@ -545,7 +545,7 @@ class Tbluser(models.Model):
 
         ret = ret.lower()
         # if the argument isn't supported'
-        if ret not in set(['html', 'int', 'dbg', 'num']):
+        if ret not in ['html', 'int', 'dbg', 'num', 'flo']:
             raise Exception("Unsupported Argument. Must be html, int or dbg")
 
         # we'll use augmented assignment
@@ -554,8 +554,29 @@ class Tbluser(models.Model):
          shift_hours, shift_minutes) = (0, 0, 0, 0, 0)
 
         day_types = [element[0] for element in WORKING_CHOICES]
-        tracking_days = TrackingEntry.objects.filter(user_id=self.id,
-                                                     daytype__in=day_types)
+
+        if not year and not month:
+            tracking_days = TrackingEntry.objects.filter(user_id=self.id,
+                                                         daytype__in=day_types)
+            return_days = TrackingEntry.objects.filter(user_id=self.id,
+                                                       daytype="ROVER")
+        elif year and not month:
+            tracking_days = TrackingEntry.objects.filter(user_id=self.id,
+                                                         daytype__in=day_types,
+                                                         entry_date__year=year)
+            return_days = TrackingEntry.objects.filter(user_id=self.id,
+                                                       daytype="ROVER",
+                                                       entry_date__year=year
+                                                       )
+        else:
+            tracking_days = TrackingEntry.objects.filter(user_id=self.id,
+                                                         daytype__in=day_types,
+                                                         entry_date__year=year,
+                                                         entry_date__month=month)
+            return_days = TrackingEntry.objects.filter(user_id=self.id,
+                                                       daytype="ROVER",
+                                                       entry_date__year=year,
+                                                       entry_date__month=month)
 
         for item in tracking_days:
             shift_hours += self.shiftlength.hour
@@ -573,8 +594,6 @@ class Tbluser(models.Model):
                 - item.breaks.minute
                 )
 
-        return_days = TrackingEntry.objects.filter(user_id=self.id,
-                                                     daytype="ROVER")
         for item in return_days:
             shift_hours += self.shiftlength.hour + self.breaklength.hour
             shift_minutes += self.shiftlength.minute + self.breaklength.minute
@@ -602,7 +621,8 @@ class Tbluser(models.Model):
                 tracking_class,
                 float_to_time(trackingnumber)
             )
-
+        elif ret == 'flo':
+            return trackingnumber
         elif ret == 'num':
             return int(trackingnumber)
         elif ret == 'int':
