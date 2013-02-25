@@ -2,6 +2,10 @@ function isNumber(n) {
   return !isNaN(parseFloat(n)) && isFinite(n);
 }
 
+function overtime_data() {
+    alert("Not implemented");
+}
+
 function all_holiday_data() {
     if ($("#user_select").val() == "null") {
         return;
@@ -48,7 +52,21 @@ function ot_by_year() {
             ].join("")
         );
     } else {
-        $("#yearbox_hol").text("");
+        $("#yearbox_ot_year").text("");
+        alert("Invalid year.");
+    }
+}
+
+function holidays_for_yearmonth() {
+    var year = $("#yearbox_hols_year").val()
+    if (isNumber(year) && year.length >= 4) {
+        window.location.assign(
+            ["/reporting/hols_for_yearmonth/",
+             year + "/"
+            ].join("")
+        );
+    } else {
+        $("#yearbox_hols_year").text("");
         alert("Invalid year.");
     }
 }

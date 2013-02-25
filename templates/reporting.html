@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block header %}
-<link href="{{ STATIC_URL }}holidays.css" type="text/css"
+<link href="{{ STATIC_URL }}reporting.css" type="text/css"
       rel="stylesheet" />
 {% endblock header %}
 {% block menubar %}
@@ -18,7 +18,7 @@ Reporting
 <div id=IEFix>
   <![endif]-->
 
-<div class="container" id="full-table-wrapper">
+<div class="container" id="reporting-box">
   <h3> Under Construction </h3>
   <form>
     <input id="to_email" type="checkbox" >Send reports via E-mail (not implemented)</input>
@@ -85,6 +85,17 @@ Reporting
       </td>
       <td>
         <input onclick="ot_by_year()" type="button" value="Download"/>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        Holidays in a month:
+      </td>
+      <td>
+        <input id="yearbox_hols_year" value="{{ yearbox_hol }}" />
+      </td>
+      <td>
+        <input onclick="holidays_for_yearmonth()" type="button" value="Download"/>
       </td>
     </tr>
     </table>

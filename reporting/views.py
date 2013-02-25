@@ -119,3 +119,31 @@ def ot_by_year(request, year=None):
     response['Content-Disposition'] = \
         'attachment;filename=OT_By_Year_%s_%s.csv' % (year, month)
     return response
+
+@admin_check
+def holidays_for_yearmonth(request, year=None):
+    if not year:
+        raise Http404
+    auth_user = Tbluser.objects.get(id=request.session.get("user_id"))
+    buf = StringIO()
+    buf.write("\xef\xbb\xbf")
+    csvfile = UnicodeWriter(buf)
+    csvfile.writerow(
+        ["Name"] + [MONTH_MAP[n][1] for n in range(0,12)] + ["Used/Remaining"]
+        )
+    for user in auth_user.get_subordinates():
+        row = [user.name()]
+        total = 0
+        for month in range(1,13):
+            e = TrackingEntry.objects.filter(user_id=user.id,
+                                             entry_date__year=year,
+                                             entry_date__month=month,
+                                             daytype="HOLIS").count()
+            total += e
+            row.append(e)
+        row.append("%d/%d" % (total, user.holiday_balance))
+        csvfile.writerow(row)
+    response = HttpResponse(buf.getvalue(), mimetype="text/csv")
+    response['Content-Disposition'] = \
+        'attachment;filename=OT_By_Year_%s_%s.csv' % (year, month)
+    return response

@@ -12,4 +12,5 @@ urlpatterns = patterns(
     url(r'^yearmonthhol/%s/%s/?$' % (YEAR, MONTH), views.yearmonthhol),
     url(r'^ot_by_month/%s/%s/?$' % (YEAR, MONTH), views.ot_by_month),
     url(r'^ot_by_year/%s/?$' % YEAR, views.ot_by_year),
+    url(r'^hols_for_yearmonth/%s/?$' % YEAR, views.holidays_for_yearmonth),
 )
