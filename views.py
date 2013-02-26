@@ -86,7 +86,7 @@ def login(request):
     :param request: Automatically passed. Contains a map of the httprequest
     :return: A HttpResponse object which is then passed to the browser
     """
-    user_id = user_id__exact=request.POST.get('user_name')
+    user_id = request.POST.get('user_name')
     if not user_id:
         return HttpResponseRedirect("/")
     try:
