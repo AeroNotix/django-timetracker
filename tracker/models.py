@@ -553,7 +553,7 @@ class Tbluser(models.Model):
         (trackingnumber, total_hours, total_mins,
          shift_hours, shift_minutes) = (0, 0, 0, 0, 0)
 
-        day_types = [element[0] for element in WORKING_CHOICES]
+        day_types = [element[0] for element in WORKING_CHOICES if element[0] != "SATUR"]
 
         if not year and not month:
             tracking_days = TrackingEntry.objects.filter(user_id=self.id,
