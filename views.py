@@ -312,6 +312,7 @@ def view_with_holiday_list(request,
     :param request: Automatically passed contains a map of the httprequest
     :return: HttpResponse object back to the browser.
     """
+
     try:
         user = Tbluser.objects.get(
             id=request.session.get('user_id')
