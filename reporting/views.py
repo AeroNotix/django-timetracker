@@ -129,7 +129,7 @@ def holidays_for_yearmonth(request, year=None):
     buf.write("\xef\xbb\xbf")
     csvfile = UnicodeWriter(buf)
     csvfile.writerow(
-        ["Name"] + [MONTH_MAP[n][1] for n in range(0,12)] + ["Used/Remaining"]
+        ["Name"] + [MONTH_MAP[n][1] for n in range(0,12)] + ["Used", "Remaining"]
         )
     for user in auth_user.get_subordinates():
         row = [user.name()]
@@ -141,7 +141,7 @@ def holidays_for_yearmonth(request, year=None):
                                              daytype="HOLIS").count()
             total += e
             row.append(e)
-        row.append("%d/%d" % (total, user.holiday_balance))
+        row.append(["%d" % total, "%d" % user.holiday_balance])
         csvfile.writerow(row)
     response = HttpResponse(buf.getvalue(), mimetype="text/csv")
     response['Content-Disposition'] = \
