@@ -13,6 +13,9 @@ from tracker.models import (Tbluser,
                             TrackingEntry,
                             Tblauthorization)
 
+from timetracker.middleware.exception_handler import UnreadablePostErrorMiddleware
+from django.http import UnreadablePostError
+
 from utils.calendar_utils import (validate_time, parse_time,
                                               delete_user, useredit,
                                               mass_holidays, ajax_delete_entry,
@@ -906,5 +909,14 @@ class FrontEndTest(LiveServerTestCase):
             if option.get_attribute("value") == num:
                 option.click()
                 break
+
+class MiddlewareTest(TestCase):
+    def setUp(self):
+        self.ehandler = UnreadablePostErrorMiddleware()
+    def test_handles_unreadable_post_error_correctly(self):
+        self.assertRaises(
+            Http404,
+            self.ehandler.process_exception, {}, UnreadablePostError()
+            )
 
 FrontEndTest = None
