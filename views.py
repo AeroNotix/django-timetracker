@@ -86,11 +86,13 @@ def login(request):
     :param request: Automatically passed. Contains a map of the httprequest
     :return: A HttpResponse object which is then passed to the browser
     """
-
+    user_id = user_id__exact=request.POST.get('user_name')
+    if not user_id:
+        return HttpResponseRedirect("/")
     try:
         # pull out the user from the POST and
         # match it against our db
-        user = Tbluser.objects.get(user_id__exact=request.POST['user_name'])
+        user =Tbluser.objects.get(user_id=user_id)
     # if the user doesn't match anything, notify
     except Tbluser.DoesNotExist:
         return render_to_response(
