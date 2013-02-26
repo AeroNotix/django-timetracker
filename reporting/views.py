@@ -145,5 +145,5 @@ def holidays_for_yearmonth(request, year=None):
         csvfile.writerow(row)
     response = HttpResponse(buf.getvalue(), mimetype="text/csv")
     response['Content-Disposition'] = \
-        'attachment;filename=OT_By_Year_%s_%s.csv' % (year, month)
+        'attachment;filename=Holidays_for_year%s.csv' % year
     return response
