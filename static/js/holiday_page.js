@@ -7,7 +7,7 @@ document.onmouseup = function (e) {
 }
 
 document.onmousemove = function(e) {
-    var e = window.event;
+    var e = e || window.event;
     if (e.button === 0 && mouseState === true) {
         mouseState = false;
     }
