@@ -238,11 +238,12 @@ def gen_holiday_list(admin_user, year=None, month=None, process=None):
         # Full name, Holiday Balance and the User's
         # job code.
         to_out("""
-               <tr>
-                 <th class="user-td">%s</th>
+               <tr id="%d_row">
+                 <th onclick="highlight_row(%d)" class="user-td">%s</th>
                    <td>%s</td>
                    <td>%s</td>
                    <td class="job_code">%s</td>""" % (
+            user.id, user.id,
             user.name(),
             user.get_holiday_balance(year),
             user.get_dod_balance(year),

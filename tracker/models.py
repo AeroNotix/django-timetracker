@@ -378,7 +378,8 @@ class Tbluser(models.Model):
         final = []
         out = []
         for x in range(1,13):
-            out.append("<tr><th>%s</th>" % MONTH_MAP[x-1][1])
+            out.append("<tr id=\"%d_row\" onclick=%s><th>%s</th>"
+                       % (x,'"highlight_row(%d)"' % x, MONTH_MAP[x-1][1]))
             for z in range(1,32):
                 try:
                     if dt.date(int(year),x,z).isoweekday() in [6,7]:
