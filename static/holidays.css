@@ -73,6 +73,10 @@
     background: white;
 }
 
+.highlighted-row {
+    border: 3px solid black;
+}
+
 .selected {
     background: orange;
 }
