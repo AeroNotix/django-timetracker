@@ -7,8 +7,12 @@ document.onmouseup = function (e) {
 }
 
 document.onmousemove = function(e) {
-    var e = e || window.event;
-    if (e.button === 0 && mouseState === true) {
+    var e = window.event || e;
+    var btn = 1;
+    if ($.browser.msie) {
+        btn = 0;
+    }
+    if (e.button === btn && mouseState === true) {
         mouseState = false;
     }
 }
