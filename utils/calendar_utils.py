@@ -1173,13 +1173,9 @@ def useredit(request):
         json_data['error'] = "Invalid Data."
         return json_data
     except Exception as error:
-        if error[0] == CONNECTION_REFUSED:
-            email_log.error("email failed to send to %s with manager %s" %
-                            (user.name(), auth.admin.name()))
-        else:
-            json_data['error'] = str(error)
-            error_log.critical(str(error))
-            return json_data
+        json_data['error'] = str(error)
+        error_log.critical(str(error))
+        return json_data
     json_data['success'] = True
     return json_data
 
