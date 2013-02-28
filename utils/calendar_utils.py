@@ -649,12 +649,8 @@ def ajax_add_entry(request):
         entry = TrackingEntry(**form)
         entry.save()
     except (IntegrityError, ValidationError) as error:
-        if error[0] == DUPLICATE_ENTRY:
-            database_log.info("Duplicate entry from %s" % form['user_id'])
-            json_data['error'] = "There is a duplicate entry for this value"
-        else:
-            error_log.error(str(error))
-            json_data['error'] = str(error)
+        error_log.error(str(error))
+        json_data['error'] = str(error)
         return json_data
 
     entry.send_notifications()
