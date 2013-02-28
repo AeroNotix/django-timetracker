@@ -1,0 +1,169 @@
+'''
+Script to generate CATW reports from the data in the Timetracking
+database.
+
+Currently in the prototype stage, queries need to be optimized and
+datastructures used may not be optimal. However, it conforms to-spec
+and is in-use.
+'''
+
+import MySQLdb
+import contextlib
+import datetime
+import csv
+import calendar
+import argparse
+
+from timetracker.tracker.models import Tbluser, TrackingEntry
+from django.core.management.base import BaseCommand, CommandError
+from django.db import connection
+
+from time import time
+
+start = time()
+def print_running_time(msg):
+    print msg, time() - start
+
+QUERIES = 0
+choices = [
+    (["BF"], "bpo_fac.csv"),
+    (["EN"], "mcbc.csv"),
+    (["BG", "BK", "CZ"], "behr.csv")
+    ]
+
+HEADINGS = [
+    "Doc. no.",
+    "Pers.No.",
+    "Date",
+    "WBS Elem.",
+    "A/A type",
+    "Oper./Act.",
+    "SubSvcTech",
+    "Process",
+    "Dlvry Mode",
+    "Coverage",
+    "Attribute",
+    "Hours",
+    "OprShrtTxt",
+    "Cust Fld 1",
+    "Cust Fld 2",
+    "Cust Fld 3",
+    "Inv Cd",
+    "Capability",
+    "Proj Task",
+    "New Rem Wk"
+    ]
+
+
+WKDAY_MAP = {
+    "BF": {
+        "FA": "zzz-3660.R01.BFAA",
+        "ELSE": "zzz-3600.R01.BHOS"
+        },
+    "EN": {
+        "FA": "zzz-2115.R01.BFAA",
+        "ELSE": "zzz-2115.R01.BHOS"
+        },
+    "BG": {
+        "FA": "zzz-2115.R01.BFAA",
+        "ELSE": "zzz-2115.R01.BHOS"
+        },
+    "BK": {
+        "FA": "zzz-2115.R01.BFAA",
+        "ELSE": "zzz-2115.R01.BHOS"
+        },
+    "CZ": {
+        "FA": "zzz-2115.R01.BFAA",
+        "ELSE": "zzz-2115.R01.BHOS"
+        }
+    }
+
+DAYTYPE_MAP = {
+    'HOLIS': "ZZZ-9999.INT.ABSNCE",
+    'SICKD': "ZZZ-9999.INT.ABSNCE",
+    'PUABS': "ZZZ-9999.INT.ABSNCE",
+    'RETRN': "ZZZ-9999.INT.ABSNCE",
+    'ROVER': "ZZZ-9999.INT.ABSNCE",
+    'DAYOD': "ZZZ-9999.INT.ABSNCE",
+    'SPECI': "ZZZ-9006.INT.OTHER",
+    'OTHER': "ZZZ-9006.INT.OTHER",
+    'SATUR': "zzz-1537.R01.BHOS",
+    'WKHOM': "zzz-1537.R01.BHOS",
+    'TRAIN': "ZZZ-9999.INT.ATTEND",
+    'PUWRK': "ZZZ-9999.INT.ATTEND",
+}
+
+def catw_code(user, daytype):
+    if daytype == "WKDAY":
+        if user.process == "FA":
+            return WKDAY_MAP[user.market]["FA"]
+        else:
+            return WKDAY_MAP[user.market]["ELSE"]
+    return DAYTYPE_MAP[daytype]
+
+def blankrow(user, year, month, day):
+    return [
+        "", user.user_id, "%s/%s/%s" % (month, day, year),
+        catw_code(user, "WKDAY"), "400",
+        # the rest are empty except for the time.
+        "", "","", "", "", "%.2f" % user.shiftlength_as_float(),
+        "","","","","","","",""
+        ]
+
+def realrow(user, year, month, day, entry):
+    return [
+        "", user.user_id, "%s/%s/%s" % (month, day, year),
+        catw_code(user, entry.daytype), "400",
+        # the rest are empty except for the time.
+        "", "","", "", "", "%.2f" % entry.nearest_half()
+        "","","","","","","",""
+        ]
+
+def report_for_account(choice_list, year, month):
+    '''
+    Writes out the report to disk.
+
+    This uses the django-orm and thus is very inefficient. It's just a
+    downside to using an ORM for complex queries like this.
+
+    The idea is to run it as a cron job as to not really feel the pain
+    of running it manually.
+    '''
+
+    accs, filename = choice_list
+
+    csvout = csv.writer(open(filename, "wb"))
+    csvout.writerow(HEADINGS)
+
+    users = Tbluser.objects.filter(market__in=accs)
+    days_this_month = filter(
+        lambda x: x > 0,
+        list(calendar.Calendar().itermonthdays(year, month))
+        )
+
+    for user in users:
+        for day in days_this_month:
+            # skip the weekends
+            if datetime.date(year=int(year),month=month,day=day).weekday() in [5,6]:
+                continue
+
+            months = month if month > 9 else "0%d" % month
+            day = day if day > 9 else "0%d" % day
+            try:
+                # this is the inefficient bit. It makes a new query
+                # each time, thus giving len(users) * days queries.
+                entry = TrackingEntry.objects.get(
+                    user_id=user.id,
+                    entry_date="%s-%s-%s" % (year, months, day)
+                    )
+            except TrackingEntry.DoesNotExist:
+                csvout.writerow(blankrow(user, year, months, day))
+            csvout.writerow(realrow(user, year, months, day, entry))
+
+class Command(BaseCommand):
+    def handle(self, *args, **options):
+        year = options.get('year', datetime.datetime.now().year)
+        month = options.get('month', datetime.datetime.now().month)
+
+        for choice_list in choices:
+            report_for_account(choice_list, year, month)
