@@ -872,6 +872,14 @@ class TrackingEntry(models.Model):
         unique_together = ('user', 'entry_date')
         ordering = ['user']
 
+    def save(self, *args, **kwargs):
+        super(TrackingEntry, self).save(*args, **kwargs)
+        self.full_clean()
+        if self.daytype == "WKDAY" and \
+                self.entry_date.isoweekday() in [6, 7]:
+            self.daytype = "SATUR"
+            super(TrackingEntry, self).save(*args, **kwargs)
+
     def __unicode__(self):
 
         '''
@@ -915,14 +923,6 @@ class TrackingEntry(models.Model):
             self.end_time, self.breaks, self.get_daytype_display(),
             self.comments
             ]
-
-    def save(self, *args, **kwargs):
-        super(TrackingEntry, self).save(*args, **kwargs)
-        self.full_clean()
-        if self.daytype == "WKDAY" and \
-                self.entry_date.isoweekday() in [6, 7]:
-            self.daytype = "SATUR"
-            super(TrackingEntry, self).save(*args, **kwargs)
 
     def threshold(self):
         return settings.OT_THRESHOLDS.get(
