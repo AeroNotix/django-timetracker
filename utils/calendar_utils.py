@@ -38,6 +38,9 @@ except ImportError:
 
 import simplejson
 
+from timetracker.loggers import (debug_log, info_log,
+                                 email_log, database_log,
+                                 error_log, suspicious_log)
 from timetracker.loggers import suspicious_log
 from timetracker.tracker.models import TrackingEntry, Tbluser
 from timetracker.tracker.models import Tblauthorization as Tblauth
