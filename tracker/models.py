@@ -872,28 +872,6 @@ class TrackingEntry(models.Model):
         unique_together = ('user', 'entry_date')
         ordering = ['user']
 
-    @staticmethod
-    def headings():
-        return [
-            "User", "Entry Date", "Start Time", "End Time", "Breaks",
-            "Daytype", "Comments"
-            ]
-
-    def display_as_csv(self):
-        return [
-            self.user.name(), self.entry_date, self.start_time,
-            self.end_time, self.breaks, self.get_daytype_display(),
-            self.comments
-            ]
-
-    def save(self, *args, **kwargs):
-        super(TrackingEntry, self).save(*args, **kwargs)
-        self.full_clean()
-        if self.daytype == "WKDAY" and \
-                self.entry_date.isoweekday() in [6, 7]:
-            self.daytype = "SATUR"
-            super(TrackingEntry, self).save(*args, **kwargs)
-
     def __unicode__(self):
 
         '''
@@ -912,11 +890,12 @@ class TrackingEntry(models.Model):
 
         return unicode(self.user) + ' - ' + date
 
-    def threshold(self):
-        return settings.OT_THRESHOLDS.get(
-            self.user.market,
-            settings.DEFAULT_OT_THRESHOLD
-            )
+    @staticmethod
+    def headings():
+        return [
+            "User", "Entry Date", "Start Time", "End Time", "Breaks",
+            "Daytype", "Comments"
+            ]
 
     @property
     def worklength(self):
@@ -926,10 +905,30 @@ class TrackingEntry(models.Model):
                            minutes=self.breaks.minute)
         return td
 
-
     def breaktime(self):
         return (dt.timedelta(hours=self.breaks.hour,
                              minutes=self.breaks.minute).seconds / 60.0) / 60.0
+
+    def display_as_csv(self):
+        return [
+            self.user.name(), self.entry_date, self.start_time,
+            self.end_time, self.breaks, self.get_daytype_display(),
+            self.comments
+            ]
+
+    def save(self, *args, **kwargs):
+        super(TrackingEntry, self).save(*args, **kwargs)
+        self.full_clean()
+        if self.daytype == "WKDAY" and \
+                self.entry_date.isoweekday() in [6, 7]:
+            self.daytype = "SATUR"
+            super(TrackingEntry, self).save(*args, **kwargs)
+
+    def threshold(self):
+        return settings.OT_THRESHOLDS.get(
+            self.user.market,
+            settings.DEFAULT_OT_THRESHOLD
+            )
 
     def totalhours(self):
         td = dt.timedelta(hours=self.end_time.hour,
