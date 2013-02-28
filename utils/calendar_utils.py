@@ -31,11 +31,14 @@ from django.http import Http404, HttpResponse
 from django.db import IntegrityError
 from django.forms import ValidationError
 
+try:
+    from django.settings import SUSPICIOUS_DATE_DIFF
+except ImportError:
+    SUSPICIOUS_DATE_DIFF = 60 # days
+
 import simplejson
 
-from timetracker.loggers import (debug_log, info_log,
-                                 email_log, database_log,
-                                 error_log)
+from timetracker.loggers import suspicious_log
 from timetracker.tracker.models import TrackingEntry, Tbluser
 from timetracker.tracker.models import Tblauthorization as Tblauth
 from timetracker.utils.error_codes import DUPLICATE_ENTRY, CONNECTION_REFUSED
@@ -822,7 +825,11 @@ def ajax_change_entry(request):
 
             entry.save()
             entry.send_notifications()
-
+            if (datetime.date.today() - entry.entry_date).days > SUSPICIOUS_DATE_DIFF:
+                suspicious_log.debug(
+                    "Suspicious Tracking Change - Who: %s - When: %s" %
+                    (user.user_id, entry.entry_date)
+                    )
         except Exception as error:
             error_log.error(str(error))
             json_data['error'] = str(error)
