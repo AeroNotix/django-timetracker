@@ -655,13 +655,19 @@ class Tbluser(models.Model):
             "This is your weekly timetracking reminder. If the below " \
             "values are incorrect then please be sure that you have " \
             "tracked all your time correctly.\n\n" \
+            "Please remember that all changes must be done before the " \
+            "end of the month.\n\n" \
             "Balance for previous week: %s\n" \
-            "Expected: %s\n\n" \
+            "Expected: %s\n" \
+            "Difference: %s\n\n" \
             "Kind Regards,\n" \
             "Timetracking Team"
 
+        cur = self.previous_week_balance()
+        prev = self.expected_weekly_balance()
         message = message % (
-            self.previous_week_balance(), self.expected_weekly_balance()
+            cur, prev,
+            cur - prev
             )
         email = EmailMessage(from_email='timetracker@unmonitored.com')
         email.body = message
