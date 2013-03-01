@@ -649,6 +649,20 @@ class Tbluser(models.Model):
             )
         return [admin.user_id for admin in admins]
 
+    def get_manager_email(self):
+        overridden = settings.MANAGER_EMAILS_OVERRIDE.get(self.market)
+        if overridden:
+            return overridden
+        # list because the SMTP module takes lists of emails when
+        # sending e-mails.
+        return [self.get_administrator().user_id]
+
+    def get_manager_name(self):
+        overridden = settings.MANAGER_NAMES_OVERRIDE.get(self.market)
+        if overridden:
+            return ',\n'.join(overridden)
+        return self.get_administrator().name()
+
     @staticmethod
     def administrator_emails_for_account(account):
         admins = Tbluser.objects.filter(
