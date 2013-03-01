@@ -16,7 +16,7 @@ from django.conf import settings
 
 from timetracker.utils.datemaps import (
     WORKING_CHOICES, DAYTYPE_CHOICES, float_to_time, datetime_to_timestring,
-    MONTH_MAP, generate_year_box
+    MONTH_MAP, generate_year_box, nearest_half
     )
 
 '''
@@ -952,7 +952,7 @@ class TrackingEntry(models.Model):
         return (td.seconds / 60.0) / 60.0
 
     def nearest_half(self):
-        return int(round(self.totalhours() / 0.5)) * 0.5
+        return nearest_half(self.totalhours())
 
     def is_overtime(self):
         if self.daytype == "WKDAY":
