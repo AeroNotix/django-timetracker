@@ -188,6 +188,8 @@ def pad(string, padchr='0', amount=2):
 
     return string
 
+def nearest_half(n):
+    return int(round(n / 0.5)) * 0.5
 
 def float_to_time(timefloat):
     """Takes a float and returns the same representation of time.
