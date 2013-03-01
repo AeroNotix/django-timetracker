@@ -1,6 +1,7 @@
 /*global $,document,window,js_calendar,alert,change_table_data,retrieveComments,table_year,table_month*/
 
 var mouseState = false;
+var calendar_state = {};
 document.onmousedown = function (e) {
 	"use strict";
     mouseState = true;
@@ -69,7 +70,10 @@ function applyClass(klass) {
             if ($(this).hasClass("selected")) {
                 $(this).removeClass();
                 $(this).addClass(klass);
-                js_calendar[parseInt($(this).attr("usrid"), 10)][parseInt($(this).text(), 10)] = klass;
+                var userid = parseInt($(this).attr("usrid"));
+                calendar_state[userid] = js_calendar[userid]
+                calendar_state[userid][parseInt($(this).text())] = klass;
+                js_calendar[userid][parseInt($(this).text())] = klass;
             }
         });
     return true;
@@ -97,7 +101,7 @@ function submit_all() {
             'form_type': 'mass_holidays',
             'year': $("#holiday-table").attr("year"), // from the table header
             'month': $("#holiday-table").attr("month"),
-            'mass_data': JSON.stringify(js_calendar)
+            'mass_data': JSON.stringify(calendar_state)
         },
         success: function (data) {
             if (data.success !== true) {
@@ -109,6 +113,7 @@ function submit_all() {
             alert(error);
         }
     });
+    calendar_state = {};
     return true;
 }
 
