@@ -13,6 +13,14 @@ from operator import add
 from django.db import models
 from django.forms import ModelForm
 from django.conf import settings
+from django.core.mail import EmailMessage
+from django.conf import settings
+
+try:
+    NUM_WORKING_DAYS = settings.NUM_WORKING_DAYS
+except AttributeError:
+    # usual working day amount
+    NUM_WORKING_DAYS = 5
 
 from timetracker.utils.datemaps import (
     WORKING_CHOICES, DAYTYPE_CHOICES, float_to_time, datetime_to_timestring,
@@ -641,13 +649,37 @@ class Tbluser(models.Model):
         if self.get_total_balance(ret='num') > 0:
             return send_pending_overtime_notification(self, send)
 
-    @staticmethod
-    def manager_emails_for_account(account):
-        admins = Tbluser.objects.filter(
-            user_type__in=["ADMIN", "TEAML"],
-            market=account
+    def send_weekly_reminder(self):
+        message = \
+            "Hi,\n\n" \
+            "This is your weekly timetracking reminder. If the below " \
+            "values are incorrect then please be sure that you have " \
+            "tracked all your time correctly.\n\n" \
+            "Balance for previous week: %s\n" \
+            "Expected: %s\n\n" \
+            "Kind Regards,\n" \
+            "Timetracking Team"
+
+        message = message % (
+            self.previous_week_balance(), self.expected_weekly_balance()
             )
-        return [admin.user_id for admin in admins]
+        email = EmailMessage(from_email='timetracker@unmonitored.com')
+        email.body = message
+        email.to = [self.user_id]
+        email.subject = "Weekly timetracking reminder"
+        email.send()
+
+    def previous_week_balance(self):
+        entries =  TrackingEntry.objects.filter(entry_date__range=(
+                dt.datetime.now()+dt.timedelta(days=-7), dt.datetime.now()
+                ), user_id=self.id)
+        total = self.shiftlength_as_float() * (NUM_WORKING_DAYS - len(entries))
+        for entry in entries:
+            total += entry.totalhours()
+        return total
+
+    def expected_weekly_balance(self):
+        return self.shiftlength_as_float() * NUM_WORKING_DAYS
 
     def get_manager_email(self):
         overridden = settings.MANAGER_EMAILS_OVERRIDE.get(self.market)
@@ -662,6 +694,14 @@ class Tbluser(models.Model):
         if overridden:
             return ',\n'.join(overridden)
         return self.get_administrator().name()
+
+    @staticmethod
+    def manager_emails_for_account(account):
+        admins = Tbluser.objects.filter(
+            user_type__in=["ADMIN", "TEAML"],
+            market=account
+            )
+        return [admin.user_id for admin in admins]
 
     @staticmethod
     def administrator_emails_for_account(account):
