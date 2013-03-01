@@ -672,7 +672,7 @@ class Tbluser(models.Model):
     def previous_week_balance(self):
         entries =  TrackingEntry.objects.filter(entry_date__range=(
                 dt.datetime.now()+dt.timedelta(days=-7), dt.datetime.now()
-                ), user_id=self.id)
+                ), user_id=self.id, daytype__in=["SATUR", "WKDAY"])
         total = self.shiftlength_as_float() * (NUM_WORKING_DAYS - len(entries))
         for entry in entries:
             total += entry.totalhours()
