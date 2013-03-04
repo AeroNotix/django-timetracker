@@ -16,13 +16,13 @@ from timetracker.utils.writers import UnicodeWriter
 connection = mail.get_connection()
 
 
-def send_report_for_account(account):
+def send_report_for_account(account, now):
     message = mail.EmailMessage(from_email="timetracker@unmonitored.com")
     message.body = \
         "Hi,\n\n" \
         "Please see attached your month end overtime report for " \
         "your team.\n\n" \
-        "If there are any errors, please inform the administrator" \
+        "If there are any errors, please inform the administrator " \
         "of the timetracker immediately.\n\n" \
         "Regards,\n" \
         "Timetracker team"
@@ -37,12 +37,10 @@ def send_report_for_account(account):
 
     # generate the dates for this month
     c = calendar.Calendar()
-    now = datetime.datetime.now()
     dates = filter(
     lambda date: date.month == now.month,
     c.itermonthdates(now.year, now.month)
     )
-
     csvout.writerow(
         # write out the top heading
         ["Date"] + [user.rev_name() for user in users]
@@ -89,6 +87,10 @@ def send_report_for_account(account):
     message.subject = "End of month Overtime Totals."
     message.send()
 
+def get_previous_month(d):
+    first_day_of_current_month = d.replace(day=1)
+    last_day_of_previous_month = first_day_of_current_month - datetime.timedelta(days=1)
+    return last_day_of_previous_month.replace(day=1)
 
 class Command(BaseCommand):
     help = 'Sends notifications of overtime balances to the all those ' \
@@ -96,4 +98,5 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         for account in args:
-            send_report_for_account(account)
+            d = get_previous_month(datetime.datetime.now())
+            send_report_for_account(account, d)
