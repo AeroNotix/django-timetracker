@@ -14,7 +14,7 @@ Contents:
    deps
    settings
    timetracker
-   javascript-files      
+   javascript-files
    user_guide
 
 Indices and tables
