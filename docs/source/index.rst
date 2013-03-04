@@ -15,6 +15,7 @@ Contents:
    settings
    timetracker
    javascript-files      
+   user_guide
 
 Indices and tables
 ==================
