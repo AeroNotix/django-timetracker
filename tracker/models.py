@@ -196,6 +196,7 @@ class Tbluser(models.Model):
                                 self.lastname)
 
     def isdisabled(self):
+        '''Returns whether this user is disabled or not'''
         return self.disabled
 
     def get_shiftlength_list(self):
@@ -329,6 +330,9 @@ class Tbluser(models.Model):
         return self.firstname + ' ' + self.lastname
 
     def rev_name(self):
+        '''Returns a user's name formatted in the reversed formal way.
+
+        I.e. "Aaron France" would be "France, Aaron"'''
         return '%s, %s' % (self.lastname, self.firstname)
 
     def tracking_entries(self,
@@ -641,15 +645,24 @@ class Tbluser(models.Model):
                     shift_hours, shift_minutes)
 
     def shiftlength_as_float(self):
+        '''Returns the shiftlength of the user as a float
+        :rtype: :class:`float`'''
         shift_hours = self.shiftlength.hour + self.breaklength.hour
         shift_minutes = (self.shiftlength.minute + self.breaklength.minute) / 60.0
         return shift_hours + shift_minutes
 
     def send_pending_overtime_notification(self, send=False):
+        '''Determines whether an overtime notification is required and sends
+        it.
+
+        :param send: send directly or return the EmailMessage.'''
         if self.get_total_balance(ret='num') > 0:
             return send_pending_overtime_notification(self, send)
 
     def send_weekly_reminder(self):
+        '''
+        Sends the weekly reminder for an agent about their holiday balances
+        '''
         message = \
             "Hi,\n\n" \
             "This is your weekly timetracking reminder. If the below " \
@@ -676,6 +689,7 @@ class Tbluser(models.Model):
         email.send()
 
     def previous_week_balance(self):
+        '''Gets the user's previous weekly balance'''
         entries =  TrackingEntry.objects.filter(entry_date__range=(
                 dt.datetime.now()+dt.timedelta(days=-7), dt.datetime.now()
                 ), user_id=self.id, daytype__in=["SATUR", "WKDAY"])
@@ -685,9 +699,11 @@ class Tbluser(models.Model):
         return total
 
     def expected_weekly_balance(self):
+        '''Returns the users normal working balance.'''
         return self.shiftlength_as_float() * NUM_WORKING_DAYS
 
     def get_manager_email(self):
+        '''Returns a list of manager's e-mails for this particular user.'''
         overridden = settings.MANAGER_EMAILS_OVERRIDE.get(self.market)
         if overridden:
             return overridden
@@ -696,6 +712,7 @@ class Tbluser(models.Model):
         return [self.get_administrator().user_id]
 
     def get_manager_name(self):
+        '''Gets the name(s) of the managers for this particular user.'''
         overridden = settings.MANAGER_NAMES_OVERRIDE.get(self.market)
         if overridden:
             return ',\n'.join(overridden)
@@ -703,6 +720,7 @@ class Tbluser(models.Model):
 
     @staticmethod
     def manager_emails_for_account(account):
+        '''Gets the e-mails for the managers for the whole account.'''
         admins = Tbluser.objects.filter(
             user_type__in=["ADMIN", "TEAML"],
             market=account
@@ -711,6 +729,7 @@ class Tbluser(models.Model):
 
     @staticmethod
     def administrator_emails_for_account(account):
+        '''Gets the e-mails for the administrators for the whole account.'''
         admins = Tbluser.objects.filter(
             user_type="ADMIN",
             market=account
@@ -719,6 +738,7 @@ class Tbluser(models.Model):
 
     @staticmethod
     def all_emails_for_account(account):
+        '''Gets all e-mails for the whole account.'''
         users = Tbluser.objects.filter(
             market=account
             )
@@ -967,6 +987,7 @@ class TrackingEntry(models.Model):
 
     @property
     def worklength(self):
+        '''Returns the working portion of this tracking entry'''
         td = dt.timedelta(hours=self.end_time.hour,
                           minutes=self.end_time.minute)
         td += dt.timedelta(hours=self.breaks.hour,
@@ -974,10 +995,12 @@ class TrackingEntry(models.Model):
         return td
 
     def breaktime(self):
+        '''Returns the breaks entry of this tracking entry.'''
         return (dt.timedelta(hours=self.breaks.hour,
                              minutes=self.breaks.minute).seconds / 60.0) / 60.0
 
     def display_as_csv(self):
+        '''Returns the tracking entry as a CSV row.'''
         return [
             self.user.name(), self.entry_date, self.start_time,
             self.end_time, self.breaks, self.get_daytype_display(),
@@ -985,12 +1008,14 @@ class TrackingEntry(models.Model):
             ]
 
     def threshold(self):
+        '''Returns the threshold for the associated user.'''
         return settings.OT_THRESHOLDS.get(
             self.user.market,
             settings.DEFAULT_OT_THRESHOLD
             )
 
     def totalhours(self):
+        '''Total hours calculated for this tracking entry'''
         td = dt.timedelta(hours=self.end_time.hour,
                           minutes=self.end_time.minute)
         td -= dt.timedelta(hours=self.start_time.hour,
@@ -998,24 +1023,33 @@ class TrackingEntry(models.Model):
         return (td.seconds / 60.0) / 60.0
 
     def nearest_half(self):
+        '''Rounds the time to the nearest half hour.'''
         return nearest_half(self.totalhours())
 
     def is_overtime(self):
+        '''Determines whether this tracking entry is overtime.'''
         if self.daytype == "WKDAY":
             return self.time_difference() >= self.threshold()
         else:
             return False
 
     def is_undertime(self):
+        '''Determines whether this tracking entry is undertime.'''
         if self.daytype == "WKDAY":
             return self.time_difference() <= -self.threshold()
         else:
             return False
 
     def time_difference(self):
+        '''Calculates the difference between this tracking entry and the user's
+        shiftlength'''
         return self.totalhours() - self.user.shiftlength_as_float()
 
     def send_notifications(self):
+        '''Send the associated notifications for this tracking entry.
+
+        For example, if this entry is an overtime entry, it will generate and
+        send out the e-mails as per the rules.'''
         if self.daytype == "WKDAY" and self.is_overtime() or \
                 self.daytype in ["PUWRK", "SATUR"]:
             send_overtime_notification(self)
