@@ -1,8 +1,9 @@
+/*global $,validateTime,idx*/
 /*
   Intended to validate form fields
 */
 
-function validateDate (field) {
+function validateDate(field) {
 
     /*
 
@@ -16,7 +17,7 @@ function validateDate (field) {
        returns true for a match, false for not
 
     */
-
+	"use strict";
     return /\d{4}\-\d{1,2}\-\d{1,2}/g.test($(field).val());
 }
 
@@ -24,6 +25,7 @@ function validateTimePair(fieldA, fieldB) {
     /*
        Validates two time fields against each other.
     */
+	"use strict";
     var fieldA_matches = $(fieldA).val().split( /\:/ );
     var fieldB_matches = $(fieldB).val().split( /\:/ );
 
@@ -38,7 +40,7 @@ function validateTimePair(fieldA, fieldB) {
 
            i.e. 04 or 12.
         */
-        for (idx in match_group) {
+		for (var idx in match_group) {
             if (!match_group[idx].match( /\d{1,2}/ )) {
                 return false;
             }
@@ -60,12 +62,11 @@ function validateTimePair(fieldA, fieldB) {
 
     if (hour_diff < 0) {
         return false;
-    } else {
-        return true;
     }
+    return true;
 }
 
-function validateTime (field) {
+function validateTime(field) {
 
     /*
 
@@ -80,11 +81,11 @@ function validateTime (field) {
        returns true for a match, false for not
 
     */
-
+	"use strict";
     return /^\d{1,2}\:\d{1,2}(\:\d{1,2})?/g.test($(field).val());
 }
 
-function stringMatch (fieldA, fieldB) {
+function stringMatch(fieldA, fieldB) {
 
     /*
        String matching function
@@ -93,7 +94,7 @@ function stringMatch (fieldA, fieldB) {
     return $(fieldA).val() === $(fieldB).val();
 }
 
-function checkStringLengths (stringArray, len) {
+function checkStringLengths(stringArray, len) {
     /*
       Checks all strings in the array for
       a given length
@@ -102,8 +103,9 @@ function checkStringLengths (stringArray, len) {
       return true if all strings validate,
       false otherwise.
     */
-
-    for (idx=0;idx<stringArray.length;idx++) {
+	"use strict";
+	var idx;
+    for (idx = 0;idx < stringArray.length; idx += 1) {
         if (stringArray[idx].length < len) {
             return false;
         }
@@ -111,13 +113,14 @@ function checkStringLengths (stringArray, len) {
     return true;
 }
 
-function emailValidate (element_name) {
+function emailValidate(element_name) {
     /*
        Validates an email address
 
        Takes a element tag and returns boolean if the
        value matches or not.
     */
+	"use strict";
     var email = $(element_name).val();
     /*
       [A-Za-z0-9_.\-]+ = matches all alphanumeric characters with -, _ and .
