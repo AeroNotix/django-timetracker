@@ -1,10 +1,13 @@
+/*global $*/
+
 var previous = 0;
 function highlight_row(Row) {
+	"use strict";
     if (previous) {
-        $("#" + previous + "_row").removeClass("highlighted-row")
+        $("#" + previous + "_row").removeClass("highlighted-row");
         /* We need to trigger a redraw because WebKit browsers sometimes
            fail to flush the layout changes. */
-        $("#" + previous + "_row").hide(0, function() {
+        $("#" + previous + "_row").hide(0, function () {
             $("#" + previous + "_row").show();
         });
     }
