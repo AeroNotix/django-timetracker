@@ -1,9 +1,11 @@
+/*global $,confirm,checkStringLengths,alert,stringMatch*/
 /*
    Module for client-side code for the user mode
    edit profile section
 */
 
-function clearForm () {
+function clearForm() {
+	"use strict";
     /*
        Clears the form
     */
@@ -17,8 +19,8 @@ function clearForm () {
 }
 
 
-function submitChanges () {
-
+function submitChanges() {
+	"use strict";
     /*
       Gathers the form elements up
       and passes them to the ajax
@@ -26,14 +28,17 @@ function submitChanges () {
       data in the database
     */
 
+	var passwords = [],
+	    ajaxData = {};
+
     if (!confirm("Are you sure?")) {
         return false;
     }
 
-    var passwords = [
+	passwords = [
         $("#id-password").val(),
         $("#id-password-rpt").val()
-    ]
+    ];
 
     if (!checkStringLengths(passwords, 6)) {
         alert("Minimum length of passwords is 6");
@@ -47,11 +52,11 @@ function submitChanges () {
         return false;
     }
 
-    var ajaxData = {
+    ajaxData = {
         "first_name": $("#id-first-name").val(),
         "last_name": $("#id-last-name").val(),
         "password": $("#id-password").val()
-    }
+    };
 
     $.ajaxSetup({
         type: "POST"
@@ -66,15 +71,15 @@ function submitChanges () {
             "lastname": $("#id-lastname").val(),
             "password": $("#id-password").val()
         },
-        success: function(data) {
-             $("#edit-profile-wrapper")
+        success: function (data) {
+            $("#edit-profile-wrapper")
                 .fadeTo(500, 0, function () {
                     $("#edit-profile-wrapper")
                         .load("/edit_profile/ #edit-profile-table",
                               function () {
-                                  $("#edit-profile-wrapper")
+                                $("#edit-profile-wrapper")
                                       .fadeTo(500, 1);
-                              });
+                            });
                 });
         }
     });
