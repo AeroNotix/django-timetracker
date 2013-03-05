@@ -36,11 +36,13 @@ nctions we need.
 '''
 try:
     from timetracker.tracker.notifications import (
-        send_overtime_notification, send_pending_overtime_notification
+        send_overtime_notification, send_pending_overtime_notification,
+        send_undertime_notification
         )
 except ImportError:
     send_overtime_notification = lambda x: x
     send_pending_overtime_notification = lambda x: x
+    send_undertime_notification = lambda x: x
 
 class Tbluser(models.Model):
 
@@ -1045,11 +1047,16 @@ class TrackingEntry(models.Model):
         shiftlength'''
         return self.totalhours() - self.user.shiftlength_as_float()
 
+    def sending_undertime(self):
+        return settings.UNDER_TIME_ENABLED.get(self.user.market)
+
     def send_notifications(self):
         '''Send the associated notifications for this tracking entry.
-
         For example, if this entry is an overtime entry, it will generate and
         send out the e-mails as per the rules.'''
+
         if self.daytype == "WKDAY" and self.is_overtime() or \
                 self.daytype in ["PUWRK", "SATUR"]:
             send_overtime_notification(self)
+        if self.is_undertime() and self.sending_undertime():
+            send_undertime_notification(self)

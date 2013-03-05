@@ -80,3 +80,15 @@ different values, then you can do so here:
     OT_THRESHOLDS = {
         "BF": 0.5
     }
+
+UNDER_TIME_ENABLED
+------------------
+
+If specific accounts need to have their undertime tracked then we can enable
+or disable the accounts using this.
+
+.. code-block:: python
+
+    UNDER_TIME_ENABLED = {
+        "BF": True
+    }
