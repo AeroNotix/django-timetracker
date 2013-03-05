@@ -1,3 +1,5 @@
+/*jslint browser:true*/
+/*global $,alert,validateTimePair,confirm*/
 /*
   all functions dealing with the calendar that aren't
   automatically created server-side.
@@ -26,35 +28,35 @@ function ajaxCall(form) {
     "use strict";
 
     $.ajaxSetup({type: 'POST'});
-    var pre = '';
+    var pre = '',
+        formData = {
+            "form_type" : form,
+            "entry_date" : $(pre + 'entrydate').val(),
+            "start_time" : $(pre + 'starttime').val(),
+            "end_time" : $(pre + 'endtime').val(),
+            "daytype" : $(pre + 'daytype').val(),
+            "hidden-id" : $('#hidden_id').val(),
+            "breaks": $(pre + "breaks").val()
+        };
+
     if (form === "delete") {
         pre = "#change_";
     } else {
         pre = "#" + form + "_";
     }
 
-    if (  $(pre + 'daytype').val() !== "WKDAY" ) {
+    if ($(pre + 'daytype').val() !== "WKDAY") {
         return;
     }
 
-    if ($(pre+'starttime').val() === $(pre+'endtime').val()) {
-        alert("Length of working time invalid")
+    if ($(pre + 'starttime').val() === $(pre + 'endtime').val()) {
+        alert("Length of working time invalid");
     }
 
-    if (!validateTimePair(pre+'starttime', pre+'endtime')) {
+    if (!validateTimePair(pre + 'starttime', pre + 'endtime')) {
         alert("Start Time before End Time");
         return false;
     }
-
-    var formData = {
-        "form_type" : form,
-        "entry_date" : $(pre + 'entrydate').val(),
-        "start_time" : $(pre + 'starttime').val(),
-        "end_time" : $(pre + 'endtime').val(),
-        "daytype" : $(pre + 'daytype').val(),
-        "hidden-id" : $('#hidden_id').val(),
-        "breaks": $(pre + "breaks").val()
-    };
 
     // no point in making invalid ajax requests
     if (!formData.entry_date || !formData.start_time || !formData.end_time) {
@@ -67,7 +69,7 @@ function ajaxCall(form) {
         dataType: "json",
         success: function (data) {
             if (data.success === true) {
-                $("#calendar-entry").fadeToggle("slow", function() {
+                $("#calendar-entry").fadeToggle("slow", function () {
                     $("#calendar-entry").html(data.calendar);
                     $(".table-links").css({"color": "white"});
                 });
@@ -93,19 +95,19 @@ function onOptionChange(element) {
 
     "use strict";
 
-    var pre = "#" + element + "_";
-    var preSet$ = $(pre + "starttime," +
-                   pre + "endtime," +
-                   pre + "breaks");
-    var optionBoxVal = $(pre + "daytype").val();
-    // these are the types that will have their
-    // form elements disabled if selected
-    var disabledTypes = [
-        "SICKD", "HOLIS", "MEDIC", "SPECI",
-        "PUABS", "TRAIN", "DAYOD", "RETRN"
-    ]
+    var pre = "#" + element + "_",
+        preSet$ = $(pre + "starttime," +
+                    pre + "endtime," +
+                    pre + "breaks"),
+        optionBoxVal = $(pre + "daytype").val(),
+            // these are the types that will have their
+            // form elements disabled if selected
+        disabledTypes = [
+            "SICKD", "HOLIS", "MEDIC", "SPECI",
+            "PUABS", "TRAIN", "DAYOD", "RETRN"
+        ];
 
-    if ( $.inArray(optionBoxVal, disabledTypes) > -1 ) {
+    if ($.inArray(optionBoxVal, disabledTypes) > -1) {
 
         $(pre + "starttime").val('00:00');
         $(pre + "endtime").val('00:01');
@@ -117,18 +119,17 @@ function onOptionChange(element) {
             $(this).attr("disabled", "disabled");
         });
         return true;
-    } else {
-        // otherwise, we clear the box in case the values
-        // were filled previously
-        preSet$.each(function () {
-            $(this).val('');
-        });
-        // and remove the disabled attribute
-        preSet$.each(function () {
-            $(this).removeAttr("disabled");
-        });
-        return true;
     }
+    // otherwise, we clear the box in case the values
+    // were filled previously
+    preSet$.each(function () {
+        $(this).val('');
+    });
+    // and remove the disabled attribute
+    preSet$.each(function () {
+        $(this).removeAttr("disabled");
+    });
+    return true;
 }
 
 
@@ -194,10 +195,10 @@ $(function () {
     addDatePicker("#add_entrydate", true);
 
     $("#add_daytype").change(function () {
-        onOptionChange('add')
+        onOptionChange('add');
     });
     $("#change_daytype").change(function () {
-        onOptionChange('change')
+        onOptionChange('change');
     });
 
     $("#add_breaks")
@@ -231,9 +232,8 @@ function deleteEntry() {
     var answer = confirm("Are you sure?");
     if (answer) {
         return ajaxCall("delete");
-    } else {
-        return false;
     }
+	return false;
 }
 
 function toggleChangeEntries(st_hour, st_min, full_st,
@@ -307,6 +307,8 @@ function toggleChangeEntries(st_hour, st_min, full_st,
 }
 
 function hideEntries(date) {
+	"use strict";
+
     $("#add_entrydate").val(date);
     $("#add_starttime").val('');
     $("#add_endtime").val('');
@@ -348,5 +350,7 @@ function hideEntries(date) {
 }
 
 $(function () {
+	"use strict";
+
     $(".table-links").css({"color": "white"});
 });
