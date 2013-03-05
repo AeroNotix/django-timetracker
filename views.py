@@ -45,7 +45,8 @@ def user_context_manager(request):
     return {
         "welcome_name": user.firstname,
         "is_admin": user.super_or_admin(),
-        "is_team_leader": user.is_tl()
+        "is_team_leader": user.is_tl(),
+        "balance": user.get_total_balance(ret="int")
         }
 
 def index(request):
@@ -189,14 +190,12 @@ def user_view(request, year=None, month=None, day=None):
                                   user=user_id)
     user_object = Tbluser.objects.get(id=user_id)
 
-    balance = user_object.get_total_balance(ret='int')
     return render_to_response(
         'calendar.html',
         {
          'calendar': calendar_table,
          'changeform': EntryForm(),
          'addform': AddForm(),
-         'balance': balance
         },
         RequestContext(request)
         )
@@ -354,7 +353,6 @@ def view_with_holiday_list(request,
         {
             'holiday_table': holiday_table,
             'comments_list': comments_list,
-            'balance': user.get_total_balance(ret='int'),
             'days_this_month': days_this_month,
             'employee_select': generate_employee_box(user),
             'js_calendar': js_calendar,
@@ -418,7 +416,6 @@ def edit_profile(request):
     return render_to_response("editprofile.html",
                               {'firstname': user.firstname,
                                'lastname': user.lastname,
-                               'balance': user.get_total_balance(ret='int'),
                                },
                               RequestContext(request))
 
@@ -445,7 +442,6 @@ def explain(request):
     return render_to_response("balance.html",
                               {'firstname': user.firstname,
                                'lastname': user.lastname,
-                               'balance': user.get_total_balance(ret='int'),
                                'shiftlength': str(user.shiftlength.hour) + ': ' + str(user.shiftlength.minute),
                                'working_days': TrackingEntry.objects.filter(user=user.id).count()
                                },
