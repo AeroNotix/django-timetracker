@@ -1,3 +1,12 @@
+'''
+Views for the reporting functions. These will be used as endpoints when
+creating the CSV reports.
+
+Refactor this module to use a base view for CSV endpoints, which will
+do the basic set up of creating a buffer object, inserting the BOM and
+pushing it back to the user.
+'''
+
 try:
     from cStringIO import StringIO
 except ImportError:
@@ -18,6 +27,9 @@ from timetracker.utils.writers import UnicodeWriter
 
 @admin_check
 def reporting(request):
+    '''Base reporting hub
+    Generates all the select boxes and pre-filled text fields.
+    '''
     user = Tbluser.objects.get(id=request.session.get("user_id"))
     return render_to_response(
         "reporting.html",
@@ -32,6 +44,12 @@ def reporting(request):
 
 @admin_check
 def download_all_holiday_data(request, who=None):
+    '''Endpoint which creates a CSV file for all holiday data for a
+    single employee.
+
+    :param who: The ID of the person the report should be generated for
+    if the user is not in the span of control for the administrator then
+    no report will be generated.'''
     if not who:
         raise Http404
 
@@ -56,6 +74,13 @@ def download_all_holiday_data(request, who=None):
 
 @admin_check
 def yearmonthhol(request, year=None, month=None):
+    '''Endpoint which creates a CSV file for all holiday data within
+    a specific month.
+
+    :param year: The year for the report.
+    :param month: The month for the report.
+
+    :note: Both year and mont are required.'''
     auth_user = Tbluser.objects.get(id=request.session.get("user_id"))
     buf = StringIO()
     buf.write("\xef\xbb\xbf")
@@ -74,6 +99,12 @@ def yearmonthhol(request, year=None, month=None):
 
 @admin_check
 def ot_by_month(request, year=None, month=None):
+    '''Endpoint which creates a CSV file for all OT in a given month
+
+    :param year: The year for the report.
+    :param month: The month for the report.
+
+    :note: Both year and mont are required.'''
     auth_user = Tbluser.objects.get(id=request.session.get("user_id"))
     buf = StringIO()
     buf.write("\xef\xbb\xbf")
@@ -94,6 +125,8 @@ def ot_by_month(request, year=None, month=None):
 
 @admin_check
 def ot_by_year(request, year=None):
+    '''Endpoint which creates a CSV file for all OT in a year.
+    :param year: The year for the report.'''
     auth_user = Tbluser.objects.get(id=request.session.get("user_id"))
     buf = StringIO()
     buf.write("\xef\xbb\xbf")
@@ -122,6 +155,10 @@ def ot_by_year(request, year=None):
 
 @admin_check
 def holidays_for_yearmonth(request, year=None):
+    '''Endpoint which creates a CSV file for all holidays per month
+    in a year
+
+    :param year: Year for the report.'''
     if not year:
         raise Http404
     auth_user = Tbluser.objects.get(id=request.session.get("user_id"))

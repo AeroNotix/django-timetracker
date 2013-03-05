@@ -18,11 +18,6 @@ from timetracker.tracker.models import Tbluser, TrackingEntry
 from django.core.management.base import BaseCommand, CommandError
 from django.db import connection
 
-from time import time
-
-start = time()
-def print_running_time(msg):
-    print msg, time() - start
 
 QUERIES = 0
 choices = [
@@ -94,6 +89,8 @@ DAYTYPE_MAP = {
 }
 
 def catw_code(user, daytype):
+    '''Calculates the CATW Code for the employee using a specific
+    daytype.'''
     if daytype == "WKDAY":
         if user.process == "FA":
             return WKDAY_MAP[user.market]["FA"]
@@ -102,6 +99,8 @@ def catw_code(user, daytype):
     return DAYTYPE_MAP[daytype]
 
 def blankrow(user, year, month, day):
+    '''Returns what the blank row (empty day) looks like in the CATW
+    report.'''
     return [
         "", user.user_id, "%s/%s/%s" % (month, day, year),
         catw_code(user, "WKDAY"), "400",
@@ -111,11 +110,12 @@ def blankrow(user, year, month, day):
         ]
 
 def realrow(user, year, month, day, entry):
+    '''Returns a real row for the user.'''
     return [
         "", user.user_id, "%s/%s/%s" % (month, day, year),
         catw_code(user, entry.daytype), "400",
         # the rest are empty except for the time.
-        "", "","", "", "", "%.2f" % entry.nearest_half()
+        "", "","", "", "", "%.2f" % entry.nearest_half(),
         "","","","","","","",""
         ]
 
@@ -161,7 +161,13 @@ def report_for_account(choice_list, year, month):
             csvout.writerow(realrow(user, year, months, day, entry))
 
 class Command(BaseCommand):
+    '''Implementation of a Django command.'''
     def handle(self, *args, **options):
+        '''This is what gets invoked from manage.py catw_report.
+
+        You may supply this command with a list of short market codes
+        doing this will generate a CATW report for each of those markets.
+        The files will be generated locally.'''
         year = options.get('year', datetime.datetime.now().year)
         month = options.get('month', datetime.datetime.now().month)
 

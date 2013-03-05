@@ -34,6 +34,10 @@ from timetracker.loggers import suspicious_log, email_log, error_log
 
 
 def user_context_manager(request):
+    '''Context manager which always puts certain variables into the
+    template context. This is because all pages require certain
+    pieces of data so it's easier to push this work down to middleware
+    '''
     try:
         user = Tbluser.objects.get(id=request.session.get("user_id"))
     except Tbluser.DoesNotExist:
@@ -277,6 +281,10 @@ def ajax(request):
 
 @admin_check
 def view_with_employee_list(request, template=None, get_all=False):
+    '''Some pages are generic HTML pages with only a select amount of
+    differences on them. We use this to generate the employee select
+    box and assign the regularly used template variables for these
+    templates.'''
     user = Tbluser.objects.get(
         id=request.session.get("user_id", None)
     )
@@ -355,7 +363,12 @@ def view_with_holiday_list(request,
 
 @admin_check
 def yearview(request, who=None, year=None):
+    '''Yearview generates the 'year at a glance' for both Administrators
+    and regular users.
 
+    :param who: This will be the ID of an employee which the yearview
+    will be generated from if the employee is not within the span
+    of control then a 404 will be generated.'''
     auth_user = Tbluser.objects.get(
         id=request.session.get('user_id')
         )

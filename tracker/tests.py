@@ -1,3 +1,10 @@
+'''The test suite for the Timetracking application.
+
+This module performs automated tests so that we can formally verify
+that our application works.
+
+Generally, when adding new functionality you will want to write tests
+before it and then write your new feature whilst checking the tests.'''
 import datetime
 import simplejson
 import random
@@ -34,9 +41,8 @@ except ImportError:
 
 
 def create_users(cls):
-    # we create users which will be linked,
-    # to test how the automatic retrieval
-    # of the links works
+    '''we create users which will be linked to test how the automatic,
+    retrieval of the links works'''
 
     cls.linked_super_user = Tbluser.objects.create(
         user_id="test.super@test.com",
@@ -204,12 +210,14 @@ def create_users(cls):
         )
 
 def delete_users(cls):
+    '''Deletes all the users on a Tbluser instance.'''
     [user.delete() for user in Tbluser.objects.all()]
 
 class BaseUserTest(TestCase):
 
     def setUp(self):
-
+        '''Sets up our BaseUserTest by creating users, linking them
+        adding some holidays and creating fake Request objects'''
         create_users(self)
 
         # create a new_user dict to share among tests
@@ -246,7 +254,9 @@ class BaseUserTest(TestCase):
         self.holiday_data_empty = simplejson.dumps(holidays_empty)
 
         class Request(object):
+            '''Fake Request class'''
             def __init__(self, model_id):
+                '''Initializor'''
                 self.session = {
                     'user_id': model_id
                     }
@@ -254,6 +264,7 @@ class BaseUserTest(TestCase):
                 self.POST = {}
 
             def is_ajax(self):
+                '''Mocked method for the django `is_ajax` method.'''
                 return True
 
         self.linked_manager_request = Request(self.linked_manager.id)
@@ -264,6 +275,7 @@ class BaseUserTest(TestCase):
         self.unlinked_user_request = Request(self.unlinked_user.id)
 
     def tearDown(self):
+        '''Deletes our class'''
         del(self.linked_manager_request)
         delete_users(self)
         [holiday.delete() for holiday in TrackingEntry.objects.all()]
@@ -274,48 +286,56 @@ class UserTestCase(BaseUserTest):
     '''
 
     def test_Sup_TL_or_Admin(self):
+        '''Tests the user permissions-related functions.'''
         self.assertEquals(self.linked_super_user.sup_tl_or_admin(), True)
         self.assertEquals(self.linked_manager.sup_tl_or_admin(), True)
         self.assertEquals(self.linked_teamlead.sup_tl_or_admin(), True)
         self.assertEquals(self.linked_user.sup_tl_or_admin(), False)
 
     def test_IsSuper(self):
+        '''Tests the user permissions-related functions.'''
         self.assertEquals(self.linked_super_user.is_super(), True)
         self.assertEquals(self.linked_manager.is_super(), False)
         self.assertEquals(self.linked_teamlead.is_super(), False)
         self.assertEquals(self.linked_user.is_super(), False)
 
     def test_Super_Or_Admin(self):
+        '''Tests the user permissions-related functions.'''
         self.assertEquals(self.linked_super_user.super_or_admin(), True)
         self.assertEquals(self.linked_manager.super_or_admin(), True)
         self.assertEquals(self.linked_teamlead.super_or_admin(), False)
         self.assertEquals(self.linked_user.super_or_admin(), False)
 
     def test_IsAdmin(self):
+        '''Tests the user permissions-related functions.'''
         self.assertEquals(self.linked_super_user.is_admin(), False)
         self.assertEquals(self.linked_manager.is_admin(), True)
         self.assertEquals(self.linked_teamlead.is_admin(), False)
         self.assertEquals(self.linked_user.is_admin(), False)
 
     def test_Admin_or_TL(self):
+        '''Tests the user permissions-related functions.'''
         self.assertEquals(self.linked_super_user.admin_or_tl(), False)
         self.assertEquals(self.linked_manager.admin_or_tl(), True)
         self.assertEquals(self.linked_teamlead.admin_or_tl(), True)
         self.assertEquals(self.linked_user.admin_or_tl(), False)
 
     def test_IsTL(self):
+        '''Tests the user permissions-related functions.'''
         self.assertEquals(self.linked_super_user.is_tl(), False)
         self.assertEquals(self.linked_manager.is_tl(), False)
         self.assertEquals(self.linked_teamlead.is_tl(), True)
         self.assertEquals(self.linked_user.is_tl(), False)
 
     def test_IsUSER(self):
+        '''Tests the user permissions-related functions.'''
         self.assertEquals(self.linked_super_user.is_user(), False)
         self.assertEquals(self.linked_manager.is_user(), False)
         self.assertEquals(self.linked_teamlead.is_user(), False)
         self.assertEquals(self.linked_user.is_user(), True)
 
     def test_get_subordinates(self):
+        '''Tests the user permissions-related functions.'''
         self.assertEquals(len(self.linked_super_user.get_subordinates()), 4)
         self.assertEquals(len(self.linked_manager.get_subordinates()), 9)
         self.assertEquals(len(self.linked_teamlead.get_subordinates()), 9)
@@ -389,7 +409,11 @@ class UserTestCase(BaseUserTest):
         self.assertEquals(self.linked_user.get_holiday_balance(2012), 17)
 
 class TrackingEntryTestCase(BaseUserTest):
+    '''TrackingEntryTestCase tests the TrackingEntry's functionality'''
     def testIsNotOvertime(self):
+        '''Tests an entry against several rules to make sure our
+        check for whether an entry is or is not overtime is correctly
+        working.'''
         for date, end in [
             ["2012-01-01", "17:00"],
             ["2012-01-02", "14:00"],
@@ -408,6 +432,9 @@ class TrackingEntryTestCase(BaseUserTest):
         self.assertFalse(entry.is_overtime())
 
     def testIsOvertime(self):
+        '''Tests an entry against several rules to make sure our
+        check for whether an entry is or is not overtime is correctly
+        working.'''
         for date, end in [
             ["2012-01-06", "18:01"],
             ["2012-01-07", "19:00"],
@@ -424,6 +451,9 @@ class TrackingEntryTestCase(BaseUserTest):
             self.assertTrue(entry.is_overtime())
 
     def testTimeDifferencePositive(self):
+        '''Tests an entry against several rules to make sure our
+        check for whether an entry is or is not overtime is correctly
+        working.'''
         for date, end in [
             ["2012-01-08", "18:00"],
             ["2012-01-09", "18:01"],
@@ -441,6 +471,9 @@ class TrackingEntryTestCase(BaseUserTest):
             self.assertTrue(entry.time_difference() > 0)
 
     def testTimeDifferenceNegative(self):
+        '''Tests an entry against several rules to make sure our
+        check for whether an entry is or is not overtime is correctly
+        working.'''
         for date, end in [
             ["2012-01-11", "14:00"],
             ["2012-01-12", "16:59"],
@@ -458,6 +491,9 @@ class TrackingEntryTestCase(BaseUserTest):
             self.assertTrue(entry.time_difference() < 0)
 
     def testTimeDifferenceZero(self):
+        '''Tests an entry against several rules to make sure our
+        check for whether an entry is or is not overtime is correctly
+        working.'''
         for date, end in [
             ["2012-01-11", "17:00"],
             ]:
@@ -596,7 +632,9 @@ class AjaxTestCase(BaseUserTest):
         self.assertEquals(valid.content, json)
 
     def testValidAddMassHolidaysManager(self):
-
+        '''Tests whether adding Valid holiday data to the tracker
+        returns the correct response.
+        '''
         # create the post
         self.linked_manager_request.POST = {
             'form_data': 'mass_holiday',
@@ -642,6 +680,8 @@ class AjaxTestCase(BaseUserTest):
         self.assertEquals(valid.content, json)
 
     def testValidAjaxDeleteHolidayEntry(self):
+        '''Tests to see if the ajax endpoint for deleting a holiday
+        entry is working correctly.'''
 
         # create the entry we want to delete
         TrackingEntry(entry_date="2012-01-01", user_id=self.linked_user.id)
@@ -661,6 +701,8 @@ class AjaxTestCase(BaseUserTest):
                 valid.content)
 
     def testValidAjaxChangeHolidayEntry(self):
+        '''Tests to see if the ajax endpoint for changing a holiday
+        entry is working correctly.'''
 
         # create the entry we want to delete
         TrackingEntry(entry_date="2012-01-01", user_id=self.linked_user.id)
@@ -684,7 +726,8 @@ class AjaxTestCase(BaseUserTest):
                 valid.content)
 
     def testAjaxError(self):
-
+        '''AjaxError is a helpful method to create a JSON message
+        containing an error. We test that here.'''
         valid = ajax_error("test string")
         self.assertIsInstance(valid, HttpResponse)
 
@@ -695,20 +738,28 @@ class AjaxTestCase(BaseUserTest):
                           )
 
 class UtilitiesTest(TestCase):
+    '''The utilties module contains several miscellanious pieces of
+    functionality, we test those here.'''
 
     def testValidateTime(self):
+        '''Time validation tests. We validate whether two time strings
+        are sequential.'''
         self.assertEquals(validate_time("00:00", "00:01"), True)
         self.assertEquals(validate_time("00:00", "23:00"), True)
         self.assertEquals(validate_time("00:00", "00:00"), False)
         self.assertEquals(validate_time("23:00", "00:00"), False)
         self.assertEquals(validate_time("00:01", "00:00"), False)
 
-    def testPaseTime(self):
+    def testParseTime(self):
+        '''Time parsing tests. We test whether certain times are parsed
+        correctly into a list of integers representing the time.'''
         self.assertEquals(parse_time("00:01"), [0,1])
         self.assertEquals(parse_time("23:57"), [23,57])
         self.assertEquals(parse_time("12:12"), [12,12])
 
     def testPad(self):
+        '''String padding tests, tests whether a string is correctly
+        padded.'''
         self.assertEquals(pad("teststring"), "teststring")
         self.assertEquals(pad("t"), "0t")
         self.assertEquals(pad("teststring", amount=20),
@@ -719,6 +770,7 @@ class UtilitiesTest(TestCase):
                           "1t")
 
     def testFloat_to_time(self):
+        '''Float to time conversion.'''
         self.assertEquals(float_to_time(0.1), "00:06")
         self.assertEquals(float_to_time(0.2), "00:12")
         self.assertEquals(float_to_time(0.3), "00:18")
@@ -728,7 +780,8 @@ class UtilitiesTest(TestCase):
         self.assertEquals(float_to_time(5.0), "05:00")
 
     def testGenerateSelect(self):
-
+        '''We have functionality to convert Python datastructures to
+        HTML select boxes. Testing the output is correct.'''
         output = generate_select((
             ('val1', 'Value One'),
             ('val2', 'Value Two'),
@@ -743,11 +796,16 @@ class UtilitiesTest(TestCase):
         self.assertEquals(output, string)
 
 class FrontEndTest(LiveServerTestCase):
+    '''FrontEndTest uses Selenium to navigate the front-end of the
+    application to test the Javascript and the interaction between
+    that and the back-end code.'''
 
     def setUp(self):
+        '''Sets up our class.'''
         create_users(self)
 
     def tearDown(self):
+        '''Deletes our class.'''
         delete_users(self)
         try:
             self.accessURL("/edit_profile/")
@@ -758,17 +816,21 @@ class FrontEndTest(LiveServerTestCase):
 
     @classmethod
     def setUpClass(cls):
+        '''Sets up the attributes for the whole test suite.'''
         cls.driver = WebDriver()
         super(FrontEndTest, cls).setUpClass()
 
     @classmethod
     def tearDownClass(cls):
+        '''Sets up the attributes for the whole test suite.'''
         super(FrontEndTest, cls).tearDownClass()
         delete_users(cls)
         cls.driver.quit()
 
     @skipUnless(SELENIUM_AVAILABLE, "These tests require Selenium to be installed.")
     def test_AccessRights(self):
+        '''Tests whether the front-end locks certain user types out
+        of the things they're not supposed to use.'''
         self.user_login()
 
         # selenium doesn't give direct access to the response
@@ -810,6 +872,7 @@ class FrontEndTest(LiveServerTestCase):
 
     @skipUnless(SELENIUM_AVAILABLE, "These tests require Selenium to be installed.")
     def test_SubmitHolidays(self):
+        '''Tests that submitting holidays works.'''
         self.manager_login()
         # wait to be logged in
         time.sleep(2)
@@ -834,6 +897,14 @@ class FrontEndTest(LiveServerTestCase):
 
     @skipUnless(SELENIUM_AVAILABLE, "These tests require Selenium to be installed.")
     def test_HolidayPageStateCheck(self):
+        '''Inserts some state into the table using a previous method
+        then we check that the state doesn't follow the application
+        around.
+
+        This test came around from a bug whereby inserting data on
+        one month, switching to another and submitting again would
+        result in the first month's data being used for the second's.
+        '''
         self.manager_login()
         time.sleep(2)
 
@@ -872,6 +943,7 @@ class FrontEndTest(LiveServerTestCase):
 
     @skipUnless(SELENIUM_AVAILABLE, "These tests require Selenium to be installed.")
     def test_Logins(self):
+        '''Tests all users can login properly.'''
         # login
         self.user_login()
         # if this raises it means we're logged in.
@@ -883,19 +955,24 @@ class FrontEndTest(LiveServerTestCase):
         self.driver.find_element_by_id("logout-btn").click()
 
     def login(self, who):
+        '''Helper method to log in a specific user.'''
         self.driver.get(self.live_server_url)
         self.driver.find_element_by_id("login-user").send_keys(who.user_id)
         self.driver.find_element_by_id("login-password").send_keys(who.password)
         self.driver.find_element_by_id("add_button").click()
     def user_login(self):
+        '''Helper method to login a user.'''
         self.login(self.linked_user)
     def manager_login(self):
+        '''Helper method to login a manager.'''
         self.login(self.linked_manager)
 
     def accessURL(self, url):
+        '''Helper to push the browser to a specific URL.'''
         self.driver.get("%s%s" % (self.live_server_url, url))
 
     def click_daytype(self, daytype):
+        '''Clicks a daytype button.'''
         holiday_buttons = self.driver.find_element_by_id("holiday-buttons")
         buttons = holiday_buttons.find_elements_by_tag_name("td")
         for button in buttons:
@@ -903,6 +980,7 @@ class FrontEndTest(LiveServerTestCase):
                 button.click()
 
     def goto_month(self, num):
+        '''Moves the calendar to the selected month.'''
         select = self.driver.find_element_by_id("month_select")
         options = select.find_elements_by_tag_name("option")
         for option in options:
@@ -911,9 +989,15 @@ class FrontEndTest(LiveServerTestCase):
                 break
 
 class MiddlewareTest(TestCase):
+    '''Tests the MiddleWare.'''
     def setUp(self):
+        '''Sets up the class.'''
         self.ehandler = UnreadablePostErrorMiddleware()
     def test_handles_unreadable_post_error_correctly(self):
+        '''Unreadable Post is raised when a post is aborted part-way
+        through. It's harmless and should be ignored. This middleware
+        allows us to not have to wrap entire methods in try/catch
+        blocks.'''
         self.assertRaises(
             Http404,
             self.ehandler.process_exception, {}, UnreadablePostError()

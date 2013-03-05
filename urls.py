@@ -8,10 +8,10 @@ from django.contrib import admin
 from timetracker import views
 from timetracker.tracker.models import Tbluser
 
-'''
-Generates the regex for the process list
-'''
 def gen_process_list():
+    '''
+    Generates the regex for the process list
+    '''
     out = ''
     for i, process in enumerate(Tbluser.PROCESS_CHOICES):
         out += process[0]
