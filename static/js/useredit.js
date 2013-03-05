@@ -1,3 +1,5 @@
+/*global $,window,clearForm,setupUI,alert,ajaxSuccess,confirm,emailValidate,validateDate*/
+
 function onOptionChange() {
     /*
        When the select box is changed the form needs to
@@ -11,7 +13,7 @@ function onOptionChange() {
 
     var user_id = $("#user_select").val();
     if (user_id === 'null') {
-        clearForm()
+        clearForm();
         return false;
     }
 
@@ -54,27 +56,25 @@ function onOptionChange() {
 }
 
 function clearForm() {
-
+	"use strict";
     /*
        Clears the entire form
 
        Takes no parameters and gives no fucks
     */
 
-    "use strict";
-
     $("#user-edit-form")
         .find(":input")
         .not(":button")
-        .each( function () {
+        .each(function () {
             $(this).val('');
         }
-    );
+			);
     return true;
 }
 
 function deleteEntry() {
-
+	"use strict";
     /*
        Asynchrously deletes an entry
 
@@ -101,14 +101,14 @@ function deleteEntry() {
             'user_id': user_id,
             'form_type': 'delete_user'
         },
-        success: function(data) {
+        success: function (data) {
             if (data.success === true) {
                 $("#edit-user-wrapper").load(
                     "/user_edit/ #edit-user-table",
                     function () {
                         ajaxSuccess();
                     }
-                );
+				);
             } else {
                 alert(data.error);
             }
@@ -119,19 +119,23 @@ function deleteEntry() {
 
 
 function addChangeEntry(entryType) {
-
+	"use strict";
     /*
        Asynchronously adds a user
 
        Takes no parameters and returns true/false for success
     */
 
-    if ( !emailValidate("#id_user_id") ) {
+	var data = [],
+	    form_data = {},
+	    index = 0;
+
+    if (!emailValidate("#id_user_id")) {
         alert("Invalid E-mail address");
         return false;
     }
 
-    if ( !validateDate("#id_start_date") ) {
+    if (!validateDate("#id_start_date")) {
         alert("Start Date validation error");
         return false;
     }
@@ -145,7 +149,7 @@ function addChangeEntry(entryType) {
         dataType: "json"
     });
 
-    var data = [
+    data = [
         'user_id',
         'firstname',
         'lastname',
@@ -158,7 +162,7 @@ function addChangeEntry(entryType) {
         'job_code',
         'holiday_balance',
         'disabled'
-    ]
+    ];
 
     /*
        here we run an anon function against
@@ -170,18 +174,16 @@ function addChangeEntry(entryType) {
        we take the current option box and
        change that entry server-side
     */
-       var form_data = {
+	form_data = {
         'form_type': 'useredit',
-        'mode': function() {
+        'mode': (function () {
             if (entryType === 'add') {
                 return false;
-            } else {
-                return $("#user_select").val();
-            }
-        }()
+			}
+            return $("#user_select").val();
+        }())
     };
 
-    var index = 0;
     // loop through the wrapped set which is the same,
     // size as the data array, that way we can get the
     // vals easy
@@ -192,9 +194,9 @@ function addChangeEntry(entryType) {
             } else {
                 form_data[data[index]] = $(this).val();
             }
-            index++;
+            index = index + 1;
         }
-    );
+	);
 
     $.ajax({
         url: '/ajax/',
@@ -203,12 +205,12 @@ function addChangeEntry(entryType) {
             if (data.success === true) {
                 $("#edit-user-wrapper")
                     .load("/user_edit/ #edit-user-table",
-                          function() {
-                              $("#user_select").change(function() {
-                                  onOptionChange();
-                              });
-                              ajaxSuccess();
-                          });
+                          function () {
+                            $("#user_select").change(function () {
+                                onOptionChange();
+                            });
+                            ajaxSuccess();
+                        });
             } else {
                 alert(data.error);
             }
@@ -244,7 +246,7 @@ function ajaxSuccess() {
     setupUI();
     clearForm();
     $("#user_select").val("null");
-    $("#user_select").change(function() {
+    $("#user_select").change(function () {
         onOptionChange();
     });
 
@@ -255,14 +257,14 @@ function ajaxSuccess() {
     // password field and the label associated with it.
     $("#user-edit-form")
         .find("label")
-        .each( function () {
+        .each(function () {
             if ($(this).attr("for") === "id_password") {
                 $(this).remove();
                 $("#id_password").remove();
             }
         });
 
-    if ( $("#is_team_leader").attr("value") ) {
+    if ($("#is_team_leader").attr("value")) {
         $("#id_job_code").hide();
     }
     return true;
