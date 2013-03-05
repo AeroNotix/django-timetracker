@@ -1,24 +1,30 @@
+/*global $,document,window,js_calendar,alert,change_table_data,retrieveComments,table_year,table_month*/
+
 var mouseState = false;
 document.onmousedown = function (e) {
+	"use strict";
     mouseState = true;
-}
-document.onmouseup = function (e) {
-    mouseState = false;
-}
+};
 
-document.onmousemove = function(e) {
-    var e = window.event || e;
-    var btn = 1;
+document.onmouseup = function (e) {
+	"use strict";
+    mouseState = false;
+};
+
+document.onmousemove = function (e) {
+	"use strict";
+    var mye = window.event || e,
+        btn = 1;
     if ($.browser.msie) {
         btn = 0;
     }
-    if (e.button === btn && mouseState === true) {
+    if (mye.button === btn && mouseState === true) {
         mouseState = false;
     }
-}
+};
 
-function dim () {
-
+function dim() {
+	"use strict";
     $('#screen').css({
         background: "#000",
         display: "block",
@@ -26,8 +32,8 @@ function dim () {
         top: 0,
         left: 0,
         opacity: 0.7,
-        'width':$(document).width(),
-        'height':$(document).height()
+        'width': $(document).width(),
+        'height': $(document).height()
     });
 
     $("#pic").css({
@@ -37,15 +43,17 @@ function dim () {
     });
 
     $("#pic").show();
-};
+}
 
 function undim() {
+	"use strict";
     $("#pic").hide();
     $('#screen').css({
         display: "none",
         opacity: 0.0
     });
 }
+
 function applyClass(klass) {
     "use strict";
     /*
@@ -61,7 +69,7 @@ function applyClass(klass) {
             if ($(this).hasClass("selected")) {
                 $(this).removeClass();
                 $(this).addClass(klass);
-                js_calendar[parseInt($(this).attr("usrid"))][parseInt($(this).text())] = klass;
+                js_calendar[parseInt($(this).attr("usrid"), 10)][parseInt($(this).text(), 10)] = klass;
             }
         });
     return true;
@@ -91,13 +99,13 @@ function submit_all() {
             'month': $("#holiday-table").attr("month"),
             'mass_data': JSON.stringify(js_calendar)
         },
-        success: function(data) {
+        success: function (data) {
             if (data.success !== true) {
                 alert(data.error);
             }
             change_table_data();
         },
-        error: function(ajaxObj, textStatus, error) {
+        error: function (ajaxObj, textStatus, error) {
             alert(error);
         }
     });
@@ -116,18 +124,21 @@ function submit_holidays(user_id) {
        Returns true for success, false for error
     */
 
+	var daytypes = [],
+	    x = 0,
+	    holiday_map = {};
+
     if (!user_id) {
         return true;
     }
 
     // create a map to hold the holidays
-    var daytypes = new Array()
+    daytypes = [];
 
     // iterate through the table and check if it's
     // selected or not, if it's selected, ignore it.
     // else, add the number and the class to the map.
-    var x;
-    for (x = 1; x < js_calendar[user_id].length; x++) {
+    for (x = 1; x < js_calendar[user_id].length; x += 1) {
         daytypes[x] = js_calendar[user_id][x];
     }
 
@@ -137,7 +148,7 @@ function submit_holidays(user_id) {
         dataType: 'json'
     });
 
-    var holiday_map = {};
+    holiday_map = {};
     holiday_map[user_id] = daytypes;
     $.ajax({
         url: '/ajax/',
@@ -147,13 +158,13 @@ function submit_holidays(user_id) {
             'month': $("#holiday-table").attr("month"),
             'mass_data': JSON.stringify(holiday_map)
         },
-        success: function(data) {
+        success: function (data) {
             if (data.success !== true) {
                 alert(data.error);
             }
             change_table_data();
         },
-        error: function(ajaxObj, textStatus, error) {
+        error: function (ajaxObj, textStatus, error) {
             alert(error);
         }
     });
@@ -163,7 +174,7 @@ function submit_holidays(user_id) {
     return true;
 }
 
-function addFunctions () {
+function addFunctions() {
     "use strict";
 
     // all the daytype classes
@@ -210,22 +221,23 @@ function addFunctions () {
     });
 
     $("#holiday-table")
-        .attr("border", "1")
+        .attr("border", "1");
 
     return true;
 }
 
-function change_table_data () {
-
+function change_table_data() {
+	"use strict";
     /*
        Function which takes the values of the select boxes
        constructs an ajax call based on those and replaces
        the table with the data returned from the ajax call
     */
 
-    var year = $("#year_select").val();
-    var month = $("#month_select").val();
-    var process = $("#process_select").val();
+    var year = $("#year_select").val(),
+        month = $("#month_select").val(),
+        process = $("#process_select").val(),
+	    url = [];
 
     if (process === "ALL") {
         process = "";
@@ -234,7 +246,7 @@ function change_table_data () {
         process = "";
     }
 
-    var url = [
+    url = [
         "/holiday_planning/", year,
         "/", month, "/", process
     ].join('');
@@ -243,27 +255,32 @@ function change_table_data () {
         type: "GET",
         dataType: "HTML",
         url: url,
-        success: function(data) {
-            $("#holiday-wrapper, #comments-wrapper").fadeTo(500, 0, function() {
+        success: function (data) {
+            $("#holiday-wrapper, #comments-wrapper").fadeTo(500, 0, function () {
                 /*
                   IE7 doesn't work with .html('<htmlstring>') so we use
                   the .load() function instead.
                 */
-                if ( $("#isie").attr("isie") === "true" ) {
+				var holiday_html = '',
+				    comments_html = '',
+				    table_year = '',
+				    table_month = '';
+                if ($("#isie").attr("isie") === "true") {
                     $("#comments-wrapper").load(
                         url + " #com-field"
                     );
                     $("#holiday-wrapper").load(
                         url + " #holiday-table",
-                        function() {
+                        function () {
                             addFunctions();
                             retrieveComments();
-                        });
+                        }
+					);
                 } else {
-                    var holiday_html = $(data).find("#holiday-wrapper").html();
-                    var comments_html = $(data).find("#comments-wrapper").html();
-                    var table_year = $(data).find("#holiday-table").attr("year");
-                    var table_month = $(data).find("#holiday-table").attr("month");
+                    holiday_html = $(data).find("#holiday-wrapper").html();
+                    comments_html = $(data).find("#comments-wrapper").html();
+                    table_year = $(data).find("#holiday-table").attr("year");
+                    table_month = $(data).find("#holiday-table").attr("month");
                     $("#com-field").html(comments_html);
                     $("#holiday-table").html(holiday_html);
                 }
@@ -277,7 +294,7 @@ function change_table_data () {
                 } else {
                     $("#process_select").val(process);
                 }
-                $(data).find("div").each(function() {
+                $(data).find("div").each(function () {
                     if ($(this).attr("id") === "newjs") {
                         eval($(this).text());
                     }
@@ -317,7 +334,7 @@ function removeComment() {
                 retrieveComments();
                 change_table_data();
             } else {
-                alert(data.error)
+                alert(data.error);
             }
         },
         error: function (data) {
@@ -355,7 +372,7 @@ function insertComment() {
                 retrieveComments();
                 change_table_data();
             } else {
-                alert(data.error)
+                alert(data.error);
             }
         },
         error: function (data) {
@@ -395,10 +412,10 @@ function retrieveComments() {
             if (data.success) {
                 $("#comments-field-comment").val(data.comment);
             } else {
-                alert(data.error)
+                alert(data.error);
             }
         },
-        error: function(data) {
+        error: function (data) {
             alert(data.error);
         }
     });
