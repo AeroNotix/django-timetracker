@@ -11,6 +11,8 @@ Python specific
 
 * MySQLdb Python MySQL bindings
 
+* ReportLab
+
 Misc
 ----
 * Apache+mod_wsgi
@@ -81,6 +83,22 @@ name is, however, some hints are below::
 This covers the installation portion of the code-dependencies.
 
 Next is preparing your system for the software which needs to be installed.
+
+ReportLab
+---------
+
+ReportLab is a PDF generation library allowing you to create rich and professional
+PDF documents directly in Python code.
+
+Linux::
+
+     ArchLinux:
+     sudo pacman -S python2-reportlab
+     Debian-based
+     sudo apt-get install python-reportlab
+
+Windows, you will need to head to the ReportLab homepage and download and install
+using their setup installer.
 
 Apache
 ------
