@@ -38,7 +38,7 @@ function ajaxCall(form) {
         pre = "#" + form + "_";
     }
 
-    breaks = $(pre + "breaks").val()
+    breaks = $(pre + "breaks").val();
     if (breaks === undefined || breaks === '') {
         breaks = "00:00";
     }
@@ -241,7 +241,7 @@ function deleteEntry() {
     if (answer) {
         return ajaxCall("delete");
     }
-	return false;
+    return false;
 }
 
 function toggleChangeEntries(st_hour, st_min, full_st,
