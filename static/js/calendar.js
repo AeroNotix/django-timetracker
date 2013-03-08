@@ -29,21 +29,29 @@ function ajaxCall(form) {
 
     $.ajaxSetup({type: 'POST'});
     var pre = '',
-        formData = {
-            "form_type" : form,
-            "entry_date" : $(pre + 'entrydate').val(),
-            "start_time" : $(pre + 'starttime').val(),
-            "end_time" : $(pre + 'endtime').val(),
-            "daytype" : $(pre + 'daytype').val(),
-            "hidden-id" : $('#hidden_id').val(),
-            "breaks": $(pre + "breaks").val()
-        };
+        formData = {},
+        breaks = '';
 
     if (form === "delete") {
         pre = "#change_";
     } else {
         pre = "#" + form + "_";
     }
+
+    breaks = $(pre + "breaks").val()
+    if (breaks === undefined || breaks === '') {
+        breaks = "00:00";
+    }
+
+    formData = {
+        "form_type" : form,
+        "entry_date" : $(pre + 'entrydate').val(),
+        "start_time" : $(pre + 'starttime').val(),
+        "end_time" : $(pre + 'endtime').val(),
+        "daytype" : $(pre + 'daytype').val(),
+        "hidden-id" : $('#hidden_id').val(),
+        "breaks": breaks
+    };
 
     if ($(pre + 'daytype').val() !== "WKDAY") {
         return;
