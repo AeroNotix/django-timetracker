@@ -191,6 +191,26 @@ def pad(string, padchr='0', amount=2):
 def nearest_half(n):
     return int(round(n / 0.5)) * 0.5
 
+def round_down(num, by=0.5):
+    '''Rounds a number down to the half below'''
+    if num < 0:
+        return (num // -by) * -by
+    return (num // by) * by
+
+def hr_calculation(user, tracking_days, return_days):
+    '''This is the calculation that the HR team use to make overtime calculations
+    since the OT calculation cannot take 0.25hr increments into account we ignore
+    all those which have 0.25hr -/+ and sum the remaining entries together.'''
+    total_hours = running_total = 0
+    for entry in tracking_days:
+        running_total += round_down(entry.totalhours())
+        total_hours += user.shiftlength_as_float()
+
+    for entry in return_days:
+        running_total += user.shiftlength_as_float()
+
+    return running_total - total_hours
+
 def float_to_time(timefloat):
     """Takes a float and returns the same representation of time.
 

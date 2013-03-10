@@ -92,3 +92,18 @@ or disable the accounts using this.
     UNDER_TIME_ENABLED = {
         "BF": True
     }
+
+OVERRIDE_CALCULATION
+--------------------
+
+If certain accounts need to make a specific calculation for the working time
+balance you can specify a function with the signature:
+
+function(:class:`timetracker.models.Tbluser` user,
+         :class:`django.db.models.query.QuerySet` tracking_entries,
+         :class:`django.db.models.query.QuerySet` return_days)
+
+Where `user` is the user for which the calculation is being made for,
+`tracking_entries` is the QuerySet containing the tracking entries being
+used for the calculation and `return_days` being the number of `daytype`
+return_days for that pariticular user.

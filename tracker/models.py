@@ -563,11 +563,6 @@ class Tbluser(models.Model):
         if ret not in ['html', 'int', 'dbg', 'num', 'flo']:
             raise Exception("Unsupported Argument. Must be html, int or dbg")
 
-        # we'll use augmented assignment
-        # so zero our local vars here
-        (trackingnumber, total_hours, total_mins,
-         shift_hours, shift_minutes) = (0, 0, 0, 0, 0)
-
         day_types = [element[0] for element in WORKING_CHOICES if element[0] != "SATUR"]
 
         if not year and not month:
@@ -593,28 +588,13 @@ class Tbluser(models.Model):
                                                        entry_date__year=year,
                                                        entry_date__month=month)
 
-        for item in tracking_days:
-            shift_hours += self.shiftlength.hour
-            shift_minutes += self.shiftlength.minute
 
-            total_hours += (
-                  item.end_time.hour
-                - item.start_time.hour
-                - item.breaks.hour
-                )
-
-            total_mins += (
-                  item.end_time.minute
-                - item.start_time.minute
-                - item.breaks.minute
-                )
-
-        for item in return_days:
-            shift_hours += self.shiftlength.hour + self.breaklength.hour
-            shift_minutes += self.shiftlength.minute + self.breaklength.minute
-
-        trackingnumber = 0 - (add(shift_hours, (shift_minutes / 60.0))
-                           - add(total_hours, (total_mins / 60.0)))
+        if settings.OVERRIDE_CALCULATION.get(self.market):
+            trackingnumber = \
+                settings.OVERRIDE_CALCULATION[self.market](self, tracking_days, return_days)
+        else:
+            trackingnumber = \
+                self._regular_calculation(tracking_days, return_days)
 
         if ret == 'html':
             tracker_class_map = {
@@ -645,6 +625,35 @@ class Tbluser(models.Model):
         elif ret == 'dbg':
             return (trackingnumber, total_hours, total_mins,
                     shift_hours, shift_minutes)
+
+    def _regular_calculation(self, tracking_days, return_days):
+        # we'll use augmented assignment
+        # so zero our local vars here
+        (total_hours, total_mins,
+         shift_hours, shift_minutes) = (0, 0, 0, 0)
+
+        for item in tracking_days:
+            shift_hours += self.shiftlength.hour
+            shift_minutes += self.shiftlength.minute
+
+            total_hours += (
+                item.end_time.hour
+                - item.start_time.hour
+                - item.breaks.hour
+                )
+
+            total_mins += (
+                item.end_time.minute
+                - item.start_time.minute
+                - item.breaks.minute
+                )
+
+        for item in return_days:
+            shift_hours += self.shiftlength.hour + self.breaklength.hour
+            shift_minutes += self.shiftlength.minute + self.breaklength.minute
+
+        return 0 - (add(shift_hours, (shift_minutes / 60.0))
+                           - add(total_hours, (total_mins / 60.0)))
 
     def shiftlength_as_float(self):
         '''Returns the shiftlength of the user as a float
