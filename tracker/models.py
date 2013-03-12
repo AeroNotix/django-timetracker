@@ -1035,6 +1035,7 @@ class TrackingEntry(models.Model):
                            minutes=self.start_time.minute)
         td += dt.timedelta(hours=self.breaks.hour,
                            minutes=self.breaks.minute)
+        debug_log.debug(str((td.seconds / 60.0) / 60.0))
         return ((td.seconds / 60.0) / 60.0)
 
     def nearest_half(self):
