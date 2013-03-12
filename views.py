@@ -274,9 +274,13 @@ def ajax(request):
         'add_comment': add_comment,
         'remove_comment': remove_comment
     }
-    return ajax_funcs.get(
-        form_type,ajax_error
-        )(request)
+    try:
+        return ajax_funcs.get(
+            form_type,ajax_error
+            )(request)
+    except Exception as e:
+        error_log.error(str(e))
+        raise
 
 @admin_check
 def view_with_employee_list(request, template=None, get_all=False):
