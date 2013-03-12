@@ -44,6 +44,8 @@ except ImportError:
     send_pending_overtime_notification = lambda x: x
     send_undertime_notification = lambda x: x
 
+from timetracker.loggers import debug_log
+
 class Tbluser(models.Model):
 
     '''Models the user table and provides the admin interface with the
@@ -1054,6 +1056,8 @@ class TrackingEntry(models.Model):
     def time_difference(self):
         '''Calculates the difference between this tracking entry and the user's
         shiftlength'''
+        value = self.totalhours() - self.user.shiftlength_as_float()
+        debug_log.debug("Time difference:" + str(value))
         return self.totalhours() - self.user.shiftlength_as_float()
 
     def sending_undertime(self):
@@ -1066,6 +1070,7 @@ class TrackingEntry(models.Model):
 
         if self.daytype == "WKDAY" and self.is_overtime() or \
                 self.daytype in ["PUWRK", "SATUR"]:
+            debug_log.debug("Overtime created: " + self.user.name())
             send_overtime_notification(self)
         if self.is_undertime() and self.sending_undertime():
             send_undertime_notification(self)
