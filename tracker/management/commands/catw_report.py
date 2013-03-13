@@ -158,6 +158,7 @@ def report_for_account(choice_list, year, month):
                     )
             except TrackingEntry.DoesNotExist:
                 csvout.writerow(blankrow(user, year, months, day))
+                continue
             csvout.writerow(realrow(user, year, months, day, entry))
 
 class Command(BaseCommand):
