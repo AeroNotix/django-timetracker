@@ -73,9 +73,10 @@ class UserAdmin(admin.ModelAdmin):
     above.   
     """
     list_display = ('__unicode__', 'display_user_type', 'disabled')
-    search_fields = ["firstname", "lastname", "user_id"]
     actions = [send_password_reminder, create_100_random_users,
                set_to_secure_password]
+    search_fields = ["firstname", "lastname", "user_id"]
+
 
 class RelatedAdmin(admin.ModelAdmin):
     filter_horizontal = ('users',)

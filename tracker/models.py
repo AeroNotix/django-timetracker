@@ -250,8 +250,8 @@ class Tbluser(models.Model):
 
     def update_password(self, string):
         '''Update our password to a new one whilst hashing it.'''
-        self.salt = get_random_string()
-        self.password = hasher(self.salt, string)
+        self.salt = get_random_string(12)
+        self.password = hasher(self.salt+string)
 
     def set_random_password(self):
         password = get_random_string(12)
