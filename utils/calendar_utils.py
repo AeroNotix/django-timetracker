@@ -55,7 +55,9 @@ from timetracker.utils.datemaps import (MONTH_MAP, WEEK_MAP_SHORT,
                                         round_down)
 from timetracker.utils.decorators import (admin_check, json_response,
                                           request_check)
+
 from timetracker.utils.error_codes import CONNECTION_REFUSED
+from timetracker.utils.crypto import get_random_string
 
 
 def get_request_data(form, request):
@@ -1247,7 +1249,7 @@ def useredit(request):
     """
 
     # create a random enough password
-    password = ''.join([chr(random.randint(65, 91)) for _ in range(12)])
+    password = get_random_string(12)
     data = {'password': password}
 
     # get the data off the request object
