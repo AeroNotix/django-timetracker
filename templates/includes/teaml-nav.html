@@ -1,4 +1,16 @@
 {% extends "includes/nav.html" %}
+
+{% comment %}
+
+This used to be different from the admin-nav.html file but some features
+were deprecated and some made available to all admin personnel so the
+two nav bars are now the same.
+
+However, it's useful to later down the line enable/disable things depending
+on the user type so I left it in.
+
+{% endcomment %}
+
 {% block right_aligned_elements %}
 <li id="balance"><a href="/explain/"><br/>Your balance is: {{ balance|safe }}</a></li>
 {% endblock right_aligned_elements %}
