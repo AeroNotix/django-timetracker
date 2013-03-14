@@ -38,6 +38,40 @@ from timetracker.utils.datemaps import (
     generate_year_box, nearest_half, round_down
     )
 
+from timetracker.utils.crypto import hasher, get_random_string
+
+'''
+The modules which provide these functions should be provided for by
+the setup environment, this is due to the fact that some notifications
+may include business-specific details, we can override by simply incl-
+uding a local notifications.py in this directory with the required fu-
+nctions we need.
+'''
+
+try:
+    # The modules which provide these functions should be provided for by
+    # the setup environment, this is due to the fact that some notifications
+    # may include business-specific details, we can override by simply incl-
+    # uding a local notifications.py in this directory with the required fu-
+    # nctions we need.
+    from timetracker.tracker.notifications import (
+        send_overtime_notification, send_pending_overtime_notification,
+        send_undertime_notification
+        )
+except ImportError:
+    #pylint: disable=W0613
+    def send_overtime_notification(*args, **kwargs):
+        '''Not implemented'''
+        pass
+    def send_pending_overtime_notification(*args, **kwargs):
+        '''Not implemented'''
+        pass
+    def send_undertime_notification(*args, **kwargs):
+        '''Not implemented'''
+        pass
+
+from timetracker.loggers import debug_log
+
 
 class Tbluser(models.Model):
 
@@ -115,8 +149,10 @@ class Tbluser(models.Model):
                                 db_column='uLastName',
                                 verbose_name=("Last Name"))
 
-    password = models.CharField(max_length=60,
+    password = models.CharField(max_length=128,
                                 db_column='uPassword')
+
+    salt = models.TextField()
 
     user_type = models.CharField(max_length=5,
                                  choices=USER_TYPE)
@@ -172,6 +208,19 @@ class Tbluser(models.Model):
         return u'%s - %s %s ' % (self.user_id,
                                 self.firstname,
                                 self.lastname)
+
+    def validate_password(self, string):
+        '''We return whether our password matches the one we're supplied.
+
+        This method will hash the string for you so you can pass in the
+        raw string to check our password against.'''
+        return hasher(self.salt+string) == self.password
+
+    def update_password(self, string):
+        '''Update our password to a new one whilst hashing it.'''
+        self.salt = get_random_string()
+        self.password = hasher(self.salt, string)
+        self.save()
 
     def isdisabled(self):
         '''Returns whether this user is disabled or not'''
