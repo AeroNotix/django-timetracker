@@ -27,6 +27,8 @@ from timetracker.utils.datemaps import (
     MONTH_MAP, generate_year_box, nearest_half
     )
 
+from timetracker.utils.crypto import hasher, get_random_string
+
 '''
 The modules which provide these functions should be provided for by
 the setup environment, this is due to the fact that some notifications
@@ -141,8 +143,10 @@ class Tbluser(models.Model):
                                 db_column='uLastName',
                                 verbose_name=("Last Name"))
 
-    password = models.CharField(max_length=60,
+    password = models.CharField(max_length=128,
                                 db_column='uPassword')
+
+    salt = models.TextField()
 
     user_type = models.CharField(max_length=5,
                                  choices=USER_TYPE)
@@ -198,6 +202,19 @@ class Tbluser(models.Model):
         return u'%s - %s %s ' % (self.user_id,
                                 self.firstname,
                                 self.lastname)
+
+    def validate_password(self, string):
+        '''We return whether our password matches the one we're supplied.
+
+        This method will hash the string for you so you can pass in the
+        raw string to check our password against.'''
+        return hasher(self.salt+string) == self.password
+
+    def update_password(self, string):
+        '''Update our password to a new one whilst hashing it.'''
+        self.salt = get_random_string()
+        self.password = hasher(self.salt, string)
+        self.save()
 
     def isdisabled(self):
         '''Returns whether this user is disabled or not'''
