@@ -1107,7 +1107,7 @@ def useredit(request):
 
     # create a random enough password
     password = get_random_string(12)
-    data = {'password': password}
+    data = {}
 
     # get the data off the request object
     for item in request.POST:
@@ -1139,6 +1139,7 @@ def useredit(request):
                 return json_data
             # create the user
             user = Tbluser(**data)
+            user.update_password(password)
             user.save()
             # link the user to the admin
             try:
