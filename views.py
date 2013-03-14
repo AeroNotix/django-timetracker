@@ -126,7 +126,7 @@ def login(request):
             },
             RequestContext(request))
 
-    if user.password == request.POST['password']:
+    if user.validate_password(request.POST['password']):
         # if all goes well, send to the tracker
         request.session['user_id'] = user.id
 
