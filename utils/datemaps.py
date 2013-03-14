@@ -203,7 +203,7 @@ def hr_calculation(user, tracking_days, return_days):
     all those which have 0.25hr -/+ and sum the remaining entries together.'''
     total_hours = running_total = 0
     for entry in tracking_days:
-        running_total += round_down(entry.totalhours())
+        running_total += round_down(entry.total_working_time())
         total_hours += user.shiftlength_as_float()
 
     for entry in return_days:
