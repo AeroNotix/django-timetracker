@@ -186,6 +186,18 @@
    color: black;
 }
 
+.OK {
+   background: #B8B8B8;
+}
+
+.OVERTIME {
+   background: red;
+}
+
+.UNDERTIME {
+   background: yellow;
+}
+
 .selected {
    background-color: #FF6F00;
    color: black;
