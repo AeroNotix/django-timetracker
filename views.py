@@ -546,7 +546,6 @@ def forgot_pass(request):
                                   {},
                                   RequestContext(request))
 
-    # We accept either the ID of the user or just the e-mail address
     try:
         try:
             user = Tbluser.objects.get(id=email_recipient)
