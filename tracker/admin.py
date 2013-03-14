@@ -21,21 +21,9 @@ def send_password_reminder(modeladmin, request, queryset):
     for user in queryset:
         user.send_password_reminder()
 
-        info = {
-            'name': user.firstname,
-            'password': user.password
-        }
-
-        try:
-            send_mail(
-                "Password Reminder",
-                email_message.format(**info),
-                "timetracker@unmonitored.com",
-                [user.user_id]
-            )
-        except Exception as error:
-            if error[0] == CONNECTION_REFUSED:
-                print email_message.format(**info),
+def set_to_secure_password(modeladmin, request, queryset):
+    for user in queryset:
+        print user.set_random_password()
 
 def create_100_random_users(modeladmin, request, queryset):
     '''Creates 100 random users for testing purposes.'''
@@ -72,7 +60,8 @@ class UserAdmin(admin.ModelAdmin):
     above.   
     """
     list_display = ('__unicode__', 'display_user_type', 'disabled')
-    actions = [send_password_reminder, create_100_random_users]
+    actions = [send_password_reminder, create_100_random_users,
+               set_to_secure_password]
 
 class RelatedAdmin(admin.ModelAdmin):
     filter_horizontal = ('users',)
