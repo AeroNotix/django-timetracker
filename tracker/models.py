@@ -48,6 +48,11 @@ uding a local notifications.py in this directory with the required fu-
 nctions we need.
 '''
 try:
+    # The modules which provide these functions should be provided for by
+    # the setup environment, this is due to the fact that some notifications
+    # may include business-specific details, we can override by simply incl-
+    # uding a local notifications.py in this directory with the required fu-
+    # nctions we need.
     from timetracker.tracker.notifications import (
         send_overtime_notification, send_pending_overtime_notification,
         send_undertime_notification
@@ -56,6 +61,16 @@ except ImportError:
     send_overtime_notification = lambda x: x
     send_pending_overtime_notification = lambda x: x
     send_undertime_notification = lambda x: x
+    #pylint: disable=W0613
+    def send_overtime_notification(*args, **kwargs):
+        '''Not implemented'''
+        pass
+    def send_pending_overtime_notification(*args, **kwargs):
+        '''Not implemented'''
+        pass
+    def send_undertime_notification(*args, **kwargs):
+        '''Not implemented'''
+        pass
 
 from timetracker.loggers import debug_log
 
@@ -232,6 +247,12 @@ class Tbluser(models.Model):
                   'timetracker@unmonitored.com',
                   [email_recipient], fail_silently=False
         )
+
+    def update_password(self, string):
+        '''Update our password to a new one whilst hashing it.'''
+        self.salt = get_random_string()
+        self.password = hasher(self.salt, string)
+        self.save()
 
     def isdisabled(self):
         '''Returns whether this user is disabled or not'''
