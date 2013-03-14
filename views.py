@@ -386,8 +386,8 @@ def yearview(request, who=None, year=None):
         try:
             userid = auth_user.get_subordinates()[0].id
             return HttpResponseRedirect("/yearview/%s/%s/" % (userid, year))
-        except (tblauth.DoesNotExist):
-            return HttpResponse("You have no team members.")
+        except (tblauth.DoesNotExist, IndexError):
+            return HttpResponseRedirect("/user_edit/")
 
     # stop people from editing the URL to access agents outside their
     # span of control.
@@ -419,8 +419,8 @@ def overtime(request, who=None, year=None):
         try:
             userid = auth_user.get_subordinates()[0].id
             return HttpResponseRedirect("/overtime/%s/%s/" % (userid, year))
-        except (tblauth.DoesNotExist):
-            return HttpResponse("You have no team members.")
+        except (tblauth.DoesNotExist, IndexError):
+            return HttpResponseRedirect("/user_edit/")
 
     # stop people from editing the URL to access agents outside their
     # span of control.
