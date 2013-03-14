@@ -214,12 +214,14 @@ class Tbluser(models.Model):
 
         This method will hash the string for you so you can pass in the
         raw string to check our password against.'''
-        return hasher(self.salt+string) == self.password
+        print hasher(self.salt + string)
+        print self.password
+        return hasher(self.salt + string) == self.password
 
     def update_password(self, string):
         '''Update our password to a new one whilst hashing it.'''
-        self.salt = get_random_string()
-        self.password = hasher(self.salt, string)
+        self.salt = get_random_string(12)
+        self.password = hasher(self.salt+string)
 
     def set_random_password(self):
         password = get_random_string(12)
