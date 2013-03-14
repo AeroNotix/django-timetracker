@@ -380,6 +380,26 @@ class Tbluser(models.Model):
                 comments_list.append(' '.join(comment_string))
         return comments_list
 
+    def year_as_whole(self, year):
+        final = []
+        out = []
+        for x in range(1,13):
+            out.append("<tr id=\"%d_row\" onclick=%s><th>%s</th>"
+                       % (x,'"highlight_row(%d)"' % x, MONTH_MAP[x-1][1]))
+            for z in range(1,32):
+                try:
+                    if dt.date(int(year),x,z).isoweekday() in [6,7]:
+                        out.append('<td class="WKEND">%d</td>' % z)
+                    else:
+                        out.append('<td {function} class={c}>%d</td>' % z)
+                except ValueError:
+                    out.append('<td {function} class={c}>%d</td>' % z)
+
+            out.append("</tr>")
+            final.append(out)
+            out = []
+        return final
+
     def yearview(self, year):
         '''
         Generates the HTML table for the yearview page. It iterates through
@@ -391,28 +411,12 @@ class Tbluser(models.Model):
         '''
         entries = TrackingEntry.objects.filter(user_id=self.id,
                                                entry_date__year=year)
-        final = []
-        out = []
-        for x in range(1,13):
-            out.append("<tr id=\"%d_row\" onclick=%s><th>%s</th>"
-                       % (x,'"highlight_row(%d)"' % x, MONTH_MAP[x-1][1]))
-            for z in range(1,32):
-                try:
-                    if dt.date(int(year),x,z).isoweekday() in [6,7]:
-                        out.append('<td class="WKEND">%d</td>' % z)
-                    else:
-                        out.append('<td class={c}>%d</td>' % z)
-                except ValueError:
-                    out.append('<td class={c}>%d</td>' % z)
-
-            out.append("</tr>")
-            final.append(out)
-            out = []
-
+        basehtml = self.year_as_whole(year)
         for entry in entries:
-            final[entry.entry_date.month-1][entry.entry_date.day] = \
-                final[entry.entry_date.month-1][entry.entry_date.day].format(c=entry.daytype)
-        table_string = ''.join([''.join(subrow) for subrow in final])
+            basehtml[entry.entry_date.month-1][entry.entry_date.day] = \
+                basehtml[entry.entry_date.month-1][entry.entry_date.day].format(
+                c=entry.daytype, function="")
+        table_string = ''.join([''.join(subrow) for subrow in basehtml])
         table_string += '''
 <tr>
   <td colspan=100>
@@ -441,6 +445,28 @@ class Tbluser(models.Model):
        ''.join("<tr><th>%s</th><td>%s</td>"
                % (k, v) for k, v in sorted(self.get_balances(year).items()))
        )
+        return '<table id="holiday-table"><th colspan=999>%s</th>' % self.name() + table_string
+
+    def overtime_view(self, year):
+        entries = TrackingEntry.objects.filter(user_id=self.id,
+                                               entry_date__year=year)
+        basehtml = self.year_as_whole(year)
+        for entry in entries:
+            basehtml[entry.entry_date.month-1][entry.entry_date.day] = \
+                basehtml[entry.entry_date.month-1][entry.entry_date.day].format(
+                c=entry.overtime_class(),
+                function="entry_date='%s'" % entry.entry_date)
+        table_string = ''.join([''.join(subrow) for subrow in basehtml])
+        table_string += '''
+<tr>
+  <td colspan=100>
+    <table>
+      <tr><th style="width:10%%">Year</th><td style="width:90%%">{yearbox}</td></tr>
+      <tr><th>Agent</th><td>{employees_select}</td></tr>
+    </table>
+  </td>
+</tr>
+'''
         return '<table id="holiday-table"><th colspan=999>%s</th>' % self.name() + table_string
 
     '''
@@ -1055,6 +1081,14 @@ class TrackingEntry(models.Model):
             return self.time_difference() <= -self.threshold()
         else:
             return False
+
+    def overtime_class(self):
+        if self.is_overtime():
+            return 'OVERTIME'
+        elif self.is_undertime():
+            return 'UNDERTIME'
+        else:
+            return 'OK'
 
     def time_difference(self):
         '''Calculates the difference between this tracking entry and the user's

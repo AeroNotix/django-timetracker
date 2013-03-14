@@ -850,6 +850,33 @@ def ajax_change_entry(request):
     json_data['calendar'] = calendar
     return json_data
 
+@admin_check
+@json_response
+def get_tracking_entry_data(request):
+    form = {
+        "who": None,
+        "entry_date": None
+        }
+    form.update(get_request_data(form, request))
+    debug_log.debug("JSON Request Tracking Entry Data: %s/%s" %
+                  (form['entry_date'], form['who']))
+    try:
+        entry = TrackingEntry.objects.get(user=form['who'], entry_date=form['entry_date'])
+    except TrackingEntry.DoesNotExist:
+        return {
+            "success": False,
+            "error": "No entry on that date."
+            }
+
+    return {
+        "success": True,
+        "entry_date": str(entry.entry_date),
+        "start_time": str(entry.start_time),
+        "end_time": str(entry.end_time),
+        "breaks": str(entry.breaks),
+        "daytype": str(entry.daytype),
+        "length": entry.total_working_time(),
+        }
 
 @request_check
 @admin_check

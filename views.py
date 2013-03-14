@@ -25,9 +25,13 @@ from timetracker.utils.calendar_utils import (gen_calendar, gen_holiday_list,
                                               useredit, mass_holidays,
                                               profile_edit, gen_datetime_cal,
                                               get_comments, add_comment,
-                                              remove_comment)
+                                              remove_comment,
+                                              get_tracking_entry_data)
 
-from timetracker.utils.datemaps import generate_select, generate_employee_box
+from timetracker.utils.datemaps import (generate_select,
+                                        generate_employee_box,
+                                        generate_year_box)
+
 from timetracker.utils.decorators import admin_check, loggedin
 from timetracker.utils.error_codes import CONNECTION_REFUSED
 from timetracker.loggers import suspicious_log, email_log, error_log
@@ -272,7 +276,8 @@ def ajax(request):
         'profileedit': profile_edit,
         'get_comments': get_comments,
         'add_comment': add_comment,
-        'remove_comment': remove_comment
+        'remove_comment': remove_comment,
+        'tracking_data': get_tracking_entry_data,
     }
     try:
         return ajax_funcs.get(
@@ -394,14 +399,48 @@ def yearview(request, who=None, year=None):
     # generate our year table.
     yeartable = target_user.yearview(year)
     # interpolate our values into it.
-    yeartable = yeartable.format(employees_select=generate_employee_box(auth_user), c="EMPTY")
+    yeartable = yeartable.format(employees_select=generate_employee_box(auth_user),
+                                 c="EMPTY",
+                                 function="")
     return render_to_response("yearview.html",
                               {"yearview_table": yeartable,
-                               "balances": target_user.get_balances(year),
                                "year": year,
                                "eeid": who,
                                }, RequestContext(request))
 
+@admin_check
+def overtime(request, who=None, year=None):
+    auth_user = Tbluser.objects.get(
+        id=request.session.get('user_id')
+        )
+    if not year:
+        year = str(datetime.datetime.now().year)
+    if not who:
+        try:
+            userid = auth_user.get_subordinates()[0].id
+            return HttpResponseRedirect("/overtime/%s/%s/" % (userid, year))
+        except (tblauth.DoesNotExist):
+            return HttpResponse("You have no team members.")
+
+    # stop people from editing the URL to access agents outside their
+    # span of control.
+    try:
+        target_user = auth_user.get_subordinates().get(id=who)
+    except Tbluser.DoesNotExist:
+        raise Http404
+
+    # generate our year table.
+    ot_table = target_user.overtime_view(year)
+    # interpolate our values into it.
+    ot_table = ot_table.format(employees_select=generate_employee_box(auth_user),
+                               yearbox=generate_year_box(int(year), id="cmb_yearbox"),
+                               c="EMPTY",
+                               function="")
+    return render_to_response("overtime.html",
+                              {"ot_table": ot_table,
+                               "year": year,
+                               "eeid": who,
+                               }, RequestContext(request))
 
 @loggedin
 def edit_profile(request):
