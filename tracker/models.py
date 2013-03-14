@@ -146,7 +146,7 @@ class Tbluser(models.Model):
     password = models.CharField(max_length=128,
                                 db_column='uPassword')
 
-    salt = models.TextField(max_length=128)
+    salt = models.CharField(max_length=128)
 
     user_type = models.CharField(max_length=5,
                                  choices=USER_TYPE)
