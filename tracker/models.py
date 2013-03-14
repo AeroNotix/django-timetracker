@@ -381,6 +381,9 @@ class Tbluser(models.Model):
         return comments_list
 
     def year_as_whole(self, year):
+        '''Creates an entire year table with the weekends properly labelled as
+        well as giving an area to fill in additional html tags and css classes.
+        This is useful for generating a year view on the data in some way.'''
         final = []
         out = []
         for x in range(1,13):
@@ -448,6 +451,14 @@ class Tbluser(models.Model):
         return '<table id="holiday-table"><th colspan=999>%s</th>' % self.name() + table_string
 
     def overtime_view(self, year):
+        '''
+        Generates the HTML table for the overtime_view page. It iterates through
+        the entire set of tracking entries for a given year.
+
+        :param year: The year in which the overtime should be generated from.
+        :type year: :class:`int`
+        :rtype :class:`str`
+        '''
         entries = TrackingEntry.objects.filter(user_id=self.id,
                                                entry_date__year=year)
         basehtml = self.year_as_whole(year)
@@ -1019,6 +1030,7 @@ class TrackingEntry(models.Model):
 
     @staticmethod
     def headings():
+        '''Describes this class as if it were a CSV heading bar.'''
         return [
             "User", "Entry Date", "Start Time", "End Time", "Breaks",
             "Daytype", "Comments"
@@ -1102,6 +1114,8 @@ class TrackingEntry(models.Model):
             return False
 
     def overtime_class(self):
+        '''Returns a string for the CSS class to use when using this entry in
+        the context of over/undertime.'''
         if self.is_overtime():
             return 'OVERTIME'
         elif self.is_undertime():

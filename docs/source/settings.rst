@@ -99,11 +99,28 @@ OVERRIDE_CALCULATION
 If certain accounts need to make a specific calculation for the working time
 balance you can specify a function with the signature:
 
-function(:class:`timetracker.models.Tbluser` user,
-         :class:`django.db.models.query.QuerySet` tracking_entries,
-         :class:`django.db.models.query.QuerySet` return_days)
+.. code-block:: python
+
+    def f(:class:`timetracker.models.Tbluser` user,
+          :class:`django.db.models.query.QuerySet` tracking_entries,
+          :class:`django.db.models.query.QuerySet` return_days):
+        return :class:`float`
+
 
 Where `user` is the user for which the calculation is being made for,
 `tracking_entries` is the QuerySet containing the tracking entries being
 used for the calculation and `return_days` being the number of `daytype`
 return_days for that pariticular user.
+
+LOG_LEVEL
+---------
+
+Set the default log level for all loggers. There is a lot of debug log calls
+throughout the code and a good log level is logging.INFO.
+
+You can choose from:
+
+* logging.DEBUG (good for test servers where you're modifying or debugging source)
+* logging.INFO
+* logging.WARNING
+* logging.CRITICAL
