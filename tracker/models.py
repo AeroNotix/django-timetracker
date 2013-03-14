@@ -215,6 +215,29 @@ class Tbluser(models.Model):
         self.salt = get_random_string()
         self.password = hasher(self.salt, string)
 
+    def set_random_password(self):
+        password = get_random_string(12)
+        self.update_password(password)
+        self.save()
+        return password
+
+    def send_password_reminder(self):
+        password = self.set_random_password()
+        email_message = \
+            "Hi {name},\n\n" \
+            "Your password reminder is: {password}\n\n" \
+            "Regards,"
+        email_message = email_message.format(**{
+                'name': self.firstname,
+                'password': password
+                })
+
+        send_mail('You recently requested a password reminder',
+                  email_message,
+                  'timetracker@unmonitored.com',
+                  [email_recipient], fail_silently=False
+        )
+
     def isdisabled(self):
         '''Returns whether this user is disabled or not'''
         return self.disabled

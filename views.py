@@ -521,24 +521,9 @@ def forgot_pass(request):
 
     # if we're here then the request was a post and we
     # should return the password for the email address
-    password = get_random_string()
     try:
         user = Tbluser.objects.get(user_id=email_recipient)
-        user.update_password(password)
-        user.save()
-        email_message = '''
-              Hi {name},
-              \tYour password reminder is: {password}\n
-              Regards,
-              '''.format(**{
-                'name': user.name(),
-                'password': user.password
-                })
-        send_mail('You recently requested a password reminder',
-                  email_message,
-                  'timetracker@unmonitored.com',
-                  [email_recipient], fail_silently=False
-        )
+        user.reset_password()
     except Tbluser.DoesNotExist:
         suspicious_log.info(
             "Someone tried to reset a password of a non-existant address"
