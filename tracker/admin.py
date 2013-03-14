@@ -19,8 +19,8 @@ def send_password_reminder(modeladmin, request, queryset):
     when editing the tbluser instances. This allows you to send an e-mail
     reminder en masse to all users selected.
     '''
-    email_message = "Hi {name},\n\tYour password is {password}\nRegards,"
     for user in queryset:
+        user.send_password_reminder()
 
         info = {
             'name': user.firstname,

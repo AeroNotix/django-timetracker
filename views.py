@@ -562,5 +562,6 @@ def forgot_pass(request):
                 "or a site administrator."
             },
             RequestContext(request))
-    password_reminder(user)
+    user.set_random_password()
+    user.send_password_reminder()
     return HttpResponseRedirect("/")
