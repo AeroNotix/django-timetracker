@@ -1251,7 +1251,7 @@ def useredit(request):
 
     # create a random enough password
     password = get_random_string(12)
-    data = {'password': password}
+    data = {}
 
     # get the data off the request object
     for item in request.POST:
