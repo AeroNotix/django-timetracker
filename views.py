@@ -521,8 +521,11 @@ def forgot_pass(request):
 
     # if we're here then the request was a post and we
     # should return the password for the email address
+    password = get_random_string()
     try:
         user = Tbluser.objects.get(user_id=email_recipient)
+        user.update_password(password)
+        user.save()
         email_message = '''
               Hi {name},
               \tYour password reminder is: {password}\n
