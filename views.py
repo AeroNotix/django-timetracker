@@ -547,10 +547,34 @@ def forgot_pass(request):
                                   {},
                                   RequestContext(request))
 
-    # We accept either the ID of the user or just the e-mail address
+    # if we're here then the request was a post and we
+    # should return the password for the email address
+    password = get_random_string()
     try:
         user = Tbluser.objects.get(id=email_recipient)
-    except ValueError:
-        user = Tbluser.objects.get(user_id=email_recipient)
-    password_reminder(user)
+        user.update_password(password)
+        user.save()
+        email_message = '''
+              Hi {name},
+              \tYour password reminder is: {password}\n
+              Regards,
+              '''.format(**{
+                'name': user.name(),
+                'password': user.password
+                })
+        send_mail('You recently requested a password reminder',
+                  email_message,
+                  'timetracker@unmonitored.com',
+                  [email_recipient], fail_silently=False
+        )
+    except Tbluser.DoesNotExist:
+        suspicious_log.info(
+            "Someone tried to reset a password of a non-existant address: %" \
+            % email_recipient
+        )
+    except Exception as error:
+        if error[0] == CONNECTION_REFUSED:
+            email_log.error("Failed sending e-mail to: %s" % email_recipient)
+        else:
+            error_log.critical("Error resetting password: %s" % str(error))
     return HttpResponseRedirect("/")
