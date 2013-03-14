@@ -74,7 +74,7 @@ def index(request):
     if request.session.get("user_id"):
         user = Tbluser.objects.get(id=request.session.get("user_id"))
     if user.sup_tl_or_admin():
-        return HttpResponseRedirect("/admin_view/")
+        return HttpResponseRedirect("/overtime/")
     else:
         return HttpResponseRedirect("/calendar/")
 
@@ -131,7 +131,7 @@ def login(request):
         request.session['user_id'] = user.id
 
         if user.sup_tl_or_admin():
-            return HttpResponseRedirect("/admin_view/")
+            return HttpResponseRedirect("/overtime/")
         else:
             return HttpResponseRedirect("/calendar/")
     else:

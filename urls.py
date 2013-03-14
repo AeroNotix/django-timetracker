@@ -58,8 +58,6 @@ urlpatterns = patterns('',
     url(r'^overtime/?(?P<who>\d+)?$', views.overtime),
     url(r'^overtime/?(?P<who>\d+)/%s/?$' % YEAR, views.overtime),
 
-    url(r'^admin_view/?$', views.view_with_employee_list,
-        {"template":"admin_view.html"}),
     url(r'^ajax/?$', views.ajax),
     url(r'^login/?$', views.login),
     url(r'^logout/?$', views.logout),
