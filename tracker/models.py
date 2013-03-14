@@ -1029,8 +1029,7 @@ class TrackingEntry(models.Model):
         '''Returns the working portion of this tracking entry'''
         td = dt.timedelta(hours=self.end_time.hour,
                           minutes=self.end_time.minute)
-        td += dt.timedelta(hours=self.breaks.hour,
-                           minutes=self.breaks.minute)
+        td += self.normalized_break()
         return td
 
     def breaktime(self):
@@ -1068,6 +1067,26 @@ class TrackingEntry(models.Model):
         '''Rounds the time to the nearest half hour.'''
         return nearest_half(self.totalhours())
 
+    def normalized_break(self):
+        breaklength = dt.timedelta(hours=self.breaks.hour,
+                           minutes=self.breaks.minute)
+        breaklength_reg = dt.timedelta(hours=self.user.breaklength.hour,
+                                       minutes=self.user.breaklength.minute)
+        if breaklength.seconds > breaklength_reg.seconds:
+            return breaklength_reg
+        else:
+            return breaklength
+
+    def total_working_time(self):
+        '''Total working time returns the actual working time of an
+        entry, ignoring breaks taken over the regular amount.'''
+        td = dt.timedelta(hours=self.end_time.hour,
+                          minutes=self.end_time.minute)
+        td -= dt.timedelta(hours=self.start_time.hour,
+                           minutes=self.start_time.minute)
+        td += self.normalized_break()
+        return ((td.seconds / 60.0) / 60.0)
+
     def is_overtime(self):
         '''Determines whether this tracking entry is overtime.'''
         if self.daytype == "WKDAY":
@@ -1093,9 +1112,9 @@ class TrackingEntry(models.Model):
     def time_difference(self):
         '''Calculates the difference between this tracking entry and the user's
         shiftlength'''
-        value = self.totalhours() - self.user.shiftlength_as_float()
+        value = self.total_working_time() - self.user.shiftlength_as_float()
         debug_log.debug("Time difference:" + str(value))
-        return self.totalhours() - self.user.shiftlength_as_float()
+        return value
 
     def sending_undertime(self):
         return settings.UNDER_TIME_ENABLED.get(self.user.market)
