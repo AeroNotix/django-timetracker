@@ -34,6 +34,10 @@ def send_password_reminder(modeladmin, request, queryset):
             [user.user_id]
         )
 
+def set_to_secure_password(modeladmin, request, queryset):
+    for user in queryset:
+        print user.set_random_password()
+
 def create_100_random_users(modeladmin, request, queryset):
     '''Creates 100 random users for testing purposes.'''
     import random
@@ -69,8 +73,9 @@ class UserAdmin(admin.ModelAdmin):
     above.   
     """
     list_display = ('__unicode__', 'display_user_type', 'disabled')
-    actions = [send_password_reminder, create_100_random_users]
     search_fields = ["firstname", "lastname", "user_id"]
+    actions = [send_password_reminder, create_100_random_users,
+               set_to_secure_password]
 
 class RelatedAdmin(admin.ModelAdmin):
     filter_horizontal = ('users',)
