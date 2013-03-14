@@ -47,7 +47,7 @@ from timetracker.tracker.models import Tblauthorization as Tblauth
 from timetracker.utils.error_codes import DUPLICATE_ENTRY, CONNECTION_REFUSED
 from timetracker.utils.datemaps import (MONTH_MAP, WEEK_MAP_SHORT,
                                         generate_select, generate_year_box,
-                                        pad)
+                                        pad, round_down)
 from timetracker.utils.decorators import (admin_check, json_response,
                                           request_check)
 
@@ -872,10 +872,10 @@ def get_tracking_entry_data(request):
         "success": True,
         "entry_date": str(entry.entry_date),
         "start_time": str(entry.start_time),
-        "end_time": str(entry.end_time),
+        "end_time": str(entry.worklength),
         "breaks": str(entry.breaks),
         "daytype": str(entry.daytype),
-        "length": entry.total_working_time(),
+        "length": round_down(entry.total_working_time()),
         }
 
 @request_check

@@ -39,7 +39,6 @@ function insert_comment(data) {
          "<li>Entry Date: " + data.entry_date + "</li>",
          "<li>Start Time: " + data.start_time + "</li>",
          "<li>End Time: " + data.end_time + "</li>",
-         "<li>Breaks: " + data.breaks + "</li>",
          "<li>DayType: " + data.daytype + "</li>",
          "<li>Length: " + data.length + "</li>",
          "</ul>"].join(''));
