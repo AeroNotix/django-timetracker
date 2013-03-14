@@ -564,4 +564,3 @@ def forgot_pass(request):
             RequestContext(request))
     user.set_random_password()
     user.send_password_reminder()
-    return HttpResponseRedirect("/")
