@@ -214,7 +214,6 @@ class Tbluser(models.Model):
         '''Update our password to a new one whilst hashing it.'''
         self.salt = get_random_string()
         self.password = hasher(self.salt, string)
-        self.save()
 
     def isdisabled(self):
         '''Returns whether this user is disabled or not'''
