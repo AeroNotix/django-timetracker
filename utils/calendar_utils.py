@@ -1,3 +1,4 @@
+# pylint: disable=E1101,W0142,W0141,F0401,E0611
 """
 Module for collecting the utility functions dealing with mostly calendar
 tasks, processing dates and creating time-based code.
@@ -38,13 +39,11 @@ except ImportError:
 
 import simplejson
 
-from timetracker.loggers import (debug_log, info_log,
-                                 email_log, database_log,
+from timetracker.loggers import (debug_log, database_log,
                                  error_log, suspicious_log)
-from timetracker.loggers import suspicious_log
 from timetracker.tracker.models import TrackingEntry, Tbluser
 from timetracker.tracker.models import Tblauthorization as Tblauth
-from timetracker.utils.error_codes import DUPLICATE_ENTRY, CONNECTION_REFUSED
+from timetracker.utils.error_codes import DUPLICATE_ENTRY
 from timetracker.utils.datemaps import (MONTH_MAP, WEEK_MAP_SHORT,
                                         generate_select, generate_year_box,
                                         pad, round_down)
@@ -146,9 +145,9 @@ def calendar_wrapper(function):
                 }
                 return HttpResponse(simplejson.dumps(json_dict))
 
-            except Exception as e:
-                error_log.error(str(e))
-                return HttpResponse(str(e))
+            except Exception as error:
+                error_log.error(str(error))
+                return HttpResponse(str(error))
 
         else:
             # if the function was called from a view
@@ -192,7 +191,9 @@ def gen_holiday_list(admin_user, year=None, month=None, process=None):
 
     str_output = []
     to_out = str_output.append
-    to_out('<table year=%s month=%s process=%s id="holiday-table">' % (year, month, process))
+    to_out('<table year=%s month=%s process=%s id="holiday-table">' % (
+            year, month, process)
+           )
     to_out("""<tr>
                  <th align="centre" colspan="100">{0}</th>
               </tr>""".format(MONTH_MAP[month - 1][1]))
@@ -205,14 +206,22 @@ def gen_holiday_list(admin_user, year=None, month=None, process=None):
 
     # generate the top row, with day names
     day_names = [WEEK_MAP_SHORT[day.weekday()] for day in datetime_cal]
-    to_out("""<tr id="theader"><td>Name</td><td>Balance</td><td>DOD</td><td>Code</td>""")
+    to_out(
+        """<tr id="theader">""" \
+            """<td>Name</td>""" \
+            """<td>Balance</td>""" \
+            """<td>DOD</td>""" \
+            """<td>Code</td>"""
+        )
     [to_out("<td>%s</td>\n" % day) for day in day_names]
     to_out("</tr>")
 
-    user_list = admin_user.get_subordinates().filter(process=process) if process else \
-        admin_user.get_subordinates()
+    user_list = admin_user.get_subordinates().filter(process=process) \
+        if process else admin_user.get_subordinates()
 
-    def isweekend(n):
+    def isweekend(num):
+        '''Returns the CSS class for a given date whether it's on the weekend
+        or not.'''
         return {
             1: 'empty',
             2: 'empty',
@@ -237,7 +246,10 @@ def gen_holiday_list(admin_user, year=None, month=None, process=None):
         for entry in user.tracking_entries(year, month):
             day_classes[entry.entry_date.day] = entry.daytype
             if entry.comments:
-                comment_string = map(unicode, [entry.entry_date, entry.user.name(), entry.comments])
+                comment_string = map(
+                    unicode,
+                    [entry.entry_date, entry.user.name(), entry.comments]
+                    )
                 comments_list.append(' '.join(comment_string))
 
         # output the table row title, which contains:-
@@ -289,8 +301,10 @@ def gen_holiday_list(admin_user, year=None, month=None, process=None):
     # generate the select box for the months
     month_select = generate_select(month_select_data, id="month_select")
     # generate the select box for the process type
-    process_select = "<td>%s</td>" % generate_select( (("ALL","All"),) + Tbluser.PROCESS_CHOICES, id="process_select") \
-        if admin_user.user_type != "RUSER" else ""
+    process_select = "<td>%s</td>" \
+        % generate_select( (("ALL","All"),) + Tbluser.PROCESS_CHOICES,
+                           id="process_select") \
+                           if admin_user.user_type != "RUSER" else ""
     # generate submit all button
     submit_all = '''<td>
                       <input id="submit_all" value="Submit All" type="button"
@@ -602,7 +616,7 @@ def ajax_add_entry(request):
     hold, it's also already validated, so, as insecure it looks, it's actually
     perfectly fine as there has been client-side side validation and
     server-side validation. There will also be validation on the database
-    level. So we can use \*\*kwargs to instantiate the TrackingEntry and
+    level. So we can use kwargs to instantiate the TrackingEntry and
     .save() it without much worry for saving some erroneous and/or harmful
     data.
 
@@ -828,7 +842,8 @@ def ajax_change_entry(request):
 
             entry.save()
             entry.send_notifications()
-            if (datetime.date.today() - entry.entry_date).days > SUSPICIOUS_DATE_DIFF:
+            if (datetime.date.today() - entry.entry_date).days \
+                    > SUSPICIOUS_DATE_DIFF:
                 suspicious_log.debug(
                     "Suspicious Tracking Change - Who: %s - When: %s" %
                     (user.user_id, entry.entry_date)
@@ -853,6 +868,8 @@ def ajax_change_entry(request):
 @admin_check
 @json_response
 def get_tracking_entry_data(request):
+    '''Function returns the JSON representation of a single tracking entry.
+    '''
     form = {
         "who": None,
         "entry_date": None
@@ -861,7 +878,8 @@ def get_tracking_entry_data(request):
     debug_log.debug("JSON Request Tracking Entry Data: %s/%s" %
                   (form['entry_date'], form['who']))
     try:
-        entry = TrackingEntry.objects.get(user=form['who'], entry_date=form['entry_date'])
+        entry = TrackingEntry.objects.get(user=form['who'],
+                                          entry_date=form['entry_date'])
     except TrackingEntry.DoesNotExist:
         return {
             "success": False,
@@ -1041,7 +1059,7 @@ def useredit(request):
     the function receives this data, it first checks the 'mode' attribute of
     the json data. If it contains 'false' then we are looking at an 'add_user'
     kind of request. Because of this, and the client-side validation that is
-    done. We simply use some \*\*kwargs magic on the
+    done. We simply use some kwargs magic on the
     :class:`timetracker.tracker.models.Tbluser` constructor and save our
     Tbluser object.
 
@@ -1201,17 +1219,16 @@ def useredit(request):
             database_log.info("Duplicate entry - %s" % str(error))
             json_data['error'] = "Duplicate entry"
             return json_data
-        else:
-            database_log.error(str(error))
-            json_data['error'] = str(error)
-            return json_data
+        database_log.error(str(error))
+        json_data['error'] = str(error)
+        return json_data
     except ValidationError:
         error_log.error("Invalid data in creating a user")
         json_data['error'] = "Invalid Data."
         return json_data
     except Exception as error:
-        json_data['error'] = str(error)
         error_log.critical(str(error))
+        json_data['error'] = str(error)
         return json_data
     json_data['success'] = True
     return json_data
@@ -1300,7 +1317,8 @@ def mass_holidays(request):
             except ValueError:
                 # if it's an invalid date, just ignore it.
                 continue
-            datestr = '-'.join([form_data['year'], form_data['month'], str(day)])
+            datestr = '-'.join([form_data['year'],
+                                form_data['month'], str(day)])
             try:
                 current_entry = TrackingEntry.objects.get(
                     entry_date=datestr,
@@ -1314,7 +1332,9 @@ def mass_holidays(request):
             except TrackingEntry.DoesNotExist:
                 if daytype == "empty":
                     continue
-                time_str = Tbluser.objects.get(id=entry[0]).get_shiftlength_list()
+                time_str = Tbluser.objects.get(
+                    id=entry[0]
+                    ).get_shiftlength_list()
                 new_entry = TrackingEntry(
                         entry_date=datestr,
                         user_id=entry[0],
@@ -1389,14 +1409,13 @@ def gen_datetime_cal(year, month):
     :rtype: :class:`List` containing :class:`datetime.datetime` objects.
 
     '''
-    dt = datetime
     days = []
     for week in cdr.monthcalendar(year, month):
         days.extend(week)
 
     # filter out zeroed days
     days = filter((lambda x: x > 0), days)
-    return [dt.datetime(year=year, month=month, day=day) for day in days]
+    return [datetime.datetime(year=year, month=month, day=day) for day in days]
 
 @admin_check
 @json_response
