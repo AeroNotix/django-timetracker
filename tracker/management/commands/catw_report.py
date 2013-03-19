@@ -154,11 +154,11 @@ def report_for_account(choice_list, year, month):
             entry_map[entry.user.id] = {
                 str(entry.entry_date): entry
                 }
-    days_this_month = filter(
-        lambda x: x > 0,
-        list(calendar.Calendar().itermonthdays(year, month))
-        )
-
+    days_this_month = [day if day > 9 else "0%d" % day for day in filter(
+            lambda x: x > 0,
+            list(calendar.Calendar().itermonthdays(year, month))
+            )]
+    months = month if month > 9 else "0%d" % month
     for user in users:
         for day in days_this_month:
             entry = entry_map[user.id].get("%s-%s-%s" % (year, months, day))
