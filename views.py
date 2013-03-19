@@ -12,6 +12,7 @@ from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.core.mail import send_mail
+from django.conf import settings
 
 from timetracker.tracker.models import Tbluser, UserForm, TrackingEntry
 from timetracker.tracker.models import Tblauthorization as tblauth
@@ -50,7 +51,8 @@ def user_context_manager(request):
         "welcome_name": user.firstname,
         "is_admin": user.super_or_admin(),
         "is_team_leader": user.is_tl(),
-        "balance": user.get_total_balance(ret="int")
+        "balance": user.get_total_balance(ret="int"),
+        "doculink": settings.DOCUMENTATION_URL
         }
 
 def index(request):
