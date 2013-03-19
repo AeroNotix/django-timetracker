@@ -7,6 +7,7 @@ User-guides
 .. toctree::
 
    user_guide
+   manager_guide
 
 Dependencies
 ------------
@@ -23,4 +24,3 @@ Technical
    timetracker
    javascript-files
    settings
-
