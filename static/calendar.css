@@ -290,25 +290,3 @@ this is a jQuery add-on
    border: 2px solid black;
    background: silver;
 }
-
-#doculink {
-   border-radius: 2px;
-   align: right;
-   text-align: right;
-   position: fixed;
-   background-color: #5e9aff;
-   border: 1px solid black;
-   right: 0;
-   bottom: 0;
-   height: 3%;
-}
-
-#doculink a {
-   height: 50px;
-   display: block;
-   padding: 0px 15px;
-   text-decoration: none;
-   font-weight: bold;
-   color: #1d1d1d;
-   border-right: 1px solid #ccc;
-}
