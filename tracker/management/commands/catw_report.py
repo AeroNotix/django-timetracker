@@ -136,9 +136,11 @@ def report_for_account(choice_list, year, month):
     csvout.writerow(HEADINGS)
 
     users = Tbluser.objects.filter(market__in=accs)
-    entries = TrackingEntry.objects.filter(user__market__in=accs,
-                                           entry_date__year=year,
-                                           entry_date__month=month)
+    entries = TrackingEntry.objects.select_related("user").filter(
+        user__market__in=accs,
+        entry_date__year=year,
+        entry_date__month=month
+        )
     entry_map = {}
     for entry in entries:
         if entry_map.get(entry.user.id):
