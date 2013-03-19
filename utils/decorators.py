@@ -1,3 +1,4 @@
+# pylint: disable=E1101
 '''
 Module to for sharing decorators between all modules
 '''
@@ -7,9 +8,7 @@ import simplejson
 from django.http import HttpResponse, Http404
 
 from timetracker.tracker.models import Tbluser
-from timetracker.loggers import (debug_log, info_log,
-                                 email_log, database_log,
-                                 error_log, suspicious_log)
+from timetracker.loggers import info_log, suspicious_log
 
 
 def loggedin(func):
@@ -30,6 +29,7 @@ def loggedin(func):
 
     @wraps(func)
     def inner(request, *args, **kwargs):
+        '''implementation'''
         try:
             Tbluser.objects.get(id=request.session.get("user_id"))
         except Tbluser.DoesNotExist:
@@ -54,7 +54,7 @@ def admin_check(func):
 
     @wraps(func)
     def inner(request, **kwargs):
-
+        '''implementation'''
         try:
             user = Tbluser.objects.get(
                 id=request.session.get('user_id', None)
