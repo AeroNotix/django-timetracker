@@ -1,3 +1,7 @@
+'''In the timetracker we sometimes require writers to interface with other
+systems. Here are any writers which are required for these purposes.
+'''
+
 try:
     from cStringIO import StringIO
 except ImportError:
@@ -5,7 +9,7 @@ except ImportError:
 
 import csv, codecs
 
-class UnicodeWriter:
+class UnicodeWriter(object):
     """
     A CSV writer which will write rows to CSV file "f",
     which is encoded in the given encoding.
@@ -13,14 +17,25 @@ class UnicodeWriter:
     Taken from the python documentation.
     """
 
-    def __init__(self, f, dialect=csv.excel, encoding="utf-8", **kwds):
-        # Redirect output to a queue
+    def __init__(self, fio, dialect=csv.excel, encoding="utf-8", **kwds):
+        '''
+        The constructor for our Unicode compliant csv writer.
+
+        :param f: This is anything which has the interface of a file. I.e. it
+                  has both the read and write methods.
+        :param dialect: The dialect of the csv file you're using, you can find
+                        a selection of these in the CSV package. Defaults to
+                        excel's dialect.
+        :param encoding: The encoding of the document which you are creating.
+                         Defaults to UTF-8.
+        '''
         self.queue = StringIO()
         self.writer = csv.writer(self.queue, dialect=dialect, **kwds)
-        self.stream = f
+        self.stream = fio
         self.encoder = codecs.getincrementalencoder(encoding)()
 
     def writerow(self, row):
+        '''Implements the writerow function as a csv writer would do so.'''
         self.writer.writerow([unicode(s).encode("utf-8") for s in row])
         # Fetch UTF-8 output from the queue ...
         data = self.queue.getvalue()
@@ -33,5 +48,6 @@ class UnicodeWriter:
         self.queue.truncate(0)
 
     def writerows(self, rows):
+        '''Implements the writerows function as a csv writer would do so.'''
         for row in rows:
             self.writerow(row)
