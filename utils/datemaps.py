@@ -1,6 +1,4 @@
-'''Maps of useful data
-
-Django has several of these built-in but they are annoying to use.
+'''Django has several of these built-in but they are annoying to use.
 
 :attr:`WEEK_MAP_MID`: This is a map of the days of the week along with the
 mid-length string for that value. For example:
@@ -18,6 +16,13 @@ mid-length string for that value. For example:
 :attr:`MONTH_MAP`: This is a map of the months which refer to a two-element
 tuple which has the short code for the month and the long string for that
 month. I.e. 'JAN' and 'January'.
+
+:attr:`MONTH_MAP`: This is a map of the months which refer to a two-element
+tuple which has the short code for the month and the long string for that
+month. I.e. 'JAN' and 'January'.
+
+:attr:`MONTH_MAP_SHORT`: This is a map of the months which refer to the short
+name of a month corresponding to the number. I.e. 1: January.
 
 :attr:`WORKING_CHOICES`: This is a tuple of two-element tuples which contain
 the only possible working day possibilites.
@@ -115,16 +120,30 @@ DAYTYPE_CHOICES = (
 )
 
 def generate_year_box(year, id=''):
+    '''Generates a select box with years -/+ 2 of the year provided.
+
+    :param year: :class:`int` the initial year to start off with.
+    :param id: :class:`str` the id attribute to give to the element.
+    '''
     year_select_data = [(y, y) for y in range(year, year - 3, -1)]
     year_select_data.extend([(y, y) for y in range(year + 1, year + 3)])
     year_select_data.sort()
     return generate_select(year_select_data, id)
 
 def generate_month_box(id=''):
+    '''Generates a select box with months.
+
+    :param id: :class:`str` the id attribute to give to the element.
+    '''
     return generate_select(MONTH_MAP_SHORT, id)
 
 def generate_employee_box(admin_user, get_all=False):
-    from timetracker.tracker.models import Tblauthorization as tblauth
+    '''Generates a select box with all subordinates for a manager.
+
+    :param admin_user: :class:`timetracker.tracker.models.Tbluser` an instance
+                       of a manager who has subordinates underneath them.
+    :param get_all: :class:`bool` Used to select or ignore disabled employees.
+    '''
     admin_user = admin_user.get_administrator()
     ees = admin_user.get_subordinates(get_all=get_all)
     ees_tuple = [(user.id, user.name()) for user in ees]
@@ -188,19 +207,24 @@ def pad(string, padchr='0', amount=2):
 
     return string
 
-def nearest_half(n):
-    return int(round(n / 0.5)) * 0.5
+def nearest_half(num):
+    '''Returns the number rounded down to the nearest half.
 
-def round_down(num, by=0.5):
+    :param n: :class:`int` the number to round
+    :return: :class:`float`'''
+    return int(round(num / 0.5)) * 0.5
+
+def round_down(num, by_=0.5):
     '''Rounds a number down to the half below'''
     if num < 0:
-        return (num // -by) * -by
-    return (num // by) * by
+        return (num // -by_) * -by_
+    return (num // by_) * by_
 
 def hr_calculation(user, tracking_days, return_days):
-    '''This is the calculation that the HR team use to make overtime calculations
-    since the OT calculation cannot take 0.25hr increments into account we ignore
-    all those which have 0.25hr -/+ and sum the remaining entries together.'''
+    '''This is the calculation that the HR team use to make overtime
+    calculations since the OT calculation cannot take 0.25hr increments
+    into account we ignore all those which have 0.25hr -/+ and sum the
+    remaining entries together.'''
     total_hours = running_total = 0
     for entry in tracking_days:
         running_total += round_down(entry.total_working_time())
@@ -228,7 +252,7 @@ def float_to_time(timefloat):
     time = prefix + str(datetime.timedelta(seconds=seconds))
     return pad(time[:-3], amount=5)
 
-def datetime_to_timestring(dt):
+def datetime_to_timestring(dt_):
     """
     Returns a pretty formatting string from a datetime object.
 
@@ -236,8 +260,7 @@ def datetime_to_timestring(dt):
     >>>datetime.time(hour=9, minute=10, second=30)
     ..."09:10:30"
 
-    :param dt: :class:`datetime.datetime` or :class:`datetime.time`
+    :param dt_: :class:`datetime.datetime` or :class:`datetime.time`
     :returns: :class:`str`
     """
-
-    return pad(dt.hour)+':'+pad(dt.minute)+':'+pad(dt.second)
+    return pad(dt_.hour)+':'+pad(dt_.minute)+':'+pad(dt_.second)
