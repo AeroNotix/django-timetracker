@@ -417,8 +417,8 @@ class TrackingEntryTestCase(BaseUserTest):
         for date, end in [
             ["2012-01-01", "17:00"],
             ["2012-01-02", "14:00"],
-            ["2012-01-03", "17:01"],
-            ["2012-01-04", "17:59"],
+            ["2012-01-03", "16:46"],
+            ["2012-01-04", "16:45"],
             ]:
             entry = TrackingEntry(
                 entry_date=date,
@@ -429,7 +429,7 @@ class TrackingEntryTestCase(BaseUserTest):
                 daytype="WKDAY"
                 )
             entry.full_clean()
-        self.assertFalse(entry.is_overtime())
+            self.assertFalse(entry.is_overtime())
 
     def testIsOvertime(self):
         '''Tests an entry against several rules to make sure our
@@ -476,15 +476,15 @@ class TrackingEntryTestCase(BaseUserTest):
         working.'''
         for date, end in [
             ["2012-01-11", "14:00"],
-            ["2012-01-12", "16:59"],
-            ["2012-01-13", "09:01"],
+            ["2012-01-12", "16:44"],
+            ["2012-01-13", "09:45"],
             ]:
             entry = TrackingEntry(
                 entry_date=date,
                 user_id=self.linked_user.id,
                 start_time="09:00",
                 end_time=end,
-                breaks="00:15",
+                breaks="00:15:00",
                 daytype="WKDAY"
                 )
             entry.full_clean()
@@ -495,7 +495,7 @@ class TrackingEntryTestCase(BaseUserTest):
         check for whether an entry is or is not overtime is correctly
         working.'''
         for date, end in [
-            ["2012-01-11", "17:00"],
+            ["2012-01-11", "16:45"],
             ]:
             entry = TrackingEntry(
                 entry_date=date,
