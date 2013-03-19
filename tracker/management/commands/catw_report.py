@@ -12,7 +12,7 @@ import contextlib
 import datetime
 import csv
 import calendar
-import argparse
+from optparse import make_option
 
 from timetracker.tracker.models import Tbluser, TrackingEntry
 from django.core.management.base import BaseCommand, CommandError
@@ -149,28 +149,35 @@ def report_for_account(choice_list, year, month):
 
             months = month if month > 9 else "0%d" % month
             day = day if day > 9 else "0%d" % day
-            try:
-                # this is the inefficient bit. It makes a new query
-                # each time, thus giving len(users) * days queries.
-                entry = TrackingEntry.objects.get(
-                    user_id=user.id,
-                    entry_date="%s-%s-%s" % (year, months, day)
-                    )
-            except TrackingEntry.DoesNotExist:
+
+            entry = entry_map[user.id].get("%s-%s-%s" % (year, months, day))
+            if entry:
+                csvout.writerow(realrow(user, year, months, day, entry))
+            else:
                 csvout.writerow(blankrow(user, year, months, day))
-                continue
-            csvout.writerow(realrow(user, year, months, day, entry))
 
 class Command(BaseCommand):
     '''Implementation of a Django command.'''
+    option_list = BaseCommand.option_list + (
+        make_option('--year',
+                    action='store',
+                    default=datetime.datetime.now().year,
+                    dest='year',
+                    help='The year to run the report for.'),
+        make_option('--month',
+                    action='store',
+                    default=datetime.datetime.now().month,
+                    dest='month',
+                    help='The month to run the report for.'),
+        )
+
     def handle(self, *args, **options):
         '''This is what gets invoked from manage.py catw_report.
 
         You may supply this command with a list of short market codes
         doing this will generate a CATW report for each of those markets.
         The files will be generated locally.'''
-        year = options.get('year', datetime.datetime.now().year)
-        month = options.get('month', datetime.datetime.now().month)
-
+        year = int(options.get('year'))
+        month = int(options.get('month'))
         for choice_list in choices:
             report_for_account(choice_list, year, month)
