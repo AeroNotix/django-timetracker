@@ -240,8 +240,8 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
   ('index', 'Timetracker', u'Timetracker Documentation',
-   u'Aaron France', 'Timetracker', 'One line description of project.',
-   'Miscellaneous'),
+   u'Aaron France', 'Timetracker', 'Holiday/Timetracking/Overtime planner',
+   'Value-added'),
 ]
 
 # Documents to append as an appendix to all manuals.
