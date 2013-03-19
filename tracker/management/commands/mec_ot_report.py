@@ -1,3 +1,8 @@
+'''
+On the month end close we total up all overtime values and send out a report
+to managers of an account.
+'''
+
 try:
     from cStringIO import StringIO
 except ImportError:
@@ -17,6 +22,8 @@ connection = mail.get_connection()
 
 
 def send_report_for_account(account, now):
+    '''Sends all overtime reports to the managers of an account for a given
+    date.'''
     message = mail.EmailMessage(from_email="timetracker@unmonitored.com")
     message.body = \
         "Hi,\n\n" \
@@ -88,15 +95,21 @@ def send_report_for_account(account, now):
     message.send()
 
 def get_previous_month(d):
+    '''From one date we return the first day of the previous month.
+
+    :param d: :class:`datetime.date`
+    '''
     first_day_of_current_month = d.replace(day=1)
     last_day_of_previous_month = first_day_of_current_month - datetime.timedelta(days=1)
     return last_day_of_previous_month.replace(day=1)
 
 class Command(BaseCommand):
+    '''Implementation of a Django command.'''
     help = 'Sends notifications of overtime balances to the all those ' \
            'who have balances over zero hours.'
 
     def handle(self, *args, **options):
+        '''Entry point for the command.'''
         for account in args:
             d = get_previous_month(datetime.datetime.now())
             send_report_for_account(account, d)
