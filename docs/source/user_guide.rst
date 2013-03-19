@@ -62,6 +62,8 @@ right – this is your current overtime balance):
 .. image:: images/tracking_bar.png
 
 
+.. _timetracking:
+
 Timetracking interface
 ----------------------
 

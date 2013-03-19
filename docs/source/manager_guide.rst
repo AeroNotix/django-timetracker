@@ -12,6 +12,7 @@ Table of contents
 - `Reporting`_
 - `Overtime`_
 - `Your balance`_
+- `Profile`_
 - `Logout`_
 - `Email functions`_
 
@@ -181,6 +182,13 @@ This is where you can find the current balance of all time entries made in the
 tracker. The balance does not refresh on its own. If you made a time entry
 that affects the balance, you need to either click on it directly or refresh
 the page to see the new balance.
+
+Profile
+-------
+
+Allows you to change your own password to access the holiday/time tracker.
+
+.. image:: images/profile.png
 
 Logout
 ------

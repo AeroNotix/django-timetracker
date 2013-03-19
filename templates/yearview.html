@@ -45,6 +45,12 @@ Year View - Timetracker
 <div id="hidden_year" hidden=true>{{year}}</div>
 <div id="hidden_ee" hidden=true>{{eeid}}</div>
 
+{% if is_admin or is_team_leader %}
+<div id="doculink">
+  <a href="{{ doculink }}manager_guide.html#year-view">Documentation</a>
+</div>
+{% endif %}
+
 {% endblock content %}
 {% block additional_javascript %}
 <script type="text/javascript" src="{{ STATIC_URL }}js/yearview.js"></script>
