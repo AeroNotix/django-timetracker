@@ -101,6 +101,11 @@ def catw_code(user, daytype):
 def blankrow(user, year, month, day):
     '''Returns what the blank row (empty day) looks like in the CATW
     report.'''
+    # skip the weekends
+    if datetime.date(year=int(year),
+                     month=int(month),
+                     day=int(day)).weekday() in [5,6]:
+        return []
     return [
         "", user.user_id, "%s/%s/%s" % (month, day, year),
         catw_code(user, "WKDAY"), "400",
@@ -156,13 +161,6 @@ def report_for_account(choice_list, year, month):
 
     for user in users:
         for day in days_this_month:
-            # skip the weekends
-            if datetime.date(year=int(year),month=month,day=day).weekday() in [5,6]:
-                continue
-
-            months = month if month > 9 else "0%d" % month
-            day = day if day > 9 else "0%d" % day
-
             entry = entry_map[user.id].get("%s-%s-%s" % (year, months, day))
             if entry:
                 csvout.writerow(realrow(user, year, months, day, entry))
