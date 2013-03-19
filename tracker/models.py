@@ -1081,12 +1081,14 @@ class TrackingEntry(models.Model):
 
     def normalized_break(self):
         breaklength = dt.timedelta(hours=self.breaks.hour,
-                           minutes=self.breaks.minute)
+                                   minutes=self.breaks.minute)
         breaklength_reg = dt.timedelta(hours=self.user.breaklength.hour,
                                        minutes=self.user.breaklength.minute)
         if breaklength.seconds > breaklength_reg.seconds:
+            debug_log.debug("Returning regular break.")
             return breaklength_reg
         else:
+            debug_log.debug("Returning actual break.")
             return breaklength
 
     def total_working_time(self):
