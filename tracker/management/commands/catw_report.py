@@ -127,12 +127,6 @@ def realrow(user, year, month, day, entry):
 def report_for_account(choice_list, year, month):
     '''
     Writes out the report to disk.
-
-    This uses the django-orm and thus is very inefficient. It's just a
-    downside to using an ORM for complex queries like this.
-
-    The idea is to run it as a cron job as to not really feel the pain
-    of running it manually.
     '''
 
     accs, filename = choice_list
