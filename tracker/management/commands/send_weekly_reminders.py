@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from timetracker.tracker.models import *
+from timetracker.tracker.models import Tbluser
 
 class Command(BaseCommand):
     help = \
