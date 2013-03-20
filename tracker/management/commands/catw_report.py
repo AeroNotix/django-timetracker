@@ -6,21 +6,17 @@ Currently in the prototype stage, queries need to be optimized and
 datastructures used may not be optimal. However, it conforms to-spec
 and is in-use.
 '''
-
-import MySQLdb
-import contextlib
 import datetime
 import csv
 import calendar
 from optparse import make_option
 
 from timetracker.tracker.models import Tbluser, TrackingEntry
-from django.core.management.base import BaseCommand, CommandError
-from django.db import connection
+from django.core.management.base import BaseCommand
 
 
 QUERIES = 0
-choices = [
+CHOICES = [
     (["BF"], "bpo_fac.csv"),
     (["EN"], "mcbc.csv"),
     (["BG", "BK", "CZ"], "behr.csv")
@@ -161,6 +157,7 @@ def report_for_account(choice_list, year, month):
             )]
     # Prefix the month digit with a leading "0"
     months = month if month > 9 else "0%d" % month
+
     for user in users:
         for day in days_this_month:
             entry = entry_map[user.id].get("%s-%s-%s" % (year, months, day))
@@ -192,5 +189,5 @@ class Command(BaseCommand):
         The files will be generated locally.'''
         year = int(options.get('year'))
         month = int(options.get('month'))
-        for choice_list in choices:
+        for choice_list in CHOICES:
             report_for_account(choice_list, year, month)
