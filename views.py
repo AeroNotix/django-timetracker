@@ -484,13 +484,15 @@ def explain(request):
     """
 
     user = Tbluser.objects.get(id=request.session.get("user_id"))
-    return render_to_response("balance.html",
-                              {'firstname': user.firstname,
-                               'lastname': user.lastname,
-                               'shiftlength': str(user.shiftlength.hour) + ': ' + str(user.shiftlength.minute),
-                               'working_days': TrackingEntry.objects.filter(user=user.id).count()
-                               },
-                              RequestContext(request))
+    return render_to_response(
+        "balance.html",
+        {'firstname': user.firstname,
+         'lastname': user.lastname,
+         'shiftlength': "%s:%s" % (user.shiftlength.hour,
+                                   user.shiftlength.minute),
+         'working_days': TrackingEntry.objects.filter(user=user.id).count()
+         },
+        RequestContext(request))
 
 
 def forgot_pass(request):
