@@ -231,7 +231,7 @@ def hr_calculation(user, tracking_days, return_days):
         total_hours += user.shiftlength_as_float()
 
     for entry in return_days:
-        running_total += user.shiftlength_as_float()
+        running_total -= user.shiftlength_as_float()
 
     return running_total - total_hours
 
