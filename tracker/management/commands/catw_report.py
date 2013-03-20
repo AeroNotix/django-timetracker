@@ -140,7 +140,10 @@ def report_for_account(choice_list, year, month):
         entry_date__year=year,
         entry_date__month=month
         )
-    entry_map = {}
+
+    # we generate the map using blank dicts since we need to use the
+    # id of the employee (who may not have any entries this month).
+    entry_map = {user.id: {} for user in users}
     for entry in entries:
         if entry_map.get(entry.user.id):
             entry_map[entry.user.id][str(entry.entry_date)] = entry
