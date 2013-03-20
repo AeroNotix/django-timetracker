@@ -4,6 +4,12 @@ Settings files
 This documentation will only highlight what is not vanilla Django. If you do not
 understand how Django works or the settings it requires, use the Django documentation.
 
+DOCUMENTATION_BASE_URL
+----------------------
+
+The base url from which the documentation pages will be served. If this is blank
+then documentation will obviously not be available.
+
 NUM_WORKING_DAYS
 ----------------
 
