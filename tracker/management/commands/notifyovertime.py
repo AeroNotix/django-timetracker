@@ -2,7 +2,7 @@
 there overtime balances.'''
 
 from django.core.management.base import BaseCommand, CommandError
-from timetracker.tracker.models import *
+from timetracker.tracker.models import Tbluser
 
 from django.core import mail
 connection = mail.get_connection()
