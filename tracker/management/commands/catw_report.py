@@ -151,10 +151,15 @@ def report_for_account(choice_list, year, month):
             entry_map[entry.user.id] = {
                 str(entry.entry_date): entry
                 }
+
+    # get a list of valid day numbers for the month we're creating
+    # the report for. Prefix all single-digit digits with a leading
+    # "0" so they format well for the date strings.
     days_this_month = [day if day > 9 else "0%d" % day for day in filter(
             lambda x: x > 0,
             list(calendar.Calendar().itermonthdays(year, month))
             )]
+    # Prefix the month digit with a leading "0"
     months = month if month > 9 else "0%d" % month
     for user in users:
         for day in days_this_month:
