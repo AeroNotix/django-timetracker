@@ -1,3 +1,6 @@
+#pylint: disable=E1101,W0232,W0141,E1103,E1002,W0232,R0201,R0903,R0904,C0302
+#pylint: disable=C0103
+
 '''Definition of the models used in the timetracker app
 
     .. moduleauthor:: Aaron France <aaron.france@hp.com>
@@ -5,7 +8,7 @@
     :platform: All
     :synopsis: Module which contains view functions that are mapped from urls
 '''
-import os
+
 import datetime as dt
 
 from operator import add
@@ -14,7 +17,6 @@ from django.db import models
 from django.forms import ModelForm
 from django.conf import settings
 from django.core.mail import EmailMessage
-from django.conf import settings
 
 try:
     NUM_WORKING_DAYS = settings.NUM_WORKING_DAYS
@@ -27,22 +29,27 @@ from timetracker.utils.datemaps import (
     MONTH_MAP, generate_year_box, nearest_half
     )
 
-'''
-The modules which provide these functions should be provided for by
-the setup environment, this is due to the fact that some notifications
-may include business-specific details, we can override by simply incl-
-uding a local notifications.py in this directory with the required fu-
-nctions we need.
-'''
 try:
+    # The modules which provide these functions should be provided for by
+    # the setup environment, this is due to the fact that some notifications
+    # may include business-specific details, we can override by simply incl-
+    # uding a local notifications.py in this directory with the required fu-
+    # nctions we need.
     from timetracker.tracker.notifications import (
         send_overtime_notification, send_pending_overtime_notification,
         send_undertime_notification
         )
 except ImportError:
-    send_overtime_notification = lambda x: x
-    send_pending_overtime_notification = lambda x: x
-    send_undertime_notification = lambda x: x
+    #pylint: disable=W0613
+    def send_overtime_notification(*args, **kwargs):
+        '''Not implemented'''
+        pass
+    def send_pending_overtime_notification(*args, **kwargs):
+        '''Not implemented'''
+        pass
+    def send_undertime_notification(*args, **kwargs):
+        '''Not implemented'''
+        pass
 
 from timetracker.loggers import debug_log
 
@@ -226,7 +233,8 @@ class Tbluser(models.Model):
             seconds=self.shiftlength.second
             )
 
-        return map(datetime_to_timestring, [start_time, end_time, self.breaklength])
+        return map(datetime_to_timestring,
+                   [start_time, end_time, self.breaklength])
 
     def get_subordinates(self, get_all=False):
         '''
@@ -260,7 +268,7 @@ class Tbluser(models.Model):
                         admin=admin
                         ).users.filter(disabled=False)
                 try:
-                    extra= RelatedUsers.objects.get(
+                    extra = RelatedUsers.objects.get(
                         admin=admin
                         ).users.filter(disabled=False)
                 except RelatedUsers.DoesNotExist:
@@ -269,7 +277,7 @@ class Tbluser(models.Model):
                 ids = [user.id for user in result] + [user.id for user in extra]
                 # find whether we need to append this user to it.
                 if self != admin or self.super_or_admin():
-                   ids.append(admin.id)
+                    ids.append(admin.id)
                 return Tbluser.objects.filter(id__in=ids).order_by("lastname")
         except Tblauthorization.DoesNotExist:
             return []
@@ -376,7 +384,9 @@ class Tbluser(models.Model):
         comments_list = []
         for entry in entries:
             if entry.comments:
-                comment_string = map(unicode, [entry.entry_date, entry.user.name(), entry.comments])
+                comment_string = map(unicode, [entry.entry_date,
+                                               entry.user.name(),
+                                               entry.comments])
                 comments_list.append(' '.join(comment_string))
         return comments_list
 
@@ -386,12 +396,12 @@ class Tbluser(models.Model):
         This is useful for generating a year view on the data in some way.'''
         final = []
         out = []
-        for x in range(1,13):
+        for x in range(1, 13):
             out.append("<tr id=\"%d_row\" onclick=%s><th>%s</th>"
-                       % (x,'"highlight_row(%d)"' % x, MONTH_MAP[x-1][1]))
-            for z in range(1,32):
+                       % (x, '"highlight_row(%d)"' % x, MONTH_MAP[x-1][1]))
+            for z in range(1, 32):
                 try:
-                    if dt.date(int(year),x,z).isoweekday() in [6,7]:
+                    if dt.date(int(year), x, z).isoweekday() in [6, 7]:
                         out.append('<td class="WKEND">%d</td>' % z)
                     else:
                         out.append('<td {function} class={c}>%d</td>' % z)
@@ -448,7 +458,8 @@ class Tbluser(models.Model):
        ''.join("<tr><th>%s</th><td>%s</td>"
                % (k, v) for k, v in sorted(self.get_balances(year).items()))
        )
-        return '<table id="holiday-table"><th colspan=999>%s</th>' % self.name() + table_string
+        return '<table id="holiday-table"><th colspan=999>%s</th>' \
+            % self.name() + table_string
 
     def overtime_view(self, year):
         '''
@@ -472,37 +483,47 @@ class Tbluser(models.Model):
 <tr>
   <td colspan=100>
     <table>
-      <tr><th style="width:10%%">Year</th><td style="width:90%%">{yearbox}</td></tr>
+      <tr>
+        <th style="width:10%%">Year</th><td style="width:90%%">{yearbox}</td>
+      </tr>
       <tr><th>Agent</th><td>{employees_select}</td></tr>
     </table>
   </td>
 </tr>
 '''
-        return '<table id="holiday-table"><th colspan=999>%s</th>' % self.name() + table_string
+        return '<table id="holiday-table"><th colspan=999>%s</th>' \
+            % self.name() + table_string
 
-    '''
-    This group of functions are helper methods for querying whether
-    the user is contained with a certain set of user_types.
-    '''
     def sup_tl_or_admin(self):
+        '''
+        This group of functions are helper methods for querying whether
+        the user is contained with a certain set of user_types.
+
+        SUPER/TL/ADMIN'''
         return self.user_type in ["SUPER", "ADMIN", "TEAML"]
 
     def super_or_admin(self):
+        '''SUPER/ADMIN'''
         return self.user_type in ["SUPER", "ADMIN"]
 
     def admin_or_tl(self):
+        '''ADMIN/TEAML'''
         return self.user_type in ["ADMIN", "TEAML"]
 
     def is_super(self):
+        '''SUPER'''
         return self.user_type == "SUPER"
 
     def is_admin(self):
+        '''ADMIN'''
         return self.user_type == "ADMIN"
 
     def is_tl(self):
+        '''TEAML'''
         return self.user_type == "TEAML"
 
     def is_user(self):
+        '''RUSER'''
         return self.user_type == "RUSER"
 
     def get_holiday_balance(self, year):
@@ -599,10 +620,12 @@ class Tbluser(models.Model):
 
         ret = ret.lower()
         # if the argument isn't supported'
-        if ret not in ['html', 'int', 'dbg', 'num', 'flo']:
+        if ret not in ['html', 'int', 'num', 'flo']:
             raise Exception("Unsupported Argument. Must be html, int or dbg")
 
-        day_types = [element[0] for element in WORKING_CHOICES if element[0] != "SATUR"]
+        day_types = [element[0]
+                     for element in WORKING_CHOICES
+                     if element[0] != "SATUR"]
 
         if not year and not month:
             tracking_days = TrackingEntry.objects.filter(user_id=self.id,
@@ -618,10 +641,12 @@ class Tbluser(models.Model):
                                                        entry_date__year=year
                                                        )
         else:
-            tracking_days = TrackingEntry.objects.filter(user_id=self.id,
-                                                         daytype__in=day_types,
-                                                         entry_date__year=year,
-                                                         entry_date__month=month)
+            tracking_days = TrackingEntry.objects.filter(
+                user_id=self.id,
+                daytype__in=day_types,
+                entry_date__year=year,
+                entry_date__month=month
+                )
             return_days = TrackingEntry.objects.filter(user_id=self.id,
                                                        daytype="ROVER",
                                                        entry_date__year=year,
@@ -630,7 +655,9 @@ class Tbluser(models.Model):
 
         if settings.OVERRIDE_CALCULATION.get(self.market):
             trackingnumber = \
-                settings.OVERRIDE_CALCULATION[self.market](self, tracking_days, return_days)
+                settings.OVERRIDE_CALCULATION[self.market](self,
+                                                           tracking_days,
+                                                           return_days)
         else:
             trackingnumber = \
                 self._regular_calculation(tracking_days, return_days)
@@ -661,11 +688,16 @@ class Tbluser(models.Model):
             return int(trackingnumber)
         elif ret == 'int':
             return float_to_time(trackingnumber)
-        elif ret == 'dbg':
-            return (trackingnumber, total_hours, total_mins,
-                    shift_hours, shift_minutes)
 
     def _regular_calculation(self, tracking_days, return_days):
+        '''
+        This is the calculation that's used as a fall-back in case there isn't
+        one being used in-place of this.
+
+        It does not do any rounding and thus will be the exact figures that
+        agent's enter.
+        '''
+
         # we'll use augmented assignment
         # so zero our local vars here
         (total_hours, total_mins,
@@ -698,7 +730,8 @@ class Tbluser(models.Model):
         '''Returns the shiftlength of the user as a float
         :rtype: :class:`float`'''
         shift_hours = self.shiftlength.hour + self.breaklength.hour
-        shift_minutes = (self.shiftlength.minute + self.breaklength.minute) / 60.0
+        shift_minutes = (self.shiftlength.minute
+                         + self.breaklength.minute) / 60.0
         return shift_hours + shift_minutes
 
     def send_pending_overtime_notification(self, send=False):
@@ -795,8 +828,9 @@ class Tbluser(models.Model):
         return [user.user_id for user in users]
 
 class UserForm(ModelForm):
-
+    '''Form class the for Tbluser'''
     class Meta:
+        '''Options.'''
         model = Tbluser
 
 class RelatedUsers(models.Model):
@@ -1080,6 +1114,8 @@ class TrackingEntry(models.Model):
         return nearest_half(self.totalhours())
 
     def normalized_break(self):
+        '''Returns the shorter of breaklengths between the users actual break
+        length and the one for this entry.'''
         breaklength = dt.timedelta(hours=self.breaks.hour,
                                    minutes=self.breaks.minute)
         breaklength_reg = dt.timedelta(hours=self.user.breaklength.hour,
@@ -1133,6 +1169,7 @@ class TrackingEntry(models.Model):
         return value
 
     def sending_undertime(self):
+        '''Returns if we are sending undertime for this entry.'''
         return settings.UNDER_TIME_ENABLED.get(self.user.market)
 
     def send_notifications(self):
