@@ -1,11 +1,14 @@
+'''Generates a holiday chart for a year'''
+
 import datetime
 import numpy as np
 import matplotlib.pyplot as plt
 
 from django.core.management.base import BaseCommand, CommandError
-from timetracker.tracker.models import *
+from timetracker.tracker.models import TrackingEntry
 
 def gendates(year):
+    ''"Generates the dates for a given year.'''
     m = {}
     d = datetime.date(year, 1, 1)
     td = datetime.timedelta(days=1)
@@ -15,10 +18,12 @@ def gendates(year):
     return m
 
 class Command(BaseCommand):
+    '''Django command.'''
     args = '<poll_id poll_id ...>'
     help = 'Closes the specified poll for voting'
 
     def handle(self, *args, **options):
+        '''Implementation.'''
         year = args[0]
         totals = gendates(int(year))
         for date_entry in TrackingEntry.objects.filter(entry_date__year=year, daytype="HOLIS"):
