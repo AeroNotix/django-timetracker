@@ -1158,6 +1158,8 @@ class TrackingEntry(models.Model):
             return 'OVERTIME'
         elif self.is_undertime():
             return 'UNDERTIME'
+        elif self.daytype == "ROVER":
+            return "ROVER"
         else:
             return 'OK'
 
