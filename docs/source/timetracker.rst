@@ -65,6 +65,12 @@ timetracker.loggers
 .. automodule:: timetracker.loggers
    :members:
 
+timetracker.utils.writers
+-------------------------
+
+.. automodule:: timetracker.utils.writers
+   :members:
+
 .. _tracker:
 
 Tracker
@@ -88,6 +94,12 @@ timetracker.tracker.forms
 .. automodule:: timetracker.tracker.forms
    :members:
 
+timetracker.tracker.tests
+-------------------------
+
+.. automodule:: timetracker.tracker.tests
+   :members:
+
 .. _reporting:
 
 Reporting
@@ -97,4 +109,42 @@ timetracker.reporting.views
 ---------------------------
 
 .. automodule:: timetracker.reporting.views
+   :members:
+
+timetracker.tracker.management.commands
+---------------------------------------
+
+CATW Report
+-----------
+
+.. automodule:: timetracker.tracker.management.commands.catw_report
+   :members:
+
+MEC OT Report
+-------------
+.. automodule:: timetracker.tracker.management.commands.mec_ot_report
+   :members:
+
+Holiday Chart
+-------------
+
+.. automodule:: timetracker.tracker.management.commands.holiday_chart
+   :members:
+
+Notify Overtime
+---------------
+
+.. automodule:: timetracker.tracker.management.commands.notifyovertime
+   :members:
+
+Send Weekly Reminders
+---------------------
+
+.. automodule:: timetracker.tracker.management.commands.send_weekly_reminders
+   :members:
+
+Test E-mails
+------------
+
+.. automodule:: timetracker.tracker.management.commands.testemails
    :members:
