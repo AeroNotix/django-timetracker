@@ -15,7 +15,7 @@ import calendar
 
 from django.core.management.base import BaseCommand, CommandError
 from django.core import mail
-from timetracker.tracker.models import *
+from timetracker.tracker.models import Tbluser, TrackingEntry
 from timetracker.utils.writers import UnicodeWriter
 
 connection = mail.get_connection()
@@ -100,7 +100,8 @@ def get_previous_month(d):
     :param d: :class:`datetime.date`
     '''
     first_day_of_current_month = d.replace(day=1)
-    last_day_of_previous_month = first_day_of_current_month - datetime.timedelta(days=1)
+    last_day_of_previous_month = (first_day_of_current_month -
+                                  datetime.timedelta(days=1))
     return last_day_of_previous_month.replace(day=1)
 
 class Command(BaseCommand):
