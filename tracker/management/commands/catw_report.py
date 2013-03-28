@@ -116,7 +116,7 @@ def realrow(user, year, month, day, entry):
         "", user.user_id, "%s/%s/%s" % (month, day, year),
         catw_code(user, entry.daytype), "400",
         # the rest are empty except for the time.
-        "", "","", "", "", "%.2f" % entry.nearest_half(),
+        "", "","", "", "", "%.2f" % entry.round_down(),
         "","","","","","","",""
         ]
 

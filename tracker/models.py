@@ -26,7 +26,7 @@ except AttributeError:
 
 from timetracker.utils.datemaps import (
     WORKING_CHOICES, DAYTYPE_CHOICES, float_to_time, datetime_to_timestring,
-    MONTH_MAP, generate_year_box, nearest_half
+    MONTH_MAP, generate_year_box, nearest_half, round_down
     )
 
 try:
@@ -1112,6 +1112,10 @@ class TrackingEntry(models.Model):
     def nearest_half(self):
         '''Rounds the time to the nearest half hour.'''
         return nearest_half(self.totalhours())
+
+    def round_down(self):
+        '''Rounds the time to the nearest half hour downwards.'''
+        return round_down(self.totalhours())
 
     def normalized_break(self):
         '''Returns the shorter of breaklengths between the users actual break
