@@ -6,7 +6,20 @@ function isNumber(n) {
 
 function overtime_data() {
 	"use strict";
-    alert("Not implemented");
+	"use strict";
+    var year =  $("#yearbox_ot_for_hr").val();
+    if (isNumber(year) && year.length >= 4) {
+        window.location.assign([
+			"/reporting/ot_for_hr/",
+            year + "/",
+            $("#monthbox_hr").val() + "/"
+		].join("")
+							  );
+    } else {
+        $("#yearbox_hol").text("");
+        alert("Invalid year.");
+    }
+
 }
 
 function all_holiday_data() {

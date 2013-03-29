@@ -595,7 +595,8 @@ class Tbluser(models.Model):
             })
         return daytype_dict
 
-    def get_total_balance(self, ret='html', year=None, month=None):
+    def get_total_balance(self, ret='html', year=None, month=None,
+                          from_=None, to_=None):
 
         ''' Calculates the total balance for the user.
 
@@ -639,6 +640,14 @@ class Tbluser(models.Model):
             return_days = TrackingEntry.objects.filter(user_id=self.id,
                                                        daytype="ROVER",
                                                        entry_date__year=year
+                                                       )
+        elif from_ and to_:
+            tracking_days = TrackingEntry.objects.filter(user_id=self.id,
+                                                         daytype__in=day_types,
+                                                         entry_date__range=[from_,to_])
+            return_days = TrackingEntry.objects.filter(user_id=self.id,
+                                                       daytype="ROVER",
+                                                       entry_date__range=[from_,to_]
                                                        )
         else:
             tracking_days = TrackingEntry.objects.filter(
@@ -1170,7 +1179,7 @@ class TrackingEntry(models.Model):
     def time_difference(self):
         '''Calculates the difference between this tracking entry and the user's
         shiftlength'''
-        value = self.total_working_time() - self.user.shiftlength_as_float()
+        value = round_down(self.total_working_time()) - self.user.shiftlength_as_float()
         debug_log.debug("Time difference:" + str(value))
         return value
 

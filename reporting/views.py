@@ -24,6 +24,7 @@ from timetracker.tracker.models import Tbluser, TrackingEntry
 from timetracker.tracker.models import Tblauthorization as tblauth
 from timetracker.utils.datemaps import generate_employee_box, generate_month_box, MONTH_MAP
 from timetracker.utils.writers import UnicodeWriter
+from timetracker.tracker.management.commands import mec_ot_report
 
 @admin_check
 def reporting(request):
@@ -184,3 +185,12 @@ def holidays_for_yearmonth(request, year=None):
     response['Content-Disposition'] = \
         'attachment;filename=Holidays_for_year%s.csv' % year
     return response
+
+@admin_check
+def ot_for_hr(request, year=None, month=None):
+    if not year or not month:
+        raise Http404
+    auth_user = Tbluser.objects.get(id=request.session.get("user_id"))
+    dt = datetime.datetime.now()
+    dt.replace(year=int(year), month=int(month))
+    return mec_ot_report.report_for_account(auth_user.market, dt, send=False)
