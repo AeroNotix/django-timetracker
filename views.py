@@ -13,6 +13,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.core.mail import send_mail
 from django.conf import settings
+from django.views.decorators.csrf import csrf_protect
 
 from timetracker.tracker.models import Tbluser, UserForm, TrackingEntry
 from timetracker.tracker.models import Tblauthorization as tblauth
@@ -206,7 +207,7 @@ def user_view(request, year=None, month=None, day=None):
         RequestContext(request)
         )
 
-
+@csrf_protect
 def ajax(request):
 
     """Ajax request handler, dispatches to specific ajax functions depending
