@@ -103,7 +103,7 @@ def login(request):
     try:
         # pull out the user from the POST and
         # match it against our db
-        user =Tbluser.objects.get(user_id=user_id)
+        user = Tbluser.objects.get(user_id=user_id)
     # if the user doesn't match anything, notify
     except Tbluser.DoesNotExist:
         return render_to_response(
