@@ -192,5 +192,5 @@ def ot_for_hr(request, year=None, month=None):
         raise Http404
     auth_user = Tbluser.objects.get(id=request.session.get("user_id"))
     dt = datetime.datetime.now()
-    dt.replace(year=int(year), month=int(month))
+    dt = dt.replace(year=int(year), month=int(month))
     return mec_ot_report.report_for_account(auth_user.market, dt, send=False)
