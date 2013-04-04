@@ -528,7 +528,7 @@ def forgot_pass(request):
     # should return the password for the email address
     try:
         user = Tbluser.objects.get(user_id=email_recipient)
-        email_message = '''
+        email_message = u'''
               Hi {name},
               \tYour password reminder is: {password}\n
               Regards,
@@ -543,11 +543,12 @@ def forgot_pass(request):
         )
     except Tbluser.DoesNotExist:
         suspicious_log.info(
-            "Someone tried to reset a password of a non-existant address"
+            "Someone tried to reset a password of a non-existant address: %" \
+            % email_recipient
         )
     except Exception as error:
         if error[0] == CONNECTION_REFUSED:
             email_log.error("Failed sending e-mail to: %s" % email_recipient)
         else:
-            error_log.critical(str(error))
+            error_log.critical("Error resetting password: %s" % str(error))
     return HttpResponseRedirect("/")
