@@ -102,13 +102,14 @@ class Tbluser(models.Model):
         }
 
     MARKET_CHOICES = (
+        ('AD', 'Administration'),
         ('BF', 'BPO Factory'),
         ('BG', 'Behr Germany'),
         ('BK', 'Behr Kirchberg'),
         ('CZ', 'Behr Czech'),
         ('EN', 'MCBC'),
         ('NE', 'Newton'),
-        ('AD', 'Administration'),
+        ('SA', 'Store Accounting'),
     )
 
     PROCESS_CHOICES = (
@@ -116,11 +117,14 @@ class Tbluser(models.Model):
         ('AO', 'Accounting Operations'),
         ('AP', 'Accounts Payable'),
         ('AR', 'Accounts Receivable'),
+        ('CP', 'C&A PL'),
+        ('CT', 'C&A AT'),
         ('FA', 'F&A'),
         ('HL', 'HRO Lodz'),
         ('HR', 'HRO'),
         ('HW', 'HRO Wro'),
         ('SC', 'Scanning'),
+        ('SK', 'C&A CZSK'),
         ('TE', 'Travel & Expenses'),
     )
 
