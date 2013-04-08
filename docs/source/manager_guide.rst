@@ -48,7 +48,7 @@ Features
 Link to the holiday/time tracker
 --------------------------------
 
-Here is the link to the timetracker: http://16.55.133.115:55/
+Here is the link to the timetracker: http://bpotimetracker.pol.hp.com
 
 Logging in
 ----------
