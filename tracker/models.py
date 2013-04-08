@@ -740,6 +740,17 @@ class Tbluser(models.Model):
         return 0 - (add(shift_hours, (shift_minutes / 60.0))
                            - add(total_hours, (total_mins / 60.0)))
 
+    def balance_breakdown(self):
+        today = dt.datetime.today()
+        return (
+            ("Last 7 Days", self.get_total_balance(
+                from_=today.replace(day=today.day-7),
+                to_=today)),
+            ("Last Month", self.get_total_balance(
+                from_=today.replace(month=today.month-1 if today.month-1 > 0 else 12),
+                to_=today)),
+            )
+
     def shiftlength_as_float(self):
         '''Returns the shiftlength of the user as a float
         :rtype: :class:`float`'''
