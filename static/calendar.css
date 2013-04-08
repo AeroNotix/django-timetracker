@@ -198,6 +198,11 @@
    background: yellow;
 }
 
+.LINKD {
+   background-color: brown;
+}
+
+
 .selected {
    background-color: #FF6F00;
    color: black;

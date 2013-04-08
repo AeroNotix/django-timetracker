@@ -104,6 +104,7 @@ ABSENT_CHOICES = (
 )
 
 DAYTYPE_CHOICES = (
+    ('LINKD', 'Linked Day'),
     ('WKDAY', 'Work Day'),
     ('HOLIS', 'Vacation'),
     ('SICKD', 'Sickness Absence'),

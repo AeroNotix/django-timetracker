@@ -525,14 +525,15 @@ def gen_calendar(year=None, month=None, day=None, user=None):
                     _day,
                     data.id,
                     data.breaks.minute,
-                    str(data.breaks)[0:5]
+                    str(data.breaks)[0:5],
+                    data.link.entry_date if data.link else ""
                     ]
 
                 to_cal("""\t\t\t\t
                        <td onclick="toggleChangeEntries({0}, {1}, '{2}',
                                                         {3}, {4}, '{5}',
                                                         '{6}', '{7}', {9},
-                                                        {10}, '{11}')"
+                                                        {10}, '{11}', '{12}')"
                            class="day-class {7}">{8}</td>\n""".format(*vals)
                        )
 
@@ -634,10 +635,10 @@ def ajax_add_entry(request):
               json.
     :rtype: :class:`HttpResponse`
     '''
-
     # object to dump form data into
     form = {
         'entry_date': None,
+        'link': None,
         'start_time': None,
         'end_time': None,
         'daytype': None,
@@ -646,6 +647,18 @@ def ajax_add_entry(request):
 
     # get the form data from the request object
     form.update(get_request_data(form, request))
+    if form['link'] == '':
+        form.pop('link')
+    else:
+        form['link'] = TrackingEntry(
+            user_id=form['user_id'],
+            entry_date=form['link'],
+            start_time="00:00:00",
+            end_time="00:00:00",
+            breaks="00:00:00",
+            daytype="LINKD",
+        )
+        
 
     # create objects to put our data into
     json_data = {
@@ -653,7 +666,7 @@ def ajax_add_entry(request):
         'error': '',
         'calendar': ''
     }
-
+    debug_log.debug(form)
     try:
         # server-side time validation
         if not validate_time(form['start_time'], form['end_time']):
@@ -666,12 +679,24 @@ def ajax_add_entry(request):
         return json_data
 
     try:
+        # This looks strange but we need a real database entry before
+        # we can One-to-one an entry. So we save the one we made before
+        # here so we catch similar errors and then link them together.
+        if form.get('link'):
+            form['link'].save()
         entry = TrackingEntry(**form)
         entry.save()
+        if form.get('link'):
+            form['link'].link = entry
+            form['link'].save()
     except (IntegrityError, ValidationError) as error:
-        error_log.error(str(error))
+        error_log.error("Error adding new entry for %s: %s" % \
+                        (request.session.get('user_id'), str(error)))
         json_data['error'] = str(error)
         return json_data
+    except Exception as e:
+        error_log.critical("Unhandled exception when creating a new tracking entry: %s" % str(e))
+        raise
 
     entry.send_notifications()
     year, month, day = map(int,
@@ -738,7 +763,7 @@ def ajax_delete_entry(request):
                                   user=user)
             entry.delete()
         except Exception as error:
-            error_log.error(str(error))
+            error_log.error("Error deleting entry for %s: %s " % (user, str(error)))
             json_data['error'] = str(error)
             return json_data
 

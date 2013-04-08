@@ -630,7 +630,7 @@ class Tbluser(models.Model):
 
         day_types = [element[0]
                      for element in WORKING_CHOICES
-                     if element[0] != "SATUR"]
+                     if element[0] in ["SATUR","LINKD"]]
 
         if not year and not month:
             tracking_days = TrackingEntry.objects.filter(user_id=self.id,
@@ -1030,7 +1030,8 @@ class TrackingEntry(models.Model):
     '''
 
     user = models.ForeignKey(Tbluser, related_name="user_tracking")
-
+    link = models.OneToOneField("self", related_name="linked_entry",
+                                null=True, blank=True)
     entry_date = models.DateField()
     start_time = models.TimeField()
     end_time = models.TimeField()
@@ -1051,6 +1052,7 @@ class TrackingEntry(models.Model):
 
     def save(self, *args, **kwargs):
         super(TrackingEntry, self).save(*args, **kwargs)
+        debug_log.debug(self.link)
         self.full_clean()
         if self.daytype == "WKDAY" and \
                 self.entry_date.isoweekday() in [6, 7]:

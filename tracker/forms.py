@@ -50,6 +50,12 @@ class EntryForm(forms.Form):
                                 'id': 'change_breaks',
                                 'readonly': 'readonly'})
 
+    link_date = forms.DateField(label="Link Date:")
+    link_date.widget.attrs.update({'class': 'change-el',
+                                    'id': 'change_link',
+                                    'readonly': 'readonly'})
+
+
     daytype = forms.ChoiceField(label="Day Type:", choices=DAYTYPE_CHOICES)
     daytype.widget.attrs.update({'class': 'change-el',
                                     'id': 'change_daytype'})
@@ -82,6 +88,11 @@ class AddForm(forms.Form):
     breaks.widget.attrs.update({'class': 'change-el',
                                 'id': 'add_breaks',
                                 'readonly': 'readonly'})
+
+    link_date = forms.DateField(label="Link Date:")
+    link_date.widget.attrs.update({'class': 'change-el',
+                                   'id': 'add_link',
+                                   'readonly': 'readonly'})
 
     daytype = forms.ChoiceField(label="Day Type:", choices=DAYTYPE_CHOICES)
     daytype.widget.attrs.update({'class': 'change-el',

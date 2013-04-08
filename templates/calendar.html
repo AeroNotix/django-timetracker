@@ -23,6 +23,9 @@
         <tr>
           <td class="WKDAY holiday-button"></td><td>Work Day</td>
         </tr>
+		<tr>
+          <td class="LINKD holiday-button"></td><td>Linked Day</td>
+        </tr>
         <tr>
           <td class="ROVER holiday-button"></td><td>Return for overtime</td>
         </tr>
@@ -65,7 +68,7 @@
           <legend class="fs-title">Add Entry</legend>
           <table>
             <tr>
-               <th>
+              <th>
                 <label for="add_entrydate">
                   Entry Date:
                 </label>
@@ -102,6 +105,16 @@
               </th>
               <td>
                 {{ addform.breaks }}
+              </td>
+            </tr>
+			<tr>
+			  <th>
+                <label for="add_link">
+				  Link Date:
+                </label>
+              </th>
+              <td>
+                {{ addform.link_date }}
               </td>
             </tr>
             <tr>
@@ -179,6 +192,16 @@
               </th>
               <td>
                 {{ changeform.breaks }}
+              </td>
+            </tr>
+			<tr>
+			  <th>
+                <label for="change_link">
+				  Link Date:
+                </label>
+              </th>
+              <td>
+                {{ changeform.link_date }}
               </td>
             </tr>
             <tr>

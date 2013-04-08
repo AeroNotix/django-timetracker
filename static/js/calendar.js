@@ -26,6 +26,7 @@ function ajaxCall(form) {
     */
 
     "use strict";
+	console.log(form);
 
     $.ajaxSetup({type: 'POST'});
     var pre = '',
@@ -46,6 +47,7 @@ function ajaxCall(form) {
     formData = {
         "form_type" : form,
         "entry_date" : $(pre + 'entrydate').val(),
+		"link" : $(pre + 'link').val(),
         "start_time" : $(pre + 'starttime').val(),
         "end_time" : $(pre + 'endtime').val(),
         "daytype" : $(pre + 'daytype').val(),
@@ -54,6 +56,7 @@ function ajaxCall(form) {
     };
 
     if ($(pre + 'daytype').val() !== "WKDAY") {
+		console.log($(pre + 'daytype').val());
         return;
     }
 
@@ -68,6 +71,7 @@ function ajaxCall(form) {
 
     // no point in making invalid ajax requests
     if (!formData.entry_date || !formData.start_time || !formData.end_time) {
+		console.log("invalid time")
         return false;
     }
 
@@ -185,46 +189,6 @@ function addDatePicker(element, state) {
 
 }
 
-$(function () {
-
-    /*
-      jQuery onload function which adds a
-      few widgets to the page along with
-      their initial state.
-    */
-
-    "use strict";
-
-    addTimePicker("#change_starttime", false);
-    addTimePicker("#change_endtime", false);
-    addTimePicker("#add_starttime", true);
-    addTimePicker("#add_endtime", true);
-    addDatePicker("#change_entrydate", false);
-    addDatePicker("#add_entrydate", true);
-
-    $("#add_daytype").change(function () {
-        onOptionChange('add');
-    });
-    $("#change_daytype").change(function () {
-        onOptionChange('change');
-    });
-
-    $("#add_breaks")
-        .timepicker({
-            showHour: true
-        })
-        .val('');
-
-    $("#change_breaks")
-        .timepicker({
-            showHour: true
-        })
-        .val('');
-
-    onOptionChange('add');
-    onOptionChange('change');
-});
-
 function deleteEntry() {
 
     /*
@@ -233,7 +197,8 @@ function deleteEntry() {
 
     "use strict";
 
-    if ($("#change_daytype").val() !== "WKDAY") {
+    if ($("#change_daytype").val() !== "WKDAY" ||
+		$("#change_link").val() !== "") {
         return;
     }
 
@@ -248,7 +213,7 @@ function toggleChangeEntries(st_hour, st_min, full_st,
                              fi_hour, fi_min, full_fi,
                              entry_date, daytype,
                              change_id, breakLength,
-                             breakLength_full) {
+                             breakLength_full, linkday) {
 
     /*
       When an entry is clicked, it will fill out the
@@ -257,6 +222,8 @@ function toggleChangeEntries(st_hour, st_min, full_st,
     */
 
     "use strict";
+	// Set the hidden type back to WKDAYs
+    $("#add_daytype").val("WKDAY");
 
     // change the ID field
     $("#hidden_id").val(change_id);
@@ -311,6 +278,7 @@ function toggleChangeEntries(st_hour, st_min, full_st,
     $("#change_starttime").val(full_st);
     $("#change_endtime").val(full_fi);
     $("#change_breaks").val(breakLength_full);
+	$("#change_link").val(linkday);
 
 }
 
@@ -321,11 +289,13 @@ function hideEntries(date) {
     $("#add_starttime").val('');
     $("#add_endtime").val('');
     $("#add_breaks").val('');
+	$("#add_link").val('');
 
     $("#change_starttime").val('');
     $("#change_entrydate").val('');
     $("#change_endtime").val('');
     $("#change_breaks").val('');
+	$("#change_link").val('');
 
 
     $("#add_starttime").timepicker("destroy");
@@ -358,7 +328,44 @@ function hideEntries(date) {
 }
 
 $(function () {
-	"use strict";
+
+    /*
+      jQuery onload function which adds a
+      few widgets to the page along with
+      their initial state.
+    */
+
+    "use strict";
+
+    addTimePicker("#change_starttime", false);
+    addTimePicker("#change_endtime", false);
+    addTimePicker("#add_starttime", true);
+    addTimePicker("#add_endtime", true);
+    addDatePicker("#change_entrydate", false);
+    addDatePicker("#add_entrydate", true);
+	addDatePicker("#add_link", true);
+	
+    $("#add_daytype").change(function () {
+        onOptionChange('add');
+    }).val("WKDAY");
+    $("#change_daytype").change(function () {
+        onOptionChange('change');
+    }).val("WKDAY");
+
+    $("#add_breaks")
+        .timepicker({
+            showHour: true
+        })
+        .val('');
+
+    $("#change_breaks")
+        .timepicker({
+            showHour: true
+        })
+        .val('');
+
+    onOptionChange('add');
+    onOptionChange('change');
 
     $(".table-links").css({"color": "white"});
 });
