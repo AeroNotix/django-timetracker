@@ -491,7 +491,9 @@ def explain(request):
          'lastname': user.lastname,
          'shiftlength': "%s:%s" % (user.shiftlength.hour,
                                    user.shiftlength.minute),
-         'working_days': TrackingEntry.objects.filter(user=user.id).count()
+         'working_days': TrackingEntry.objects.filter(user=user.id).count(),
+         'balances': user.balance_breakdown(),
+         'holiday_balances': user.get_balances(datetime.datetime.now().year),
          },
         RequestContext(request))
 

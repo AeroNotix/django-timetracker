@@ -11,6 +11,7 @@ Understanding your balance
 <!--[ifIE]>
 <div id="IEroot">
 <!--[endif]-->
+
 <div id="text-item">
   <h3>Understanding your balance</h3>
   <p>
@@ -21,9 +22,31 @@ Understanding your balance
     total and the actual total.
   </p>
   <p>Below is a mathematical representation:</p>
-  <div id="code">
-    <ul>&nbsp&nbsp(shiftLength * (number_of_days_logged))</ul>
-    <ul>- (total_time_logged)</ul>       
+  <script src="https://gist.github.com/AeroNotix/5336914.js"></script>
+  <h3> Balances </h3>
+  <div style="display: inline-block; float: left">
+    <table border="1">
+      <tr>
+        <td>Balance Type</td><td>Balance</td>
+      </tr>
+      {% for balance in balances %}
+      <tr>
+        <td>{{balance.0}}</td><td>{{balance.1|safe}}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+  <div style="display: inline-block; margin-left: 20px">
+    <table border="1">
+      <tr>
+        <td>Day Type</td><td>Balance</td>
+      </tr>
+      {% for key, value in holiday_balances.items %}
+      <tr>
+        <td>{{key}}</td><td>{{value}}</td>
+      </tr>
+      {% endfor %}
+    </table>
   </div>
 </div>
 <!--[ifIE]>
