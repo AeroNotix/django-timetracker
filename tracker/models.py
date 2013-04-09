@@ -716,6 +716,8 @@ class Tbluser(models.Model):
          shift_hours, shift_minutes) = (0, 0, 0, 0)
 
         for item in tracking_days:
+            if item.is_linked():
+                continue
             shift_hours += self.shiftlength.hour
             shift_minutes += self.shiftlength.minute
 
@@ -1207,7 +1209,7 @@ class TrackingEntry(models.Model):
         send out the e-mails as per the rules.'''
 
         if self.daytype == "WKDAY" and self.is_overtime() or \
-                self.daytype in ["PUWRK", "SATUR"]:
+                self.daytype in ["PUWRK", "SATUR", "LINKD"]:
             debug_log.debug("Overtime created: " + self.user.name())
             send_overtime_notification(self)
         if self.is_undertime() and self.sending_undertime():
