@@ -1364,7 +1364,7 @@ def mass_holidays(request):
                     current_entry.daytype = daytype
                     current_entry.save()
             except TrackingEntry.DoesNotExist:
-                if daytype == "empty":
+                if daytype in ["empty", "LINKD"]:
                     continue
                 time_str = Tbluser.objects.get(
                     id=entry[0]

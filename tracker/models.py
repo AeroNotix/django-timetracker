@@ -1098,9 +1098,11 @@ class TrackingEntry(models.Model):
 
     def unlink(self):
         if self.link:
-            self.link.daytype = "WKDAY"
-            self.link.link = None
-            self.link.save()
+            if self.link.daytype == "LINKD":
+                self.link.delete()
+            else:
+                self.link.link = None
+                self.link.save()
 
     def breaktime(self):
         '''Returns the breaks entry of this tracking entry.'''
