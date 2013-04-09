@@ -1349,10 +1349,18 @@ def mass_holidays(request):
                 current_entry = TrackingEntry.objects.get(
                     entry_date=datestr,
                     user_id=entry[0]
-                    )
-                if daytype == "empty":
+                )
+                if current_entry.is_linked() and daytype == "empty":
+                    current_entry.unlink()
+                    current_entry.delete()
+                elif daytype == "empty":
                     current_entry.delete()
                 else:
+                    # we may have unlinked something before, and if
+                    # we're here we don't want to set something to
+                    # linked again.
+                    if daytype == "LINKD":
+                        continue
                     current_entry.daytype = daytype
                     current_entry.save()
             except TrackingEntry.DoesNotExist:
