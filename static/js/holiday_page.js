@@ -187,7 +187,7 @@ function addFunctions() {
             + '.SPECI, .MEDIC, .PUABS, '
             + '.PUWRK, .SATUR, .RETRN, '
             + '.WKHOM, .OTHER, .ROVER, '
-            + '.WKEND')
+            + '.WKEND, .LINKD')
         .not(":button")
         .attr("unselectable", "on")   // make it so you can't select text
         .mouseover(function (e) {
