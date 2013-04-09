@@ -685,6 +685,8 @@ def ajax_add_entry(request):
         if form.get('link'):
             form['link'].save()
         entry = TrackingEntry(**form)
+        if form.get('link'):
+            entry.daytype = "LINKD"
         entry.save()
         if form.get('link'):
             form['link'].link = entry
