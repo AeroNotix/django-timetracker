@@ -1092,6 +1092,15 @@ class TrackingEntry(models.Model):
         td += self.normalized_break()
         return td
 
+    def is_linked(self):
+        return self.daytype == "LINKD" or self.link
+
+    def unlink(self):
+        if self.link:
+            self.link.daytype = "WKDAY"
+            self.link.link = None
+            self.link.save()
+
     def breaktime(self):
         '''Returns the breaks entry of this tracking entry.'''
         return (dt.timedelta(hours=self.breaks.hour,
