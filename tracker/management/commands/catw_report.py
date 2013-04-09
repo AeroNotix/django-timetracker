@@ -141,6 +141,8 @@ def report_for_account(choice_list, year, month):
     # id of the employee (who may not have any entries this month).
     entry_map = {user.id: {} for user in users}
     for entry in entries:
+        if entry.is_linked():
+            continue
         if entry_map.get(entry.user.id):
             entry_map[entry.user.id][str(entry.entry_date)] = entry
         else:
