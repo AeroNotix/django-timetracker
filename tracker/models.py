@@ -665,7 +665,6 @@ class Tbluser(models.Model):
                                                        entry_date__year=year,
                                                        entry_date__month=month)
 
-
         if settings.OVERRIDE_CALCULATION.get(self.market):
             trackingnumber = \
                 settings.OVERRIDE_CALCULATION[self.market](self,
