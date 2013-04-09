@@ -1053,7 +1053,6 @@ class TrackingEntry(models.Model):
 
     def save(self, *args, **kwargs):
         super(TrackingEntry, self).save(*args, **kwargs)
-        debug_log.debug(self.link)
         self.full_clean()
         if self.daytype == "WKDAY" and \
                 self.entry_date.isoweekday() in [6, 7]:
