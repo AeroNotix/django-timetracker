@@ -41,6 +41,7 @@ function insert_comment(data) {
          "<li>End Time: " + data.end_time + "</li>",
          "<li>DayType: " + data.daytype + "</li>",
          "<li>Length: " + data.length + "</li>",
+         "<li>Linked Day: " + data.link + "</li>",
          "</ul>"].join(''));
 }
 

@@ -921,6 +921,7 @@ def get_tracking_entry_data(request):
         "breaks": str(entry.breaks),
         "daytype": str(entry.daytype),
         "length": round_down(entry.total_working_time()),
+        "link": str(entry.link.entry_date) if entry.link else ""
         }
 
 @request_check
