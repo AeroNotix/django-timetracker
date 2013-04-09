@@ -666,7 +666,6 @@ def ajax_add_entry(request):
         'error': '',
         'calendar': ''
     }
-    debug_log.debug(form)
     try:
         # server-side time validation
         if not validate_time(form['start_time'], form['end_time']):
