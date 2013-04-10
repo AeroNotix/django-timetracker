@@ -26,7 +26,6 @@ function ajaxCall(form) {
     */
 
     "use strict";
-	console.log(form);
 
     $.ajaxSetup({type: 'POST'});
     var pre = '',
@@ -56,7 +55,6 @@ function ajaxCall(form) {
     };
 
     if ($(pre + 'daytype').val() !== "WKDAY") {
-		console.log($(pre + 'daytype').val());
         return false;
     }
 
@@ -77,7 +75,6 @@ function ajaxCall(form) {
 
     // no point in making invalid ajax requests
     if (!formData.entry_date || !formData.start_time || !formData.end_time) {
-		console.log("invalid time")
         return false;
     }
 
