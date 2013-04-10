@@ -57,15 +57,21 @@ function ajaxCall(form) {
 
     if ($(pre + 'daytype').val() !== "WKDAY") {
 		console.log($(pre + 'daytype').val());
-        return;
+        return false;
     }
 
     if ($(pre + 'starttime').val() === $(pre + 'endtime').val()) {
-        alert("Length of working time invalid");
+        alert("Length of working time invalid.");
+        return false;
     }
 
     if (!validateTimePair(pre + 'starttime', pre + 'endtime')) {
-        alert("Start Time before End Time");
+        alert("Start Time before End Time.");
+        return false;
+    }
+
+    if (formData["entry_date"] === formData["link"]) {
+        alert("You cannot link to the same day.");
         return false;
     }
 
