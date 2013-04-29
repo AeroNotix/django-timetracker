@@ -54,20 +54,20 @@ WKDAY_MAP = {
     "EN": {
         "FA": "zzz-2115.R01.BFAA",
         "ELSE": "zzz-2115.R01.BHOS"
-        },
+    },
     "BG": {
         "FA": "zzz-3662.R01.BFAA",
         "ELSE": "zzz-3662.R01.BHOS"
-        },
+    },
     "BK": {
         "FA": "zzz-3662.R01.BFAA",
         "ELSE": "zzz-3662.R01.BHOS"
-        },
+    },
     "CZ": {
         "FA": "zzz-3662.R01.BFAA",
-        "ELSE": "zzz-3662.R01.BFOS"
-        }
+        "ELSE": "zzz-3662.R01.BHOS"
     }
+}
 
 DAYTYPE_MAP = {
     'HOLIS': "ZZZ-9999.INT.ABSNCE",
