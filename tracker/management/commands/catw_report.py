@@ -131,7 +131,7 @@ def report_for_account(choice_list, year, month):
     csvout = csv.writer(open(filename, "wb"))
     csvout.writerow(HEADINGS)
 
-    users = Tbluser.objects.filter(market__in=accs)
+    users = Tbluser.objects.filter(market__in=accs, disabled=False)
     entries = TrackingEntry.objects.select_related("user").filter(
         user__market__in=accs,
         entry_date__year=year,
