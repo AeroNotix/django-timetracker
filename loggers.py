@@ -5,17 +5,6 @@ A module to create and share a few logging instances
 import logging
 import os
 
-'''
-Hacky method of importing the settings module that is currently
-running.
-
-The way this works is by detecting the environment setting for
-the settings module which Django loads (we load it in the case
-of apache) and then uses that setting as the string name, we
-then build a list of module level variable names which we want
-to import, set up both dicts to insert them from/to then put it
-into the name space of _mod_.
-'''
 from django.conf import settings
 
 def create_logger(filename,
