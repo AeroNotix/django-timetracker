@@ -749,7 +749,9 @@ class Tbluser(models.Model):
                                     else {'day': today.day-7}),
                 to_=today)),
             ("Last Month", self.get_total_balance(
-                from_=today.replace(month=today.month-1 if today.month-1 > 0 else 12),
+                from_=today.replace(month=today.month-1 \
+                                    if today.month-1 > 0 \
+                                    else 12),
                 to_=today)),
             )
 
