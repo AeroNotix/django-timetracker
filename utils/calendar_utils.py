@@ -1480,7 +1480,9 @@ def get_comments(request):
     try:
         entry = TrackingEntry.objects.get(entry_date=entry_date,
                                           user_id=form_data['user'])
-    except TrackingEntry.DoesNotExist:
+    # DoesNotExist error because entries may not have any comments and
+    # ValidationError because we have been given invalid date values.
+    except (TrackingEntry.DoesNotExist, ValidationError):
         json_data['success'] = True
         return json_data
 
