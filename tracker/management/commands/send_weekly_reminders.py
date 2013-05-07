@@ -7,5 +7,5 @@ class Command(BaseCommand):
         'in the argument list'
 
     def handle(self, *args, **options):
-        for user in Tbluser.objects.filter(market__in=args):
+        for user in Tbluser.objects.filter(market__in=args, disabled=False):
             user.send_weekly_reminder()
