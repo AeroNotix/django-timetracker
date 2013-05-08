@@ -6,6 +6,7 @@ from functools import wraps
 import simplejson
 
 from django.http import HttpResponse, Http404
+from django.conf import settings
 
 from timetracker.tracker.models import Tbluser
 from timetracker.loggers import info_log, suspicious_log
@@ -38,37 +39,43 @@ def loggedin(func):
         return func(request, *args, **kwargs)
     return inner
 
-
 def admin_check(func):
+    """
+    The API was changed so I provide this to retain a backwards comptible
+    function.
+    """
+    return permissions(["SUPER", "ADMIN", "TEAML"])(func)
 
-    """Wrapper to see if the view is being called as an admin
+def permissions(permission):
 
-    This works by 1) Checking if there is a user_id in the session
-    table. 2) If that user is a real user in the database and 3) if
-    that user's is_admin() returns True.
+    """Wrapper to see if the view is being called by a specific set of
+    users.
 
-    :param func: A function with a request object as a parameter
+    :param permission: A list of user types which are allowed to access
+                       a resource.
     :returns: Nothing directly, it returns the function it decorates.
     :raises: :class:`Http404` error
     """
-
-    @wraps(func)
-    def inner(request, **kwargs):
-        '''implementation'''
-        try:
-            user = Tbluser.objects.get(
-                id=request.session.get('user_id', None)
-            )
-        except Tbluser.DoesNotExist:
-            info_log.info("Non-logged in user accessing @loggedin page")
-            raise Http404
-        if not user.sup_tl_or_admin():
-            suspicious_log.info("Non-admin user accessing @admin_check page")
-            raise Http404
-        else:
-            return func(request, **kwargs)
-
-    return inner
+    def wrapper(func):
+        @wraps(func)
+        def inner(request, **kwargs):
+            '''implementation'''
+            if settings.DEBUG:
+                return func(request, **kwargs)
+            try:
+                user = Tbluser.objects.get(
+                    id=request.session.get('user_id', None)
+                )
+            except Tbluser.DoesNotExist:
+                info_log.info("Non-logged in user accessing @loggedin page")
+                raise Http404
+            if user.user_type not in permission:
+                suspicious_log.info("Non-admin user accessing @permission page: %s", user.name())
+                raise Http404
+            else:
+                return func(request, **kwargs)
+        return inner
+    return wrapper
 
 
 def json_response(func):
