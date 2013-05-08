@@ -93,3 +93,25 @@ function holidays_for_yearmonth() {
         alert("Invalid year.");
     }
 }
+
+function all_team() {
+    "use strict";
+
+    var year = $("#yearbox_hols_year").val(),
+        month = $("#monthbox_all").val(),
+        team = $("#teambox_all").val();
+
+    if (isNumber(year) && year.length >= 4) {
+        window.location.assign([
+			"/reporting/all_team/",
+            year + "/",
+            month + "/",
+            team + "/"
+        ].join("")
+							  );
+    } else {
+        $("#yearbox_hols_year").text("");
+        alert("Invalid year.");
+    }
+
+}

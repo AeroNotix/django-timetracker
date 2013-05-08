@@ -19,10 +19,13 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.http import HttpResponse, Http404
 
-from timetracker.utils.decorators import admin_check, loggedin
+from timetracker.utils.decorators import admin_check, loggedin, permissions
 from timetracker.tracker.models import Tbluser, TrackingEntry
 from timetracker.tracker.models import Tblauthorization as tblauth
-from timetracker.utils.datemaps import generate_employee_box, generate_month_box, MONTH_MAP
+from timetracker.utils.datemaps import (generate_select,
+                                        generate_employee_box,
+                                        generate_month_box,
+                                        MONTH_MAP)
 from timetracker.utils.writers import UnicodeWriter
 from timetracker.tracker.management.commands import mec_ot_report
 
@@ -40,6 +43,8 @@ def reporting(request):
             "monthbox_hol": generate_month_box("monthbox_hol"),
             "monthbox_ot": generate_month_box("monthbox_ot"),
             "monthbox_hr": generate_month_box("monthbox_hr"),
+            "monthbox_all": generate_month_box("monthbox_all"),
+            "teambox_all": generate_select(Tbluser.MARKET_CHOICES, id="teambox_all"),
         },
         RequestContext(request))
 
@@ -193,3 +198,23 @@ def ot_for_hr(request, year=None, month=None):
     auth_user = Tbluser.objects.get(id=request.session.get("user_id"))
     dt = datetime.datetime(year=int(year), month=int(month), day=1)
     return mec_ot_report.report_for_account(auth_user.market, dt, send=False)
+
+@permissions(["SUPER"])
+def all_team(request, year=None, month=None, team=None):
+    if not year or not month or not team:
+        raise Http404
+
+    buf = StringIO()
+    buf.write("\xef\xbb\xbf")
+    csvfile = UnicodeWriter(buf)
+    csvfile.writerow(TrackingEntry.headings())
+    for user in Tbluser.objects.filter(market=team):
+        for entry in TrackingEntry.objects.filter(
+            entry_date__year=year,
+            entry_date__month=month,
+            user_id=user.id):
+            csvfile.writerow(entry.display_as_csv())
+    response = HttpResponse(buf.getvalue(), mimetype="text/csv")
+    response['Content-Disposition'] = \
+        'attachment;filename=AllHolidayData_%s_%s_%s.csv' % (year, month, team)
+    return response

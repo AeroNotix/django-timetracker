@@ -102,6 +102,25 @@ Reporting
         <input onclick="holidays_for_yearmonth()" type="button" value="Download"/>
       </td>
     </tr>
+
+    <tr>
+      <td>
+        All holidays for a team in a month:
+      </td>
+      <td>
+        <input id="all_team_year" value="{{ yearbox_hol }}" />
+      </td>
+      <td>
+        {{ monthbox_all|safe }}
+      </td>
+      <td>
+        {{ teambox_all|safe }}
+      </td>
+      <td>
+        <input onclick="all_team()" type="button" value="Download"/>
+      </td>
+    </tr>
+
     </table>
   </form>
 </div>
