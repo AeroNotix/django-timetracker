@@ -36,6 +36,7 @@ the only possible absent day possibilities.
 
 import datetime
 
+
 WEEK_MAP_MID = {
     0: 'Mon',
     1: 'Tue',
