@@ -1,9 +1,13 @@
 from django.conf.urls import patterns, include, url
 
 from timetracker.reporting import views
+from timetracker.utils.datemaps import gen_team_list
 
 YEAR = '(?P<year>\d{4})'
 MONTH = '(?P<month>\d{1,2})'
+TEAM = '(?P<team>%s)'
+
+TEAM = TEAM % gen_team_list()
 
 urlpatterns = patterns(
     '',

@@ -265,3 +265,27 @@ def datetime_to_timestring(dt_):
     :returns: :class:`str`
     """
     return pad(dt_.hour)+':'+pad(dt_.minute)+':'+pad(dt_.second)
+
+def gen_process_list():
+    from timetracker.tracker.models import Tbluser
+    '''
+    Generates the regex for the process list
+    '''
+    out = ''
+    for i, process in enumerate(Tbluser.PROCESS_CHOICES):
+        out += process[0]
+        if i + 1 != len(Tbluser.PROCESS_CHOICES):
+            out += '|'
+    return out
+
+def gen_team_list():
+    from timetracker.tracker.models import Tbluser
+    '''
+    Generates the regex for the market list
+    '''
+    out = ''
+    for i, process in enumerate(Tbluser.MARKET_CHOICES):
+        out += process[0]
+        if i + 1 != len(Tbluser.MARKET_CHOICES):
+            out += '|'
+    return out

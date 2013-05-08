@@ -7,17 +7,7 @@ from django.contrib import admin
 
 from timetracker import views
 from timetracker.tracker.models import Tbluser
-
-def gen_process_list():
-    '''
-    Generates the regex for the process list
-    '''
-    out = ''
-    for i, process in enumerate(Tbluser.PROCESS_CHOICES):
-        out += process[0]
-        if i + 1 != len(Tbluser.PROCESS_CHOICES):
-            out += '|'
-    return out
+from timetracker.utils.datemaps import gen_process_list
 
 admin.autodiscover()
 
