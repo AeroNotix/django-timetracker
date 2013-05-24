@@ -117,7 +117,8 @@ def realrow(user, year, month, day, entry):
         catw_code(user, entry.daytype), "400",
         # the rest are empty except for the time.
         "", "","", "", "", "%.2f" % entry.round_down() \
-        if entry.daytype != "HOLIS" else user.shiftlength_as_float(),
+        if entry.daytype not in ["HOLIS", "PUABS"] \
+        else user.shiftlength_as_float(),
         "","","","","","","",""
         ]
 
