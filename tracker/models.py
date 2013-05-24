@@ -837,7 +837,7 @@ class Tbluser(models.Model):
 
     def available_categories(self):
         return self.available_activities().values('grouptype').distinct()
-
+        
     def available_activities(self):
         return Activity.objects.filter(group=self.market+self.process)
 
