@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+{{ logged_in_user.market }}
+
+<select>
+  {{ logged_in_user.process }}
+  {% for activity in logged_in_user.available_activities %}
+  <option value="{{ activity.grouptype }}">{{activity.grouptype}}</option>
+  {% endfor %}
+</select>
+{% endblock content %}

@@ -121,6 +121,34 @@ DAYTYPE_CHOICES = (
     ('OTHER', 'Other'),
 )
 
+MARKET_CHOICES = (
+    ('AD', 'Administration'),
+    ('BF', 'BPO Factory'),
+    ('BG', 'Behr Germany'),
+    ('BK', 'Behr Kirchberg'),
+    ('CZ', 'Behr Czech'),
+    ('EN', 'MCBC'),
+    ('NE', 'Newton'),
+    ('SA', 'Store Accounting'),
+)
+
+PROCESS_CHOICES = (
+    ('AD', 'Administration'),
+    ('AO', 'Accounting Operations'),
+    ('AP', 'Accounts Payable'),
+    ('AR', 'Accounts Receivable'),
+    ('CP', 'C&A PL'),
+    ('CT', 'C&A AT'),
+    ('FA', 'F&A'),
+    ('HL', 'HRO Lodz'),
+    ('HR', 'HRO'),
+    ('HW', 'HRO Wro'),
+    ('SC', 'Scanning'),
+    ('SK', 'C&A CZSK'),
+    ('TE', 'Travel & Expenses'),
+)
+
+
 def generate_year_box(year, id=''):
     '''Generates a select box with years -/+ 2 of the year provided.
 
@@ -268,25 +296,23 @@ def datetime_to_timestring(dt_):
     return pad(dt_.hour)+':'+pad(dt_.minute)+':'+pad(dt_.second)
 
 def gen_process_list():
-    from timetracker.tracker.models import Tbluser
     '''
     Generates the regex for the process list
     '''
     out = ''
-    for i, process in enumerate(Tbluser.PROCESS_CHOICES):
+    for i, process in enumerate(PROCESS_CHOICES):
         out += process[0]
-        if i + 1 != len(Tbluser.PROCESS_CHOICES):
+        if i + 1 != len(PROCESS_CHOICES):
             out += '|'
     return out
 
 def gen_team_list():
-    from timetracker.tracker.models import Tbluser
     '''
     Generates the regex for the market list
     '''
     out = ''
-    for i, process in enumerate(Tbluser.MARKET_CHOICES):
+    for i, process in enumerate(MARKET_CHOICES):
         out += process[0]
-        if i + 1 != len(Tbluser.MARKET_CHOICES):
+        if i + 1 != len(MARKET_CHOICES):
             out += '|'
     return out

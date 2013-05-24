@@ -49,6 +49,7 @@ def user_context_manager(request):
     except Tbluser.DoesNotExist:
         return {}
     return {
+        "logged_in_user": user,
         "welcome_name": user.firstname,
         "is_admin": user.super_or_admin(),
         "is_team_leader": user.is_tl(),
