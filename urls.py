@@ -63,4 +63,5 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
 
     (r'^reporting/', include('timetracker.reporting.urls')),
+    (r'^vcs/', include('timetracker.vcs.urls')),
 )
