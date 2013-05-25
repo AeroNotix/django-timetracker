@@ -805,6 +805,9 @@ class Tbluser(models.Model):
             return ',\n'.join(overridden)
         return self.get_administrator().name()
 
+    def available_categories(self):
+        return self.available_activities().values('grouptype').distinct()
+
     def available_activities(self):
         return Activity.objects.filter(group=self.market+self.process)
 
