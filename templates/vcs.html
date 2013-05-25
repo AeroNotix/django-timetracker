@@ -38,28 +38,3 @@
   {% endfor %}
 </script>
 {% endblock additional_javascript %}
-{% block content %}
-{{ logged_in_user.market }}
-
-<select id="grp-slct" multiple>
-  {{ logged_in_user.process }}
-  {% for activity in logged_in_user.available_categories %}
-  <option value="{{ activity.grouptype }}">{{activity.grouptype}}</option>
-  {% endfor %}
-</select>
-<select id="subgrp-slct" multiple></select>
-<p id="detail-msg"></p>
-
-<script type="text/javascript">
-  var options = {};
-  var details = {};
-  {% for activity in logged_in_user.available_activities %}
-  options["{{activity.grouptype}}"] += "<option value=\"{{ activity.id }}\">{{activity.groupdetail}}</option>";
-  details["{{activity.id}}"] = "{{ activity.details }}";
-  {% endfor %}
-</script>
-{% endblock content %}
-
-{% block additional_javascript %}
-<script type="text/javascript" src="{{STATIC_URL}}js/vcs.js"></script>
-{% endblock additional_javascript %}
