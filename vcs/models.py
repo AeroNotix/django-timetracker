@@ -10,9 +10,8 @@ class Activity(models.Model):
     unique_together = (("group", "grouptype", "disabled", "time"),)
 
 class ActivityEntry(models.Model):
-    from timetracker.tracker.models import Tbluser
     user = models.ManyToManyField(
-        Tbluser,
+        'tracker.Tbluser',
         related_name="user_foreign"
     )
     activity = models.ManyToManyField(
