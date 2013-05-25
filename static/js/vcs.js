@@ -16,6 +16,7 @@ $(function() {
 	$("#subgrp-slct").change(
 		function() {
 			detailselected("#subgrp-slct", "#detail-msg");
+			$("#activity_key").attr("value", $("#subgrp-slct").val());
 		});
 
 });
