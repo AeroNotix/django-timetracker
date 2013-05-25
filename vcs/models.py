@@ -9,6 +9,11 @@ class Activity(models.Model):
     time = models.DecimalField(decimal_places=2, max_digits=10)
     unique_together = (("group", "grouptype", "disabled", "time"),)
 
+    def __unicode__(self):
+        return u"%s - %s - %s - %s" % (self.group,
+                                       self.grouptype,
+                                       self.groupdetail,
+                                       self.details)
 class ActivityEntry(models.Model):
     user = models.OneToOneField(
         'tracker.Tbluser',
