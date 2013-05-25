@@ -7,4 +7,5 @@ from timetracker.vcs import views
 
 urlpatterns = patterns('',
                        (r'insert/?$', views.vcs),
+                       (r'inserted/?$', views.vcs_add),
 )
