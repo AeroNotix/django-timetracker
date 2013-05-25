@@ -17,7 +17,7 @@ class ActivityEntry(models.Model):
     )
     activity = models.ManyToManyField(
         Activity,
-        related_name="user_foreign"
+        related_name="activity_foreign"
     )
     amount = models.BigIntegerField()
 
