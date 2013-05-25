@@ -14,6 +14,10 @@ class Activity(models.Model):
                                        self.grouptype,
                                        self.groupdetail,
                                        self.details)
+
+    class Meta:
+        verbose_name_plural = "Activities"
+
 class ActivityEntry(models.Model):
     user = models.OneToOneField(
         'tracker.Tbluser',
@@ -27,3 +31,6 @@ class ActivityEntry(models.Model):
 
     def time(self):
         return self.activity.time * self.amount
+
+    class Meta:
+        verbose_name_plural = "Activity Entries"
