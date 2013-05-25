@@ -2,6 +2,13 @@
    width: 300px;
 }
 
+#vcs-box {
+   position: relative;
+   margin-top: 10%;
+   margin-left: 20%;
+   margin-right: 20%;
+   border: 4px solid #1d1d1d;
+}
 #amount {
    display: inline;
 }
