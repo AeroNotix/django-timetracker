@@ -10,11 +10,11 @@ class Activity(models.Model):
     unique_together = (("group", "grouptype", "disabled", "time"),)
 
 class ActivityEntry(models.Model):
-    user = models.ManyToManyField(
+    user = models.OneToOneField(
         'tracker.Tbluser',
         related_name="user_foreign"
     )
-    activity = models.ManyToManyField(
+    activity = models.OneToOneField(
         Activity,
         related_name="activity_foreign"
     )
