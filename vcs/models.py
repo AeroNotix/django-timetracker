@@ -19,11 +19,11 @@ class Activity(models.Model):
         verbose_name_plural = "Activities"
 
 class ActivityEntry(models.Model):
-    user = models.OneToOneField(
+    user = models.ForeignKey(
         'tracker.Tbluser',
         related_name="user_foreign"
     )
-    activity = models.OneToOneField(
+    activity = models.ForeignKey(
         Activity,
         related_name="activity_foreign"
     )
