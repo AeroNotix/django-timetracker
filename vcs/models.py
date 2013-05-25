@@ -23,8 +23,3 @@ class ActivityEntry(models.Model):
 
     def time(self):
         return self.activity.time * self.amount
-        
-
-
-
-
