@@ -1,11 +1,29 @@
 {% extends "base.html" %}
+{% block header %}
+<link href="{{ STATIC_URL }}vcs.css" type="text/css" rel="stylesheet" />
+{% endblock header %}
 {% block content %}
 {{ logged_in_user.market }}
 
-<select>
+<select id="grp-slct" multiple>
   {{ logged_in_user.process }}
-  {% for activity in logged_in_user.available_activities %}
+  {% for activity in logged_in_user.available_categories %}
   <option value="{{ activity.grouptype }}">{{activity.grouptype}}</option>
   {% endfor %}
 </select>
+<select id="subgrp-slct" multiple></select>
+<p id="detail-msg"></p>
+
+<script type="text/javascript">
+  var options = {};
+  var details = {};
+  {% for activity in logged_in_user.available_activities %}
+  options["{{activity.grouptype}}"] += "<option value=\"{{ activity.id }}\">{{activity.groupdetail}}</option>";
+  details["{{activity.id}}"] = "{{ activity.details }}";
+  {% endfor %}
+</script>
+
+{% block additional_javascript %}
+<script type="text/javascript" src="{{STATIC_URL}}js/vcs.js"></script>
+{% endblock additional_javascript %}
 {% endblock content %}
