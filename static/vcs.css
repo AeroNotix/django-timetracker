@@ -2,10 +2,21 @@
    width: 300px;
 }
 
+#amount {
+   display: inline;
+}
+
+#amount-box {
+   width: 50px;
+}
+
 #vcs-box {
    position: relative;
    margin-top: 10%;
    margin-left: 20%;
    margin-right: 20%;
-   border: 4px solid #1d1d1d;
+}
+
+.multi {
+   border-radius: 4px;
 }
