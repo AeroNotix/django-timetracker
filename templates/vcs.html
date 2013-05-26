@@ -9,31 +9,33 @@
 {{ logged_in_user.market }}
 
 <div class="container" id="vcs-box">
-  <select id="grp-slct" multiple>
-	{{ logged_in_user.process }}
-	{% for activity in logged_in_user.available_categories %}
-	<option value="{{ activity.grouptype }}">{{activity.grouptype}}</option>
-	{% endfor %}
-  </select>
-  <select id="subgrp-slct" multiple></select>
+  <div>
+  </div>
   <form id="amount" method="POST" action="{% url 'vcs.views.vcs_add' %}">
+	<label for="grp-slct">Activity Group</label>
+	<select class="multi" id="grp-slct" multiple>
+	  {% for activity in logged_in_user.available_categories %}
+	  <option value="{{ activity.grouptype }}">{{activity.grouptype}}</option>
+	  {% endfor %}
+	</select>
+	<label for="subgrp-slct">Activity</label>
+	<select class="multi" id="subgrp-slct" multiple></select>
 	{% csrf_token %}
 	<label for="amount" id="detail-msg"></label>
 	<input type="hidden" name="activity_key" id="activity_key" value=""/>
-	<input type="number" name="amount" />
+	<input id="amount-box" min="0" type="number" name="amount" />
 	<input type="submit" />
   </form>
-
-  <script type="text/javascript">
-	var options = {};
-	var details = {};
-	{% for activity in logged_in_user.available_activities %}
-	options["{{activity.grouptype}}"] += "<option value=\"{{ activity.id }}\">{{activity.groupdetail}}</option>";
-	details["{{activity.id}}"] = "{{ activity.details }}";
-	{% endfor %}
-  </script>
 </div>
 {% block additional_javascript %}
 <script type="text/javascript" src="{{STATIC_URL}}js/vcs.js"></script>
+<script type="text/javascript">
+  var options = {};
+  var details = {};
+  {% for activity in logged_in_user.available_activities %}
+  options["{{activity.grouptype}}"] += "<option value=\"{{ activity.id }}\">{{activity.groupdetail}}</option>";
+  details["{{activity.id}}"] = "{{ activity.details }}";
+  {% endfor %}
+</script>
 {% endblock additional_javascript %}
 {% endblock content %}
