@@ -546,7 +546,7 @@ def forgot_pass(request):
         )
     except Tbluser.DoesNotExist:
         suspicious_log.info(
-            "Someone tried to reset a password of a non-existant address: %" \
+            "Someone tried to reset a password of a non-existant address: %s" \
             % email_recipient
         )
     except Exception as error:
