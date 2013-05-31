@@ -658,14 +658,6 @@ class Tbluser(models.Model):
                                                        daytype="ROVER",
                                                        entry_date__year=year
                                                        )
-        elif from_ and to_:
-            tracking_days = TrackingEntry.objects.filter(user_id=self.id,
-                                                         daytype__in=day_types,
-                                                         entry_date__range=[from_,to_])
-            return_days = TrackingEntry.objects.filter(user_id=self.id,
-                                                       daytype="ROVER",
-                                                       entry_date__range=[from_,to_]
-                                                       )
         else:
             tracking_days = TrackingEntry.objects.filter(
                 user_id=self.id,
@@ -677,6 +669,14 @@ class Tbluser(models.Model):
                                                        daytype="ROVER",
                                                        entry_date__year=year,
                                                        entry_date__month=month)
+        if from_ and to_:
+            tracking_days = TrackingEntry.objects.filter(user_id=self.id,
+                                                         daytype__in=day_types,
+                                                         entry_date__range=[from_,to_])
+            return_days = TrackingEntry.objects.filter(user_id=self.id,
+                                                       daytype="ROVER",
+                                                       entry_date__range=[from_,to_]
+                                                       )
 
         if settings.OVERRIDE_CALCULATION.get(self.market):
             trackingnumber = \
