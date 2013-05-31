@@ -39,7 +39,7 @@ Overview - Timetracker
             <p>{{ employee.name }}</p>
           </td>
           <td>
-            {{ employee.get_total_balance|safe }}
+            {{ employee.get_thismonths_balance | safe }}
           </td>
         </tr>
         {% endfor %}

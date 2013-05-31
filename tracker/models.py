@@ -599,6 +599,19 @@ class Tbluser(models.Model):
             })
         return daytype_dict
 
+    def get_thismonths_balance(self, ret="html"):
+        return self.get_total_balance(ret=ret,
+                                      year=dt.datetime.today().year,
+                                      month=dt.datetime.today().month)
+
+    def get_last7days(self):
+        today = dt.datetime.today()
+        return self.get_total_balance(
+            from_=today.replace(**{'day': 1} \
+                                if today.day-7 <= 0 \
+                                else {'day': today.day-7}),
+            to_=today)
+
     def get_total_balance(self, ret='html', year=None, month=None,
                           from_=None, to_=None):
 
@@ -743,16 +756,8 @@ class Tbluser(models.Model):
     def balance_breakdown(self):
         today = dt.datetime.today()
         return (
-            ("Last 7 Days", self.get_total_balance(
-                from_=today.replace(**{'day': 1} \
-                                    if today.day-7 <= 0 \
-                                    else {'day': today.day-7}),
-                to_=today)),
-            ("Last Month", self.get_total_balance(
-                from_=today.replace(month=today.month-1 \
-                                    if today.month-1 > 0 \
-                                    else 12),
-                to_=today)),
+            ("Last 7 Days", self.get_last7days()),
+            ("Last Month", self.get_thismonths_balance()),
             )
 
     def shiftlength_as_float(self):
