@@ -28,21 +28,25 @@ Overview - Timetracker
     </td>
     <td valign="top">
       <table id="admin-inner-cal">
-        <tr>
-          <td colspan="2">
-            <p>Your team's status:</p>
-          </td>
-        </tr>
-        {% for employee in employees %}
-        <tr>
-          <td>
-            <p>{{ employee.name }}</p>
-          </td>
-          <td>
-            {{ employee.get_thismonths_balance | safe }}
-          </td>
-        </tr>
-        {% endfor %}
+        <thead>
+          <tr>
+            <th colspan="2">
+              Your team's status:
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for employee in employees %}
+          <tr>
+            <td class="{% cycle 'row-a' 'row-b' as rowcolour%}">
+              <p>{{ employee.name }}</p>
+            </td>
+            <td class="{{ rowcolour }}">
+              {{ employee.get_thismonths_balance | safe }}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
       </table>
     </td>
   </tr>
