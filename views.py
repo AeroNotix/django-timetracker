@@ -53,7 +53,7 @@ def user_context_manager(request):
         "is_admin": user.super_or_admin(),
         "is_team_leader": user.is_tl(),
         "is_super": user.is_super(),
-        "balance": user.get_thismonths_balance(ret="int") if user.zeroing_hours() else user.get_total_balance(ret="int"),
+        "balance": user.get_normalized_balance(),
         "doculink": settings.DOCUMENTATION_BASE_URL
         }
 

@@ -625,6 +625,10 @@ class Tbluser(models.Model):
     def zeroing_hours(self):
         return settings.ZEROING_HOURS.get(self.market)
 
+    def get_normalized_balance(self, ret="int"):
+        return self.get_thismonths_balance(ret=ret) if self.zeroing_hours() \
+            else self.get_total_balance(ret=ret)
+
     def get_total_balance(self, ret='html', year=None, month=None,
                           from_=None, to_=None):
 
@@ -772,8 +776,8 @@ class Tbluser(models.Model):
         today = dt.datetime.today()
         return (
             ("Last 7 Days", self.get_last7days()),
-            ("Last Month", self.get_thismonths_balance()),
-            )
+            ("Last Month", self.get_normalized_balance(ret="html"))
+        )
 
     def shiftlength_as_float(self):
         '''Returns the shiftlength of the user as a float
