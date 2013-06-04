@@ -622,6 +622,9 @@ class Tbluser(models.Model):
                                 else {'day': today.day-7}),
             to_=today)
 
+    def zeroing_hours(self):
+        return settings.ZEROING_HOURS.get(self.market)
+
     def get_total_balance(self, ret='html', year=None, month=None,
                           from_=None, to_=None):
 
