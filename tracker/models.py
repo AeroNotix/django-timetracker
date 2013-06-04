@@ -623,15 +623,21 @@ class Tbluser(models.Model):
             to_=today)
 
     def zeroing_hours(self):
+        '''zeroing_hours returns true if the user should have their hours
+        zeroed.'''
         return settings.ZEROING_HOURS.get(self.market)
 
     def get_normalized_balance(self, ret="int"):
+
+        '''get_normalized_balance will automatically figure out whether the
+        user in question should have their balance zeroed or not.
+        '''
+
         return self.get_thismonths_balance(ret=ret) if self.zeroing_hours() \
             else self.get_total_balance(ret=ret)
 
     def get_total_balance(self, ret='html', year=None, month=None,
                           from_=None, to_=None):
-
         '''Calculates the total balance for the user.
 
         This method iterates through every :class:`TrackingEntry`
