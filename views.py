@@ -84,20 +84,21 @@ def index(request):
 
 def login(request):
 
-    """ This function logs the user in, directly adding the session id to
-    a database entry. This function is invoked from the url mapped in urls.py.
-    The url is POSTed to, and should contain two fields, the use_name and the
-    pass word field. This is then pulled from the database and matched
-    against, what the user supplied. If they match, the user is then checked
-    to see what *kind* of user their are, if they are ADMIN or TEAML they will
-    be sent to the administrator view. Else they will be sent to the user
-    page.
+    """This function logs the user in, directly adding the session id to
+    a database entry. This function is invoked from the url mapped in
+    urls.py.  The url is POSTed to, and should contain two fields, the
+    use_name and the pass word field. This is then pulled from the
+    database and matched against, what the user supplied. If they
+    match, the user is then checked to see what *kind* of user their
+    are, if they are ADMIN or TEAML they will be sent to the
+    administrator view. Else they will be sent to the user page.
 
     This function shouldn't be directly called, it's invocation is automatic
     from the url mappings.
 
     :param request: Automatically passed. Contains a map of the httprequest
     :return: A HttpResponse object which is then passed to the browser
+
     """
     user_id = request.POST.get('user_name')
     if not user_id:
