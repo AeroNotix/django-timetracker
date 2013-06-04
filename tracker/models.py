@@ -60,31 +60,34 @@ class Tbluser(models.Model):
 
     This model is the central pillar to this entire application.
 
-    The permissions for a user is determined in the view functions, not in a
-    table this is a design choice because there is only a minimal set of
-    things to have permissions *over*, so it would be overkill to take full
-    advantage of the MVC pattern.
+    The permissions for a user is determined in the view functions,
+    not in a table this is a design choice because there is only a
+    minimal set of things to have permissions *over*, so it would be
+    overkill to take full advantage of the MVC pattern.
 
     User\n
     The most general and base type of a User is the *RUSER*, which is
-    shorthand (and what actually gets stored in the database) for Regular
-    User. A regular user will only be able to access a specific section of the
-    site.
+    shorthand (and what actually gets stored in the database) for
+    Regular User. A regular user will only be able to access a
+    specific section of the site.
 
     Team Leader\n
-    The second type of User is the *TEAML*, this user has very similar level
-    access as the administrator type but has only a limited subset of their
-    access rights. They cannot have a team of their own, but view the team
-    their manager is assigned. They cannot view and/or change job codes, but
-    they can create new users with all the *other* information that they
-    need. They can view/create/add/change holidays of themselves and the users
-    that are assigned to their manager.
+    The second type of User is the *TEAML*, this user has very similar
+    level access as the administrator type but has only a limited
+    subset of their access rights. They cannot have a team of their
+    own, but view the team their manager is assigned. They cannot view
+    and/or change job codes, but they can create new users with all
+    the *other* information that they need. They can
+    view/create/add/change holidays of themselves and the users that
+    are assigned to their manager.
 
     Administrator\n
-    The third type of User is the Administrator/*ADMIN*. They have full access to all
-    functions of the app. They can view/create/change/delete members of their
-    team. They can view/create/add/change holidays of all members of their
-    team and themselves. They can create users of any type.
+    The third type of User is the Administrator/*ADMIN*. They have
+    full access to all functions of the app. They can
+    view/create/change/delete members of their team. They can
+    view/create/add/change holidays of all members of their team and
+    themselves. They can create users of any type.
+
     '''
 
     USER_TYPE = (
@@ -241,18 +244,18 @@ class Tbluser(models.Model):
                    [start_time, end_time, self.breaklength])
 
     def get_subordinates(self, get_all=False):
-        '''
-        get_subordinates will smartly find which Users are related to
+        '''get_subordinates will smartly find which Users are related to
         this User instance.
 
         In the case of a RUSER then the returned QuerySet will contain
         only those who are under the same manager and have the same
         process type.
 
-        TEAML will return a QuerySet containing their manager and their
-        manager's team.
+        TEAML will return a QuerySet containing their manager and
+        their manager's team.
 
         SUPER and ADMIN will return their linked teams.
+
         '''
         try:
             if self.is_user():
@@ -288,11 +291,12 @@ class Tbluser(models.Model):
 
     def get_administrator(self):
 
-        '''
-        Returns the :class:`Tbluser` who is this instances Authorization link
+        '''Returns the :class:`Tbluser` who is this instances Authorization
+        link
 
         :returns: A :class:`Tbluser` instance
         :rtype: :class:`Tbluser`
+
         '''
 
         if self.super_or_admin():
@@ -336,12 +340,13 @@ class Tbluser(models.Model):
         return self.user_type
 
     def name(self):
-        '''
-        Utility method for returning users full name. This is useful for when
-        we are pretty printing users and their names. For example in e-mails
-        and or when we are displaying users on the front-end.
+        '''Utility method for returning users full name. This is useful for
+        when we are pretty printing users and their names. For example
+        in e-mails and or when we are displaying users on the
+        front-end.
 
         :rtype: :class:`string`
+
         '''
         return self.firstname + ' ' + self.lastname
 
@@ -357,14 +362,15 @@ class Tbluser(models.Model):
         '''Returns all the tracking entries associated with
         this user.
 
-        This is particularly useful when required to make a report or generate
-        a specific view of the tracking entries of the user.
+        This is particularly useful when required to make a report or
+        generate a specific view of the tracking entries of the user.
 
         :param year: The year in which the QuerySet should be filtered
                      by. Defaults to the current year.
         :param month: The month in which the QuerySet should be filtered
                      by. Defaults to the current month.
         :rtype: :class:`QuerySet`
+
         '''
 
         if year is None:
@@ -396,8 +402,11 @@ class Tbluser(models.Model):
 
     def year_as_whole(self, year):
         '''Creates an entire year table with the weekends properly labelled as
-        well as giving an area to fill in additional html tags and css classes.
-        This is useful for generating a year view on the data in some way.'''
+        well as giving an area to fill in additional html tags and css
+        classes.  This is useful for generating a year view on the
+        data in some way.
+        '''
+
         final = []
         out = []
         for x in range(1, 13):
@@ -418,13 +427,13 @@ class Tbluser(models.Model):
         return final
 
     def yearview(self, year):
-        '''
-        Generates the HTML table for the yearview page. It iterates through
-        the entire set of tracking entries for a given year.
+        '''Generates the HTML table for the yearview page. It iterates
+        through the entire set of tracking entries for a given year.
 
         :param year: The year in which the yearview should be generated from.
         :type year: :class:`int`
         :rtype :class:`str`
+
         '''
         entries = TrackingEntry.objects.filter(user_id=self.id,
                                                entry_date__year=year)
@@ -466,13 +475,13 @@ class Tbluser(models.Model):
             % self.name() + table_string
 
     def overtime_view(self, year):
-        '''
-        Generates the HTML table for the overtime_view page. It iterates through
-        the entire set of tracking entries for a given year.
+        '''Generates the HTML table for the overtime_view page. It iterates
+        through the entire set of tracking entries for a given year.
 
         :param year: The year in which the overtime should be generated from.
         :type year: :class:`int`
         :rtype :class:`str`
+
         '''
         entries = TrackingEntry.objects.filter(user_id=self.id,
                                                entry_date__year=year)
@@ -531,12 +540,12 @@ class Tbluser(models.Model):
         return self.user_type == "RUSER"
 
     def get_holiday_balance(self, year):
-        '''
-        Calculates the holiday balance for the employee
+        '''Calculates the holiday balance for the employee
 
-        This method loops over all :class:`TrackingEntry` entries attached to
-        the user instance which are in the year passed in, taking each entries
-        day_type and looking that up in a value map.
+        This method loops over all :class:`TrackingEntry` entries
+        attached to the user instance which are in the year passed in,
+        taking each entries day_type and looking that up in a value
+        map.
 
         Values can be:
 
@@ -551,6 +560,7 @@ class Tbluser(models.Model):
                      calculated from
         :type year: :class:`int`
         :rtype: :class:`Integer`
+
         '''
 
         tracking_days = TrackingEntry.objects.filter(user_id=self.id,
@@ -615,12 +625,13 @@ class Tbluser(models.Model):
     def get_total_balance(self, ret='html', year=None, month=None,
                           from_=None, to_=None):
 
-        ''' Calculates the total balance for the user.
+        '''Calculates the total balance for the user.
 
-        This method iterates through every :class:`TrackingEntry` attached to
-        this user instance which is a working day, multiplies the user's
-        shiftlength by the number of days and finds the difference between the
-        projected working hours and the actual working hours.
+        This method iterates through every :class:`TrackingEntry`
+        attached to this user instance which is a working day,
+        multiplies the user's shiftlength by the number of days and
+        finds the difference between the projected working hours and
+        the actual working hours.
 
         The return type of this function is different depending on the
         argument supplied.
@@ -634,6 +645,7 @@ class Tbluser(models.Model):
                     string 'dbg' is passed then we output all the values used
                     to calculate and the final value.
         :rtype: :class:`string` or :class:`integer`
+
         '''
 
         ret = ret.lower()
@@ -715,12 +727,12 @@ class Tbluser(models.Model):
             return float_to_time(trackingnumber)
 
     def _regular_calculation(self, tracking_days, return_days):
-        '''
-        This is the calculation that's used as a fall-back in case there isn't
-        one being used in-place of this.
+        '''This is the calculation that's used as a fall-back in case there
+        isn't one being used in-place of this.
 
         It does not do any rounding and thus will be the exact figures that
         agent's enter.
+
         '''
 
         # we'll use augmented assignment
@@ -941,27 +953,30 @@ class Tblauthorization(models.Model):
 
     '''Links Administrators (managers) with their team.
 
-    This table is a many-to-many relationship between Administrators and any
-    other any user type in TEAML/RUSER.
+    This table is a many-to-many relationship between Administrators
+    and any other any user type in TEAML/RUSER.
 
     This table is used to explicitly show which people are in an
     Administrator's team. Usually in SQL-land, you would be able to
-    instanstiate multiple rows of many-to-many relationships, however, due to
-    the fact that working with these tables in an object orientated fashion is
-    far simpler adding multiple relationships to the same
-    :class:`Tblauthorization` object, we re-use the relationship when
-    creating/adding additional :class:`Tblauthorization` instances.
+    instanstiate multiple rows of many-to-many relationships, however,
+    due to the fact that working with these tables in an object
+    orientated fashion is far simpler adding multiple relationships to
+    the same :class:`Tblauthorization` object, we re-use the
+    relationship when creating/adding additional
+    :class:`Tblauthorization` instances.
 
-    This means that, if you were to need to add a relationship between an
-    Administrator and a RUSER, then you would need to make sure that you
-    retrieve the :class:`Tblauthorization` object *before* and save the new
-    link using that instance. Failure to do this would mean that areas where
-    the .get() method is employed would start to throw
-    Tblauthorization.MultipleObjectsReturned.
+    This means that, if you were to need to add a relationship between
+    an Administrator and a RUSER, then you would need to make sure
+    that you retrieve the :class:`Tblauthorization` object *before*
+    and save the new link using that instance. Failure to do this
+    would mean that areas where the .get() method is employed would
+    start to throw Tblauthorization.MultipleObjectsReturned.
 
-    In future, and time, I would like to make it so that the .save() method is
-    overloaded and then we can check if a :class:`Tblauthorization` link
-    already exists and if so, save to that instead.
+    In future, and time, I would like to make it so that the .save()
+    method is overloaded and then we can check if a
+    :class:`Tblauthorization` link already exists and if so, save to
+    that instead.
+
     '''
 
     admin = models.ForeignKey(
