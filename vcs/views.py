@@ -1,3 +1,5 @@
+import datetime
+
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
@@ -10,7 +12,7 @@ from timetracker.tracker.models import Tbluser
 def vcs(request):
     return render_to_response(
         "vcs.html",
-        {},
+        {"todays_date": datetime.datetime.today().strftime("mm-dd-yyyy")},
         RequestContext(request)
     )
 

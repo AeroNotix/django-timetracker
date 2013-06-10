@@ -27,6 +27,8 @@
       </div>
 
 	  {% csrf_token %}
+      <label for="which-date">Date:</label>
+      <input id="which-date" value="{{ todays_date }}"/>
       <div class="form-align-right">
 	    <input type="submit" />
 	    <input type="hidden" name="activity_key" id="activity_key" value=""/>
@@ -49,6 +51,8 @@
 
     $(function() {
         $("#amount-box").spinner({"min": 0});
+        $("#which-date").datepicker().datepicker("option", "dateFormat", "yy-mm-dd");
+        $("#which-date").datepicker("setDate", "{{ todays_date}}");
     });
   </script>
   {% endblock additional_javascript %}
