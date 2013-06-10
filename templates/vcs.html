@@ -10,33 +10,33 @@
 
 <div class="container" id="vcs-box">
   <div>
+    <form id="amount" method="POST" action="{% url 'vcs.views.vcs_add' %}">
+
+      <div class="center-form">
+	    <label class="center-form" for="grp-slct">Activity Group</label>
+	    <select class="multi" id="grp-slct" multiple>
+	      {% for activity in logged_in_user.available_categories %}
+	      <option value="{{ activity.grouptype }}">{{activity.grouptype}}</option>
+	      {% endfor %}
+	    </select>
+      </div>
+
+      <div class="center-form">
+	    <label class="center-form" for="subgrp-slct">Activity</label>
+	    <select class="multi" id="subgrp-slct" multiple></select>
+      </div>
+
+	  {% csrf_token %}
+      <div class="form-align-right">
+	    <input type="submit" />
+	    <input type="hidden" name="activity_key" id="activity_key" value=""/>
+	    <input id="amount-box" min="0" type="number" name="amount" />
+	    <label for="amount" id="detail-msg"></label>
+      </div>
+
+    </form>
   </div>
-  <form id="amount" method="POST" action="{% url 'vcs.views.vcs_add' %}">
-
-    <div class="center-form">
-	  <label class="center-form" for="grp-slct">Activity Group</label>
-	  <select class="multi" id="grp-slct" multiple>
-	    {% for activity in logged_in_user.available_categories %}
-	    <option value="{{ activity.grouptype }}">{{activity.grouptype}}</option>
-	    {% endfor %}
-	  </select>
-    </div>
-
-    <div class="center-form">
-	  <label class="center-form" for="subgrp-slct">Activity</label>
-	  <select class="multi" id="subgrp-slct" multiple></select>
-    </div>
-
-	{% csrf_token %}
-    <div class="form-align-right">
-	  <input type="submit" />
-	  <input type="hidden" name="activity_key" id="activity_key" value=""/>
-	  <input id="amount-box" min="0" type="number" name="amount" />
-	  <label for="amount" id="detail-msg"></label>
-    </div>
-
-  </form>
-</div>
+</form>
 {% block additional_javascript %}
 <script type="text/javascript" src="{{STATIC_URL}}js/vcs.js"></script>
 <script type="text/javascript">
