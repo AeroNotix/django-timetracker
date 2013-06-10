@@ -1,8 +1,5 @@
-#subgrp-slct {
-   width: 300px;
-}
-
 #amount {
+   width: 600px;
    display: inline;
 }
 
@@ -18,5 +15,21 @@
 }
 
 .multi {
+   margin: 10px;
+   width: 300px;
    border-radius: 4px;
+}
+
+.center-form {
+   display: table-cell;
+   vertical-align: top;
+}
+
+.form-align-right {
+   width: 600px;
+}
+
+.form-align-right > * {
+   margin: 3px;
+   float: right;
 }
