@@ -1,7 +1,7 @@
 #naver {
    position: absolute;
    width: 100%;
-   height: 50px;
+   height: 35px;
    margin: 0;
    padding: 0;
    top: 0;
@@ -17,7 +17,8 @@
 }
 
 #naver li a {
-   height: 50px;
+   font-size: 14px;
+   height: 35px;
    display: block;
    padding: 0px 15px;
    text-decoration: none;
