@@ -25,7 +25,7 @@ from timetracker.tracker.models import Tblauthorization as tblauth
 from timetracker.utils.datemaps import (generate_select,
                                         generate_employee_box,
                                         generate_month_box,
-                                        MONTH_MAP)
+                                        MONTH_MAP, MARKET_CHOICES)
 from timetracker.utils.writers import UnicodeWriter
 from timetracker.tracker.management.commands import mec_ot_report
 
@@ -44,7 +44,7 @@ def reporting(request):
             "monthbox_ot": generate_month_box("monthbox_ot"),
             "monthbox_hr": generate_month_box("monthbox_hr"),
             "monthbox_all": generate_month_box("monthbox_all"),
-            "teambox_all": generate_select(Tbluser.MARKET_CHOICES, id="teambox_all"),
+            "teambox_all": generate_select(MARKET_CHOICES, id="teambox_all"),
         },
         RequestContext(request))
 
