@@ -30,21 +30,26 @@
       <div class="form-align-right">
 	    <input type="submit" />
 	    <input type="hidden" name="activity_key" id="activity_key" value=""/>
-	    <input id="amount-box" min="0" type="number" name="amount" />
+	    <input id="amount-box" name="amount" />
 	    <label for="amount" id="detail-msg"></label>
       </div>
 
     </form>
   </div>
-</form>
-{% block additional_javascript %}
-<script type="text/javascript" src="{{STATIC_URL}}js/vcs.js"></script>
-<script type="text/javascript">
-  var options = {};
-  var details = {};
-  {% for activity in logged_in_user.available_activities %}
-  options["{{activity.grouptype}}"] += "<option value=\"{{ activity.id }}\">{{activity.groupdetail}}</option>";
-  details["{{activity.id}}"] = "{{ activity.details }}";
-  {% endfor %}
-</script>
-{% endblock additional_javascript %}
+  {% block additional_javascript %}
+  <script type="text/javascript" src="{{STATIC_URL}}js/vcs.js"></script>
+  <script type="text/javascript">
+    var options = {};
+    var details = {};
+    {% for activity in logged_in_user.available_activities %}
+    options["{{activity.grouptype}}"] += "<option value=\"{{ activity.id }}\">{{activity.groupdetail}}</option>";
+    details["{{activity.id}}"] = "{{ activity.details }}";
+    {% endfor %}
+
+    $(function() {
+        $("#amount-box").spinner({"min": 0});
+    });
+  </script>
+  {% endblock additional_javascript %}
+  {% endblock content %}
+
