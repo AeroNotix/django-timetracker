@@ -56,7 +56,6 @@ def update(request):
     entryid = request.POST.get("id")
     if not volume or not entryid:
         raise Http404
-    print request.POST
     entry = ActivityEntry.objects.get(id=entryid)
     entry.amount = int(volume)
     entry.save()
