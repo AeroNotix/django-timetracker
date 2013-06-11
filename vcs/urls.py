@@ -9,4 +9,5 @@ urlpatterns = patterns('',
                        (r'insert/?$', views.vcs),
                        (r'inserted/?$', views.vcs_add),
                        (r'entries', views.entries),
+                       (r'update', views.update),
 )
