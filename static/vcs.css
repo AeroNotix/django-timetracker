@@ -32,3 +32,7 @@
    margin: 3px;
    float: right;
 }
+
+#entries {
+   border: 1px solid black;
+}
