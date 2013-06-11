@@ -101,7 +101,7 @@ def json_response(func):
         """
 
         return HttpResponse(simplejson.dumps(func(request)),
-                            mimetype="application/javscript")
+                            mimetype="application/json")
     return inner
 
 
