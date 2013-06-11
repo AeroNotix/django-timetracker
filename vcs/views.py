@@ -4,7 +4,7 @@ from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 
-from timetracker.utils.decorators import loggedin
+from timetracker.utils.decorators import loggedin, json_response
 from timetracker.vcs.models import ActivityEntry, Activity
 from timetracker.tracker.models import Tbluser
 
@@ -34,3 +34,23 @@ def vcs_add(request):
         {},
         RequestContext(request)
     )
+
+@loggedin
+@json_response
+def entries(request):
+    user_id = request.session.get("user_id")
+    user = Tbluser.objects.get(id=user_id)
+    date = request.GET.get("date")
+    if not date:
+        raise Http404
+    entries = ActivityEntry.objects.filter(creation_date=date)
+    if not len(entries):
+        raise Http404
+    return {"entries": map(serialize_activityentry, entries)}
+
+def serialize_activityentry(entry):
+    return {
+        "date": str(entry.creation_date),
+        "text": entry.activity.groupdetail,
+        "amount": int(entry.amount)
+    }

@@ -6,7 +6,6 @@
 {% include "includes/get_nav.html" %}
 {% endblock menubar %}
 {% block content %}
-{{ logged_in_user.market }}
 
 <div class="container" id="vcs-box">
   <div>
@@ -29,16 +28,18 @@
 	  {% csrf_token %}
       <label for="which-date">Date:</label>
       <input id="which-date" value="{{ todays_date }}"/>
+	  <input type="hidden" name="activity_key" id="activity_key" value=""/>
+	  <input id="amount-box" name="amount" />
+	  <label for="amount" id="detail-msg"></label>
       <div class="form-align-right">
 	    <input type="submit" />
-	    <input type="hidden" name="activity_key" id="activity_key" value=""/>
-	    <input id="amount-box" name="amount" />
-	    <label for="amount" id="detail-msg"></label>
       </div>
     </form>
   </div>
+  <br />
   <div>
-    <select class="multi" multiple></select>
+    <table id="entries">
+    </table>
   </div>
   {% block additional_javascript %}
   <script type="text/javascript" src="{{STATIC_URL}}js/vcs.js"></script>
@@ -49,12 +50,7 @@
     options["{{activity.grouptype}}"] += "<option value=\"{{ activity.id }}\">{{activity.groupdetail}}</option>";
     details["{{activity.id}}"] = "{{ activity.details }}";
     {% endfor %}
-
-    $(function() {
-        $("#amount-box").spinner({"min": 0});
-        $("#which-date").datepicker().datepicker("option", "dateFormat", "yy-mm-dd");
-        $("#which-date").datepicker("setDate", "{{ todays_date}}");
-    });
+    CONFIG.AJAX_ENTRIES_URL = "{% url "vcs.views.entries" %}";
   </script>
   {% endblock additional_javascript %}
   {% endblock content %}
