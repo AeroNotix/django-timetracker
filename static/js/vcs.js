@@ -31,50 +31,48 @@ $(function() {
 			detailselected("#subgrp-slct", "#detail-msg");
 			$("#activity_key").attr("value", $("#subgrp-slct").val());
 		});
-    $("#which-date").change(
-        function() {
-            $.ajax({
-                method: "GET",
-                url: CONFIG.AJAX_ENTRIES_URL,
-                data: {
-                    date: $("#which-date").val()
-                },
-                success: function (data) {
-                    var i;
-                    $("#entries")
-                        .children()
-                        .remove();
-                    $("#entries").append("<th>Type</th><th>Amount</th>");
-                    for (i = 0; i < data.entries.length; i++) {
-                        $("#entries").append(["<tr><td>",
-                                              data.entries[i].text,
-                                              "</td><td><input id=\"entry_",
-                                              data.entries[i].id,
-                                              "\" ",
-                                              "value=\"",
-                                              data.entries[i].amount,
-                                              "\"/></td></tr>"].join(""));
-                    }
-                    $("#entries").find("input").each(function() {
-                        $(this).spinner({spin:
-                                         function (event, ui) {
-                                             updateentry($(this).attr("id"), ui);
-                                         },
-                                         min: 0
-                                        });
-                    });
-                },
-                error: function (a,b,c) {
-                    $("#entries")
-                        .children()
-                        .remove();
-                }
-            });
-        });
-
-    $(function() {
-        $("#amount-box").spinner({"min": 0});
-        $("#which-date").datepicker().datepicker("option", "dateFormat", "yy-mm-dd");
-        $("#which-date").datepicker("setDate", "{{ todays_date}}");
-    });
+    $("#which-date").change(populatetable);
+    $("#amount-box").spinner({"min": 0});
+    $("#which-date").datepicker().datepicker("option", "dateFormat", "yy-mm-dd");
+    $("#which-date").datepicker("setDate", "{{ todays_date}}");
 });
+
+function populatetable() {
+    $.ajax({
+        method: "GET",
+        url: CONFIG.AJAX_ENTRIES_URL,
+        data: {
+            date: $("#which-date").val()
+        },
+        success: function (data) {
+            var i;
+            $("#entries")
+                .children()
+                .remove();
+            $("#entries").append("<th>Type</th><th>Amount</th>");
+            for (i = 0; i < data.entries.length; i++) {
+                $("#entries").append(["<tr><td>",
+                                      data.entries[i].text,
+                                      "</td><td><input id=\"entry_",
+                                      data.entries[i].id,
+                                      "\" ",
+                                      "value=\"",
+                                      data.entries[i].amount,
+                                      "\"/></td></tr>"].join(""));
+            }
+            $("#entries").find("input").each(function() {
+                $(this).spinner({spin:
+                                 function (event, ui) {
+                                     updateentry($(this).attr("id"), ui);
+                                 },
+                                 min: 0
+                                });
+            });
+        },
+        error: function (a,b,c) {
+            $("#entries")
+                .children()
+                .remove();
+        }
+    });
+}
