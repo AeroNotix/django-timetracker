@@ -27,7 +27,7 @@
 
 	  {% csrf_token %}
       <label for="which-date">Date:</label>
-      <input id="which-date" value="{{ todays_date }}"/>
+      <input id="which-date" name="date" value="{{ todays_date }}"/>
 	  <input type="hidden" name="activity_key" id="activity_key" value=""/>
 	  <input id="amount-box" name="amount" />
 	  <label for="amount" id="detail-msg"></label>
@@ -51,6 +51,7 @@
     details["{{activity.id}}"] = "{{ activity.details }}";
     {% endfor %}
     CONFIG.AJAX_ENTRIES_URL = "{% url "vcs.views.entries" %}";
+    CONFIG.AJAX_UPDATE_URL = "{% url "vcs.views.update" %}";
   </script>
   {% endblock additional_javascript %}
   {% endblock content %}

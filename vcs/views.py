@@ -20,14 +20,18 @@ def vcs(request):
 def vcs_add(request):
     activity_key = request.POST.get("activity_key")
     amount = request.POST.get("amount")
+    date = request.POST.get("date")
     user_id = request.session.get("user_id")
 
-    if not activity_key or not amount:
+    if not all([date, user_id, activity_key, amount]):
         raise Http404
 
     activity = Activity.objects.get(id=activity_key)
     user = Tbluser.objects.get(id=user_id)
-    ActivityEntry(user=user, activity=activity, amount=amount).save()
+    activity = ActivityEntry(user=user, activity=activity, amount=amount)
+    activity.save()
+    activity.creation_date = date
+    activity.save()
 
     return render_to_response(
         "vcs.html",
@@ -48,8 +52,22 @@ def entries(request):
         raise Http404
     return {"entries": map(serialize_activityentry, entries)}
 
+@loggedin
+@json_response
+def update(request):
+    volume = request.POST.get("volume")
+    entryid = request.POST.get("id")
+    if not volume or not entryid:
+        raise Http404
+    print request.POST
+    entry = ActivityEntry.objects.get(id=entryid)
+    entry.amount = int(volume)
+    entry.save()
+    return {"success": True}
+
 def serialize_activityentry(entry):
     return {
+        "id": entry.id,
         "date": str(entry.creation_date),
         "text": entry.activity.groupdetail,
         "amount": int(entry.amount)

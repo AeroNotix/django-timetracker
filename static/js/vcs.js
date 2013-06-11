@@ -9,6 +9,18 @@ function detailselected(from, to) {
 	$(to).text(details[$(from).val()]);
 }
 
+function updateentry(which, ui) {
+    $.ajax({
+        method: "POST",
+        url: CONFIG.AJAX_UPDATE_URL,
+        async: false, // to prevent multiple in-flight requests.
+        data: {
+            volume: ui.value,
+            id: which.substring("entry_".length, which.length)
+        }
+    });
+}
+
 $(function() {
 	$("#grp-slct").change(
 		function() {
@@ -26,7 +38,7 @@ $(function() {
                 method: "GET",
                 url: CONFIG.AJAX_ENTRIES_URL,
                 data: {
-                    "date": $("#which-date").val()
+                    date: $("#which-date").val()
                 },
                 success: function (data) {
                     var i;
@@ -34,19 +46,20 @@ $(function() {
                         .children()
                         .remove();
                     $("#entries").append("<th>Type</th><th>Amount</th>");
-
                     for (i = 0; i < data.entries.length; i++) {
                         $("#entries").append(["<tr><td>",
-                                           data.entries[i].text,
-                                           "</td><td><input value=\"",
-                                           data.entries[i].amount,
-                                           "\"/></td></tr>"].join(""));
+                                              data.entries[i].text,
+                                              "</td><td><input id=\"entry_",
+                                              data.entries[i].id,
+                                              "\" ",
+                                              "value=\"",
+                                              data.entries[i].amount,
+                                              "\"/></td></tr>"].join(""));
                     }
                     $("#entries").find("input").each(function() {
                         $(this).spinner({spin:
-                                         function () {
-                                             console.log("sup");
-                                             console.log($(this).id);
+                                         function (event, ui) {
+                                             updateentry($(this).attr("id"), ui);
                                          },
                                          min: 0
                                         });
