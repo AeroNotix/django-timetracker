@@ -59,13 +59,15 @@ def user_context_manager(request):
 
 def index(request):
 
-    """ This function serves the base login page. This view detects if the
-    user is logged in. If so, redirects, else, serves them the login page.
+    """This function serves the base login page. This view detects if the
+    user is logged in. If so, redirects, else, serves them the login
+    page.
 
     This function shouldn't be directly called, it's invocation is automatic
 
     :param request: Automatically passed. Contains a map of the httprequest
     :return: A HttpResponse object which is then passed to the browser
+
     """
 
     try:
@@ -84,8 +86,8 @@ def index(request):
 
 def login(request):
 
-    """This function logs the user in, directly adding the session id to
-    a database entry. This function is invoked from the url mapped in
+    """This function logs the user in, directly adding the session id to a
+    database entry. This function is invoked from the url mapped in
     urls.py.  The url is POSTed to, and should contain two fields, the
     use_name and the pass word field. This is then pulled from the
     database and matched against, what the user supplied. If they
@@ -93,8 +95,8 @@ def login(request):
     are, if they are ADMIN or TEAML they will be sent to the
     administrator view. Else they will be sent to the user page.
 
-    This function shouldn't be directly called, it's invocation is automatic
-    from the url mappings.
+    This function shouldn't be directly called, it's invocation is
+    automatic from the url mappings.
 
     :param request: Automatically passed. Contains a map of the httprequest
     :return: A HttpResponse object which is then passed to the browser
@@ -153,13 +155,15 @@ def login(request):
 
 def logout(request):
 
-    """ Simple logout function
+    """Simple logout function
 
-    This function will delete a session id from the session dictionary so that
-    the user will need to log back in order to access the same pages.
+    This function will delete a session id from the session dictionary
+    so that the user will need to log back in order to access the same
+    pages.
 
     :param request: Automatically passed contains a map of the httprequest
     :return: A HttpResponse object which is passed to the browser.
+
     """
 
     try:
@@ -171,11 +175,10 @@ def logout(request):
 
 @loggedin
 def user_view(request, year=None, month=None, day=None):
-    """Generates a calendar based on the URL it receives.
-    For example: domain.com/calendar/{year}/{month}/{day},
-    also takes a day just in case you want to add a particular
-    view for a day, for example. Currently a day-level is not
-    in-use.
+    """Generates a calendar based on the URL it receives.  For example:
+    domain.com/calendar/{year}/{month}/{day}, also takes a day just in
+    case you want to add a particular view for a day, for
+    example. Currently a day-level is not in-use.
 
     :note: The generated HTML should be pretty printed
 
@@ -212,13 +215,14 @@ def user_view(request, year=None, month=None, day=None):
 @csrf_protect
 def ajax(request):
 
-    """Ajax request handler, dispatches to specific ajax functions depending
-    on what json gets sent.
+    """Ajax request handler, dispatches to specific ajax functions
+    depending on what json gets sent.
 
-    Any additional ajax views should be added to the ajax_funcs map, this will
-    allow the dispatch function to be used. Future revisions could have a kind
-    of decorator which could be applied to functions to mutate some global map
-    of ajax dispatch functions. For now, however, just add them into the map.
+    Any additional ajax views should be added to the ajax_funcs map,
+    this will allow the dispatch function to be used. Future revisions
+    could have a kind of decorator which could be applied to functions
+    to mutate some global map of ajax dispatch functions. For now,
+    however, just add them into the map.
 
     The idea for this is that on the client-side call you would construct your
     javascript call with something like the below (using jQuery):
@@ -237,10 +241,11 @@ def ajax(request):
                }
           });
 
-    Using this method, this allows us to construct a single view url and have
-    all ajax requests come through here. This is highly advantagious because
-    then we don't have to create a url map and construct views to handle that
-    specific call. We just have some server-side map and route through there.
+    Using this method, this allows us to construct a single view url
+    and have all ajax requests come through here. This is highly
+    advantagious because then we don't have to create a url map and
+    construct views to handle that specific call. We just have some
+    server-side map and route through there.
 
     The lookup and dispatch works like this:
 
@@ -297,7 +302,8 @@ def view_with_employee_list(request, template=None, get_all=False):
     '''Some pages are generic HTML pages with only a select amount of
     differences on them. We use this to generate the employee select
     box and assign the regularly used template variables for these
-    templates.'''
+    templates.
+    '''
     user = Tbluser.objects.get(
         id=request.session.get("user_id", None)
     )
@@ -328,8 +334,7 @@ def view_with_holiday_list(request,
                            process=None,
                            template=None,
                            admin_required=False):
-    """
-    Generates the full holiday table for all employees under a manager
+    """Generates the full holiday table for all employees under a manager
     or a user's teammates if they are a regular user.
 
     :param request: Automatically passed contains a map of the httprequest
@@ -452,12 +457,13 @@ def edit_profile(request):
 
     """View for sending the user to the edit profile page
 
-    This view is a simple set of fields which allow all kinds of users to edit
-    pieces of information about their profile, currently it allows uers to
-    edit their name and their password.
+    This view is a simple set of fields which allow all kinds of users
+    to edit pieces of information about their profile, currently it
+    allows uers to edit their name and their password.
 
     :param request: Automatically passed contains a map of the httprequest
     :return: HttpResponse object back to the browser.
+
     """
 
     user = Tbluser.objects.get(id=request.session.get("user_id"))
@@ -470,20 +476,21 @@ def edit_profile(request):
 
 @loggedin
 def explain(request):
+    """Renders the Balance explanation page.
 
-    """Renders the Balance explanation page
-
-    This page renders a simple template to show the users how their balance is
-    calculated. This view takes the user object, retrieves a couple of fields,
-    which are user.shiftlength and the associated values with that datetime
-    object, constructs a string with them and passes it to the template as
-    the users 'shiftlength' attribute. It then takes the count of working
-    days in the database so that the user has an idea of how many days they
-    have tracked altogether. Then it calculates their total balance and pushes
-    all these strings into the template.
+    This page renders a simple template to show the users how their
+    balance is calculated. This view takes the user object, retrieves
+    a couple of fields, which are user.shiftlength and the associated
+    values with that datetime object, constructs a string with them
+    and passes it to the template as the users 'shiftlength'
+    attribute. It then takes the count of working days in the database
+    so that the user has an idea of how many days they have tracked
+    altogether. Then it calculates their total balance and pushes all
+    these strings into the template.
 
     :param request: Automatically passed contains a map of the httprequest
     :return: HttpResponse object back to the browser.
+
     """
 
     user = Tbluser.objects.get(id=request.session.get("user_id"))
@@ -504,20 +511,22 @@ def forgot_pass(request):
 
     """Simple view for resetting a user's password
 
-    This view has a dual function. The first function is to simply render the
-    initial page which has a field and the themed markup. On this page a user
-    can enter their e-mail address and then click submit to have their
-    password sent to them.
+    This view has a dual function. The first function is to simply
+    render the initial page which has a field and the themed
+    markup. On this page a user can enter their e-mail address and
+    then click submit to have their password sent to them.
 
-    The second function of this page is to respond to the change password
-    request. In the html markup of the 'forgotpass.html' page you will see
-    that the intention is to have the page post to the same URL which this
-    page was rendered from. If the request contains POST information then we
-    retrieve that user from the database, construct an e-mail based on that
-    and send their password to them. Finally, we redirect to the login page.
+    The second function of this page is to respond to the change
+    password request. In the html markup of the 'forgotpass.html' page
+    you will see that the intention is to have the page post to the
+    same URL which this page was rendered from. If the request
+    contains POST information then we retrieve that user from the
+    database, construct an e-mail based on that and send their
+    password to them. Finally, we redirect to the login page.
 
     :param request: Automatically passed contains a map of the httprequest
     :return: HttpResponse object back to the browser.
+
     """
 
     # if the email recipient isn't in the POST dict,
