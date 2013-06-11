@@ -28,10 +28,7 @@ def vcs_add(request):
 
     activity = Activity.objects.get(id=activity_key)
     user = Tbluser.objects.get(id=user_id)
-    activity = ActivityEntry(user=user, activity=activity, amount=amount)
-    activity.save()
-    activity.creation_date = date
-    activity.save()
+    ActivityEntry(user=user, activity=activity, amount=amount, creation_date=date).save()
 
     return render_to_response(
         "vcs.html",

@@ -28,7 +28,7 @@ class ActivityEntry(models.Model):
         related_name="activity_foreign"
     )
     amount = models.BigIntegerField()
-    creation_date = models.DateField(auto_now_add=True)
+    creation_date = models.DateField()
 
     def time(self):
         return self.activity.time * self.amount
