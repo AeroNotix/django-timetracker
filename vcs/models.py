@@ -33,5 +33,8 @@ class ActivityEntry(models.Model):
     def time(self):
         return self.activity.time * self.amount
 
+    def __unicode__(self):
+        return u'%s - %s - %d' % (self.user, self.activity, self.time())
+
     class Meta:
         verbose_name_plural = "Activity Entries"

@@ -91,5 +91,5 @@ def report_upload(request):
         raise Http404
     success = processor["callback"](fd)
     if success["success"]:
-        return HttpResponse("Done!")
+        return HttpResponse("Done! %s" % success["data"])
     return HttpResponse("Error processing report: %s" % success["error"])
