@@ -77,46 +77,19 @@ def update(request):
     entry.save()
     return {"success": True}
 
-def serialize_activityentry(entry):
 
-    '''Serializes a single ActivityEntry into a JSON format.'''
-    return {
-        "id": entry.id,
-        "date": str(entry.creation_date),
-        "text": entry.activity.groupdetail,
-        "amount": int(entry.amount)
-    }
 
-def listplugins(directory):
-    '''Iterates through the passed-in directory, looking for raw Python
-    modules to import, when it imports the modules we specifically
-    look for several module-level attributes of which we make no
-    error-checking to see if they are there or not.
 
-    We check no errors since this will be a very early warning trigger
-    if there is a programmatic warning.
 
-    :param directory: :class:`str`, the name of the directory to
-                      search for plugins.
 
-    :return: List of dictionaries containing both the module and the
-             module-level attributes for that module.
-    '''
 
-    plugins = []
-    for f in os.listdir(directory):
-        # ignore irrelevant files and compiled python modules.
-        if f == "__init__.py" or f.endswith(".pyc"):
-            continue
-        g = f.replace(".py", "")
-        info = imp.find_module(g, [directory])
-        # dynamically import our module and extrapolate the callback
-        # along with the attributes.
-        m = imp.load_module(g, *info)
-        plugins.append({
-            "name": m.PLUGIN_NAME,
-            "accounts": m.ACCOUNTS,
-            "callback": getattr(m, m.CALLBACK),
-            "module": m,
-        })
-    return plugins
+@loggedin
+def report_upload(request):
+    fd = request.FILES.get("uploaded_file")
+    user_id = request.session.get("user_id")
+    user = Tbluser.objects.get(id=user_id)
+    processor = pluginbyname(request.POST.get("processor"), acc=user.market)
+    if not processor:
+        raise Http404
+    success = processor["callback"](fd)
+    return HttpResponse("done")

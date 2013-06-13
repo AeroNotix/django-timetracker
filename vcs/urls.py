@@ -10,4 +10,5 @@ urlpatterns = patterns('',
                        (r'inserted/?$', views.vcs_add),
                        (r'entries', views.entries),
                        (r'update', views.update),
+                       (r'report_upload', views.report_upload),
 )
