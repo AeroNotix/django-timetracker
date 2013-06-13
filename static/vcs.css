@@ -13,23 +13,6 @@
 }
 
 .multi {
-   border-radius: 4px;
-}#amount {
-   display: inline;
-}
-
-#amount-box {
-   width: 50px;
-}
-
-#vcs-box {
-   position: relative;
-   margin-top: 10%;
-   margin-left: 20%;
-   margin-right: 20%;
-}
-
-.multi {
    margin: 10px;
    width: 300px;
    border-radius: 4px;

@@ -31,6 +31,7 @@ $(function() {
 			detailselected("#subgrp-slct", "#detail-msg");
 			$("#activity_key").attr("value", $("#subgrp-slct").val());
 		});
+
     $("#which-date").change(populatetable);
     $("#amount-box").spinner({"min": 0});
     $("#which-date").datepicker().datepicker("option", "dateFormat", "yy-mm-dd");
