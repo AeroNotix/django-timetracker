@@ -78,12 +78,6 @@ def update(request):
     entry.save()
     return {"success": True}
 
-
-
-
-
-
-
 @loggedin
 def report_upload(request):
     fd = request.FILES.get("uploaded_file")
