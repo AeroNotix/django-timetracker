@@ -1,4 +1,65 @@
+import os
+import imp
+
+from django.conf import settings
+
 from timetracker.vcs.models import Activity
+
+
+def serialize_activityentry(entry):
+    '''Serializes a single ActivityEntry into a JSON format.'''
+    return {
+        "id": entry.id,
+        "date": str(entry.creation_date),
+        "text": entry.activity.groupdetail,
+        "amount": int(entry.amount)
+    }
+
+def defaultplugins(acc=None):
+    '''Returns the plugins in the default location for either all accounts
+    or a single account.'''
+    return listplugins(settings.PLUGIN_DIRECTORY, acc=acc)
+
+def pluginbyname(name, acc=None):
+    '''Returns the named plugin for either all accounts or a single
+    account.'''
+    return defaultplugins(acc=acc).get(name)
+
+def listplugins(directory, acc=None):
+    '''Iterates through the passed-in directory, looking for raw Python
+    modules to import, when it imports the modules we specifically
+    look for several module-level attributes of which we make no
+    error-checking to see if they are there or not.
+
+    We check no errors since this will be a very early warning trigger
+    if there is a programmatic warning.
+
+    :param directory: :class:`str`, the name of the directory to
+                      search for plugins.
+
+    :return: List of dictionaries containing both the module and the
+             module-level attributes for that module.
+    '''
+
+    plugins = {}
+    for f in os.listdir(directory):
+        # ignore irrelevant files and compiled python modules.
+        if f == "__init__.py" or f.endswith(".pyc"):
+            continue
+        g = f.replace(".py", "")
+        info = imp.find_module(g, [directory])
+        # dynamically import our module and extract the callback along
+        # with the attributes.
+        m = imp.load_module(g, *info)
+        if acc and acc not in m.ACCOUNTS:
+            continue
+        plugins[m.PLUGIN_NAME] = {
+            "name": m.PLUGIN_NAME,
+            "accounts": m.ACCOUNTS,
+            "callback": getattr(m, m.CALLBACK),
+            "module": m,
+        }
+    return plugins
 
 def createuseractivities(user):
     choices = {

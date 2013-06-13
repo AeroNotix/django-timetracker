@@ -41,13 +41,22 @@
     <table id="entries">
     </table>
   </div>
+  <!--- File upload section ---->
   <div>
-    <select>
-    {% for plugin in plugin_list %}
-      <option value="{{ plugin.name }}"> {{ plugin.name }} </option>>
+    <select id="plugin_select">
+    {% for plugin in plugin_dict %}
+      <option value="{{ plugin }}"> {{ plugin }} </option>>
     {% endfor %}
     </select>
+    <form method="POST" enctype="multipart/form-data" action="{% url "vcs.views.report_upload" %}">
+      {% csrf_token %}
+      <input type="file" name="uploaded_file" />
+      <input id="plugin_processor" type="hidden" name="processor" />
+      <input type="submit" />
+    </form>
   </div>
+  <!--- End file upload section ---->
+
   {% block additional_javascript %}
   <script type="text/javascript" src="{{STATIC_URL}}js/vcs.js"></script>
   <script type="text/javascript">
