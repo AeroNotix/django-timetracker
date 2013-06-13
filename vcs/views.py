@@ -9,6 +9,10 @@ from django.conf import settings
 
 from timetracker.utils.decorators import loggedin, json_response
 from timetracker.vcs.models import ActivityEntry, Activity
+from timetracker.vcs.activities import (defaultplugins,
+                                        listplugins,
+                                        pluginbyname,
+                                        serialize_activityentry)
 from timetracker.tracker.models import Tbluser
 
 @loggedin
@@ -19,10 +23,7 @@ def vcs(request):
         "vcs.html",
         {
             "todays_date": datetime.datetime.today().strftime("mm-dd-yyyy"),
-            "plugin_list": filter(
-                lambda p: user.market in p["accounts"],
-                listplugins(settings.PLUGIN_DIRECTORY),
-            )
+            "plugin_dict": defaultplugins(acc=user.market),
         },
         RequestContext(request)
     )

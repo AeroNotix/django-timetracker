@@ -35,7 +35,13 @@ $(function() {
     $("#amount-box").spinner({"min": 0});
     $("#which-date").datepicker().datepicker("option", "dateFormat", "yy-mm-dd");
     $("#which-date").datepicker("setDate", "{{ todays_date}}");
+    $("#plugin_select").change(selectprocessor);
+    selectprocessor();
 });
+
+function selectprocessor() {
+    $("#plugin_processor").attr("value", $("#plugin_select").val());
+}
 
 function populatetable() {
     $.ajax({
