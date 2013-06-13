@@ -63,6 +63,11 @@ def entries(request):
 @loggedin
 @json_response
 def update(request):
+    '''Update is the handler for when an ActivityEntry is to be updated by
+    the front-end. We're simply changing the Volume field on the
+    ActivityEntry.
+    '''
+
     volume = request.POST.get("volume")
     entryid = request.POST.get("id")
     if not volume or not entryid:
