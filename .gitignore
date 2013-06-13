@@ -15,3 +15,5 @@ eproject.cfg
 *.log
 docs/build/
 tracker/notifications.py
+*.csv
+vcs/plugins/*
