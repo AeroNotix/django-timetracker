@@ -41,6 +41,13 @@
     <table id="entries">
     </table>
   </div>
+  <div>
+    <select>
+    {% for plugin in plugin_list %}
+      <option value="{{ plugin.name }}"> {{ plugin.name }} </option>>
+    {% endfor %}
+    </select>
+  </div>
   {% block additional_javascript %}
   <script type="text/javascript" src="{{STATIC_URL}}js/vcs.js"></script>
   <script type="text/javascript">
