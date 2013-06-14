@@ -40,6 +40,22 @@ class Activity(models.Model):
         verbose_name_plural = "Activities"
 
 class ActivityEntry(models.Model):
+    """ActivityEntry allows us to join together a single Activity along
+    with the user, amount and creation date of when the Activity took
+    place.
+
+    User: This is the user associated with this particular
+    ActivityEntry.
+
+    Activity: An instance of the Activity this ActivityEntry is linked
+    to.
+
+    Amount: an integer representing how many of that particular
+    Activity was completed.
+
+    Creation Date: The date that this ActivityEntry was created.
+    """
+
     user = models.ForeignKey(
         'tracker.Tbluser',
         related_name="user_foreign"
