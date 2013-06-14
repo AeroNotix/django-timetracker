@@ -34,11 +34,25 @@ def listplugins(directory, acc=None):
     We check no errors since this will be a very early warning trigger
     if there is a programmatic warning.
 
+    A more efficient version of this would be to load the module by
+    name whenever the user requests a specific report. However, this
+    presents a serious security risk and thus; instead of loading the
+    report processor which the user asks for, we find the available
+    reports and *then* filter that list by what the user is allowed to
+    access and *then* give them the report they requested in there if
+    it is available.
+
+    Otherwise, we could end up with a directory traversal attack. This
+    is somewhat mitigated by the fact that imp.load_module requires an
+    explicit load path and thus. I far much prefer the filtered
+    approach versus a whimsical dynamic lookup method.
+
     :param directory: :class:`str`, the name of the directory to
                       search for plugins.
 
     :return: List of dictionaries containing both the module and the
              module-level attributes for that module.
+
     '''
 
     plugins = {}
