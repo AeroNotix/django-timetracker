@@ -2,6 +2,7 @@ import os
 import imp
 
 from django.conf import settings
+from django.db import IntegrityError
 
 from timetracker.vcs.models import Activity
 
@@ -81,7 +82,6 @@ def createuseractivities(user):
             'AR': [
                 Activity(None, "CZAR", "Autorun", "Autorun", "# of autorun transaction launched", True, 1.52),
                 Activity(None, "CZAR", "Bellin update", "Foreign Exchange", "# of uploads", True, 2.04),
-                Activity(None, "CZAR", "Bellin update", "Foreign Exchange", "# of uploads", True, 2.04),
                 Activity(None, "CZAR", "Bellin update", "Treasury", "# of uploads", True, 0.98),
                 Activity(None, "CZAR", "Bellin update-cash flow", "Cash flow", "# of updates", True, 0.42),
                 Activity(None, "CZAR", "Call", "Call", "# of minutes", True, 1.00),
@@ -150,4 +150,7 @@ def createuseractivities(user):
     for market in choices:
         for process in choices[market]:
             for activity in choices[market][process]:
-                activity.save()
+                try:
+                    activity.save()
+                except IntegrityError as e:
+                    print e
