@@ -1,6 +1,27 @@
 from django.db import models
 
 class Activity(models.Model):
+    """Activity encapsulates the idea of a single task for Industrial
+    Engineering purposes.
+
+    Group: This is the concatenation of the account and the process
+    this is used to find which employees a particular activity is
+    aimed at.
+
+    Group Type: This is the category in which a particular activity
+    resides
+
+    Group Detail: This is similar to a sub-category, this gives a lot
+    more details on what the Activity is.
+
+    Details: This shows what the volume represents when you create a
+    related ActivityEntry.
+
+    Disabled: Currently unused.
+
+    Time: the time factor for this Activity, how long it takes to
+    process.
+    """
     group = models.CharField(max_length=4)
     grouptype = models.TextField()
     groupdetail = models.TextField()
