@@ -130,3 +130,9 @@ You can choose from:
 * logging.INFO
 * logging.WARNING
 * logging.CRITICAL
+
+PLUGIN_DIRECTORY
+----------------
+
+The location on your file system where the report processor plugins should
+reside.
