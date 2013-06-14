@@ -83,12 +83,21 @@ def update(request):
 
 @loggedin
 def report_upload(request):
+    '''report_upload is the handler for when a report is requested to be
+    processed. It will extract the processor name from the POST body
+    along with the file. We then look for the associated report
+    processor and pass the file upload to that processor for
+    miscellanious processing.
+    '''
+
+    # Get a fd on the in-memory uploaded file.
     fd = request.FILES.get("uploaded_file")
     user_id = request.session.get("user_id")
     user = Tbluser.objects.get(id=user_id)
     processor = pluginbyname(request.POST.get("processor"), acc=user.market)
     if not processor:
         raise Http404
+    # call the dynamically loaded plugin with the fd.
     success = processor["callback"](fd)
     if success["success"]:
         return HttpResponse("Done! %s" % success["data"])
