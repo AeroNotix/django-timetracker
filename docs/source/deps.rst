@@ -23,6 +23,13 @@ Misc
 
 * MySQL Server
 
+Documentation
+-------------
+
+To build the documentation you will need:
+
+* Sphinx for Python2
+
 Detailed Instructions
 ---------------------
 
