@@ -44,7 +44,7 @@ def listplugins(directory, acc=None):
     plugins = {}
     for f in os.listdir(directory):
         # ignore irrelevant files and compiled python modules.
-        if f == "__init__.py" or f.endswith(".pyc"):
+        if f == "__init__.py" or f == "example.py" or f.endswith(".pyc"):
             continue
         g = f.replace(".py", "")
         info = imp.find_module(g, [directory])
