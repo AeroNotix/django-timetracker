@@ -23,12 +23,11 @@ class Activity(models.Model):
     process.
     """
     group = models.CharField(max_length=4)
-    grouptype = models.TextField()
-    groupdetail = models.TextField()
-    details = models.TextField()
+    grouptype = models.CharField(max_length=100)
+    groupdetail = models.CharField(max_length=100)
+    details = models.CharField(max_length=256)
     disabled = models.BooleanField()
     time = models.DecimalField(decimal_places=2, max_digits=10)
-    unique_together = (("group", "grouptype", "disabled", "time"),)
 
     def __unicode__(self):
         return u"%s - %s - %s - %s" % (self.group,
@@ -37,6 +36,7 @@ class Activity(models.Model):
                                        self.details)
 
     class Meta:
+        unique_together = (("group", "grouptype", "groupdetail", "time"),)
         verbose_name_plural = "Activities"
 
 class ActivityEntry(models.Model):
