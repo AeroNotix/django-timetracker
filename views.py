@@ -225,8 +225,9 @@ def ajax(request):
     to mutate some global map of ajax dispatch functions. For now,
     however, just add them into the map.
 
-    The idea for this is that on the client-side call you would construct your
-    javascript call with something like the below (using jQuery):
+    The idea for this is that on the client-side call you would
+    construct your javascript call with something like the below
+    (using jQuery):
 
         .. code-block:: javascript
 
