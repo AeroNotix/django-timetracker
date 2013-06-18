@@ -28,6 +28,7 @@ from functools import wraps
 
 from django.core.handlers.wsgi import WSGIRequest
 from django.core.mail import send_mail
+from django.conf import settings
 from django.http import Http404, HttpResponse
 from django.db import IntegrityError
 from django.forms import ValidationError
@@ -1199,10 +1200,13 @@ def useredit(request):
                 Please use the following password to login: {1}.\n
 
                 Below is the link to the timetracker:\n
-                http://16.55.133.115:55/
+                {3}
                 Regards,
                 {2}
-                """.format(user.firstname, password, auth_user.firstname)
+                """.format(
+                    user.firstname, password, auth_user.firstname,
+                    settings.DOMAIN_NAME
+                )
 
             send_mail('Your account has been created',
                       email_message,
