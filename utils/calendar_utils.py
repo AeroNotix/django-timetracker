@@ -1382,7 +1382,7 @@ def mass_holidays(request):
                         daytype=daytype)
                 new_entry.save()
                 new_entry.send_notifications()
-                if not sick_sent:
+                if not sick_sent and daytype == "SICKD":
                     sickuser = Tbluser.objects.get(id=entry[0])
                     if sickuser.shouldnotifysick(new_entry):
                         sickuser.sendsicknotification()
