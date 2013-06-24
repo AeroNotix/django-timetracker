@@ -860,6 +860,34 @@ class Tbluser(models.Model):
             return ',\n'.join(overridden)
         return self.get_administrator().name()
 
+    def shouldnotifysick(self, entry):
+        thirtydaysago = entry.entry_date + dt.timedelta(days=-30)
+        previous30days = TrackingEntry.objects.filter(
+            daytype="SICKD", entry_date__range=[thirtydaysago, entry.entry_date]
+        )
+        return len(previous30days) >= 30
+
+    def sendsicknotification(self):
+        email_message_manager = \
+                                "Hi,\n\n" \
+                                "Your employee %s is on continuous " \
+                                "sick leave for 30 days. Please use " \
+                                "ContactHR to clarify with HR if " \
+                                "this employee should be set to " \
+                                "inactive." \
+                                "\n\n" \
+                                "Regards,\nTimetracker team"
+
+        email_message_manager = email_message_manager % (
+            self.name(),
+        )
+        message_manager = EmailMessage(from_email='timetracker@unmonitored.com',)
+        message_manager.body = email_message_manager
+        message_manager.to = self.get_manager_email()
+        message_manager.subject = "Sick leave >= 30 days: %s" % \
+                                  self.name()
+        message_manager.send()
+
     @staticmethod
     def manager_emails_for_account(account):
         '''Gets the e-mails for the managers for the whole account.'''

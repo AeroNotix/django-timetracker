@@ -1333,6 +1333,7 @@ def mass_holidays(request):
         json_data['error'] = str(err)
         return json_data
 
+    sick_sent = False
     for entry in holidays.items():
         for (day, daytype) in enumerate(entry[1]):
             if day == 0:
@@ -1381,6 +1382,11 @@ def mass_holidays(request):
                         daytype=daytype)
                 new_entry.save()
                 new_entry.send_notifications()
+                if not sick_sent:
+                    sickuser = Tbluser.objects.get(id=entry[0])
+                    if sickuser.shouldnotifysick(new_entry):
+                        sickuser.sendsicknotification()
+                        sick_sent = True
     json_data['success'] = True
     return json_data
 
