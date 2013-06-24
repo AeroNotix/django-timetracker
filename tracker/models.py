@@ -861,6 +861,15 @@ class Tbluser(models.Model):
         return self.get_administrator().name()
 
     def shouldnotifysick(self, entry):
+        '''shouldnotifysick determintes whether the entry and the 30 days
+        previous to it require us to send out a notification to the
+        manager extolling that the user has gone over the allowed
+        amount of sickdays and thus may require to be taken off the
+        Action Reports.
+
+        :param entry: The entry to do the search from.
+        :return: Boolean.
+        '''
         thirtydaysago = entry.entry_date + dt.timedelta(days=-30)
         previous30days = TrackingEntry.objects.filter(
             daytype="SICKD", entry_date__range=[thirtydaysago, entry.entry_date]
@@ -868,6 +877,9 @@ class Tbluser(models.Model):
         return len(previous30days) >= 30
 
     def sendsicknotification(self):
+        '''sendsicknotification actually performs the sick notification to the
+        manager.
+        '''
         email_message_manager = \
                                 "Hi,\n\n" \
                                 "Your employee %s is on continuous " \
