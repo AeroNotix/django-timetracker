@@ -698,7 +698,7 @@ def ajax_add_entry(request):
         error_log.critical("Unhandled exception when creating a new tracking entry: %s" % str(e))
         raise
 
-    entry.send_notifications()
+    entry.create_approval_request()
     year, month, day = map(int,
                            form['entry_date'].split("-")
                            )
@@ -866,7 +866,7 @@ def ajax_change_entry(request):
             entry.breaks = form['breaks']
 
             entry.save()
-            entry.send_notifications()
+            entry.create_approval_request()
             if (datetime.date.today() - entry.entry_date).days \
                     > SUSPICIOUS_DATE_DIFF:
                 suspicious_log.debug(
@@ -1381,7 +1381,7 @@ def mass_holidays(request):
                         breaks=time_str[2],
                         daytype=daytype)
                 new_entry.save()
-                new_entry.send_notifications()
+                new_entry.create_approval_request()
                 if not sick_sent and daytype == "SICKD":
                     sickuser = Tbluser.objects.get(id=entry[0])
                     if sickuser.shouldnotifysick(new_entry):
