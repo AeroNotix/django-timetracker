@@ -45,7 +45,7 @@ def overtimereqs(f):
 
 @overtimereqs
 @admin_check
-def accept_edit(request, entry):
+def accept_edit(request, entry=None):
     entry = PendingApproval.objects.get(entry_id=entry, closed=False)
     return render_to_response(
         "accept_edit.html",
