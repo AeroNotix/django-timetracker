@@ -1,7 +1,9 @@
 import datetime
 
 from django.db import models
+from django.conf import settings
 from django.core.mail import EmailMessage
+from django.core.urlresolvers import reverse
 
 from timetracker.tracker.models import TrackingEntry, Tbluser
 
@@ -52,3 +54,25 @@ class PendingApproval(models.Model):
 
     def __unicode__(self):
         return u'%s - %s' % (self.entry.entry_date, self.entry.user.name())
+
+    def inform_manager(self):
+        message = \
+                  "Hi,\n\n" \
+                  "An approval request from %s was just created.\n\n" \
+                  "You can approve, edit or deny this request in the " \
+                  "following link: %s%s\n\n" \
+                  "Kind Regards,\n" \
+                  "Timetracking Team"
+        message = message % (
+            str(self.entry.entry_date),
+            settings.DOMAIN_NAME,
+            reverse(
+                "timetracker.overtime.views.accept_edit",
+                kwargs={"entry": self.entry.id},
+            )[1:] # because it has the leading slash
+        )
+        email = EmailMessage(from_email='timetracker@unmonitored.com')
+        email.body = message
+        email.to = [self.entry.user.user_id]
+        email.subject = "Request for Overtime: Denied."
+        email.send()

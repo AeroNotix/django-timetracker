@@ -1326,6 +1326,7 @@ class TrackingEntry(models.Model):
         )
         debug_log.debug("Creating approval request.")
         approval_request.save()
+        approval_request.inform_manager()
 
     def overtime_notification_check(self):
         return self.daytype == "WKDAY" and self.is_overtime() or \
