@@ -6,11 +6,9 @@
     :synopsis: Module which contains view functions that are mapped from urls
 '''
 
-from django.http import HttpResponse, Http404, HttpResponseRedirect
+from django.http import HttpResponse, Http404
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from django.core.mail import send_mail
-from django.conf import settings
 from django.views.decorators.csrf import csrf_protect
 
 from timetracker.tracker.models import Tbluser, UserForm, TrackingEntry
