@@ -11,7 +11,8 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_protect
 
-from timetracker.tracker.models import Tbluser, UserForm, TrackingEntry
+from timetracker.overtime.models import PendingApproval
+from timetracker.tracker.models import Tbluser, TrackingEntry
 from timetracker.tracker.models import Tblauthorization as tblauth
 from timetracker.tracker.forms import TrackingEntryForm
 
@@ -25,21 +26,21 @@ def accept_edit(request, entry):
     )
     # if the provided entry ID is not here, then we're being duped.
     try:
-        entry = TrackingEntry.objects.get(id=entry)
+        entry = PendingApproval.objects.get(entry_id=entry)
     except:
         suspicious_log.critical(
             "An accept/edit check was made by %s for a non-existent entry." % auth_user.name()
         )
         raise Http404
 
-    if not entry.user_can_see(auth_user):
+    if not entry.entry.user_can_see(auth_user):
         raise Http404
 
     return render_to_response(
         "accept_edit.html",
         {
             "entry": entry,
-            "form": TrackingEntryForm(instance=entry)
+            "form": TrackingEntryForm(instance=entry.entry)
         },
         RequestContext(request)
     )

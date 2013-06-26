@@ -11,7 +11,7 @@ class PendingApproval(models.Model):
         auto_now_add=True
     )
     closed = models.BooleanField()
-    closed_on = models.DateField(null=True)
+    closed_on = models.DateField(null=True, blank=True)
     entry = models.ForeignKey(
         TrackingEntry
     )

@@ -27,7 +27,7 @@ Accept/Edit Tracking Entry
         <label for="id_user">Agent:</label>
       </th>
       <td>
-        <input id="id_user" name="user" type="text" value="{{ entry.user.name }}" readonly />
+        <input id="id_user" name="user" type="text" value="{{ entry.entry.user.name }}" readonly />
       </td>
     </tr>
     {{ form.as_table }}
