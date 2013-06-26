@@ -1311,14 +1311,37 @@ class TrackingEntry(models.Model):
         '''Returns if we are sending undertime for this entry.'''
         return settings.UNDER_TIME_ENABLED.get(self.user.market)
 
+    def create_approval_request(self):
+        debug_log.debug("Checking if approval request is needed.")
+        # to avoid circular import dependencies
+        from timetracker.overtime.models  import PendingApproval
+        if not self.overtime_notification_check() and \
+           not self.undertime_notification_check():
+            print self.overtime_notification_check()
+            print self.undertime_notification_check()
+            return
+        approval_request = PendingApproval(
+            entry=self,
+            approver=self.user.get_administrator()
+        )
+        debug_log.debug("Creating approval request.")
+        approval_request.save()
+
+    def overtime_notification_check(self):
+        return self.daytype == "WKDAY" and self.is_overtime() or \
+            self.daytype in ["PUWRK", "SATUR", "LINKD"]
+
+    def undertime_notification_check(self):
+        return self.is_undertime() and self.sending_undertime()
+
     def send_notifications(self):
         '''Send the associated notifications for this tracking entry.
         For example, if this entry is an overtime entry, it will generate and
         send out the e-mails as per the rules.'''
-
-        if self.daytype == "WKDAY" and self.is_overtime() or \
-                self.daytype in ["PUWRK", "SATUR", "LINKD"]:
+        if self.overtime_notification_check():
             debug_log.debug("Overtime created: " + self.user.name())
             send_overtime_notification(self)
-        if self.is_undertime() and self.sending_undertime():
+            return
+        if self.undertime_notification_check():
             send_undertime_notification(self)
+            return
