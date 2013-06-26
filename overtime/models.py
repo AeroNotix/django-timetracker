@@ -23,7 +23,9 @@ class PendingApproval(models.Model):
         }
     )
 
-    def close(self):
+    def close(self, status):
+        if self.closed:
+            return
         self.closed = True
         self.closed_on = datetime.datetime.now()
         self.save()
