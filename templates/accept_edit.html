@@ -33,10 +33,21 @@ Accept/Edit Tracking Entry
     {{ form.as_table }}
     <tr>
       <th>
+        <label for="status">Status:</label>
+      </th>
+      <td>
+        <select id="status" name="status">
+          <option value="approved" selected>Approved</option>
+          <option value="denied">Denied</option>
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <th>
         <label for="submit">Submit:</label>
       </th>
       <td>
-        <input type="submit" />
+        <input id="submit" type="submit" />
       </td>
     </tr>
   </form>
