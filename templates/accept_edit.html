@@ -14,11 +14,11 @@ Accept/Edit Tracking Entry
 
 {% block content %}
 <!--[if IE 7]>
-<div id="isie" isie="true"></div>
-<![endif]-->
+    <div id="isie" isie="true"></div>
+    <![endif]-->
 <!--[if IE]>
-<div id=IEFix>
-  <![endif]-->
+    <div id=IEFix>
+      <![endif]-->
 <table id="full-table-wrapper">
   <form action="{% url "overtime.views.accepted" %}" method="POST">
     {% csrf_token %}
@@ -54,6 +54,6 @@ Accept/Edit Tracking Entry
 </table>
 <!--[if IE]>
     </div id=IEFix>
-<![endif]-->
+    <![endif]-->
 
 {% endblock content %}
