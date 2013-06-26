@@ -129,4 +129,4 @@ class Login(forms.Form):
 class TrackingEntryForm(forms.ModelForm):
     class Meta:
         model = TrackingEntry
-        fields = ['entry_date', 'start_time', 'end_time', 'breaks', 'daytype']
+        fields = ['entry_date', 'start_time', 'end_time', 'breaks']
