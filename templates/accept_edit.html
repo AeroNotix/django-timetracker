@@ -21,6 +21,7 @@ Accept/Edit Tracking Entry
       <![endif]-->
 <table id="full-table-wrapper">
   <form action="{% url "overtime.views.accepted" %}" method="POST">
+    <input type="hidden" name="pending_id" value="{{ entry.id }}" />
     {% csrf_token %}
     <tr>
       <th>
