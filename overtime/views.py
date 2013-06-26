@@ -26,7 +26,7 @@ def accept_edit(request, entry):
     )
     # if the provided entry ID is not here, then we're being duped.
     try:
-        entry = PendingApproval.objects.get(entry_id=entry)
+        entry = PendingApproval.objects.get(entry_id=entry, closed=False)
     except:
         suspicious_log.critical(
             "An accept/edit check was made by %s for a non-existent entry." % auth_user.name()
