@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block menubar %}
+{% include "includes/get_nav.html" %}
+{% endblock menubar %}
+{% block header %}
+<link href="{{ STATIC_URL }}calendar.css" type="text/css"
+      rel="stylesheet" />
+<link href="{{ STATIC_URL }}holidays.css" type="text/css"
+      rel="stylesheet" />
+{% endblock header %}
+{% block title %}
+Accept/Edit Tracking Entry
+{% endblock title %}
+
+{% block content %}
+<!--[if IE 7]>
+    <div id="isie" isie="true"></div>
+    <![endif]-->
+<!--[if IE]>
+    <div id=IEFix>
+      <![endif]-->
+<div id="full-table-wrapper">
+  <ul>
+    {% for approval in approvals %}
+    <li>{{ approval }}</li>
+    {% endfor %}
+  </ul>
+</div>
+<!--[if IE]>
+    </div id=IEFix>
+    <![endif]-->
+
+{% endblock content %}

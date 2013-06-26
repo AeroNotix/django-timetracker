@@ -9,5 +9,5 @@ from timetracker.overtime import views
 urlpatterns = patterns('',
                        (r'accept_edit/(?P<entry>\d+)/?$', views.accept_edit),
                        (r'accepted/?$', views.accepted),
+                       (r'approval_list/?$', views.approval_list),
 )
-
