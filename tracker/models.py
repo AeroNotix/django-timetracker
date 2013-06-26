@@ -1181,6 +1181,25 @@ class TrackingEntry(models.Model):
         td += self.normalized_break()
         return td
 
+    def user_can_see(self, user):
+        '''Method checks to see if the user passed-in is privvy to view
+        the details of this TrackingEntry.
+
+        :param user: A Tbluser instance.
+        :return: A boolean indicating whether or not the user is
+                 allowed to view this entry.
+        '''
+        try:
+            user.get_subordinates().get(id=self.user.id)
+            return True
+        except Tbluser.DoesNotExist:
+            suspicious_log.critical(
+                "An accept/edit check was made by %s for an entry which " \
+                % auth_user.name() + \
+                "is for a person outside their team"
+            )
+            return False
+
     def is_linked(self):
         return self.daytype == "LINKD" or self.link
 

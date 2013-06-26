@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block menubar %}
+{% include "includes/get_nav.html" %}
+{% endblock menubar %}
+{% block header %}
+<link href="{{ STATIC_URL }}calendar.css" type="text/css"
+      rel="stylesheet" />
+<link href="{{ STATIC_URL }}holidays.css" type="text/css"
+      rel="stylesheet" />
+{% endblock header %}
+{% block title %}
+Accept/Edit Tracking Entry
+{% endblock title %}
+
+{% block content %}
+<!--[if IE 7]>
+<div id="isie" isie="true"></div>
+<![endif]-->
+<!--[if IE]>
+<div id=IEFix>
+  <![endif]-->
+<table id="full-table-wrapper">
+  <form action="{% url "overtime.views.accepted" %}" method="POST">
+    {% csrf_token %}
+    <tr>
+      <th>
+        <label for="id_user">Agent:</label>
+      </th>
+      <td>
+        <input id="id_user" name="user" type="text" value="{{ entry.user.name }}" readonly />
+      </td>
+    </tr>
+    {{ form.as_table }}
+    <tr>
+      <th>
+        <label for="submit">Submit:</label>
+      </th>
+      <td>
+        <input type="submit" />
+      </td>
+    </tr>
+  </form>
+</table>
+<!--[if IE]>
+    </div id=IEFix>
+<![endif]-->
+
+{% endblock content %}

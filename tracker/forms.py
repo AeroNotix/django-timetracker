@@ -15,8 +15,9 @@ Module Overview
 '''
 
 from django import forms
-from timetracker.utils.datemaps import DAYTYPE_CHOICES
 
+from timetracker.utils.datemaps import DAYTYPE_CHOICES
+from timetracker.tracker.models import TrackingEntry
 
 class EntryForm(forms.Form):
     """Change entry form
@@ -124,3 +125,8 @@ class Login(forms.Form):
 
     password.widget.attrs.update({'class': 'login-form',
                                   'id': 'login-password'})
+
+class TrackingEntryForm(forms.ModelForm):
+    class Meta:
+        model = TrackingEntry
+        fields = ['entry_date', 'start_time', 'end_time', 'breaks', 'daytype']
