@@ -37,8 +37,8 @@ Accept/Edit Tracking Entry
 		<td>{{ approval.entry.entry_date }}</td>
         <td class="center">{{ approval.entry.time_difference|floatformat:2|intcomma }}</td>
         <td class="center">
-          <input type="button" value="Approve" />
-          <input type="button" value="Deny" />
+          <input type="button" onclick="approve('{{ approval.id }}')" value="Approve" />
+          <input type="button" onclick="deny('{{ approval.id }}')" value="Deny" />
         </td>
 	  </tr>
       {% endfor %}
