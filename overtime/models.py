@@ -51,6 +51,10 @@ class PendingApproval(models.Model):
         email.to = [self.entry.user.user_id]
         email.subject = "Request for Overtime: Denied."
         email.send()
+        if self.entry.is_linked():
+            self.entry.link.delete()
+        self.entry.delete()
+        self.delete()
 
     def __unicode__(self):
         return u'%s - %s' % (self.entry.entry_date, self.entry.user.name())
