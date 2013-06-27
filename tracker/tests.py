@@ -1004,5 +1004,3 @@ class MiddlewareTest(TestCase):
             Http404,
             self.ehandler.process_exception, {}, UnreadablePostError()
             )
-
-FrontEndTest = None
