@@ -18,6 +18,8 @@ from django.forms import ModelForm
 from django.conf import settings
 from django.core.mail import EmailMessage
 
+from timetracker.loggers import debug_log
+
 try:
     NUM_WORKING_DAYS = settings.NUM_WORKING_DAYS
 except AttributeError:
@@ -39,10 +41,12 @@ try:
         send_overtime_notification, send_pending_overtime_notification,
         send_undertime_notification
         )
-except ImportError:
+except ImportError as e:
+    debug_log.debug(str(e))
     #pylint: disable=W0613
     def send_overtime_notification(*args, **kwargs):
         '''Not implemented'''
+        debug_log.debug("default implementation of send_overtime_notification.")
         pass
     def send_pending_overtime_notification(*args, **kwargs):
         '''Not implemented'''
@@ -51,7 +55,6 @@ except ImportError:
         '''Not implemented'''
         pass
 
-from timetracker.loggers import debug_log
 
 class Tbluser(models.Model):
 
@@ -1352,6 +1355,7 @@ class TrackingEntry(models.Model):
         '''Send the associated notifications for this tracking entry.
         For example, if this entry is an overtime entry, it will generate and
         send out the e-mails as per the rules.'''
+        debug_log.debug("Send Overtime?:" + str(self.overtime_notification_check()))
         if self.overtime_notification_check():
             debug_log.debug("Overtime created: " + self.user.name())
             send_overtime_notification(self)
