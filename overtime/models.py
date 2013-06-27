@@ -58,12 +58,14 @@ class PendingApproval(models.Model):
     def inform_manager(self):
         message = \
                   "Hi,\n\n" \
-                  "An approval request from %s was just created.\n\n" \
+                  "An approval request from %s was just created for %s." \
+                  "\n\n" \
                   "You can approve, edit or deny this request in the " \
                   "following link: %s%s\n\n" \
                   "Kind Regards,\n" \
                   "Timetracking Team"
         message = message % (
+            self.entry.user.name(),
             str(self.entry.entry_date),
             settings.DOMAIN_NAME,
             reverse(
@@ -73,6 +75,6 @@ class PendingApproval(models.Model):
         )
         email = EmailMessage(from_email='timetracker@unmonitored.com')
         email.body = message
-        email.to = [self.entry.user.user_id]
-        email.subject = "Request for Overtime: Denied."
+        email.to = self.entry.user.get_manager_email()
+        email.subject = "Request for Overtime: %s" % self.entry.user.name()
         email.send()
