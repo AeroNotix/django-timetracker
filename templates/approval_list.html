@@ -58,4 +58,10 @@ Accept/Edit Tracking Entry
      $('#example').dataTable();
   });
 </script>
+<script>
+  var CONFIG = {
+      APPROVAL_URL: "{% url "timetracker.overtime.views.accepted" %}"
+  };
+  console.log(CONFIG);
+</script>
 {% endblock additional_javascript %}
