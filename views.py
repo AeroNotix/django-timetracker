@@ -49,12 +49,14 @@ def user_context_manager(request):
     except Tbluser.DoesNotExist:
         return {}
     return {
+        "user": user,
         "welcome_name": user.firstname,
         "is_admin": user.super_or_admin(),
         "is_team_leader": user.is_tl(),
         "is_super": user.is_super(),
         "balance": user.get_normalized_balance(),
-        "doculink": settings.DOCUMENTATION_BASE_URL
+        "doculink": settings.DOCUMENTATION_BASE_URL,
+        "approval_notifications": user.approval_notifications()
         }
 
 def index(request):

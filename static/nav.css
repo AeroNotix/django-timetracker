@@ -36,3 +36,24 @@
    top: 0;
    right: 0;
 }
+
+.notification-label {
+   border: none;
+   display:inline-block;
+   position:relative;
+   text-decoration:none;
+}
+
+.notifications {
+   position:absolute;
+   width: 10px;
+   height: 20px;
+   top:-4px;
+   right:-4px;
+   background-color:#FF0000;
+   color:#fff;
+   padding:2px;
+   font-family:tahoma, arial, 'sans-serif';
+   font-size: 15px;
+   font-weight:bold;
+}

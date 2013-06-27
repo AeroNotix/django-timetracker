@@ -900,6 +900,19 @@ class Tbluser(models.Model):
                                   self.name()
         message_manager.send()
 
+    def approval_notifications(self):
+        if self.is_user():
+            return ""
+        return "<span class=\"notifications\">%d</span>" % len(self.get_approvals())
+
+    def get_approvals(self):
+        # to avoid circular import dependencies
+        from timetracker.overtime.models  import PendingApproval
+        return PendingApproval.objects.filter(closed=False, approver=self.get_administrator())
+
+    def has_pending_approvals(self):
+        return bool(len(self.get_approvals()))
+
     @staticmethod
     def manager_emails_for_account(account):
         '''Gets the e-mails for the managers for the whole account.'''

@@ -10,5 +10,12 @@
 <li><a href="/user_edit/"><br/>Add/Change Agent</a></li>
 <li><a href="/reporting/"><br/>Reporting</a></li>
 <li><a href="/overtime/"><br/>Overtime</a></li>
+{% if user.has_pending_approvals %}
+  <li><a class="notification-label" href="{% url "timetracker.overtime.views.approval_list" %}">
+      {{ approval_notifications|safe }}
+      <br/>Approvals</a></li>
+{% else %}
+  <li><a href="{% url "timetracker.overtime.views.approval_list" %}"><br/>Approvals</a></li>
+{% endif %}
 <li><a href="/edit_profile/"><br/>Profile</a></li>
 {% endblock navelements %}
