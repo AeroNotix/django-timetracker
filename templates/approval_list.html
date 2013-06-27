@@ -32,7 +32,7 @@ Accept/Edit Tracking Entry
 	</thead>
 	<tbody>
       {% for approval in approvals %}
-	  <tr class="gradeA">
+	  <tr>
 		<td>{{ approval.entry.user.name }}</td>
 		<td>{{ approval.entry.entry_date }}</td>
         <td class="center">{{ approval.entry.time_difference|floatformat:2|intcomma }}</td>
