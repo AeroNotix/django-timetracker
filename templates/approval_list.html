@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load humanize %}
 {% block menubar %}
 {% include "includes/get_nav.html" %}
 {% endblock menubar %}
@@ -36,11 +37,7 @@ Accept/Edit Tracking Entry
 	  <tr class="gradeA">
 		<td>{{ approval.entry.user.name }}</td>
 		<td>{{ approval.entry.entry_date }}</td>
-        {% if approval.entry.is_overtime %}
-        <td class="center">Overtime</td>
-        {% else %}
-        <td class="center">Undertime</td>
-        {% endif %}
+        <td class="center">{{ approval.entry.time_difference|floatformat:2|intcomma }}</td>
         <td class="center">
           <input type="button" value="Approve" />
           <input type="button" value="Deny" />
