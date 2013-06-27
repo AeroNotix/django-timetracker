@@ -1333,8 +1333,6 @@ class TrackingEntry(models.Model):
         from timetracker.overtime.models  import PendingApproval
         if not self.overtime_notification_check() and \
            not self.undertime_notification_check():
-            print self.overtime_notification_check()
-            print self.undertime_notification_check()
             return
         approval_request = PendingApproval(
             entry=self,
