@@ -9,7 +9,24 @@ from timetracker.tracker.models import TrackingEntry, Tbluser
 
 
 class PendingApproval(models.Model):
+    '''PendingApproval is the model with which we store
+    Overtime/Undertime and Work at weekend approval requests.
 
+    When an agent is required to work under these specific conditions
+    we must be able to track this and have a proper approval
+    chain. The agent first creates their entry using the normal
+    methods and an approval request is generated. This approval
+    request is then available for their immediate manager to approve
+    or deny it.
+
+    Approving a request means that the agent will then receive the
+    normal follow-up e-mails and the notification plugin functions
+    will be ran.
+
+    Denying a request simply deletes the entry and informs the agent
+    that the request was not successful.
+
+    '''
     created_on = models.DateField(
         auto_now_add=True
     )
@@ -26,6 +43,20 @@ class PendingApproval(models.Model):
     )
 
     def close(self, status):
+        '''Close, as the name implies, closes this PendingApproval request.
+
+        When we close the entry we make a timestamp for when it was
+        closed and send the appropriate follow-up e-mails.
+
+        If the entry is approved, status should be True and this will
+        keep the entry in the system and generate all the associated
+        forms.
+
+        If the entry is denied, then it will delete the associated
+        entry and any link days which are associated with *that* entry.
+
+        :param status: Boolean indicating whether this entry was approved.
+        '''
         if self.closed:
             return
         self.closed = True
@@ -37,9 +68,11 @@ class PendingApproval(models.Model):
             self.denied()
 
     def approved(self):
+        '''approved fires off the notifications associated with this entry.'''
         self.entry.send_notifications()
 
     def denied(self):
+        '''denied will inform the user that their request was not successful.'''
         message = \
                   "Hi,\n\n" \
                   "Your request for overtime on %s was denied.\n\n" \
@@ -60,6 +93,10 @@ class PendingApproval(models.Model):
         return u'%s - %s' % (self.entry.entry_date, self.entry.user.name())
 
     def inform_manager(self):
+        '''When we create a PendingApproval we can inform the manager that a
+        new entry was created.
+
+        '''
         message = \
                   "Hi,\n\n" \
                   "An approval request from %s was just created for %s." \
