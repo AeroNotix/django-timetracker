@@ -26,6 +26,7 @@ Accept/Edit Tracking Entry
 	  <tr>
 	    <th>Agent</th>
 	    <th>Date</th>
+        <th>Link Date</th>
 	    <th>Hours</th>
         <th>Approve/Deny</th>
 	  </tr>
@@ -35,6 +36,11 @@ Accept/Edit Tracking Entry
 	  <tr>
 		<td>{{ approval.entry.user.name }}</td>
 		<td>{{ approval.entry.entry_date }}</td>
+        {% if approval.entry.is_linked %}
+           <td>{{ approval.entry.link.entry_date }}</td>
+        {% else %}
+           <td></td>
+        {% endif %}
         <td class="center">{{ approval.entry.time_difference|floatformat:2|intcomma }}</td>
         <td class="center">
           <input type="button" onclick="approve('{{ approval.id }}')" value="Approve" />
