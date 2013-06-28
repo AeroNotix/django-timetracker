@@ -2,6 +2,7 @@ import datetime
 
 from django.test import TestCase
 from django.core import mail
+from django.conf import settings
 
 from timetracker.overtime.models import PendingApproval
 from timetracker.tracker.models import TrackingEntry
@@ -55,6 +56,8 @@ class ApprovalTest(TestCase):
         self.assertEqual(len(mail.outbox[0].attachments), attachments)
 
     def testNoApprovalRequired(self):
+        if not settings.SENDING_APPROVAL.get(self.linked_manager.market):
+            return
         approval = PendingApproval(
             entry=self.entry,
             approver=self.linked_manager
@@ -63,6 +66,8 @@ class ApprovalTest(TestCase):
         self.assertEqual(len(mail.outbox), 0)
 
     def testApprovalRequired(self):
+        if not settings.SENDING_APPROVAL.get(self.linked_manager.market):
+            return
         approval = PendingApproval(
             entry=self.ot_entry,
             approver=self.linked_manager
