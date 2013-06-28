@@ -101,6 +101,9 @@ class PendingApproval(models.Model):
         if not self.entry.approval_required():
             return
 
+        if not settings.SENDING_APPROVAL.get(self.approver.market):
+            return
+
         message = \
                   "Hi,\n\n" \
                   "An approval request from %s was just created for %s." \
