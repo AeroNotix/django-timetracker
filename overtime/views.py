@@ -72,7 +72,7 @@ def accepted(request):
 @admin_check
 def approval_list(request):
     auth_user = Tbluser.objects.get(id=request.session.get("user_id"))
-    approvals = PendingApproval.objects.filter(closed=False, approver=auth_user)
+    approvals = PendingApproval.objects.filter(closed=False, approver=auth_user.get_administrator())
     return render_to_response(
         "approval_list.html",
         {
