@@ -1290,6 +1290,9 @@ class TrackingEntry(models.Model):
         td += self.normalized_break()
         return ((td.seconds / 60.0) / 60.0)
 
+    def approval_required(self):
+        return self.is_overtime() or self.is_undertime()
+
     def is_overtime(self):
         '''Determines whether this tracking entry is overtime.'''
         if self.daytype == "WKDAY":
