@@ -19,8 +19,20 @@ class ApprovalTest(TestCase):
             breaks=datetime.time(0, 15, 0),
             daytype="WKDAY",
         )
+
+        self.entry = TrackingEntry(
+            user=self.linked_user,
+            entry_date=datetime.datetime.today() + datetime.timedelta(days=1),
+            start_time=datetime.time(9, 0, 0),
+            end_time=datetime.time(16, 45, 0),
+            breaks=datetime.time(0, 15, 0),
+            daytype="WKDAY",
+        )
+
         self.ot_entry.full_clean()
         self.ot_entry.save()
+        self.entry.full_clean()
+        self.entry.save()
             
     def tearDown(self):
         delete_users(self)
@@ -41,3 +53,19 @@ class ApprovalTest(TestCase):
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject, message)
         self.assertEqual(len(mail.outbox[0].attachments), attachments)
+
+    def testNoApprovalRequired(self):
+        approval = PendingApproval(
+            entry=self.entry,
+            approver=self.linked_manager
+        )
+        approval.inform_manager()
+        self.assertEqual(len(mail.outbox), 0)
+
+    def testApprovalRequired(self):
+        approval = PendingApproval(
+            entry=self.ot_entry,
+            approver=self.linked_manager
+        )
+        approval.inform_manager()
+        self.assertEqual(len(mail.outbox), 1)
