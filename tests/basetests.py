@@ -170,6 +170,13 @@ def create_users(cls):
         job_code="00F20G",
         holiday_balance=20
         )
+    
+    # Do a full clean on all items that we can do one on.
+    for attr in dir(cls):
+        try:
+            getattr(cls, attr).full_clean()
+        except AttributeError:
+            pass
 
 def delete_users(cls):
     '''Deletes all the users on a Tbluser instance.'''
