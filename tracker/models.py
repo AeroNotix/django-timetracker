@@ -1330,7 +1330,13 @@ class TrackingEntry(models.Model):
         '''Returns if we are sending undertime for this entry.'''
         return settings.UNDER_TIME_ENABLED.get(self.user.market)
 
+    def pending(self):
+        from timetracker.overtime.models  import PendingApproval
+        return len(PendingApproval.objects.filter(closed=False, entry=self)) > 0
+
     def create_approval_request(self):
+        if self.pending():
+            return
         debug_log.debug("Checking if approval request is needed.")
         # to avoid circular import dependencies
         from timetracker.overtime.models  import PendingApproval
