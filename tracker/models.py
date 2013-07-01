@@ -17,6 +17,8 @@ from django.db import models
 from django.forms import ModelForm
 from django.conf import settings
 from django.core.mail import EmailMessage
+from django.template import Context
+from django.template.loader import get_template
 
 from timetracker.loggers import debug_log, suspicious_log
 
@@ -820,27 +822,17 @@ class Tbluser(models.Model):
         '''
         Sends the weekly reminder for an agent about their holiday balances
         '''
-        message = \
-            "Hi,\n\n" \
-            "This is your weekly timetracking reminder. If the below " \
-            "values are incorrect then please be sure that you have " \
-            "tracked all your time correctly.\n\n" \
-            "Please remember that all changes must be done before the " \
-            "end of the month.\n\n" \
-            "Balance for previous week: %s\n" \
-            "Expected: %s\n" \
-            "Difference: %s\n\n" \
-            "Kind Regards,\n" \
-            "Timetracking Team"
+        templ = get_template("emails/weekly_reminder.dhtml")
 
-        cur = self.previous_week_balance()
-        prev = self.expected_weekly_balance()
-        message = message % (
-            cur, prev,
-            cur - prev
-            )
+        prev = self.previous_week_balance()
+        expect = self.expected_weekly_balance()
+        ctx = Context({
+            "previous_week_balance": prev,
+            "expected_balance": expect,
+            "difference": prev - expect
+        })
         email = EmailMessage(from_email='timetracker@unmonitored.com')
-        email.body = message
+        email.body = templ.render(ctx)
         email.to = [self.user_id]
         email.subject = "Weekly timetracking reminder"
         email.send()
