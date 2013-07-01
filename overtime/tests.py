@@ -34,7 +34,7 @@ class ApprovalTest(TestCase):
         self.ot_entry.save()
         self.entry.full_clean()
         self.entry.save()
-            
+
     def tearDown(self):
         delete_users(self)
 

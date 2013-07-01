@@ -636,7 +636,6 @@ class FrontEndTest(LiveServerTestCase):
 
     def tearDown(self):
         '''Deletes our class.'''
-        delete_users(self)
         try:
             self.accessURL("/edit_profile/")
             self.driver.get_element_by_id("logout-btn").click()
@@ -790,9 +789,11 @@ class FrontEndTest(LiveServerTestCase):
         self.driver.find_element_by_id("login-user").send_keys(who.user_id)
         self.driver.find_element_by_id("login-password").send_keys(who.password)
         self.driver.find_element_by_id("add_button").click()
+
     def user_login(self):
         '''Helper method to login a user.'''
         self.login(self.linked_user)
+
     def manager_login(self):
         '''Helper method to login a manager.'''
         self.login(self.linked_manager)
