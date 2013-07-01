@@ -80,14 +80,10 @@ class PendingApproval(models.Model):
 
     def denied(self):
         '''denied will inform the user that their request was not successful.'''
-        message = \
-                  "Hi,\n\n" \
-                  "Your request for overtime on %s was denied.\n\n" \
-                  "Kind Regards,\n" \
-                  "Timetracking Team"
-        message = message % str(self.entry.entry_date)
+        tmpl = get_template("emails/denied.dhtml")
+        ctx = Context({"entry_date": str(self.entry.entry_date)})
         email = EmailMessage(from_email='timetracker@unmonitored.com')
-        email.body = message
+        email.body = tmpl.render(ctx)
         email.to = [self.entry.user.user_id]
         email.subject = "Request for Overtime: Denied."
         email.send()
