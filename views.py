@@ -12,6 +12,8 @@ from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.core.mail import send_mail
+from django.template.loader import get_template
+from django.template import Context
 from django.conf import settings
 from django.views.decorators.csrf import csrf_protect
 
@@ -543,18 +545,16 @@ def forgot_pass(request):
     # should return the password for the email address
     try:
         user = Tbluser.objects.get(user_id=email_recipient)
-        email_message = u'''
-              Hi {name},
-              \tYour password reminder is: {password}\n
-              Regards,
-              '''.format(**{
-                'name': user.name(),
-                'password': user.password
-                })
-        send_mail('You recently requested a password reminder',
-                  email_message,
-                  'timetracker@unmonitored.com',
-                  [email_recipient], fail_silently=False
+        tmpl = get_template("emails/password_reminder.dhtml")
+        ctx = Context({
+            "username": user.firstname,
+            "password": user.password
+        })
+        send_mail(
+            'You recently requested a password reminder',
+            tmpl.render(ctx),
+            'timetracker@unmonitored.com',
+            [email_recipient], fail_silently=False
         )
     except Tbluser.DoesNotExist:
         suspicious_log.info(
