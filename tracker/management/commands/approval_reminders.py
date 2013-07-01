@@ -28,7 +28,7 @@ def send_approval_digest(market):
 
     email = EmailMessage(from_email='timetracker@unmonitored.com')
     email.body = message
-    email.to = ["aaron.france@hp.com"] #approvals[0].user.get_manager_email()
+    email.to = approvals[0].entry.user.get_manager_email()
     email.subject = "Pending Approvals in the Timetracker."
     email.send()
 
