@@ -496,6 +496,7 @@ class Tbluser(models.Model):
                 c=entry.overtime_class(),
                 function="entry_date='%s'" % entry.entry_date)
         table_string = ''.join([''.join(subrow) for subrow in basehtml])
+        # TODO: Template this.
         table_string += '''
 <tr>
   <td colspan=100>
