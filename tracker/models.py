@@ -47,13 +47,10 @@ except ImportError as e:
     def send_overtime_notification(*args, **kwargs):
         '''Not implemented'''
         debug_log.debug("default implementation of send_overtime_notification.")
-        pass
     def send_pending_overtime_notification(*args, **kwargs):
         '''Not implemented'''
-        pass
     def send_undertime_notification(*args, **kwargs):
         '''Not implemented'''
-        pass
 
 
 class Tbluser(models.Model):
