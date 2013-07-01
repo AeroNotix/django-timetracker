@@ -1237,7 +1237,7 @@ class TrackingEntry(models.Model):
         except Tbluser.DoesNotExist:
             suspicious_log.critical(
                 "An accept/edit check was made by %s for an entry which " \
-                % auth_user.name() + \
+                % self.name() + \
                 "is for a person outside their team"
             )
             return False
