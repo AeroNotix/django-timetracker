@@ -875,7 +875,9 @@ class Tbluser(models.Model):
         '''
         thirtydaysago = entry.entry_date + dt.timedelta(days=-30)
         previous30days = TrackingEntry.objects.filter(
-            daytype="SICKD", entry_date__range=[thirtydaysago, entry.entry_date]
+            user_id=self.id,
+            daytype="SICKD",
+            entry_date__range=[thirtydaysago, entry.entry_date]
         )
         return len(previous30days) >= 30
 
