@@ -795,7 +795,6 @@ class Tbluser(models.Model):
         :return: :class:`tuple` Two tuples containing each a two-tuple
         with a tag for the name and the value for that field.
         '''
-        today = dt.datetime.today()
         return (
             ("Last 7 Days", self.get_last7days()),
             ("Last Month", self.get_normalized_balance(ret="html"))
