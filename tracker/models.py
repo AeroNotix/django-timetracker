@@ -445,36 +445,13 @@ class Tbluser(models.Model):
                 basehtml[entry.entry_date.month-1][entry.entry_date.day].format(
                 c=entry.daytype, function="")
         table_string = ''.join([''.join(subrow) for subrow in basehtml])
-        # TODO: This should all be templated instead of being generated
-        # here.
-        table_string += '''
-<tr>
-  <td colspan=100>
-    <table>
-      <tr><th style="width:10%%">Year</th><td style="width:90%%">%s</td></tr>
-      <tr><th>Agent</th><td>{employees_select}</td></tr>
-      <tr>
-        <th style="width:10%%">Comments</th>
-        <td style="width:90%%">
-          <ul>%s</ul>
-        </td>
-      </tr>
-      <tr>
-        <th>Total Balances</th>
-        <td>
-         <table>
-          %s
-         </table>
-        </td>
-      </tr>
-    </table>
-  </td>
-</tr>
-''' % (generate_year_box(int(year), id="cmb_yearbox"),
-       ''.join(("<li>%s</li>" % entry) for entry in self.get_comments(year)),
-       ''.join("<tr><th>%s</th><td>%s</td>"
-               % (k, v) for k, v in sorted(self.get_balances(year).items()))
-       )
+        tmpl = get_template("fragments/yearview.html")
+        ctx = Context({
+            "yearbox": generate_year_box(int(year), id="cmb_yearbox"),
+            "comments": self.get_comments(year),
+            "balances": ((k, v) for k, v in sorted(self.get_balances(year).items())),
+            })
+        table_string += tmpl.render(ctx)
         return '<table id="holiday-table"><th colspan=999>%s</th>' \
             % self.name() + table_string
 
