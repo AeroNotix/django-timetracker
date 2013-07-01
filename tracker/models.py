@@ -910,7 +910,9 @@ class Tbluser(models.Model):
         email_message_manager = email_message_manager % (
             self.name(),
         )
-        message_manager = EmailMessage(from_email='timetracker@unmonitored.com',)
+        message_manager = EmailMessage(
+            from_email='timetracker@unmonitored.com'
+        )
         message_manager.body = email_message_manager
         message_manager.to = self.get_manager_email()
         message_manager.subject = "Sick leave >= 30 days: %s" % \
@@ -928,13 +930,17 @@ class Tbluser(models.Model):
         '''
         if self.is_user():
             return ""
-        return "<span class=\"notifications\">%d</span>" % len(self.get_approvals())
+        return "<span class=\"notifications\">%d</span>" % len(
+            self.get_approvals()
+        )
 
     def get_approvals(self):
         '''Returns the approvals associated with this team's user.'''
         # to avoid circular import dependencies
         from timetracker.overtime.models  import PendingApproval
-        return PendingApproval.objects.filter(closed=False, approver=self.get_administrator())
+        return PendingApproval.objects.filter(
+            closed=False, approver=self.get_administrator()
+        )
 
     def has_pending_approvals(self):
         '''Returns whether this user has any pending approvals in their
@@ -1353,7 +1359,8 @@ class TrackingEntry(models.Model):
     def time_difference(self):
         '''Calculates the difference between this tracking entry and the user's
         shiftlength'''
-        value = round_down(self.total_working_time()) - self.user.shiftlength_as_float()
+        value = round_down(self.total_working_time()) - \
+                self.user.shiftlength_as_float()
         debug_log.debug("Time difference:" + str(value))
         return value
 
@@ -1401,7 +1408,9 @@ class TrackingEntry(models.Model):
         '''Send the associated notifications for this tracking entry.
         For example, if this entry is an overtime entry, it will generate and
         send out the e-mails as per the rules.'''
-        debug_log.debug("Send Overtime?:" + str(self.overtime_notification_check()))
+        debug_log.debug("Send Overtime?:" + \
+                        str(self.overtime_notification_check())
+        )
         if self.overtime_notification_check():
             debug_log.debug("Overtime created: " + self.user.name())
             send_overtime_notification(self)
