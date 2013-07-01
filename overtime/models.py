@@ -1,3 +1,8 @@
+#pylint: disable=E1101,W0232,W0141,E1103,E1002,W0232,R0201,R0903,R0904,C0302
+#pylint: disable=C0103
+'''The overtime application encapsulates some common functionality
+with the overtime approval queues in the timetracker application.
+'''
 import datetime
 
 from django.db import models
