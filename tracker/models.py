@@ -613,11 +613,20 @@ class Tbluser(models.Model):
         return daytype_dict
 
     def get_thismonths_balance(self, ret="html"):
+        '''get_thismonths_balance returns the users balance for this month and
+        this month only.
+
+        :param ret: String indicating what return type is required.
+        '''
         return self.get_total_balance(ret=ret,
                                       year=dt.datetime.today().year,
                                       month=dt.datetime.today().month)
 
     def get_last7days(self):
+        '''get_last7days returns the users balance for the last seven days.
+
+        :param ret: String indicating what return type is required.
+        '''
         today = dt.datetime.today()
         return self.get_total_balance(
             from_=today.replace(**{'day': 1} \
@@ -782,6 +791,13 @@ class Tbluser(models.Model):
                            - add(total_hours, (total_mins / 60.0)))
 
     def balance_breakdown(self):
+        '''balance_breakdown returns a tuple of tuples showing a
+        pretty-printed version of the users balances for 7 days and
+        the last month.
+
+        :return: :class:`tuple` Two tuples containing each a two-tuple
+        with a tag for the name and the value for that field.
+        '''
         today = dt.datetime.today()
         return (
             ("Last 7 Days", self.get_last7days()),
@@ -906,16 +922,27 @@ class Tbluser(models.Model):
         message_manager.send()
 
     def approval_notifications(self):
+        '''approval_notifications will generate the required HTML for
+        displaying approval notifications in the navigation bar. We
+        return an empty string if there are no approval notifications
+        pending or a span with the relevant information inside it if
+        there are any.
+
+        :return: :class:`str`
+        '''
         if self.is_user():
             return ""
         return "<span class=\"notifications\">%d</span>" % len(self.get_approvals())
 
     def get_approvals(self):
+        '''Returns the approvals associated with this team's user.'''
         # to avoid circular import dependencies
         from timetracker.overtime.models  import PendingApproval
         return PendingApproval.objects.filter(closed=False, approver=self.get_administrator())
 
     def has_pending_approvals(self):
+        '''Returns whether this user has any pending approvals in their
+        queue.'''
         return bool(len(self.get_approvals()))
 
     @staticmethod
@@ -1219,9 +1246,13 @@ class TrackingEntry(models.Model):
             return False
 
     def is_linked(self):
+        '''Checks whether this particular entry is a linked entry.'''
         return self.daytype == "LINKD" or self.link
 
     def unlink(self):
+        '''If this current entry is linked, then we will unlink the entry and
+        set the target link to a regular working day.
+        '''
         if self.link:
             if self.link.daytype == "LINKD":
                 self.link.delete()
@@ -1293,6 +1324,8 @@ class TrackingEntry(models.Model):
         return ((td.seconds / 60.0) / 60.0)
 
     def approval_required(self):
+        '''Returns whether this entry is needing approval in order to be
+        processed.'''
         return self.is_overtime() or self.is_undertime()
 
     def is_overtime(self):
@@ -1333,10 +1366,14 @@ class TrackingEntry(models.Model):
         return settings.UNDER_TIME_ENABLED.get(self.user.market)
 
     def pending(self):
+        '''Checks to see if the entry the PendingApproval object associated
+        with this exists and is still open.'''
         from timetracker.overtime.models  import PendingApproval
         return len(PendingApproval.objects.filter(closed=False, entry=self)) > 0
 
     def create_approval_request(self):
+        '''create_approval_request will take this entry and create a
+        PendingApproval entry pointing back to this one.'''
         if self.pending():
             return
         debug_log.debug("Checking if approval request is needed.")
@@ -1354,10 +1391,14 @@ class TrackingEntry(models.Model):
         approval_request.inform_manager()
 
     def overtime_notification_check(self):
+        '''Checks if this entry is overtime or not for the purposes of
+        sending notifications.'''
         return self.daytype == "WKDAY" and self.is_overtime() or \
             self.daytype in ["PUWRK", "SATUR", "LINKD"]
 
     def undertime_notification_check(self):
+        '''Checks if this entry is undertime or not for the puporses of
+        sending notifications.'''
         return self.is_undertime() and self.sending_undertime()
 
     def send_notifications(self):
