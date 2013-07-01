@@ -445,6 +445,8 @@ class Tbluser(models.Model):
                 basehtml[entry.entry_date.month-1][entry.entry_date.day].format(
                 c=entry.daytype, function="")
         table_string = ''.join([''.join(subrow) for subrow in basehtml])
+        # TODO: This should all be templated instead of being generated
+        # here.
         table_string += '''
 <tr>
   <td colspan=100>
