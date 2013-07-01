@@ -8,11 +8,13 @@ import datetime
 from django.db import models
 from django.conf import settings
 from django.core.mail import EmailMessage
+from django.template import Context
+from django.template.loader import get_template
 from django.core.urlresolvers import reverse
 
 from timetracker.tracker.models import TrackingEntry, Tbluser
 
-
+ 
 class PendingApproval(models.Model):
     '''PendingApproval is the model with which we store
     Overtime/Undertime and Work at weekend approval requests.
@@ -109,25 +111,18 @@ class PendingApproval(models.Model):
         if not settings.SENDING_APPROVAL.get(self.approver.market):
             return
 
-        message = \
-                  "Hi,\n\n" \
-                  "An approval request from %s was just created for %s." \
-                  "\n\n" \
-                  "You can approve, edit or deny this request in the " \
-                  "following link: %s%s\n\n" \
-                  "Kind Regards,\n" \
-                  "Timetracking Team"
-        message = message % (
-            self.entry.user.name(),
-            str(self.entry.entry_date),
-            settings.DOMAIN_NAME,
-            reverse(
+        tmpl = get_template("emails/inform_manager.dhtml")
+        ctx = Context({
+            "username": self.entry.user.name(),
+            "entry_date": str(self.entry.entry_date),
+            "domain": settings.DOMAIN_NAME,
+            "rest": reverse(
                 "timetracker.overtime.views.accept_edit",
                 kwargs={"entry": self.entry.id},
             )[1:] # because it has the leading slash
-        )
+        })
         email = EmailMessage(from_email='timetracker@unmonitored.com')
-        email.body = message
+        email.body = tmpl.render(ctx)
         email.to = self.entry.user.get_manager_email()
         email.subject = "Request for Overtime: %s" % self.entry.user.name()
         email.send()

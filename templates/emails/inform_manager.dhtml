@@ -1,0 +1,11 @@
+Hi, 
+
+An approval request from {{ username }} was just created for {{
+entry_date }}.
+
+You can approve, edit or deny this request in the following link: 
+
+{{ domain }}{{ rest }}
+
+Kind Regards,
+Timetracking Team
