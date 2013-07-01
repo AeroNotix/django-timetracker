@@ -141,6 +141,7 @@ def report_for_account(choice_list, year, month):
 
     # we generate the map using blank dicts since we need to use the
     # id of the employee (who may not have any entries this month).
+    # TODO: Shouldn't this use a collections.defaultdict?
     entry_map = {user.id: {} for user in users}
     for entry in entries:
         if entry.is_linked():
