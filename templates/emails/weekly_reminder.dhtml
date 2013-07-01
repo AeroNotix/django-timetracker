@@ -1,0 +1,13 @@
+Hi,
+
+This is your weekly timetracking reminder. If the below values are
+incorrect then please be sure that you have tracked all your time
+correctly. Please remember that all changes must be done before the
+end of the month.
+
+Balance for previous week: {{ previous_week_balance }}
+Expected: {{ expected_balance }}
+Difference: {{ difference }}
+
+Kind Regards,
+Timetracking Team
