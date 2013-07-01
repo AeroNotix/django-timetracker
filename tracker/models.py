@@ -889,23 +889,14 @@ class Tbluser(models.Model):
         '''sendsicknotification actually performs the sick notification to the
         manager.
         '''
-        email_message_manager = \
-                                "Hi,\n\n" \
-                                "Your employee %s is on continuous " \
-                                "sick leave for 30 days. Please use " \
-                                "ContactHR to clarify with HR if " \
-                                "this employee should be set to " \
-                                "inactive." \
-                                "\n\n" \
-                                "Regards,\nTimetracker team"
-
-        email_message_manager = email_message_manager % (
-            self.name(),
-        )
+        tmpl = get_template("emails/sick_notification.dhtml")
+        ctx = Context({
+            "employee": self.name()
+        })
         message_manager = EmailMessage(
             from_email='timetracker@unmonitored.com'
         )
-        message_manager.body = email_message_manager
+        message_manager.body = tmpl.render(ctx)
         message_manager.to = self.get_manager_email()
         message_manager.subject = "Sick leave >= 30 days: %s" % \
                                   self.name()
