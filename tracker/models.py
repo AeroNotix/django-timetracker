@@ -18,7 +18,7 @@ from django.forms import ModelForm
 from django.conf import settings
 from django.core.mail import EmailMessage
 
-from timetracker.loggers import debug_log
+from timetracker.loggers import debug_log, suspicious_log
 
 try:
     NUM_WORKING_DAYS = settings.NUM_WORKING_DAYS
