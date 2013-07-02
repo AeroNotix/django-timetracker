@@ -1387,6 +1387,7 @@ class TrackingEntry(models.Model):
             return
 
     def holiday_approval_notification(self):
+        '''Send the associated holiday approval for this entry.'''
         templ = get_template("emails/holiday_approved.dhtml")
         ctx = Context({
             "entry_date": str(self.entry_date)

@@ -79,6 +79,10 @@ class PendingApproval(models.Model):
             self.denied()
 
     def tl_close(self, status):
+        '''Performs a 'soft close' on the PendingApproval entry by simply
+        marking the tl_approved as True. This allows us to know that
+        an entry can be approved by a one-up manager.
+        '''
         if self.closed:
             return
         if status:
@@ -142,4 +146,5 @@ class PendingApproval(models.Model):
         email.send()
 
     def is_holiday_request(self):
+        '''checks whether this entry is a holiday entry or not.'''
         return self.entry.daytype == "PENDI"
