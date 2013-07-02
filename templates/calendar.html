@@ -57,6 +57,9 @@
           <td class="DAYOD holiday-button"></td><td>Day on demand</td>
         </tr>
         <tr>
+          <td class="PENDI holiday-button"></td><td>Approval Vacation</td>
+        </tr>
+        <tr>
           <td class="OTHER holiday-button"></td><td>Other</td>
         </tr>
       </table>
@@ -124,7 +127,10 @@
                 </label>
               </th>
               <td>
-                {{ addform.daytype }}
+                <select class="change-el" id="add_daytype" name="daytype">
+                  <option value="WKDAY">Work Day</option>
+                  <option value="HOLIS">Vacation</option>
+                </select>
               </td>
             </tr>
             <tr>
@@ -251,7 +257,6 @@
                 }
             });
         $("#change_daytype").hide();
-        $("#add_daytype").hide();
     </script>
     <script type="text/javascript" src="{{ STATIC_URL }}jquery/js/timepicker.js">
     </script>

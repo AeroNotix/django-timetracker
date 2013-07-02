@@ -28,6 +28,7 @@ Accept/Edit Tracking Entry
 	    <th>Date</th>
         <th>Link Date</th>
 	    <th>Hours</th>
+        <th>TL Approved</th>
         <th>Approve/Deny</th>
 	  </tr>
 	</thead>
@@ -41,7 +42,16 @@ Accept/Edit Tracking Entry
         {% else %}
         <td></td>
         {% endif %}
+        {% if approval.is_holiday_request %}
+        <td class="center">Holiday Request</td>
+        {% else %}
         <td class="center">{{ approval.entry.time_difference|floatformat:2|intcomma }}</td>
+        {% endif %}
+        {% if approval.tl_approved %}
+        <td class="center"><img src="{{ STATIC_URL }}images/tick.png" /></td>
+        {% else %}
+        <td class="center"><img src="{{ STATIC_URL }}images/cross.png" /></td>
+        {% endif %}
         <td class="center">
           <input type="button" onclick="approve('{{ approval.id }}')" value="Approve" />
           <input type="button" onclick="deny('{{ approval.id }}')" value="Deny" />

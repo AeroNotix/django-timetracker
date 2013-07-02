@@ -648,6 +648,10 @@ def ajax_add_entry(request):
 
     # get the form data from the request object
     form.update(get_request_data(form, request))
+
+    if form["daytype"] == "HOLIS":
+        return ajax_add_holiday(form)
+
     if form['link'] == '':
         form.pop('link')
     else:
@@ -663,7 +667,7 @@ def ajax_add_entry(request):
 
     # create objects to put our data into
     json_data = {
-        'succes': False,
+        'success': False,
         'error': '',
         'calendar': ''
     }
@@ -711,6 +715,33 @@ def ajax_add_entry(request):
     json_data['calendar'] = calendar
     return json_data
 
+def ajax_add_holiday(form):
+    # create objects to put our data into
+    json_data = {
+        'success': False,
+        'error': '',
+        'calendar': ''
+    }
+    user = Tbluser.objects.get(id=form['user_id'])
+    shiftlength_list = user.get_shiftlength_list()
+    holiday_req = TrackingEntry(
+        user_id=user.id,
+        entry_date=form['entry_date'],
+        start_time=shiftlength_list[0],
+        end_time=shiftlength_list[1],
+        breaks=shiftlength_list[2],
+        daytype="PENDI",
+    )
+    holiday_req.save()
+    holiday_req.create_approval_request()
+    # if all went well
+    year, month, day = form['entry_date'].split("-")
+    calendar = gen_calendar(year, month, day,
+                            form['user_id'])
+    json_data['success'] = True
+    json_data['calendar'] = calendar
+
+    return json_data
 
 @request_check
 @json_response

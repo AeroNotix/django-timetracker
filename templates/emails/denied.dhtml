@@ -1,6 +1,8 @@
 Hi,
-
-Your request for overtime on {{ entry_date }} was denied. 
-
+{% if daytype == "HOLIS" or daytype == "PENDI" %}
+Your request for holiday on {{ entry_date }} was denied.
+{% else %}
+Your request for overtime on {{ entry_date }} was denied.
+{% endif %}
 Kind Regards,
 Timetracking Team

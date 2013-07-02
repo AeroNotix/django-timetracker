@@ -95,6 +95,7 @@ WORKING_CHOICES = (
 )
 
 ABSENT_CHOICES = (
+    ('PENDI', 'Vacation Request'),
     ('HOLIS', 'Vacation'),
     ('SICKD', 'Sickness Absence'),
     ('PUABS', 'Public Holiday'),
@@ -107,6 +108,7 @@ ABSENT_CHOICES = (
 DAYTYPE_CHOICES = (
     ('LINKD', 'Linked Day'),
     ('WKDAY', 'Work Day'),
+    ('PENDI', 'Vacation Request'),
     ('HOLIS', 'Vacation'),
     ('SICKD', 'Sickness Absence'),
     ('PUABS', 'Public Holiday'),

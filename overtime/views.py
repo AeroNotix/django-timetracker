@@ -60,7 +60,11 @@ def accept_edit(request, entry=None):
 def accepted(request):
     status = request.POST["status"] == "approved"
     pending_id = request.POST.get("pending_id")
-    PendingApproval.objects.get(id=pending_id).close(status)
+    auth_user = Tbluser.objects.get(id=request.session.get("user_id"))
+    if auth_user.is_tl():
+        PendingApproval.objects.get(id=pending_id).tl_close(status)
+    else:
+        PendingApproval.objects.get(id=pending_id).close(status)
     return render_to_response(
         "accept_edit_done.html",
         {

@@ -43,38 +43,45 @@ function ajaxCall(form) {
         breaks = "00:00";
     }
 
-    formData = {
-        "form_type" : form,
-        "entry_date" : $(pre + 'entrydate').val(),
-		"link" : $(pre + 'link').val(),
-        "start_time" : $(pre + 'starttime').val(),
-        "end_time" : $(pre + 'endtime').val(),
-        "daytype" : $(pre + 'daytype').val(),
-        "hidden-id" : $('#hidden_id').val(),
-        "breaks": breaks
-    };
+    if ($(pre + 'daytype').val() === "HOLIS") {
+        formData = {
+            "form_type" : form,
+            "entry_date" : $(pre + 'entrydate').val(),
+            "daytype" : $(pre + 'daytype').val(),
+            "hidden-id" : $('#hidden_id').val(),
+        };
+    } else {
+        formData = {
+            "form_type" : form,
+            "entry_date" : $(pre + 'entrydate').val(),
+		    "link" : $(pre + 'link').val(),
+            "start_time" : $(pre + 'starttime').val(),
+            "end_time" : $(pre + 'endtime').val(),
+            "daytype" : $(pre + 'daytype').val(),
+            "hidden-id" : $('#hidden_id').val(),
+            "breaks": breaks
+        };
+    }
 
-    if ($(pre + 'daytype').val() !== "WKDAY") {
+    if ($(pre + 'daytype').val() !== "WKDAY" &&
+        $(pre + 'daytype').val() !== "HOLIS") {
         return false;
     }
 
-    if ($(pre + 'starttime').val() === $(pre + 'endtime').val()) {
+    if ($(pre + 'daytype').val() !== "HOLIS" &&
+        $(pre + 'starttime').val() === $(pre + 'endtime').val()) {
         alert("Length of working time invalid.");
         return false;
     }
 
-    if (!validateTimePair(pre + 'starttime', pre + 'endtime')) {
+    if ($(pre + 'daytype').val() !== "HOLIS" &&
+         !validateTimePair(pre + 'starttime', pre + 'endtime')) {
         alert("Start Time before End Time.");
         return false;
     }
 
     if (formData["entry_date"] === formData["link"]) {
         alert("You cannot link to the same day.");
-        return false;
-    }
-
-    // no point in making invalid ajax requests
-    if (!formData.entry_date || !formData.start_time || !formData.end_time) {
         return false;
     }
 
@@ -118,8 +125,8 @@ function onOptionChange(element) {
             // these are the types that will have their
             // form elements disabled if selected
         disabledTypes = [
-            "SICKD", "HOLIS", "MEDIC", "SPECI",
-            "PUABS", "TRAIN", "DAYOD", "RETRN"
+            "SICKD", "HOLIS", "MEDIC", "SPECI", "PUABS",
+            "TRAIN", "DAYOD", "RETRN", "PENDI"
         ];
 
     if ($.inArray(optionBoxVal, disabledTypes) > -1) {

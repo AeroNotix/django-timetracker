@@ -1291,7 +1291,9 @@ class TrackingEntry(models.Model):
     def approval_required(self):
         '''Returns whether this entry is needing approval in order to be
         processed.'''
-        return self.is_overtime() or self.is_undertime()
+        return self.is_overtime() \
+            or self.is_undertime() \
+            or self.daytype == "PENDI"
 
     def is_overtime(self):
         '''Determines whether this tracking entry is overtime.'''
@@ -1340,19 +1342,19 @@ class TrackingEntry(models.Model):
     def create_approval_request(self):
         '''create_approval_request will take this entry and create a
         PendingApproval entry pointing back to this one.'''
-        if self.pending():
-            return
-        debug_log.debug("Checking if approval request is needed.")
         # to avoid circular import dependencies
         from timetracker.overtime.models  import PendingApproval
+
+        if self.pending():
+            return
         if not self.overtime_notification_check() and \
-           not self.undertime_notification_check():
+           not self.undertime_notification_check() and \
+           not self.daytype == "PENDI":
             return
         approval_request = PendingApproval(
             entry=self,
             approver=self.user.get_administrator()
         )
-        debug_log.debug("Creating approval request.")
         approval_request.save()
         approval_request.inform_manager()
 
@@ -1374,6 +1376,8 @@ class TrackingEntry(models.Model):
         debug_log.debug("Send Overtime?:" + \
                         str(self.overtime_notification_check())
         )
+        if self.daytype == "HOLIS":
+            return self.holiday_approval_notification()
         if self.overtime_notification_check():
             debug_log.debug("Overtime created: " + self.user.name())
             send_overtime_notification(self)
@@ -1381,3 +1385,14 @@ class TrackingEntry(models.Model):
         if self.undertime_notification_check():
             send_undertime_notification(self)
             return
+
+    def holiday_approval_notification(self):
+        templ = get_template("emails/holiday_approved.dhtml")
+        ctx = Context({
+            "entry_date": str(self.entry_date)
+            })
+        email = EmailMessage(from_email='timetracker@unmonitored.com')
+        email.body = templ.render(ctx)
+        email.to = [self.user.user_id]
+        email.subject = "Holiday Request: Approved."
+        email.send()

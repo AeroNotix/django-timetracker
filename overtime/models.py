@@ -48,6 +48,7 @@ class PendingApproval(models.Model):
             "user_type__in": ["SUPER", "ADMIN"]
         }
     )
+    tl_approved = models.BooleanField()
 
     def close(self, status):
         '''Close, as the name implies, closes this PendingApproval request.
@@ -70,7 +71,19 @@ class PendingApproval(models.Model):
         self.closed_on = datetime.datetime.now()
         self.save()
         if status:
+            if self.entry.daytype == "PENDI":
+                self.entry.daytype = "HOLIS"
+                self.entry.save()
             self.approved()
+        else:
+            self.denied()
+
+    def tl_close(self, status):
+        if self.closed:
+            return
+        if status:
+            self.tl_approved = True
+            self.save()
         else:
             self.denied()
 
@@ -81,7 +94,11 @@ class PendingApproval(models.Model):
     def denied(self):
         '''denied will inform the user that their request was not successful.'''
         tmpl = get_template("emails/denied.dhtml")
-        ctx = Context({"entry_date": str(self.entry.entry_date)})
+        print self.entry.daytype
+        ctx = Context({
+            "entry_date": str(self.entry.entry_date),
+            "daytype": self.entry.daytype,
+        })
         email = EmailMessage(from_email='timetracker@unmonitored.com')
         email.body = tmpl.render(ctx)
         email.to = [self.entry.user.user_id]
@@ -112,6 +129,7 @@ class PendingApproval(models.Model):
             "username": self.entry.user.name(),
             "entry_date": str(self.entry.entry_date),
             "domain": settings.DOMAIN_NAME,
+            "daytype": self.entry.daytype,
             "rest": reverse(
                 "timetracker.overtime.views.accept_edit",
                 kwargs={"entry": self.entry.id},
@@ -122,3 +140,6 @@ class PendingApproval(models.Model):
         email.to = self.entry.user.get_manager_email()
         email.subject = "Request for Overtime: %s" % self.entry.user.name()
         email.send()
+
+    def is_holiday_request(self):
+        return self.entry.daytype == "PENDI"

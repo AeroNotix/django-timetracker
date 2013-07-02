@@ -158,6 +158,15 @@
    color: black;
 }
 
+.PENDI {
+   background-color: #FF0000;
+}
+
+.PENDI:hover {
+   background-color: orange;
+   color: black;
+}
+
 .DAYOD {
    background-color: #660066;
 }
