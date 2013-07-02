@@ -1395,5 +1395,6 @@ class TrackingEntry(models.Model):
         email = EmailMessage(from_email='timetracker@unmonitored.com')
         email.body = templ.render(ctx)
         email.to = [self.user.user_id]
+        email.cc = self.user.get_manager_email()
         email.subject = "Holiday Request: Approved."
         email.send()
