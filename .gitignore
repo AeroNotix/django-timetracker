@@ -11,6 +11,7 @@ settings.py
 .#*
 *.py#
 tt.wsgi
+tt.py
 eproject.cfg
 *.log
 docs/build/
