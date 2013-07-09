@@ -48,7 +48,7 @@ function ajaxCall(form) {
             "form_type" : form,
             "entry_date" : $(pre + 'entrydate').val(),
             "daytype" : $(pre + 'daytype').val(),
-            "hidden-id" : $('#hidden_id').val(),
+            "hidden-id" : $('#hidden_id').val()
         };
     } else {
         formData = {
