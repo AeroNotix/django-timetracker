@@ -61,10 +61,10 @@ def accepted(request):
     status = request.POST["status"] == "approved"
     pending_id = request.POST.get("pending_id")
     auth_user = Tbluser.objects.get(id=request.session.get("user_id"))
-    if auth_user.is_tl():
-        PendingApproval.objects.get(id=pending_id).tl_close(status)
-    else:
+    if auth_user.can_close_approvals():
         PendingApproval.objects.get(id=pending_id).close(status)
+    else:
+        PendingApproval.objects.get(id=pending_id).tl_close(status)
     return render_to_response(
         "accept_edit_done.html",
         {

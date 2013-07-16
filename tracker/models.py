@@ -910,6 +910,10 @@ class Tbluser(models.Model):
         queue.'''
         return bool(len(self.get_approvals()))
 
+    def can_close_approvals(self):
+        '''Returns whether this user can fully close pending approvals.'''
+        return self.super_or_admin() or self.user_id in settings.CAN_CLOSE_APPROVALS
+
     @staticmethod
     def manager_emails_for_account(account):
         '''Gets the e-mails for the managers for the whole account.'''
