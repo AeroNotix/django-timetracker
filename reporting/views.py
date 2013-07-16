@@ -122,8 +122,8 @@ def ot_by_month(request, year=None, month=None):
     for user in auth_user.get_subordinates():
         balance = user.get_total_balance(ret='flo', year=year, month=month)
         total_balance += balance
-        csvfile.writerow([user.name(), user.process, "%.2f" % balance])
-    csvfile.writerow(["Total", "Total", "%.2f" % total_balance])
+        csvfile.writerow([user.name(), user.process, '="%.2f"' % balance])
+    csvfile.writerow(["Total", "Total", '="%.2f"' % total_balance])
     response = HttpResponse(buf.getvalue(), mimetype="text/csv")
     response['Content-Disposition'] = \
         'attachment;filename=OT_By_Month_%s_%s.csv' % (year, month)
@@ -149,10 +149,10 @@ def ot_by_year(request, year=None):
         for month in range(1, 13):
             balance = user.get_total_balance(ret='flo', year=year, month=month)
             balances[month] += balance
-            row.append("%.2f" % balance if balance != 0.0 else "-")
+            row.append('="%.2f"' % balance if balance != 0.0 else "-")
         csvfile.writerow(row)
     totalrow = ["Total", "Total"]
-    [totalrow.append("%.2f" % balances[n]) for n in range(1,13)]
+    [totalrow.append('="%.2f"' % balances[n]) for n in range(1,13)]
     csvfile.writerow(totalrow)
     response = HttpResponse(buf.getvalue(), mimetype="text/csv")
     response['Content-Disposition'] = \
