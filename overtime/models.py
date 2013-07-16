@@ -125,7 +125,18 @@ class PendingApproval(models.Model):
         if not self.entry.approval_required():
             return
 
-        if not settings.SENDING_APPROVAL.get(self.approver.market):
+        if settings.SENDING_APPROVAL_MANAGER.get(self.approver.market):
+            managers = self.entry.user.get_manager_email()
+        else:
+            managers = []
+
+        if settings.SENDING_APPROVAL_TL.get(self.approver.market):
+            tls = self.entry.user.get_tl_email()
+        else:
+            tls = []
+
+        recipients = manager + tls
+        if len(recipients) == 0:
             return
 
         tmpl = get_template("emails/inform_manager.dhtml")
@@ -141,7 +152,7 @@ class PendingApproval(models.Model):
         })
         email = EmailMessage(from_email='timetracker@unmonitored.com')
         email.body = tmpl.render(ctx)
-        email.to = self.entry.user.get_manager_email()
+        email.to = recipients
         email.subject = "Request for Overtime: %s" % self.entry.user.name()
         email.send()
 

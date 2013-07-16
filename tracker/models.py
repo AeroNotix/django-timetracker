@@ -840,6 +840,13 @@ class Tbluser(models.Model):
         # sending e-mails.
         return [self.get_administrator().user_id]
 
+    def get_tl_email(self):
+        '''Returns a list of Team Leader's e-mails for this particular user.'''
+        try:
+            return settings.TL_APPROVAL_CHAINS[self.market][self.process]
+        except KeyError:
+            return []
+
     def get_manager_name(self):
         '''Gets the name(s) of the managers for this particular user.'''
         overridden = settings.MANAGER_NAMES_OVERRIDE.get(self.market)
