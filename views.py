@@ -30,14 +30,14 @@ from timetracker.utils.calendar_utils import (gen_calendar, gen_holiday_list,
                                               profile_edit, gen_datetime_cal,
                                               get_comments, add_comment,
                                               remove_comment,
-                                              get_tracking_entry_data)
+                                              get_tracking_entry_data,
+                                              password_reminder)
 
 from timetracker.utils.datemaps import (generate_select,
                                         generate_employee_box,
                                         generate_year_box)
 
 from timetracker.utils.decorators import admin_check, loggedin
-from timetracker.utils.error_codes import CONNECTION_REFUSED
 from timetracker.loggers import suspicious_log, email_log, error_log
 
 
@@ -540,30 +540,5 @@ def forgot_pass(request):
         return render_to_response("forgotpass.html",
                                   {},
                                   RequestContext(request))
-
-    # if we're here then the request was a post and we
-    # should return the password for the email address
-    try:
-        user = Tbluser.objects.get(user_id=email_recipient)
-        tmpl = get_template("emails/password_reminder.dhtml")
-        ctx = Context({
-            "username": user.firstname,
-            "password": user.password
-        })
-        send_mail(
-            'You recently requested a password reminder',
-            tmpl.render(ctx),
-            'timetracker@unmonitored.com',
-            [email_recipient], fail_silently=False
-        )
-    except Tbluser.DoesNotExist:
-        suspicious_log.info(
-            "Someone tried to reset a password of a non-existant address: %s" \
-            % email_recipient
-        )
-    except Exception as error:
-        if error[0] == CONNECTION_REFUSED:
-            email_log.error("Failed sending e-mail to: %s" % email_recipient)
-        else:
-            error_log.critical("Error resetting password: %s" % str(error))
+    password_reminder(Tbluser.objects.get(user_id=email_recipient))
     return HttpResponseRedirect("/")

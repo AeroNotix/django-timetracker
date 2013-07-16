@@ -28,7 +28,9 @@ from functools import wraps
 
 from django.core.handlers.wsgi import WSGIRequest
 from django.core.mail import send_mail
+from django.template.loader import get_template
 from django.conf import settings
+from django.template import Context
 from django.http import Http404, HttpResponse
 from django.db import IntegrityError
 from django.forms import ValidationError
@@ -50,6 +52,8 @@ from timetracker.utils.datemaps import (MONTH_MAP, WEEK_MAP_SHORT,
                                         pad, round_down)
 from timetracker.utils.decorators import (admin_check, json_response,
                                           request_check)
+from timetracker.utils.error_codes import CONNECTION_REFUSED
+
 
 def get_request_data(form, request):
 
@@ -1612,3 +1616,30 @@ def remove_comment(request):
     entry.save()
     json_data['success'] = True
     return json_data
+
+def password_reminder(user):
+    # if we're here then the request was a post and we
+    # should return the password for the email address
+    try:
+        tmpl = get_template("emails/password_reminder.dhtml")
+        ctx = Context({
+            "username": user.firstname,
+            "password": user.password
+        })
+        send_mail(
+            'You recently requested a password reminder',
+            tmpl.render(ctx),
+            'timetracker@unmonitored.com',
+            [user.user_id], fail_silently=False
+        )
+    except Tbluser.DoesNotExist:
+        suspicious_log.info(
+            "Someone tried to reset a password of a non-existant address: %s" \
+            % email_recipient
+        )
+    except Exception as error:
+        if error[0] == CONNECTION_REFUSED:
+            email_log.error("Failed sending e-mail to: %s" % user.user_id)
+        else:
+            error_log.critical("Error resetting password: %s" % str(error))
+            raise
