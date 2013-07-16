@@ -98,7 +98,6 @@ class PendingApproval(models.Model):
     def denied(self):
         '''denied will inform the user that their request was not successful.'''
         tmpl = get_template("emails/denied.dhtml")
-        print self.entry.daytype
         ctx = Context({
             "entry_date": str(self.entry.entry_date),
             "daytype": self.entry.daytype,
