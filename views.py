@@ -15,6 +15,7 @@ from django.core.mail import send_mail
 from django.template.loader import get_template
 from django.template import Context
 from django.conf import settings
+from django.db.models import Q
 from django.views.decorators.csrf import csrf_protect
 
 from timetracker.tracker.models import Tbluser, UserForm, TrackingEntry
@@ -38,7 +39,7 @@ from timetracker.utils.datemaps import (generate_select,
                                         generate_year_box)
 
 from timetracker.utils.decorators import admin_check, loggedin
-from timetracker.loggers import suspicious_log, email_log, error_log
+from timetracker.loggers import suspicious_log, email_log, error_log, debug_log
 
 
 def user_context_manager(request):
@@ -292,6 +293,7 @@ def ajax(request):
         'add_comment': add_comment,
         'remove_comment': remove_comment,
         'tracking_data': get_tracking_entry_data,
+        'password_reminder': forgot_pass,
     }
     try:
         return ajax_funcs.get(
@@ -540,5 +542,7 @@ def forgot_pass(request):
         return render_to_response("forgotpass.html",
                                   {},
                                   RequestContext(request))
-    password_reminder(Tbluser.objects.get(user_id=email_recipient))
+    # We accept either the ID of the user or just the e-mail address
+    user = Tbluser.objects.filter(Q(user_id=email_recipient) | Q(id=email_recipient))[0]
+    password_reminder(user)
     return HttpResponseRedirect("/")

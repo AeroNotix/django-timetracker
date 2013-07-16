@@ -52,6 +52,7 @@ function onOptionChange() {
             }
         }
     });
+    $("#passreminder").removeAttr('disabled');
     return true;
 }
 
@@ -268,6 +269,22 @@ function ajaxSuccess() {
         $("#id_job_code").hide();
     }
     return true;
+}
+
+function passwordReminder() {
+    "use strict";
+
+    $.ajax({
+        url: "/ajax/",
+        type: "POST",
+        data: {
+            form_type: "password_reminder",
+            email_input: $("#user_select").val()
+        },
+        success: function () {
+            $("#passreminder").attr('disabled', 'disabled');
+        }
+    });
 }
 
 $(function () {
