@@ -124,7 +124,7 @@ class PendingApproval(models.Model):
         if not self.entry.approval_required():
             return
 
-        if settings.SENDING_APPROVAL_MANAGER.get(self.approver.market):
+        if settings.SENDING_APPROVAL_MANAGERS.get(self.approver.market):
             managers = self.entry.user.get_manager_email()
         else:
             managers = []
