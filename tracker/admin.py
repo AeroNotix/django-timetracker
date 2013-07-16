@@ -73,6 +73,7 @@ class UserAdmin(admin.ModelAdmin):
     """
     list_display = ('__unicode__', 'display_user_type', 'disabled')
     actions = [send_password_reminder, create_100_random_users]
+    search_fields = ["firstname", "lastname", "user_id"]
 
 class RelatedAdmin(admin.ModelAdmin):
     filter_horizontal = ('users',)
@@ -101,7 +102,7 @@ class TrackerAdmin(admin.ModelAdmin):
     edit these items is far more useful and better programmed than the basic
     model editor the admin interface provides.
     """
-    pass
+    search_fields = ["user__firstname", "user__lastname", "user__user_id"]
 
 
 admin.site.register(models.Tbluser, UserAdmin)
