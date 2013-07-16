@@ -135,7 +135,7 @@ class PendingApproval(models.Model):
         else:
             tls = []
 
-        recipients = manager + tls
+        recipients = managers + tls
         if len(recipients) == 0:
             return
 
