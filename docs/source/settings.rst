@@ -118,6 +118,44 @@ Where `user` is the user for which the calculation is being made for,
 used for the calculation and `return_days` being the number of `daytype`
 return_days for that pariticular user.
 
+SENDING_APPROVAL
+----------------
+
+A map of Markets to boolean markers to see which accounts should have
+individual approval e-mails for.
+
+SENDING_APPROVAL_MANAGERS
+-------------------------
+
+A map of Markets to boolean markers to see which accounts should have
+individual approval e-mails for managers.
+
+SENDING_APPROVAL_TL
+-------------------
+
+A map of Markets to boolean markers to see which accounts should have
+individual approval e-mails for Team Leaders.
+
+TL_APPROVAL_CHAINS
+------------------
+
+A map of markets to process names which have a list of e-mail addresses for
+who individual approval e-mails should go to.
+
+.. code-block:: python
+
+    TL_APPROVAL_CHAINS = {
+        "BF": {
+            "HR": ["name.whatever@domain.com", "name2.something@domain.com"],
+            "TE": ["example@person.com"],
+        }
+    }
+
+This will allow you to have an approval chain for individual processes in each
+account you're running. For example, in the above code the BF account's HR and
+TE processes will have the approvals sent to the list of people in their
+entry.
+
 CAN_CLOSE_APPROVALS
 -------------------
 
