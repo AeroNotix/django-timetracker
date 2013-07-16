@@ -118,6 +118,14 @@ Where `user` is the user for which the calculation is being made for,
 used for the calculation and `return_days` being the number of `daytype`
 return_days for that pariticular user.
 
+CAN_CLOSE_APPROVALS
+-------------------
+
+This setting is required as an iterable of user_id's for which users are able
+to close approval requests, despite them possibly not being at the correct
+level for it. Otherwise only Administrators or Supervisors will be able to
+actually fully close approval requests.
+
 LOG_LEVEL
 ---------
 
