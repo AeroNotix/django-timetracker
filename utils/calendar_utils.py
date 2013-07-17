@@ -659,7 +659,7 @@ def ajax_add_entry(request):
     if form['link'] == '':
         form.pop('link')
     else:
-        form['link'] = TrackingEntry(
+        form['link'], _ = TrackingEntry.objects.get_or_create(
             user_id=form['user_id'],
             entry_date=form['link'],
             start_time="00:00:00",
@@ -695,7 +695,6 @@ def ajax_add_entry(request):
         entry = TrackingEntry(**form)
         entry.save()
         if form.get('link'):
-            form['link'].link = entry
             form['link'].save()
     except (IntegrityError, ValidationError) as error:
         error_log.error("Error adding new entry for %s: %s" % \

@@ -1140,7 +1140,7 @@ class TrackingEntry(models.Model):
     '''
 
     user = models.ForeignKey(Tbluser, related_name="user_tracking")
-    link = models.ManyToManyField("self", related_name="linked_entry",
+    link = models.ForeignKey("self", related_name="linked_entry",
                                 null=True, blank=True)
     entry_date = models.DateField()
     start_time = models.TimeField()
@@ -1230,12 +1230,12 @@ class TrackingEntry(models.Model):
         set the target link to a regular working day.
         '''
         if self.link:
-            if self.link.daytype == "LINKD":
+            if self.link.daytype == "LINKD" and \
+               len(TrackingEntry.objects.filter(link=self.link)) == 1:
                 self.link.delete()
             else:
-                self.link.link = None
-                self.link.save()
-
+                self.link = None
+                self.save()
     def breaktime(self):
         '''Returns the breaks entry of this tracking entry.'''
         return (dt.timedelta(hours=self.breaks.hour,

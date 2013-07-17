@@ -29,7 +29,7 @@ from timetracker.utils.calendar_utils import (validate_time, parse_time,
                                               delete_user, useredit,
                                               mass_holidays, ajax_delete_entry,
                                               gen_calendar, ajax_change_entry,
-                                              ajax_error)
+                                              ajax_error, ajax_add_entry)
 from timetracker.utils.datemaps import pad, float_to_time, generate_select, ABSENT_CHOICES
 from timetracker.utils.error_codes import DUPLICATE_ENTRY
 from timetracker.tests.basetests import create_users, delete_users
@@ -566,6 +566,51 @@ class AjaxTestCase(BaseUserTest):
                     'error': 'test string'
                     })
                           )
+
+    def testAjaxAddEntry(self):
+        self.linked_user_request.POST = {
+            'link': '',
+            'entry_date': '2012-01-01',
+            'start_time': '09:00',
+            'end_time': '17:00',
+            'daytype': 'WKDAY',
+            'breaks': '00:15:00',
+            'hidden-id': self.linked_user.id
+        }
+
+        valid = ajax_add_entry(self.linked_user_request)
+        self.assertEquals(len(TrackingEntry.objects.filter(entry_date="2012-01-01")), 1)
+
+    def testDeletingLinkedEntries(self):
+        self.linked_user_request.POST = {
+            'link': '2012-01-04',
+            'entry_date': '2012-01-02',
+            'start_time': '09:00',
+            'end_time': '17:00',
+            'daytype': 'WKDAY',
+            'breaks': '00:15:00',
+            'hidden-id': self.linked_user.id
+        }
+        ajax_add_entry(self.linked_user_request)
+        self.linked_user_request.POST['entry_date'] = '2012-01-03'
+        ajax_add_entry(self.linked_user_request)
+        self.linked_user_request.POST['entry_date'] = '2012-01-05'
+        ajax_add_entry(self.linked_user_request)
+        self.linked_user_request.POST['entry_date'] = '2012-01-06'
+        ajax_add_entry(self.linked_user_request)
+        self.linked_user_request.POST['entry_date'] = '2012-01-07'
+        ajax_add_entry(self.linked_user_request)
+
+        TrackingEntry.objects.get(entry_date="2012-01-03").unlink()
+        self.assertEquals(len(TrackingEntry.objects.filter(entry_date="2012-01-04", daytype="LINKD")), 1)
+        TrackingEntry.objects.get(entry_date="2012-01-05").unlink()
+        self.assertEquals(len(TrackingEntry.objects.filter(entry_date="2012-01-04", daytype="LINKD")), 1)
+        TrackingEntry.objects.get(entry_date="2012-01-06").unlink()
+        self.assertEquals(len(TrackingEntry.objects.filter(entry_date="2012-01-04", daytype="LINKD")), 1)
+        TrackingEntry.objects.get(entry_date="2012-01-07").unlink()
+        self.assertEquals(len(TrackingEntry.objects.filter(entry_date="2012-01-04", daytype="LINKD")), 1)
+        TrackingEntry.objects.get(entry_date="2012-01-02").unlink()
+        self.assertEquals(len(TrackingEntry.objects.filter(entry_date="2012-01-04", daytype="LINKD")), 0)
 
 class UtilitiesTest(TestCase):
     '''The utilties module contains several miscellanious pieces of
