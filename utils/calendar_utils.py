@@ -531,7 +531,7 @@ def gen_calendar(year=None, month=None, day=None, user=None):
                     data.id,
                     data.breaks.minute,
                     str(data.breaks)[0:5],
-                    data.link.entry_date if data.link else ""
+                    ""
                     ]
 
                 to_cal("""\t\t\t\t

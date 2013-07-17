@@ -1140,7 +1140,7 @@ class TrackingEntry(models.Model):
     '''
 
     user = models.ForeignKey(Tbluser, related_name="user_tracking")
-    link = models.OneToOneField("self", related_name="linked_entry",
+    link = models.ManyToManyField("self", related_name="linked_entry",
                                 null=True, blank=True)
     entry_date = models.DateField()
     start_time = models.TimeField()
