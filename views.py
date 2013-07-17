@@ -542,7 +542,11 @@ def forgot_pass(request):
         return render_to_response("forgotpass.html",
                                   {},
                                   RequestContext(request))
+
     # We accept either the ID of the user or just the e-mail address
-    user = Tbluser.objects.filter(Q(user_id=email_recipient) | Q(id=email_recipient))[0]
+    try:
+        user = Tbluser.objects.get(id=email_recipient)
+    except ValueError:
+        user = Tbluser.objects.get(user_id=email_recipient)
     password_reminder(user)
     return HttpResponseRedirect("/")
