@@ -687,13 +687,16 @@ def ajax_add_entry(request):
         return json_data
 
     try:
-        # This looks strange but we need a real database entry before
-        # we can ForeignKey to an entry. So we save the one we made
-        # before here so we catch similar errors and then link them
-        # together.
+        entry = TrackingEntry(**form)
+        entry.full_clean()
+        entry.save()
+        if entry.is_undertime() and form.get('link'):
+            entry.unlink()
+            entry.delete()
+            json_data['error'] = "You cannot link undertime entries."
+            return json_data
         if form.get('link'):
             form['link'].save()
-        entry = TrackingEntry(**form)
         entry.save()
         if form.get('link'):
             form['link'].save()
@@ -885,6 +888,10 @@ def ajax_change_entry(request):
         json_data['error'] = "Date Error"
         return json_data
 
+    year, month, day = map(int,
+                           form['entry_date'].split("-")
+                           )
+
     if form['hidden-id']:
         try:
             # get the user and make sure that the user
@@ -894,6 +901,13 @@ def ajax_change_entry(request):
             entry = TrackingEntry.objects.get(id=form['hidden-id'])
             entry.unlink()
             # change the fields on the retrieved entry
+            stored_data = {
+                "entry_date": entry.entry_date,
+                "start_time": entry.start_time,
+                "end_time": entry.end_time,
+                "daytype": entry.daytype,
+                "breaks": entry.breaks,
+            }
             entry.entry_date = form['entry_date']
             entry.start_time = form['start_time']
             entry.end_time = form['end_time']
@@ -903,6 +917,22 @@ def ajax_change_entry(request):
                 entry.link = get_or_create_link(user, form['link'])
             else:
                 entry.unlink()
+            entry.full_clean()
+            if entry.is_undertime() and (entry.is_linked() or form.get('link')):
+                entry.save()
+                entry.unlink()
+                entry.entry_date = stored_data['entry_date']
+                entry.start_time = stored_data['start_time']
+                entry.end_time = stored_data['end_time']
+                entry.daytype = stored_data['daytype']
+                entry.breaks = stored_data['breaks']
+                entry.link = None
+                entry.save()
+                json_data['success'] = False
+                json_data['error'] = "You cannot link an undertime entry."
+                json_data['calendar'] = gen_calendar(year, month, day,
+                                                     form['user_id'])
+                return json_data
             entry.save()
             entry.create_approval_request()
             if (datetime.date.today() - entry.entry_date).days \
@@ -915,10 +945,6 @@ def ajax_change_entry(request):
             error_log.error(str(error))
             json_data['error'] = str(error)
             return json_data
-
-    year, month, day = map(int,
-                           form['entry_date'].split("-")
-                           )
 
     calendar = gen_calendar(year, month, day,
                             form['user_id'])
