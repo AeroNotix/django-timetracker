@@ -688,8 +688,9 @@ def ajax_add_entry(request):
 
     try:
         # This looks strange but we need a real database entry before
-        # we can One-to-one an entry. So we save the one we made before
-        # here so we catch similar errors and then link them together.
+        # we can ForeignKey to an entry. So we save the one we made
+        # before here so we catch similar errors and then link them
+        # together.
         if form.get('link'):
             form['link'].save()
         entry = TrackingEntry(**form)
