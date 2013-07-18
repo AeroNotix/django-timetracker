@@ -253,6 +253,7 @@ function toggleChangeEntries(st_hour, st_min, full_st,
     $("#change_starttime").timepicker("destroy");
     $("#change_endtime").timepicker("destroy");
     $("#change_breaks").timepicker("destroy");
+    addDatePicker("#change_link", true);
 
     $("#change_starttime").timepicker({
         showHour: true,
