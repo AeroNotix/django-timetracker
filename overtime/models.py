@@ -108,7 +108,7 @@ class PendingApproval(models.Model):
         email.subject = "Request for Overtime: Denied."
         email.send()
         if self.entry.is_linked():
-            self.entry.link.delete()
+            self.entry.link.unlink()
         self.entry.delete()
         self.delete()
 
