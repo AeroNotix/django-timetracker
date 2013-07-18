@@ -90,18 +90,17 @@ function ajaxCall(form) {
         data: formData,
         dataType: "json",
         success: function (data) {
-            if (data.success === true) {
+            if (data.success !== true) {
+                alert(data.error);
+            } else {
                 $("#calendar-entry").fadeToggle("slow", function () {
                     $("#calendar-entry").html(data.calendar);
                     $(".table-links").css({"color": "white"});
                 });
                 $("#calendar-entry").fadeToggle("slow");
-            } else {
-                alert(data.error);
             }
         }
-    }
-          );
+    });
 
     return false; // so the form doesn't do it's regular action
 }
