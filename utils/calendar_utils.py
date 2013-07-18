@@ -862,6 +862,7 @@ def ajax_change_entry(request):
         'daytype': None,
         'breaks': None,
         'hidden-id': None,
+        'link': None
     }
 
     # get the form data from the request object
@@ -899,6 +900,7 @@ def ajax_change_entry(request):
             entry.end_time = form['end_time']
             entry.daytype = form['daytype']
             entry.breaks = form['breaks']
+            entry.link = form['link']
 
             entry.save()
             entry.create_approval_request()
