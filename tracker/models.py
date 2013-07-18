@@ -1141,7 +1141,7 @@ class TrackingEntry(models.Model):
 
     user = models.ForeignKey(Tbluser, related_name="user_tracking")
     link = models.ForeignKey("self", related_name="linked_entry",
-                                null=True, blank=True)
+                             null=True, blank=True, on_delete=models.SET_NULL)
     entry_date = models.DateField()
     start_time = models.TimeField()
     end_time = models.TimeField()
