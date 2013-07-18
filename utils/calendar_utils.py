@@ -891,17 +891,18 @@ def ajax_change_entry(request):
             # assigned to the TrackingEntry is the same
             # as what's requesting the change
             user = Tbluser.objects.get(id__exact=form['user_id'])
-            entry = TrackingEntry(id=form['hidden-id'],
-                                  user=user)
-
+            entry = TrackingEntry.objects.get(id=form['hidden-id'])
+            entry.unlink()
             # change the fields on the retrieved entry
             entry.entry_date = form['entry_date']
             entry.start_time = form['start_time']
             entry.end_time = form['end_time']
             entry.daytype = form['daytype']
             entry.breaks = form['breaks']
-            entry.link = form['link']
-
+            if form['link'] != '':
+                entry.link = get_or_create_link(user, form['link'])
+            else:
+                entry.unlink()
             entry.save()
             entry.create_approval_request()
             if (datetime.date.today() - entry.entry_date).days \
@@ -1645,3 +1646,16 @@ def password_reminder(user):
         else:
             error_log.critical("Error resetting password: %s" % str(error))
             raise
+
+def get_or_create_link(user, date):
+    entry, created = TrackingEntry.objects.get_or_create(
+        user=user,
+        entry_date=date,
+        start_time="00:00",
+        end_time="00:00",
+        breaks="00:00",
+        daytype="LINKD"
+    )
+    if created:
+        entry.save()
+    return entry
