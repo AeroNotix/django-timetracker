@@ -77,6 +77,8 @@ def report_for_account(account, now, send=True):
             if entry.daytype not in DAYS_SHORT:
                 current_line.append("")
                 continue
+            if entry.is_linked():
+                continue
             # if the entry is a return for overtime entry, we display
             # the user's shiftlength as a negative value since that's
             # what the value should be.
