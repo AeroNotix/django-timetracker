@@ -1236,6 +1236,7 @@ class TrackingEntry(models.Model):
             else:
                 self.link = None
                 self.save()
+
     def breaktime(self):
         '''Returns the breaks entry of this tracking entry.'''
         return (dt.timedelta(hours=self.breaks.hour,
