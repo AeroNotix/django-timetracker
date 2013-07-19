@@ -375,15 +375,24 @@ class Tbluser(models.Model):
         :rtype: :class:`QuerySet`
 
         '''
-
+        cached_result = cache.get(
+            "tracking_entries:%s%s%s" % (self.id, year, month)
+        )
+        if cached_result:
+            return cached_result
         if year is None:
             year = dt.datetime.today().year
         if month is None:
             month = dt.datetime.today().month
 
-        return TrackingEntry.objects.filter(user_id=self.id,
+        res = TrackingEntry.objects.filter(user_id=self.id,
                                             entry_date__year=year,
                                             entry_date__month=month)
+        cache.set(
+            "tracking_entries:%s%s%s" % (self.id, year, month),
+            res
+        )
+        return res
 
     def get_comments(self, year):
         '''
@@ -1169,7 +1178,12 @@ class TrackingEntry(models.Model):
                 "holidaytablerow%s%s" %
                 (self.user.id, self.entry_date.year)
             )
-        cache.delete("holidayfields:%s%s" % (self.user.id, self.entry_date.year))
+        cache.delete("holidayfields:%s%s" % (
+            self.user.id, self.entry_date.year)
+        )
+        cache.delete("tracking_entries:%s%s" % (
+            self.user.id, self.entry_date.year, self.entry_date.month)
+        )
         if self.daytype == "WKDAY" and \
                 self.entry_date.isoweekday() in [6, 7]:
             self.daytype = "SATUR"
