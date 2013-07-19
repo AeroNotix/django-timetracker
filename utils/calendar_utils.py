@@ -282,7 +282,7 @@ def gen_holiday_list(admin_user, year=None, month=None, process=None):
                 user.get_job_code_display() if admin_user.super_or_admin() else ""
             )
             to_out(row)
-            cache.set("holidaytablerow%s%s" % (user.id, year), row, 60 * 15)
+            cache.set("holidaytablerow%s%s" % (user.id, year), row, None)
 
         # We've mapped the users' days to the day number,
         # we can write the user_id as an attribute to the
