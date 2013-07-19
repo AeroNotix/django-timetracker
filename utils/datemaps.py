@@ -36,6 +36,8 @@ the only possible absent day possibilities.
 
 import datetime
 
+from django.core.cache import cache
+
 
 WEEK_MAP_MID = {
     0: 'Mon',
@@ -149,13 +151,18 @@ def generate_employee_box(admin_user, get_all=False):
     :param get_all: :class:`bool` Used to select or ignore disabled employees.
     '''
     admin_user = admin_user.get_administrator()
+    cached_result = cache.get("employee_box:%s%s" % (admin_user.id, get_all))
+    if cached_result:
+        return cached_result
     ees = admin_user.get_subordinates(get_all=get_all)
     ees_tuple = [(user.id, user.name()) for user in ees]
     ees_tuple.append(("null", "----------"))
-    return generate_select(
+    select = generate_select(
         ees_tuple,
         id="user_select"
         )
+    cache.set("employee_box:%s%s" % (admin_user.id, get_all), select)
+    return select
 
 def generate_select(data, id=''):
     """Generates a select box from a tuple of tuples
