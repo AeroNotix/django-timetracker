@@ -177,7 +177,6 @@ def logout(request):
         pass
     return HttpResponseRedirect("/")
 
-
 @loggedin
 def user_view(request, year=None, month=None, day=None):
     """Generates a calendar based on the URL it receives.  For example:
