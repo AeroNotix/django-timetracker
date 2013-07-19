@@ -1179,7 +1179,7 @@ class TrackingEntry(models.Model):
                 (self.user.id, self.entry_date.year)
             )
         cache.delete("holidayfields:%s%s" % (
-            self.user.id, self.entry_date.year)
+            self.user.id, self.entry_date.year, self.entry_date.month)
         )
         cache.delete("tracking_entries:%s%s" % (
             self.user.id, self.entry_date.year, self.entry_date.month)

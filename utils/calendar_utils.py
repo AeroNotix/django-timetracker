@@ -292,7 +292,7 @@ def gen_holiday_list(admin_user, year=None, month=None, process=None):
         to_js('"%s":["empty",' % user.id)
         entries = sorted(day_classes.items())
         cached_text = cache.get(
-            "holidayfields:%s%s" % (user.id, year)
+            "holidayfields:%s%s%s" % (user.id, year, month)
         )
         if cached_text:
             to_js(cached_text[0])
