@@ -1169,6 +1169,7 @@ class TrackingEntry(models.Model):
                 "holidaytablerow%s%s" %
                 (self.user.id, self.entry_date.year)
             )
+        cache.delete("holidayfields:%s%s" % (self.user.id, self.entry_date.year))
         if self.daytype == "WKDAY" and \
                 self.entry_date.isoweekday() in [6, 7]:
             self.daytype = "SATUR"

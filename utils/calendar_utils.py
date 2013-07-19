@@ -291,12 +291,28 @@ def gen_holiday_list(admin_user, year=None, month=None, process=None):
         # shows what number we're on.
         to_js('"%s":["empty",' % user.id)
         entries = sorted(day_classes.items())
-        for iidx, (klass, day) in enumerate(entries):
-            to_js('"%s"%s' % (
+        cached_text = cache.get(
+            "holidayfields:%s%s" % (user.id, year)
+        )
+        if cached_text:
+            to_js(cached_text[0])
+            to_out(cached_text[1])
+        else:
+            text_js = ''
+            text_out = ''
+            for iidx, (klass, day) in enumerate(entries):
+                text_js += '"%s"%s' % (
                     day if day != "WKEND" else "empty",
-                    "," if iidx+1 != len(entries) else "]")
-                  )
-            to_out('<td usrid=%s class=%s>%s\n' % (user.id, day, klass))
+                    "," if iidx+1 != len(entries) else "]"
+                )
+                text_out += ('<td usrid=%s class=%s>%s\n' % (user.id, day, klass))
+            to_js(text_js)
+            to_out(text_out)
+            cache.set(
+                "holidayfields:%s%s" % (user.id, year),
+                (text_js, text_out),
+                None
+            )
         # user_id is added as attr to make mass calls
         if admin_user.user_type != "RUSER":
             to_out("""<td>
