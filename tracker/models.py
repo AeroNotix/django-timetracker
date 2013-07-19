@@ -19,6 +19,7 @@ from django.conf import settings
 from django.core.mail import EmailMessage
 from django.template import Context
 from django.template.loader import get_template
+from django.core.cache import cache
 
 from timetracker.loggers import debug_log, suspicious_log
 
@@ -1163,6 +1164,11 @@ class TrackingEntry(models.Model):
     def save(self, *args, **kwargs):
         super(TrackingEntry, self).save(*args, **kwargs)
         self.full_clean()
+        if self.daytype in ["DAYOD", "HOLIS"]:
+            cache.delete(
+                "holidaytablerow%s%s" %
+                (self.user.id, self.entry_date.year)
+            )
         if self.daytype == "WKDAY" and \
                 self.entry_date.isoweekday() in [6, 7]:
             self.daytype = "SATUR"

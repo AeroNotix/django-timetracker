@@ -34,6 +34,7 @@ from django.template import Context
 from django.http import Http404, HttpResponse
 from django.db import IntegrityError
 from django.forms import ValidationError
+from django.core.cache import cache
 
 try:
     from django.settings import SUSPICIOUS_DATE_DIFF
@@ -257,22 +258,31 @@ def gen_holiday_list(admin_user, year=None, month=None, process=None):
                     )
                 comments_list.append(' '.join(comment_string))
 
-        # output the table row title, which contains:-
-        # Full name, Holiday Balance and the User's
-        # job code.
-        to_out("""
-               <tr id="%d_row">
-                 <th onclick="highlight_row(%d)" class="user-td">%s</th>
-                   <td>%s</td>
-                   <td>%s</td>
-                   <td class="job_code">%s</td>""" % (
-            user.id, user.id,
-            user.name(),
-            user.get_holiday_balance(year),
-            user.get_dod_balance(year),
-            user.get_job_code_display() if admin_user.super_or_admin() else ""
-            )
+        # if we have a cached row for this user and this year, use that.
+        cached_result = cache.get(
+            "holidaytablerow%s%s" % (user.id,
+                                     year)
         )
+        if cached_result:
+            to_out(cached_result)
+        else:
+            # output the table row title, which contains:-
+            # Full name, Holiday Balance and the User's
+            # job code.
+            row = """
+            <tr id="%d_row">
+            <th onclick="highlight_row(%d)" class="user-td">%s</th>
+            <td>%s</td>
+            <td>%s</td>
+            <td class="job_code">%s</td>""" % (
+                user.id, user.id,
+                user.name(),
+                user.get_holiday_balance(year),
+                user.get_dod_balance(year),
+                user.get_job_code_display() if admin_user.super_or_admin() else ""
+            )
+            to_out(row)
+            cache.set("holidaytablerow%s%s" % (user.id, year), row, 60 * 15)
 
         # We've mapped the users' days to the day number,
         # we can write the user_id as an attribute to the
