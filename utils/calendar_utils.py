@@ -917,7 +917,6 @@ def ajax_change_entry(request):
     year, month, day = map(int,
                            form['entry_date'].split("-")
                            )
-
     if form['hidden-id']:
         try:
             # get the user and make sure that the user

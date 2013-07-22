@@ -514,7 +514,8 @@ class AjaxTestCase(BaseUserTest):
         entry is working correctly.'''
 
         # create the entry we want to delete
-        TrackingEntry(entry_date="2012-01-01", user_id=self.linked_user.id)
+        TrackingEntry(entry_date="2012-01-01",
+                      user_id=self.linked_user.id)
 
         # create the post
         self.linked_user_request.POST = {
@@ -584,7 +585,6 @@ class AjaxTestCase(BaseUserTest):
             'breaks': '00:15:00',
             'hidden-id': self.linked_user.id
         }
-
         valid = ajax_add_entry(self.linked_user_request)
         self.assertEquals(len(TrackingEntry.objects.filter(entry_date="2012-01-01")), 1)
 
