@@ -554,7 +554,10 @@ class Tbluser(models.Model):
         :rtype: :class:`Integer`
 
         '''
-
+        cachestr = "holidaybalance:%s%s" % (self.id, year)
+        cache_result = cache.get(cachestr)
+        if cache_result:
+            return int(cache_result)
         tracking_days = TrackingEntry.objects.filter(user_id=self.id,
                                                      entry_date__year=year)
 
@@ -569,7 +572,7 @@ class Tbluser(models.Model):
         holiday_balance = self.holiday_balance
         for entry in tracking_days:
             holiday_balance += holiday_value_map.get(entry.daytype, 0)
-
+        cache.set(cachestr, str(holiday_balance))
         return holiday_balance
 
     def get_num_daytype_in_year(self, year, daytype):
@@ -577,9 +580,17 @@ class Tbluser(models.Model):
         Base method for retrieving the number of instances of a specific
         daytype in a given year.
         '''
-        return len(TrackingEntry.objects.filter(user_id=self.id,
+        cachestr = "numdaytype:%s%s%s" % (self.id,
+                                          year,
+                                          daytype)
+        cached_result = cache.get(cachestr)
+        if cached_result:
+            return int(cached_result)
+        result = len(TrackingEntry.objects.filter(user_id=self.id,
                                             entry_date__year=year,
                                             daytype=daytype))
+        cache.set(cachestr, str(result))
+        return result
 
     def get_dod_balance(self, year):
         '''
