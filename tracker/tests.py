@@ -535,8 +535,15 @@ class AjaxTestCase(BaseUserTest):
         entry is working correctly.'''
 
         # create the entry we want to delete
-        TrackingEntry(entry_date="2012-01-01", user_id=self.linked_user.id)
-
+        te = TrackingEntry(
+            entry_date="2012-01-01",
+            start_time="09:00",
+            end_time="17:00",
+            breaks="00:15",
+            daytype="HOLIS",
+            user_id=self.linked_user.id
+        )
+        te.save()
         # create the post
         self.linked_user_request.POST = {
             'entry_date': '2012-01-01',
