@@ -1184,17 +1184,7 @@ class TrackingEntry(models.Model):
     def save(self, *args, **kwargs):
         super(TrackingEntry, self).save(*args, **kwargs)
         self.full_clean()
-        if self.daytype in ["DAYOD", "HOLIS"]:
-            cache.delete(
-                "holidaytablerow%s%s" %
-                (self.user.id, self.entry_date.year)
-            )
-        cache.delete("holidayfields:%s%s%s" % (
-            self.user.id, self.entry_date.year, self.entry_date.month)
-        )
-        cache.delete("tracking_entries:%s%s%s" % (
-            self.user.id, self.entry_date.year, self.entry_date.month)
-        )
+        self.invalidate_caches()
         if self.daytype == "WKDAY" and \
                 self.entry_date.isoweekday() in [6, 7]:
             self.daytype = "SATUR"
@@ -1217,6 +1207,23 @@ class TrackingEntry(models.Model):
             )
 
         return unicode(self.user) + ' - ' + date
+
+    def invalidate_caches(self):
+        if self.daytype in ["DAYOD", "HOLIS"]:
+            cache.delete(
+                "holidaytablerow%s%s" %
+                (self.user.id, self.entry_date.year)
+            )
+        cache.delete("holidayfields:%s%s%s" % (
+            self.user.id, self.entry_date.year, self.entry_date.month)
+        )
+        cache.delete("tracking_entries:%s%s%s" % (
+            self.user.id, self.entry_date.year, self.entry_date.month)
+        )
+        cache.delete("numdaytype:%s%s%s" % (
+            self.user.id, self.entry_date.year, self.daytype)
+        )
+        cache.delete("holidaybalance:%s%s" % (self.id, year))
 
     @staticmethod
     def headings():
