@@ -968,6 +968,7 @@ def ajax_change_entry(request):
                     )
         except Exception as error:
             error_log.error(str(error))
+            json_data['success'] = False
             json_data['error'] = str(error)
             return json_data
 
