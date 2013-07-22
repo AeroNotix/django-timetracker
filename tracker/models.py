@@ -375,11 +375,6 @@ class Tbluser(models.Model):
         :rtype: :class:`QuerySet`
 
         '''
-        cached_result = cache.get(
-            "tracking_entries:%s%s%s" % (self.id, year, month)
-        )
-        if cached_result:
-            return cached_result
         if year is None:
             year = dt.datetime.today().year
         if month is None:
@@ -388,10 +383,6 @@ class Tbluser(models.Model):
         res = TrackingEntry.objects.filter(user_id=self.id,
                                             entry_date__year=year,
                                             entry_date__month=month)
-        cache.set(
-            "tracking_entries:%s%s%s" % (self.id, year, month),
-            res
-        )
         return res
 
     def get_comments(self, year):
