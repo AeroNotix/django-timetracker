@@ -939,7 +939,7 @@ def ajax_change_entry(request):
             entry.end_time = form['end_time']
             entry.daytype = form['daytype']
             entry.breaks = form['breaks']
-            if form['link'] != '':
+            if form['link']:
                 entry.link = get_or_create_link(user, form['link'])
             else:
                 entry.unlink()
