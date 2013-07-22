@@ -551,7 +551,7 @@ class AjaxTestCase(BaseUserTest):
             'end_time': '17:00',
             'daytype': 'WKDAY',
             'breaks': '00:15:00',
-            'hidden-id': self.linked_user.id,
+            'hidden-id': te.id,
         }
         valid = ajax_change_entry(self.linked_user_request)
         self.assertIsInstance(valid, HttpResponse)
