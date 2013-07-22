@@ -1178,10 +1178,10 @@ class TrackingEntry(models.Model):
                 "holidaytablerow%s%s" %
                 (self.user.id, self.entry_date.year)
             )
-        cache.delete("holidayfields:%s%s" % (
+        cache.delete("holidayfields:%s%s%s" % (
             self.user.id, self.entry_date.year, self.entry_date.month)
         )
-        cache.delete("tracking_entries:%s%s" % (
+        cache.delete("tracking_entries:%s%s%s" % (
             self.user.id, self.entry_date.year, self.entry_date.month)
         )
         if self.daytype == "WKDAY" and \
