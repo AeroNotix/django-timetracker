@@ -445,8 +445,11 @@ class Tbluser(models.Model):
         :param year: The year in which the yearview should be generated from.
         :type year: :class:`int`
         :rtype :class:`str`
-
         '''
+        cachestr = "yearview:%s%s" % (self.id, year)
+        cached_result = cache.get(cachestr)
+        if cached_result:
+            return cached_result
         entries = TrackingEntry.objects.filter(user_id=self.id,
                                                entry_date__year=year)
         basehtml = self.year_as_whole(year)
@@ -462,8 +465,10 @@ class Tbluser(models.Model):
             "balances": ((k, v) for k, v in sorted(self.get_balances(year).items())),
             })
         table_string += tmpl.render(ctx)
-        return '<table id="holiday-table"><th colspan=999>%s</th>' \
-            % self.name() + table_string
+        result = '<table id="holiday-table"><th colspan=999>%s</th>' \
+                 % self.name() + table_string
+        cache.set(cachestr, result)
+        return result
 
     def overtime_view(self, year):
         '''Generates the HTML table for the overtime_view page. It iterates
@@ -1223,7 +1228,8 @@ class TrackingEntry(models.Model):
         cache.delete("numdaytype:%s%s%s" % (
             self.user.id, self.entry_date.year, self.daytype)
         )
-        cache.delete("holidaybalance:%s%s" % (self.id, year))
+        cache.delete("holidaybalance:%s%s" % (self.id, self.entry_date.year))
+        cache.delete("yearview:%s%s" % (self.id, self.entry_date.year))
 
     @staticmethod
     def headings():
