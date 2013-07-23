@@ -243,6 +243,12 @@ class UserTestCase(BaseUserTest):
 
         self.assertEquals(self.linked_user.get_holiday_balance(2012), 17)
 
+    def test_add_100_users(self):
+        orig = len(Tbluser.objects.all())
+        from timetracker.tracker.admin import *
+        create_100_random_users(None, None, None)
+        self.assertEquals(len(Tbluser.objects.all()), orig+100)
+
 class TrackingEntryTestCase(BaseUserTest):
     '''TrackingEntryTestCase tests the TrackingEntry's functionality'''
     def testIsNotOvertime(self):
@@ -401,6 +407,17 @@ class TrackingEntryTestCase(BaseUserTest):
         entry.save()
         self.assertEqual(entry.overtime_class(), "OK")
 
+    def testBreaktime(self):
+        entry = TrackingEntry(
+            entry_date="1066-01-03",
+            user=self.linked_user,
+            start_time="09:00",
+            end_time="17:00",
+            breaks="00:15",
+            daytype="WKDAY"
+        )
+        entry.save()
+        self.assertEquals(entry.breaktime(), 0.25)
 
 class DatabaseTestCase(BaseUserTest):
     '''
@@ -999,5 +1016,11 @@ class EmailTest(BaseUserTest):
     def test_send_sick_notification(self):
         self.linked_user.sendsicknotification()
         self.assertEqual(1, len(mail.outbox))
+
+    def test_send_password_reminder(self):
+        from timetracker.tracker.admin import send_password_reminder
+        users = Tbluser.objects.all()
+        send_password_reminder(None, None, users)
+        self.assertEquals(len(users), len(mail.outbox))
 
 FrontEndTest = None
