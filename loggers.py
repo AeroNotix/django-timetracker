@@ -29,6 +29,7 @@ debug_log = create_logger('debug', root_path=settings.ROOT_LOG_DIR)
 info_log = create_logger('info', root_path=settings.ROOT_LOG_DIR)
 error_log = create_logger('error', root_path=settings.ROOT_LOG_DIR)
 suspicious_log = create_logger('suspicious', root_path=settings.ROOT_LOG_DIR)
+cache_log = create_logger('cache', root_path=settings.ROOT_LOG_DIR)
 
 if __name__ == '__main__':
     # test the logs

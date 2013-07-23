@@ -21,7 +21,7 @@ from django.template import Context
 from django.template.loader import get_template
 from django.core.cache import cache
 
-from timetracker.loggers import debug_log, suspicious_log
+from timetracker.loggers import debug_log, suspicious_log, cache_log
 from timetracker.vcs.models import Activity
 
 try:
@@ -415,6 +415,7 @@ class Tbluser(models.Model):
         cachestr = "yearview:%s%s" % (self.id, year)
         cached_result = cache.get(cachestr)
         if cached_result:
+            cache_log.debug("Returning cache for: %s" % cachestr)
             return cached_result
         entries = TrackingEntry.objects.filter(user_id=self.id,
                                                entry_date__year=year)
@@ -433,7 +434,9 @@ class Tbluser(models.Model):
         table_string += tmpl.render(ctx)
         result = '<table id="holiday-table"><th colspan=999>%s</th>' \
                  % self.name() + table_string
-        cache.set(cachestr, result)
+        cache_log.debug(
+            "Setting cache for %s: %s" % (cachestr, cache.set(cachestr, result))
+        )
         return result
 
     def overtime_view(self, year):
@@ -445,6 +448,11 @@ class Tbluser(models.Model):
         :rtype :class:`str`
 
         '''
+        cachestr = "overtime_view:%s%s" % (self.id, year)
+        cached_result = cache.get(cachestr)
+        if cached_result:
+            cache_log.debug("Returning cache for: %s" % cachestr)
+            return cached_result
         entries = TrackingEntry.objects.filter(user_id=self.id,
                                                entry_date__year=year)
         basehtml = self.year_as_whole(year)
@@ -467,8 +475,10 @@ class Tbluser(models.Model):
   </td>
 </tr>
 '''
-        return '<table id="holiday-table"><th colspan=999>%s</th>' \
+        result = '<table id="holiday-table"><th colspan=999>%s</th>' \
             % self.name() + table_string
+        cache.set(cachestr, result)
+        return result
 
     def sup_tl_or_admin(self):
         '''
@@ -543,7 +553,11 @@ class Tbluser(models.Model):
         holiday_balance = self.holiday_balance
         for entry in tracking_days:
             holiday_balance += holiday_value_map.get(entry.daytype, 0)
-        cache.set(cachestr, str(holiday_balance))
+        cache_log.debug(
+            "Setting cache for %s: %s" % (
+                cachestr, cache.set(cachestr, str(holiday_balance))
+            )
+        )
         return holiday_balance
 
     def get_num_daytype_in_year(self, year, daytype):
