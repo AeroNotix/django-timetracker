@@ -407,6 +407,17 @@ class TrackingEntryTestCase(BaseUserTest):
         )
         entry.save()
         self.assertEqual(entry.overtime_class(), "OK")
+        entry = TrackingEntry(
+            entry_date="1066-01-04",
+            user=self.linked_user,
+            start_time="09:00",
+            end_time="17:00",
+            breaks="00:15",
+            daytype="ROVER"
+        )
+        entry.save()
+        self.assertEqual(entry.overtime_class(), "ROVER")
+
 
     def testBreaktime(self):
         entry = TrackingEntry(
