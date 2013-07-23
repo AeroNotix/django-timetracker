@@ -245,7 +245,7 @@ class UserTestCase(BaseUserTest):
 
     def test_add_100_users(self):
         orig = len(Tbluser.objects.all())
-        from timetracker.tracker.admin import *
+        from timetracker.tracker.admin import create_100_random_users
         create_100_random_users(None, None, None)
         self.assertEquals(len(Tbluser.objects.all()), orig+100)
 
