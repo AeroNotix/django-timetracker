@@ -246,7 +246,7 @@ class Tbluser(models.Model):
                     ids.append(admin.id)
                 return Tbluser.objects.filter(id__in=ids).order_by("lastname")
         except Tblauthorization.DoesNotExist:
-            return []
+            return Tbluser.objects.none()
 
     def get_administrator(self):
 
