@@ -263,6 +263,7 @@ def gen_holiday_list(admin_user, year=None, month=None, process=None):
             "holidaytablerow%s%s" % (user.id,
                                      year)
         )
+
         if cached_result:
             to_out(cached_result)
         else:
@@ -282,7 +283,7 @@ def gen_holiday_list(admin_user, year=None, month=None, process=None):
                 user.get_job_code_display() if admin_user.super_or_admin() else ""
             )
             to_out(row)
-            cache.set("holidaytablerow%s%s" % (user.id, year), row, None)
+            cache.set("holidaytablerow%s%s" % (user.id, year), row)
 
         # We've mapped the users' days to the day number,
         # we can write the user_id as an attribute to the
@@ -309,9 +310,8 @@ def gen_holiday_list(admin_user, year=None, month=None, process=None):
             to_js(text_js)
             to_out(text_out)
             cache.set(
-                "holidayfields:%s%s" % (user.id, year),
+                "holidayfields:%s%s%s" % (user.id, year, month),
                 (text_js, text_out),
-                None
             )
         # user_id is added as attr to make mass calls
         if admin_user.user_type != "RUSER":
