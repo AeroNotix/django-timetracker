@@ -1004,6 +1004,15 @@ class EmailTest(BaseUserTest):
         self.assertEqual(1, len(mail.outbox))
 
     def test_sendnotifications_ot(self):
+        # if the modules aren't there we can't really test them.
+        try:
+            from timetracker.tracker.notifications import (
+                send_overtime_notification, send_pending_overtime_notification,
+                send_undertime_notification
+            )
+        except ImportError as e:
+            return
+
         ot_entry = TrackingEntry(
             user=self.linked_user,
             entry_date="1999-01-1",
