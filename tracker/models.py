@@ -22,6 +22,7 @@ from django.template.loader import get_template
 from django.core.cache import cache
 
 from timetracker.loggers import debug_log, suspicious_log
+from timetracker.vcs.models import Activity
 
 try:
     NUM_WORKING_DAYS = settings.NUM_WORKING_DAYS
@@ -30,8 +31,9 @@ except AttributeError:
     NUM_WORKING_DAYS = 5
 
 from timetracker.utils.datemaps import (
-    WORKING_CHOICES, DAYTYPE_CHOICES, float_to_time, datetime_to_timestring,
-    MONTH_MAP, generate_year_box, nearest_half, round_down
+    WORKING_CHOICES, DAYTYPE_CHOICES, MARKET_CHOICES, PROCESS_CHOICES,
+    float_to_time, datetime_to_timestring, MONTH_MAP,
+    generate_year_box, nearest_half, round_down
     )
 
 try:
@@ -106,33 +108,6 @@ class Tbluser(models.Model):
         'TEAML': 2,
         'RUSER': 1,
         }
-
-    MARKET_CHOICES = (
-        ('AD', 'Administration'),
-        ('BF', 'BPO Factory'),
-        ('BG', 'Behr Germany'),
-        ('BK', 'Behr Kirchberg'),
-        ('CZ', 'Behr Czech'),
-        ('EN', 'MCBC'),
-        ('NE', 'Newton'),
-        ('SA', 'Store Accounting'),
-    )
-
-    PROCESS_CHOICES = (
-        ('AD', 'Administration'),
-        ('AO', 'Accounting Operations'),
-        ('AP', 'Accounts Payable'),
-        ('AR', 'Accounts Receivable'),
-        ('CP', 'C&A PL'),
-        ('CT', 'C&A AT'),
-        ('FA', 'F&A'),
-        ('HL', 'HRO Lodz'),
-        ('HR', 'HRO'),
-        ('HW', 'HRO Wro'),
-        ('SC', 'Scanning'),
-        ('SK', 'C&A CZSK'),
-        ('TE', 'Travel & Expenses'),
-    )
 
     JOB_CODES = (
         ('00F20A', '00F20A'),
@@ -937,6 +912,16 @@ class Tbluser(models.Model):
     def can_close_approvals(self):
         '''Returns whether this user can fully close pending approvals.'''
         return self.super_or_admin() or self.user_id in settings.CAN_CLOSE_APPROVALS
+
+    def available_categories(self):
+        return self.available_activities().values('grouptype').distinct()
+
+    def available_activities(self):
+        return Activity.objects.filter(group=self.market+self.process)
+
+    def vcsenabled(self):
+        print self.market
+        return self.market in settings.VCS_ENABLED
 
     @staticmethod
     def manager_emails_for_account(account):

@@ -8,7 +8,7 @@ from django.core.management.base import BaseCommand, CommandError
 from timetracker.tracker.models import TrackingEntry
 
 def gendates(year):
-    ''"Generates the dates for a given year.'''
+    '''Generates the dates for a given year.'''
     m = {}
     d = datetime.date(year, 1, 1)
     td = datetime.timedelta(days=1)

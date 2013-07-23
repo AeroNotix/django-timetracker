@@ -1,0 +1,43 @@
+.container {
+   width: 500px;
+   margin-left: 100px;
+}
+
+#amount {
+   width: 600px;
+   display: inline;
+}
+
+#amount-box {
+   width: 50px;
+}
+
+#vcs-box {
+   position: relative;
+   margin-top: 3%;
+}
+
+.multi {
+   margin: 10px;
+   width: 300px;
+   border-radius: 4px;
+}
+
+.center-form {
+   display: table-cell;
+   vertical-align: top;
+}
+
+.form-align-right {
+   margin-left: 10px;
+   width: 600px;
+}
+
+.form-align-right > * {
+   margin: 3px;
+   float: right;
+}
+
+#entries {
+   border: 1px solid black;
+}

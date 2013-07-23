@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block header %}
+<link href="{{ STATIC_URL }}vcs.css" type="text/css" rel="stylesheet" />
+{% endblock header %}
+{% block menubar %}
+{% include "includes/get_nav.html" %}
+{% endblock menubar %}
+{% block content %}
+
+<div class="container" id="vcs-box">
+  <div>
+    <form id="amount" method="POST" action="{% url 'vcs.views.vcs_add' %}">
+
+      <div class="center-form">
+	    <label class="center-form" for="grp-slct">Activity Group</label>
+	    <select class="multi" id="grp-slct" multiple>
+	      {% for activity in logged_in_user.available_categories %}
+	      <option value="{{ activity.grouptype }}">{{activity.grouptype}}</option>
+	      {% endfor %}
+	    </select>
+      </div>
+
+      <div class="center-form">
+	    <label class="center-form" for="subgrp-slct">Activity</label>
+	    <select class="multi" id="subgrp-slct" multiple></select>
+      </div>
+
+	  {% csrf_token %}
+      <label for="which-date">Date:</label>
+      <input id="which-date" name="date" value="{{ todays_date }}"/>
+	  <input type="hidden" name="activity_key" id="activity_key" value=""/>
+	  <input id="amount-box" name="amount" />
+	  <label for="amount" id="detail-msg"></label>
+      <div class="form-align-right">
+	    <input type="submit" />
+      </div>
+    </form>
+  </div>
+  <br />
+  <div>
+    <table id="entries">
+    </table>
+  </div>
+  <!--- File upload section ---->
+  <div>
+    <select id="plugin_select">
+    {% for plugin in plugin_dict %}
+      <option value="{{ plugin }}"> {{ plugin }} </option>>
+    {% endfor %}
+    </select>
+    <form method="POST" enctype="multipart/form-data" action="{% url "vcs.views.report_upload" %}">
+      {% csrf_token %}
+      <input type="file" name="uploaded_file" />
+      <input id="plugin_processor" type="hidden" name="processor" />
+      <input type="submit" />
+    </form>
+  </div>
+  <!--- End file upload section ---->
+
+  {% block additional_javascript %}
+  <script type="text/javascript" src="{{STATIC_URL}}js/vcs.js"></script>
+  <script type="text/javascript">
+    var options = {};
+    var details = {};
+    {% for activity in logged_in_user.available_activities %}
+    options["{{activity.grouptype}}"] += "<option value=\"{{ activity.id }}\">{{activity.groupdetail}}</option>";
+    details["{{activity.id}}"] = "{{ activity.details }}";
+    {% endfor %}
+    CONFIG.AJAX_ENTRIES_URL = "{% url "vcs.views.entries" %}";
+    CONFIG.AJAX_UPDATE_URL = "{% url "vcs.views.update" %}";
+  </script>
+  {% endblock additional_javascript %}
+  {% endblock content %}

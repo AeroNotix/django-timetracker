@@ -773,7 +773,6 @@ class FrontEndTest(LiveServerTestCase):
         self.click_daytype("HOLIS")
         self.driver.find_element_by_id("submit_all").click()
         time.sleep(5)
-        self.driver.switch_to_alert().accept()
         self.assertEquals(len(TrackingEntry.objects.all()), count)
 
     @skipUnless(SELENIUM_AVAILABLE, "These tests require Selenium to be installed.")

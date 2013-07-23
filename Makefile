@@ -4,3 +4,6 @@ run:
 install:
 	virtualenv --no-site-packages .
 	pip install -r requirements.txt
+
+doc:
+	cd docs && make -f ./Makefile html
