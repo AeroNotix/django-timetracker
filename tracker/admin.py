@@ -26,16 +26,12 @@ def send_password_reminder(modeladmin, request, queryset):
             'password': user.password
         }
 
-        try:
-            send_mail(
-                "Password Reminder",
-                email_message.format(**info),
-                "timetracker@unmonitored.com",
-                [user.user_id]
-            )
-        except Exception as error:
-            if error[0] == CONNECTION_REFUSED:
-                print email_message.format(**info),
+        send_mail(
+            "Password Reminder",
+            email_message.format(**info),
+            "timetracker@unmonitored.com",
+            [user.user_id]
+        )
 
 def create_100_random_users(modeladmin, request, queryset):
     '''Creates 100 random users for testing purposes.'''
