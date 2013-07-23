@@ -419,6 +419,13 @@ class TrackingEntryTestCase(BaseUserTest):
         entry.save()
         self.assertEquals(entry.breaktime(), 0.25)
 
+    def testHeadings(self):
+        headings = TrackingEntry().headings()
+        self.assertEquals([
+            "User", "Entry Date", "Start Time", "End Time", "Breaks",
+            "Daytype", "Comments"
+            ], headings)
+
 class DatabaseTestCase(BaseUserTest):
     '''
     Class which tests the database for improper settings
