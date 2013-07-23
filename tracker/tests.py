@@ -38,6 +38,7 @@ from timetracker.utils.datemaps import (pad, float_to_time,
                                         MARKET_CHOICES)
 from timetracker.utils.error_codes import DUPLICATE_ENTRY
 from timetracker.tests.basetests import create_users, delete_users
+from timetracker.overtime.models import PendingApproval
 
 try:
     from selenium.webdriver.firefox.webdriver import WebDriver
@@ -425,6 +426,59 @@ class TrackingEntryTestCase(BaseUserTest):
             "User", "Entry Date", "Start Time", "End Time", "Breaks",
             "Daytype", "Comments"
             ], headings)
+
+    def testWorklength(self):
+        entry = TrackingEntry(
+            entry_date="1066-01-03",
+            user=self.linked_user,
+            start_time="09:00",
+            end_time="17:00",
+            breaks="00:15",
+            daytype="WKDAY"
+        )
+        entry.save()
+        td = datetime.timedelta(hours=17,minutes=15)
+        self.assertEquals(td, entry.worklength)
+
+    def testCreatePendingApproval(self):
+        entry = TrackingEntry(
+            entry_date="1066-01-03",
+            user=self.linked_user,
+            start_time="09:00",
+            end_time="22:00",
+            breaks="00:15",
+            daytype="WKDAY"
+        )
+        entry.save()
+        entry.create_approval_request()
+        self.assertEquals(PendingApproval.objects.count(), 1)
+
+    def testDontDuplicatePendingApprovals(self):
+        entry = TrackingEntry(
+            entry_date="1066-01-03",
+            user=self.linked_user,
+            start_time="09:00",
+            end_time="22:00",
+            breaks="00:15",
+            daytype="WKDAY"
+        )
+        entry.save()
+        entry.create_approval_request()
+        self.assertEquals(PendingApproval.objects.count(), 1)
+        entry.create_approval_request()
+        self.assertEquals(PendingApproval.objects.count(), 1)
+
+    def testRounddown(self):
+        entry = TrackingEntry(
+            entry_date="1066-01-03",
+            user=self.linked_user,
+            start_time="09:00",
+            end_time="22:00",
+            breaks="00:15",
+            daytype="WKDAY"
+        )
+        entry.save()
+        self.assertEquals(13.0, entry.round_down())
 
 class DatabaseTestCase(BaseUserTest):
     '''
