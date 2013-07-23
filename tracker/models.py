@@ -990,7 +990,7 @@ class RelatedUsers(models.Model):
         Method which generates the HTML for the admin views
         :rtype: :class:`string`
         '''
-
+        # pragma: no cover
         table_header = u'''
                        <table>
                          <tr>
@@ -1084,7 +1084,7 @@ class Tblauthorization(models.Model):
         return unicode(self.admin)
 
     def display_users(self):
-
+        # pragma: no cover
         '''
         Method which generates the HTML for the admin views
         :rtype: :class:`string`
