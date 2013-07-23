@@ -16,7 +16,10 @@ from unittest import skipUnless
 
 from django.db import IntegrityError
 from django.test import TestCase, LiveServerTestCase
+from django.core import mail
 from django.http import HttpResponse, Http404
+from django.conf import settings
+from django.test.utils import override_settings
 
 from timetracker.tracker.models import (Tbluser,
                             TrackingEntry,
@@ -30,7 +33,9 @@ from timetracker.utils.calendar_utils import (validate_time, parse_time,
                                               mass_holidays, ajax_delete_entry,
                                               gen_calendar, ajax_change_entry,
                                               ajax_error, ajax_add_entry)
-from timetracker.utils.datemaps import pad, float_to_time, generate_select, ABSENT_CHOICES
+from timetracker.utils.datemaps import (pad, float_to_time,
+                                        generate_select, ABSENT_CHOICES,
+                                        MARKET_CHOICES)
 from timetracker.utils.error_codes import DUPLICATE_ENTRY
 from timetracker.tests.basetests import create_users, delete_users
 
@@ -337,6 +342,64 @@ class TrackingEntryTestCase(BaseUserTest):
                 )
             entry.full_clean()
             self.assertTrue(entry.time_difference() == 0)
+
+    def testUsersCanSee(self):
+        entry = TrackingEntry(
+            entry_date="1066-01-01",
+            user=self.linked_user,
+            start_time="09:00",
+            end_time="17:00",
+            breaks="00:15",
+            daytype="WKDAY"
+        )
+        entry.save()
+        self.assertTrue(entry.user_can_see(self.linked_manager))
+        self.assertTrue(entry.user_can_see(self.linked_user))
+        self.assertFalse(entry.user_can_see(self.unlinked_user))
+
+    def testTotalHours(self):
+        entry = TrackingEntry(
+            entry_date="1066-01-01",
+            user=self.linked_user,
+            start_time="09:00",
+            end_time="17:00",
+            breaks="00:15",
+            daytype="WKDAY"
+        )
+        entry.save()
+        self.assertEqual(entry.totalhours(), 8.25)
+
+    def testOvertimeClass(self):
+        entry = TrackingEntry(
+            entry_date="1066-01-01",
+            user=self.linked_user,
+            start_time="09:00",
+            end_time="09:01",
+            breaks="00:15",
+            daytype="WKDAY"
+        )
+        entry.save()
+        self.assertEqual(entry.overtime_class(), "UNDERTIME")
+        entry = TrackingEntry(
+            entry_date="1066-01-02",
+            user=self.linked_user,
+            start_time="09:00",
+            end_time="22:00",
+            breaks="00:15",
+            daytype="WKDAY"
+        )
+        entry.save()
+        self.assertEqual(entry.overtime_class(), "OVERTIME")
+        entry = TrackingEntry(
+            entry_date="1066-01-03",
+            user=self.linked_user,
+            start_time="09:00",
+            end_time="17:00",
+            breaks="00:15",
+            daytype="WKDAY"
+        )
+        entry.save()
+        self.assertEqual(entry.overtime_class(), "OK")
 
 
 class DatabaseTestCase(BaseUserTest):
@@ -884,3 +947,57 @@ class MiddlewareTest(TestCase):
             Http404,
             self.ehandler.process_exception, {}, UnreadablePostError()
             )
+
+FAKE_MARKETS = {
+    market[0]: True for market in MARKET_CHOICES
+}
+@override_settings(SENDING_APPROVAL_MANAGERS=FAKE_MARKETS)
+class EmailTest(BaseUserTest):
+    def test_holiday_approval_notification(self):
+        holiday_entry = TrackingEntry(
+            user=self.linked_user,
+            entry_date="1999-01-1",
+            start_time="09:00",
+            end_time="17:00",
+            breaks="00:15:00",
+            daytype="HOLIS"
+        )
+        holiday_entry.save()
+        holiday_entry.holiday_approval_notification()
+        self.assertEqual(1, len(mail.outbox))
+
+    def test_create_approval_request(self):
+        ot_entry = TrackingEntry(
+            user=self.linked_user,
+            entry_date="1999-01-1",
+            start_time="09:00",
+            end_time="22:00",
+            breaks="00:15:00",
+            daytype="WKDAY"
+        )
+        ot_entry.save()
+        ot_entry.create_approval_request()
+        self.assertEqual(1, len(mail.outbox))
+
+    def test_sendnotifications_ot(self):
+        ot_entry = TrackingEntry(
+            user=self.linked_user,
+            entry_date="1999-01-1",
+            start_time="09:00",
+            end_time="22:00",
+            breaks="00:15:00",
+            daytype="WKDAY"
+        )
+        ot_entry.save()
+        ot_entry.send_notifications()
+        self.assertEqual(1, len(mail.outbox))
+
+    def test_send_weekly_reminder(self):
+        self.linked_user.send_weekly_reminder()
+        self.assertEqual(1, len(mail.outbox))
+
+    def test_send_sick_notification(self):
+        self.linked_user.sendsicknotification()
+        self.assertEqual(1, len(mail.outbox))
+
+FrontEndTest = None
