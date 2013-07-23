@@ -1,7 +1,10 @@
 [run]
-omit = *commands*
+omit =
+    *commands*
+    *notifications*
 
 [report]
 exclude_lines =
     pragma: no cover
     def display_users
+    except ImportError as e:

@@ -21,6 +21,7 @@ try:
         send_overtime_notification, send_pending_overtime_notification,
         send_undertime_notification
         )
+# pragma: no cover
 except ImportError as e:
     debug_log.debug(str(e))
     #pylint: disable=W0613
@@ -120,6 +121,7 @@ class TrackingEntry(models.Model):
     @staticmethod
     def headings():
         '''Describes this class as if it were a CSV heading bar.'''
+        #pragma: no cover
         return [
             "User", "Entry Date", "Start Time", "End Time", "Breaks",
             "Daytype", "Comments"
