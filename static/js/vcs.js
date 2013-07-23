@@ -83,3 +83,7 @@ function populatetable() {
         }
     });
 }
+
+$(function() {
+    populatetable();
+})
