@@ -934,7 +934,6 @@ class Tbluser(models.Model):
         return Activity.objects.filter(group=self.market+self.process)
 
     def vcsenabled(self):
-        print self.market
         return self.market in settings.VCS_ENABLED
 
     @staticmethod
