@@ -9,5 +9,7 @@
     </div>
     {% block navelements %}
     {% endblock navelements %}
-    <li ><a href="/vcs/insert"><br/>VCS</a></li>
+    {% if logged_in_user.vcsenabled %}
+      <li><a href="/vcs/insert"><br/>VCS</a></li>
+    {% endif %}
   </div>

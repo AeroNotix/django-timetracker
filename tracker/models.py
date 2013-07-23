@@ -841,6 +841,10 @@ class Tbluser(models.Model):
     def available_activities(self):
         return Activity.objects.filter(group=self.market+self.process)
 
+    def vcsenabled(self):
+        print self.market
+        return self.market in settings.VCS_ENABLED
+
     @staticmethod
     def manager_emails_for_account(account):
         '''Gets the e-mails for the managers for the whole account.'''
