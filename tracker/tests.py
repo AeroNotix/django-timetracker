@@ -22,8 +22,8 @@ from django.conf import settings
 from django.test.utils import override_settings
 
 from timetracker.tracker.models import (Tbluser,
-                            TrackingEntry,
-                            Tblauthorization)
+                                        TrackingEntry,
+                                        Tblauthorization)
 
 from timetracker.middleware.exception_handler import UnreadablePostErrorMiddleware
 from django.http import UnreadablePostError
