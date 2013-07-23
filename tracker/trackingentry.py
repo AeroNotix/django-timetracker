@@ -121,7 +121,6 @@ class TrackingEntry(models.Model):
     @staticmethod
     def headings():
         '''Describes this class as if it were a CSV heading bar.'''
-        #pragma: no cover
         return [
             "User", "Entry Date", "Start Time", "End Time", "Breaks",
             "Daytype", "Comments"
