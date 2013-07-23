@@ -181,7 +181,7 @@ class TrackingEntry(models.Model):
             self.user.name(), self.entry_date, self.start_time,
             self.end_time, self.breaks, self.get_daytype_display(),
             self.comments
-            ]
+            ] # pragma: no cover
 
     def threshold(self):
         '''Returns the threshold for the associated user.'''
@@ -203,13 +203,13 @@ class TrackingEntry(models.Model):
 
     def nearest_half(self):
         '''Rounds the time to the nearest half hour.'''
-        return nearest_half(self.totalhours())
+        return nearest_half(self.totalhours()) # pragma: no cover
 
     def round_down(self):
         '''Rounds the time to the nearest half hour downwards.'''
         return round_down(self.totalhours())
 
-    def normalized_break(self):
+    def normalized_break(self): # pragma: no cover
         '''Returns the shorter of breaklengths between the users actual break
         length and the one for this entry.'''
         breaklength = dt.timedelta(hours=self.breaks.hour,
@@ -274,7 +274,7 @@ class TrackingEntry(models.Model):
         debug_log.debug("Time difference:" + str(value))
         return value
 
-    def sending_undertime(self):
+    def sending_undertime(self): # pragma: no cover
         '''Returns if we are sending undertime for this entry.'''
         return settings.UNDER_TIME_ENABLED.get(self.user.market)
 
@@ -314,7 +314,7 @@ class TrackingEntry(models.Model):
         sending notifications.'''
         return self.is_undertime() and self.sending_undertime()
 
-    def send_notifications(self):
+    def send_notifications(self): # pragma: no cover
         '''Send the associated notifications for this tracking entry.
         For example, if this entry is an overtime entry, it will generate and
         send out the e-mails as per the rules.'''
