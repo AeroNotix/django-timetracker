@@ -6,6 +6,7 @@ from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.conf import settings
+from django.core.urlresolvers import reverse
 
 from timetracker.utils.decorators import loggedin, json_response
 from timetracker.vcs.models import ActivityEntry, Activity
@@ -45,11 +46,7 @@ def vcs_add(request):
                   amount=amount,
                   creation_date=date).save()
 
-    return render_to_response(
-        "vcs.html",
-        {},
-        RequestContext(request)
-    )
+    return HttpResponseRedirect(reverse("timetracker.vcs.views.vcs"))
 
 @loggedin
 @json_response
