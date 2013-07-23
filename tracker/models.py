@@ -1218,8 +1218,9 @@ class TrackingEntry(models.Model):
         cache.delete("numdaytype:%s%s%s" % (
             self.user.id, self.entry_date.year, self.daytype)
         )
-        cache.delete("holidaybalance:%s%s" % (self.id, self.entry_date.year))
-        cache.delete("yearview:%s%s" % (self.id, self.entry_date.year))
+        cache.delete("holidaybalance:%s%s" % (self.user.id, self.entry_date.year))
+        cache.delete("yearview:%s%s" % (self.user.id, self.entry_date.year))
+        cache.delete("overtime_view:%s%s" % (self.user.id, self.entry_date.year))
 
     @staticmethod
     def headings():
