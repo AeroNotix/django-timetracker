@@ -22,12 +22,32 @@ class Activity(models.Model):
     Time: the time factor for this Activity, how long it takes to
     process.
     """
+    COSTBUCKETS = (
+        ('PVA', 'Processing Value Add'),
+        ('PVE', 'Processing Value Enabling'),
+        ('PNVE', 'Processing Non Value Add'),
+        ('QApp', 'Quality Appresial'),
+        ('QPr', 'Quality Prevention'),
+        ('QIF', 'Quality Internal Failure'),
+        ('QIFPQ', 'Quality Internal Failure Process Quality'),
+        ('QIFPI', 'Quality Internal Failure Poor Input Quality'),
+        ('QIFRC', 'Quality Internal Failure Rework Cost'),
+        ('QEF', 'Quality External Failure'),
+        ('QEFQR', 'Quality External Failure Query Resolution'),
+        ('QEFER', 'Quality External Failure External Rework'),
+        ('QEFCE', 'Quality External Failure Customer Escalations'),
+        ('COUTT', 'Cost of Under Utilization Non Transactional Time'),
+        ('COUUL', 'Cost of Under Utilization Unavoidable Loss'),
+        ('COUAL', 'Cost of Under Utilization Avoidable Loss'),
+    )
+
     group = models.CharField(max_length=4)
     grouptype = models.CharField(max_length=100)
     groupdetail = models.CharField(max_length=100)
     details = models.CharField(max_length=256)
     disabled = models.BooleanField()
     time = models.DecimalField(decimal_places=2, max_digits=10)
+    costbucket = models.CharField(max_length=5, choices=COSTBUCKETS)
 
     def __unicode__(self):
         return u"%s - %s - %s - %s" % (self.group,
