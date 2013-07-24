@@ -767,7 +767,12 @@ def ajax_add_holiday(form):
         breaks=shiftlength_list[2],
         daytype="PENDI",
     )
-    holiday_req.save()
+    try:
+        holiday_req.save()
+    except IntegrityError:
+        json_data["error"] = "Duplicate holiday requests not allowed."
+        return json_data
+
     holiday_req.create_approval_request()
     # if all went well
     year, month, day = form['entry_date'].split("-")
