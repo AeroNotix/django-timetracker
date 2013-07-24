@@ -50,7 +50,7 @@ def vcs_add(request):
 
 @loggedin
 @json_response
-def entries(request):
+def entries(request): # pragma: no cover
     user_id = request.session.get("user_id")
     user = Tbluser.objects.get(id=user_id)
     date = request.GET.get("date")

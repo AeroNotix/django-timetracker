@@ -143,7 +143,7 @@ def calendar_wrapper(function):
         based on that.
         """
 
-        if isinstance(args[0], WSGIRequest):
+        if isinstance(args[0], WSGIRequest): # pragma: no cover
             request = args[0]
             try:
                 eeid = request.POST.get('eeid', None)
