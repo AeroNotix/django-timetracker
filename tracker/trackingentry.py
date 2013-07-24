@@ -7,7 +7,7 @@ from django.core.mail import EmailMessage
 from django.template import Context
 from django.template.loader import get_template
 
-from timetracker.utils.datemaps import DAYTYPE_CHOICES, round_down
+from timetracker.utils.datemaps import DAYTYPE_CHOICES, round_down, nearest_half
 from timetracker.loggers import debug_log, suspicious_log, cache_log
 
 
