@@ -930,30 +930,6 @@ class FrontEndTest(LiveServerTestCase):
             self.assertFalse("WKEND" in cell.get_attribute("class"))
 
     @skipUnless(SELENIUM_AVAILABLE, "These tests require Selenium to be installed.")
-    def test_SubmitHolidays(self):
-        '''Tests that submitting holidays works.'''
-        self.manager_login()
-        # wait to be logged in
-        time.sleep(2)
-
-        self.accessURL("/holiday_planning/")
-        holiday_table = self.driver.find_element_by_id("holiday-table")
-        cells = holiday_table.find_elements_by_tag_name("td")
-        count = 0
-        for cell in cells:
-            if cell.get_attribute("usrid"):
-                if cell.get_attribute("class") != "WKEND":
-                    cell.click()
-                    count += 1
-                    # we don't need that many to test
-                    if count == 30:
-                        break
-        self.click_daytype("HOLIS")
-        self.driver.find_element_by_id("submit_all").click()
-        time.sleep(5)
-        self.assertEquals(len(TrackingEntry.objects.all()), count)
-
-    @skipUnless(SELENIUM_AVAILABLE, "These tests require Selenium to be installed.")
     def test_HolidayPageStateCheck(self):
         '''Inserts some state into the table using a previous method
         then we check that the state doesn't follow the application
