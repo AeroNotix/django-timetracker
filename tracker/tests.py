@@ -250,6 +250,32 @@ class UserTestCase(BaseUserTest):
         create_100_random_users(None, None, None)
         self.assertEquals(len(Tbluser.objects.all()), orig+100)
 
+    def test_get_subordinates_all(self):
+        self.get_subordinates(True, 10)
+
+    def test_get_subordinates_notall(self):
+        self.get_subordinates(False, 9)
+
+    def get_subordinates(self, all, count):
+        user = Tbluser.objects.create(
+            user_id="test.disabled@test.com",
+            firstname="test",
+            lastname="case",
+            password="password",
+            user_type="RUSER",
+            market="BG",
+            process="AP",
+            start_date=datetime.datetime.today(),
+            breaklength="00:15:00",
+            shiftlength="07:45:00",
+            job_code="00F20G",
+            holiday_balance=20,
+            disabled=True
+        )
+        auth = Tblauthorization.objects.get(admin=self.linked_manager)
+        auth.users.add(user)
+        self.assertEquals(self.linked_manager.get_subordinates(get_all=all).count(), count)
+
 class TrackingEntryTestCase(BaseUserTest):
     '''TrackingEntryTestCase tests the TrackingEntry's functionality'''
     def testIsNotOvertime(self):
