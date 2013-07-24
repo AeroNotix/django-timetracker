@@ -856,9 +856,9 @@ class FrontEndTest(LiveServerTestCase):
     @classmethod
     def tearDownClass(cls):
         '''Sets up the attributes for the whole test suite.'''
+        cls.driver.quit()
         super(FrontEndTest, cls).tearDownClass()
         delete_users(cls)
-        cls.driver.quit()
 
     @skipUnless(SELENIUM_AVAILABLE, "These tests require Selenium to be installed.")
     def test_AccessRights(self):
