@@ -17,7 +17,7 @@ from timetracker.vcs.activities import (defaultplugins,
 from timetracker.tracker.models import Tbluser
 
 @loggedin
-def vcs(request):
+def vcs(request): # pragma: no cover
     user = request.session.get("user_id")
     user = Tbluser.objects.get(id=user)
     return render_to_response(
@@ -79,7 +79,7 @@ def update(request):
     return {"success": True}
 
 @loggedin
-def report_upload(request):
+def report_upload(request): # pragma: no cover
     '''report_upload is the handler for when a report is requested to be
     processed. It will extract the processor name from the POST body
     along with the file. We then look for the associated report

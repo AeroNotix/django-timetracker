@@ -159,7 +159,7 @@ class Tbluser(models.Model):
         verbose_name_plural = "Users"
         ordering = ['user_id']
 
-    def __unicode__(self):
+    def __unicode__(self): # pragma: no cover
 
         '''
         How the row is represented in admin
@@ -309,7 +309,7 @@ class Tbluser(models.Model):
         '''
         return self.firstname + ' ' + self.lastname
 
-    def rev_name(self):
+    def rev_name(self): # pragma: no cover
         '''Returns a user's name formatted in the reversed formal way.
 
         I.e. "Aaron France" would be "France, Aaron"'''

@@ -49,7 +49,7 @@ class Activity(models.Model):
     time = models.DecimalField(decimal_places=2, max_digits=10)
     costbucket = models.CharField(max_length=5, choices=COSTBUCKETS)
 
-    def __unicode__(self):
+    def __unicode__(self): # pragma: no cover
         return u"%s - %s - %s - %s" % (self.group,
                                        self.grouptype,
                                        self.groupdetail,
@@ -87,10 +87,10 @@ class ActivityEntry(models.Model):
     amount = models.BigIntegerField()
     creation_date = models.DateField()
 
-    def time(self):
+    def time(self): # pragma: no cover
         return self.activity.time * self.amount
 
-    def __unicode__(self):
+    def __unicode__(self): # pragma: no cover
         return u'%s - %s - %d' % (self.user, self.activity, self.time())
 
     class Meta:

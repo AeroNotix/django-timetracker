@@ -81,7 +81,7 @@ class TrackingEntry(models.Model):
             self.daytype = "SATUR"
             super(TrackingEntry, self).save(*args, **kwargs)
 
-    def __unicode__(self):
+    def __unicode__(self): # pragma: no cover
 
         '''
         Method to display entry in admin
