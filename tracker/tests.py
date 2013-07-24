@@ -965,13 +965,9 @@ class FrontEndTest(LiveServerTestCase):
         self.goto_month("3")
         time.sleep(2)
         inputs = self.driver.find_elements_by_tag_name("input")
-        for input_ in inputs:
-            if "button_" in input_.get_attribute("id"):
-                input_.click()
-                time.sleep(2)
-                self.driver.switch_to_alert().accept()
-                break
-        self.assertEquals(len(TrackingEntry.objects.all()), count)
+        self.driver.find_element_by_id("submit_all").click()
+        time.sleep(5)
+        self.assertNotEquals(TrackingEntry.objects.count(), count)
 
     @skipUnless(SELENIUM_AVAILABLE, "These tests require Selenium to be installed.")
     def test_Logins(self):
