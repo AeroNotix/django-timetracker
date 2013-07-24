@@ -977,10 +977,6 @@ class FrontEndTest(LiveServerTestCase):
         # if this raises it means we're logged in.
         self.assertRaises(NoSuchElementException, self.driver.find_element_by_id, "error")
         self.driver.find_element_by_id("logout-btn").click()
-        # once again with a manager
-        self.manager_login()
-        self.assertRaises(NoSuchElementException, self.driver.find_element_by_id, "error")
-        self.driver.find_element_by_id("logout-btn").click()
 
     def login(self, who):
         '''Helper method to log in a specific user.'''
@@ -1099,5 +1095,3 @@ class EmailTest(BaseUserTest):
         users = Tbluser.objects.all()
         send_password_reminder(None, None, users)
         self.assertEquals(len(users), len(mail.outbox))
-
-FrontEndTest = None
