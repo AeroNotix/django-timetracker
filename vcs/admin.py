@@ -3,7 +3,8 @@ from django.contrib import admin
 from timetracker.vcs import models
 
 class ActivityAdmin(admin.ModelAdmin):
-    pass
+    search_fields = ["group", "grouptype", "groupdetail", "details",
+                     "costbucket"]
 
 class ActivityEntryAdmin(admin.ModelAdmin):
     pass
