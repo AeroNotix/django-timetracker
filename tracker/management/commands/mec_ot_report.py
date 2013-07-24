@@ -78,6 +78,7 @@ def report_for_account(account, now, send=True):
                 current_line.append("")
                 continue
             if entry.is_linked():
+                current_line.append("")
                 continue
             # if the entry is a return for overtime entry, we display
             # the user's shiftlength as a negative value since that's
