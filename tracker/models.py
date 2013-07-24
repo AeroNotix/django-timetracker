@@ -289,7 +289,7 @@ class Tbluser(models.Model):
             disabled=False, process=self.process
             ).order_by('lastname')
 
-    def display_user_type(self):
+    def display_user_type(self): # pragma: no cover
         '''
         Function for displaying the user_type in admin.
 
@@ -332,16 +332,16 @@ class Tbluser(models.Model):
 
         '''
         if year is None:
-            year = dt.datetime.today().year
+            year = dt.datetime.today().year # pragma: no cover
         if month is None:
-            month = dt.datetime.today().month
+            month = dt.datetime.today().month # pragma: no cover
 
         res = TrackingEntry.objects.filter(user_id=self.id,
                                             entry_date__year=year,
                                             entry_date__month=month)
         return res
 
-    def get_comments(self, year):
+    def get_comments(self, year): # pragma: no cover
         '''
         Get Comments will return a formatted string of this users comments
         for a given year.
