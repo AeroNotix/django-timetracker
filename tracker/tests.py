@@ -276,6 +276,42 @@ class UserTestCase(BaseUserTest):
         auth.users.add(user)
         self.assertEquals(self.linked_manager.get_subordinates(get_all=all).count(), count)
 
+    def test_get_administrator_existing(self):
+        self.assertEqual(self.linked_user.get_administrator(), self.linked_manager)
+
+    def test_get_administrator_new_users(self):
+        user = Tbluser.objects.create(
+            user_id="test.newadmin@test.com",
+            firstname="test",
+            lastname="case",
+            password="password",
+            user_type="ADMIN",
+            market="BG",
+            process="AP",
+            start_date=datetime.datetime.today(),
+            breaklength="00:15:00",
+            shiftlength="07:45:00",
+            job_code="00F20G",
+            holiday_balance=20,
+        )
+        auth = Tblauthorization.objects.create(admin=user)
+        user2 = Tbluser.objects.create(
+            user_id="test.newuser@test.com",
+            firstname="test",
+            lastname="case",
+            password="password",
+            user_type="RUSER",
+            market="BG",
+            process="AP",
+            start_date=datetime.datetime.today(),
+            breaklength="00:15:00",
+            shiftlength="07:45:00",
+            job_code="00F20G",
+            holiday_balance=20,
+        )
+        auth.users.add(user2)
+        self.assertEquals(user, user2.get_administrator())
+
 class TrackingEntryTestCase(BaseUserTest):
     '''TrackingEntryTestCase tests the TrackingEntry's functionality'''
     def testIsNotOvertime(self):
