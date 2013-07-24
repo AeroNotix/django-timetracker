@@ -9,7 +9,7 @@ from timetracker.vcs.models import Activity
 
 def serialize_activityentry(entry):
     '''Serializes a single ActivityEntry into a JSON format.'''
-    return {
+    return { # pragma: no cover
         "id": entry.id,
         "date": str(entry.creation_date),
         "text": entry.activity.groupdetail,
@@ -19,14 +19,14 @@ def serialize_activityentry(entry):
 def defaultplugins(acc=None):
     '''Returns the plugins in the default location for either all accounts
     or a single account.'''
-    return listplugins(settings.PLUGIN_DIRECTORY, acc=acc)
+    return listplugins(settings.PLUGIN_DIRECTORY, acc=acc) # pragma: no cover
 
 def pluginbyname(name, acc=None):
     '''Returns the named plugin for either all accounts or a single
     account.'''
-    return defaultplugins(acc=acc).get(name)
+    return defaultplugins(acc=acc).get(name) # pragma: no cover
 
-def listplugins(directory, acc=None):
+def listplugins(directory, acc=None): # pragma: no cover
     '''Iterates through the passed-in directory, looking for raw Python
     modules to import, when it imports the modules we specifically
     look for several module-level attributes of which we make no

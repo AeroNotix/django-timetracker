@@ -2,14 +2,14 @@
 systems. Here are any writers which are required for these purposes.
 '''
 
-try:
+try: # pragma: no cover
     from cStringIO import StringIO
 except ImportError:
     from StringIO import StringIO
 
 import csv, codecs
 
-class UnicodeWriter(object):
+class UnicodeWriter(object): # pragma: no cover
     """
     A CSV writer which will write rows to CSV file "f",
     which is encoded in the given encoding.

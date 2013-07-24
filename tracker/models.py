@@ -26,7 +26,7 @@ from timetracker.vcs.models import Activity
 
 try:
     NUM_WORKING_DAYS = settings.NUM_WORKING_DAYS
-except AttributeError:
+except AttributeError: # pragma: no cover
     # usual working day amount
     NUM_WORKING_DAYS = 5
 
