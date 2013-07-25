@@ -1,6 +1,10 @@
-"""
-This file demonstrates writing tests using the unittest module. These will pass
-when you run "manage.py test".
+from django.test import TestCase
+from django.http import Http404
 
-Replace this with more appropriate tests for your application.
-"""
+from timetracker.reporting.views import all_team
+
+class PermissionTest(TestCase):
+    def testPermissionNoUser(self):
+        class Req:
+            session = {"user_id": 31337}
+        self.assertRaises(Http404, all_team, Req())

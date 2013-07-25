@@ -21,6 +21,7 @@ from django.http import HttpResponse, Http404
 from django.conf import settings
 from django.test.utils import override_settings
 
+from timetracker.views import user_view
 from timetracker.tracker.models import (Tbluser,
                                         TrackingEntry,
                                         Tblauthorization)
@@ -312,6 +313,11 @@ class UserTestCase(BaseUserTest):
         auth.users.add(user2)
         self.assertEquals(user, user2.get_administrator())
 
+    def testNonExistentUser404(self):
+        class Req:
+            session = {"user_id": 31337}
+        self.assertRaises(Http404, user_view, Req())
+
 class TrackingEntryTestCase(BaseUserTest):
     '''TrackingEntryTestCase tests the TrackingEntry's functionality'''
     def testIsNotOvertime(self):
@@ -552,6 +558,7 @@ class TrackingEntryTestCase(BaseUserTest):
         )
         entry.save()
         self.assertEquals(13.0, entry.round_down())
+
 
 class DatabaseTestCase(BaseUserTest):
     '''
@@ -832,6 +839,20 @@ class AjaxTestCase(BaseUserTest):
         self.assertEquals(len(TrackingEntry.objects.filter(entry_date="2012-01-04", daytype="LINKD")), 1)
         TrackingEntry.objects.get(entry_date="2012-01-02").unlink()
         self.assertEquals(len(TrackingEntry.objects.filter(entry_date="2012-01-04", daytype="LINKD")), 0)
+
+    def testAjax404(self):
+        class Req:
+            session = {}
+            def is_ajax(self):
+                return True
+        self.assertRaises(Http404, ajax_add_entry, Req())
+
+    def testIsAjaxFalse404(self):
+        class Req:
+            session = {}
+            def is_ajax(self):
+                return False
+        self.assertRaises(Http404, ajax_add_entry, Req())
 
 class UtilitiesTest(TestCase):
     '''The utilties module contains several miscellanious pieces of
