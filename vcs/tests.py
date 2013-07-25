@@ -13,7 +13,7 @@ class BaseVCS(TestCase):
 
     def setUp(self):
         create_users(self)
-        createuseractivities(None)
+        createuseractivities()
         self.req.session = {
             "user_id": self.linked_user.id
         }
