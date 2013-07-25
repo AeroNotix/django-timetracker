@@ -65,7 +65,7 @@ class PendingApproval(models.Model):
 
         :param status: Boolean indicating whether this entry was approved.
         '''
-        if self.closed:
+        if self.closed: # pragma: no cover
             return
         self.closed = True
         self.closed_on = datetime.datetime.now()

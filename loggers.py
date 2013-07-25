@@ -31,7 +31,7 @@ error_log = create_logger('error', root_path=settings.ROOT_LOG_DIR)
 suspicious_log = create_logger('suspicious', root_path=settings.ROOT_LOG_DIR)
 cache_log = create_logger('cache', root_path=settings.ROOT_LOG_DIR)
 
-if __name__ == '__main__':
+if __name__ == '__main__': # pragma: no cover
     # test the logs
     database_log.debug('hello')
     database_log.info('hello')

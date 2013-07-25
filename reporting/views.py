@@ -9,7 +9,7 @@ pushing it back to the user.
 
 try:
     from cStringIO import StringIO
-except ImportError:
+except ImportError: # pragma: no cover
     from StringIO import StringIO
 
 import datetime
@@ -30,7 +30,7 @@ from timetracker.utils.writers import UnicodeWriter
 from timetracker.tracker.management.commands import mec_ot_report
 
 @admin_check
-def reporting(request):
+def reporting(request): # pragma: no cover
     '''Base reporting hub
     Generates all the select boxes and pre-filled text fields.
     '''
@@ -49,7 +49,7 @@ def reporting(request):
         RequestContext(request))
 
 @admin_check
-def download_all_holiday_data(request, who=None):
+def download_all_holiday_data(request, who=None): # pragma: no cover
     '''Endpoint which creates a CSV file for all holiday data for a
     single employee.
 
@@ -79,7 +79,7 @@ def download_all_holiday_data(request, who=None):
     return response
 
 @admin_check
-def yearmonthhol(request, year=None, month=None):
+def yearmonthhol(request, year=None, month=None): # pragma: no cover
     '''Endpoint which creates a CSV file for all holiday data within
     a specific month.
 
@@ -104,7 +104,7 @@ def yearmonthhol(request, year=None, month=None):
     return response
 
 @admin_check
-def ot_by_month(request, year=None, month=None):
+def ot_by_month(request, year=None, month=None): # pragma: no cover
     '''Endpoint which creates a CSV file for all OT in a given month
 
     :param year: The year for the report.
@@ -130,7 +130,7 @@ def ot_by_month(request, year=None, month=None):
     return response
 
 @admin_check
-def ot_by_year(request, year=None):
+def ot_by_year(request, year=None): # pragma: no cover
     '''Endpoint which creates a CSV file for all OT in a year.
     :param year: The year for the report.'''
     auth_user = Tbluser.objects.get(id=request.session.get("user_id"))
@@ -160,7 +160,7 @@ def ot_by_year(request, year=None):
     return response
 
 @admin_check
-def holidays_for_yearmonth(request, year=None):
+def holidays_for_yearmonth(request, year=None): # pragma: no cover
     '''Endpoint which creates a CSV file for all holidays per month
     in a year
 
@@ -192,7 +192,7 @@ def holidays_for_yearmonth(request, year=None):
     return response
 
 @admin_check
-def ot_for_hr(request, year=None, month=None):
+def ot_for_hr(request, year=None, month=None): # pragma: no cover
     if not year or not month:
         raise Http404
     auth_user = Tbluser.objects.get(id=request.session.get("user_id"))
@@ -200,7 +200,7 @@ def ot_for_hr(request, year=None, month=None):
     return mec_ot_report.report_for_account(auth_user.market, dt, send=False)
 
 @permissions(["SUPER"])
-def all_team(request, year=None, month=None, team=None):
+def all_team(request, year=None, month=None, team=None): # pragma: no cover
     if not year or not month or not team:
         raise Http404
 
