@@ -50,7 +50,7 @@ WKDAY_MAP = {
     "BF": {
         "FA": "zzz-3660.R01.BFAA",
         "ELSE": "zzz-3600.R01.BHOS"
-        },
+    },
     "EN": {
         "FA": "zzz-2115.R01.BFAA",
         "ELSE": "zzz-2115.R01.BHOS"
