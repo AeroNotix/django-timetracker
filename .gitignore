@@ -21,3 +21,4 @@ vcs/plugins/*
 bin/
 lib/
 include/
+.coverage
