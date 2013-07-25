@@ -65,4 +65,5 @@ urlpatterns = patterns('',
     (r'^reporting/', include('timetracker.reporting.urls')),
     (r'^ot/', include('timetracker.overtime.urls')),
     (r'^vcs/', include('timetracker.vcs.urls')),
+    (r'^indeng/', include('timetracker.industrial_engineering.urls')),
 )

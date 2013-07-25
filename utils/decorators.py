@@ -60,6 +60,8 @@ def permissions(permission):
         @wraps(func)
         def inner(request, **kwargs):
             '''implementation'''
+            if settings.DEBUG:
+                return func(request, **kwargs)
             try:
                 user = Tbluser.objects.get(
                     id=request.session.get('user_id', None)

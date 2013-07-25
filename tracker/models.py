@@ -81,6 +81,7 @@ class Tbluser(models.Model):
         ('TEAML', 'Team Leader'),
         ('RUSER', 'Regular User'),
         ('SUPER', 'Super User'),
+        ('INENG', 'Industrial Engineering')
     )
 
     USER_LEVELS = {

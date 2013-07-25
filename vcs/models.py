@@ -1,5 +1,25 @@
 from django.db import models
 
+COSTBUCKETS = (
+    ('PVA', 'Processing Value Add'),
+    ('PVE', 'Processing Value Enabling'),
+    ('PNVE', 'Processing Non Value Add'),
+    ('QAPP', 'Quality Appresial'),
+    ('QPR', 'Quality Prevention'),
+    ('QIF', 'Quality Internal Failure'),
+    ('QIFPQ', 'Quality Internal Failure Process Quality'),
+    ('QIFPI', 'Quality Internal Failure Poor Input Quality'),
+    ('QIFRC', 'Quality Internal Failure Rework Cost'),
+    ('QEF', 'Quality External Failure'),
+    ('QEFQR', 'Quality External Failure Query Resolution'),
+    ('QEFER', 'Quality External Failure External Rework'),
+    ('QEFCE', 'Quality External Failure Customer Escalations'),
+    ('COUTT', 'Cost of Under Utilization Non Transactional Time'),
+    ('COUUL', 'Cost of Under Utilization Unavoidable Loss'),
+    ('COUAL', 'Cost of Under Utilization Avoidable Loss'),
+)
+
+
 class Activity(models.Model):
     """Activity encapsulates the idea of a single task for Industrial
     Engineering purposes.
@@ -22,24 +42,6 @@ class Activity(models.Model):
     Time: the time factor for this Activity, how long it takes to
     process.
     """
-    COSTBUCKETS = (
-        ('PVA', 'Processing Value Add'),
-        ('PVE', 'Processing Value Enabling'),
-        ('PNVE', 'Processing Non Value Add'),
-        ('QAPP', 'Quality Appresial'),
-        ('QPR', 'Quality Prevention'),
-        ('QIF', 'Quality Internal Failure'),
-        ('QIFPQ', 'Quality Internal Failure Process Quality'),
-        ('QIFPI', 'Quality Internal Failure Poor Input Quality'),
-        ('QIFRC', 'Quality Internal Failure Rework Cost'),
-        ('QEF', 'Quality External Failure'),
-        ('QEFQR', 'Quality External Failure Query Resolution'),
-        ('QEFER', 'Quality External Failure External Rework'),
-        ('QEFCE', 'Quality External Failure Customer Escalations'),
-        ('COUTT', 'Cost of Under Utilization Non Transactional Time'),
-        ('COUUL', 'Cost of Under Utilization Unavoidable Loss'),
-        ('COUAL', 'Cost of Under Utilization Avoidable Loss'),
-    )
 
     group = models.CharField(max_length=4)
     grouptype = models.CharField(max_length=100)
@@ -95,3 +97,14 @@ class ActivityEntry(models.Model):
 
     class Meta:
         verbose_name_plural = "Activity Entries"
+
+class Offset(models.Model):
+    amount = models.IntegerField()
+    costbucket = models.CharField(max_length=5, choices=COSTBUCKETS)
+
+    def __unicode__(self): # pragma: no cover
+        return u'%d%% - %s' % (self.amount, self.get_costbucket_display())
+
+class ActivityOffset(models.Model):
+    activity = models.ForeignKey(Activity)
+    offset = models.ManyToManyField(Offset)
