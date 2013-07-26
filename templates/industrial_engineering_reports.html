@@ -1,5 +1,116 @@
 {% extends "base.html" %}
+{% block header %}
+<link href="{{ STATIC_URL }}indeng.css" type="text/css" rel="stylesheet" />
+<link href="{{ STATIC_URL }}jquery.jqplot.min.css" type="text/css" rel="stylesheet" />
+{% endblock header %}
+{% block menubar %}
+{% include "includes/get_nav.html" %}
+{% endblock menubar %}
 
 {% block content %}
-<p>lol what</p>
+<div class="container">
+  <h3>Industrial Engineering Reports</h3>
+  <table>
+    <tr>
+      <td>Team:
+        <select id="team">
+          {% for team in teams %}
+          <option value="{{ team.0 }}">{{ team.1 }}</option>
+          {% endfor %}
+        </select>
+        <input type="text" value="{{ year }}" />
+    </tr>
+    <tr>
+      <td>
+        <div id="cbb" style="height:500px; width:500px;"></div>
+      </td>
+      <td>
+        <div id="coq" style="height:500px; width:500px;"></div>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <div id="cop" style="height:500px; width:500px;"></div>
+      </td>
+      <td>
+        <div id="couu" style="height:500px; width:500px;"></div>
+      </td>
+    </tr>
+  </table>
+</div>
+<div></div>
 {% endblock content %}
+{% block additional_javascript %}
+<script type="text/javascript" src="{{ STATIC_URL}}jquery/jquery.jqplot.min.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL}}jquery/jqplot.pieRenderer.min.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL}}js/indeng.js"></script>
+<script>
+ function gen_plot(ele, data, title) {
+   return jQuery.jqplot(
+     ele, [data],
+     {
+       title: {
+         text: title
+       },
+       seriesDefaults: {
+         renderer: jQuery.jqplot.PieRenderer,
+         rendererOptions: {
+           showDataLabels: true,
+         }
+       },
+       legend: { show:true, location: 'e' }
+     })
+ }
+ $(document).ready(function(){
+   var cbb = [
+     ['Cost of Processing',
+      {{costbuckets.PVA}} +
+      {{costbuckets.PVE}} +
+      {{costbuckets.PNV}}],
+     ['Cost of Quality',
+      {{costbuckets.QAPP}} +
+      {{costbuckets.QPR}} +
+      {{costbuckets.QIF}} +
+      {{costbuckets.QIFPQ}} +
+      {{costbuckets.QIFPI}} +
+      {{costbuckets.QIFRC}} +
+      {{costbuckets.QEF}} +
+      {{costbuckets.QEFQR}} +
+      {{costbuckets.QEFER}} +
+      {{costbuckets.QEFCE}}],
+     ['Cost of Under Utilization',
+      {{costbuckets.COUTT}} +
+      {{costbuckets.COUUL}} +
+      {{costbuckets.COUAL}}]
+   ];
+
+   var cop = [
+     ['Processing Value Add', {{costbuckets.PVA}}],
+     ['Processing Value Enabling', {{costbuckets.PVE}}],
+     ['Processing Non Value Add', {{costbuckets.PNV}}],
+   ];
+   var couu = [
+     ['Cost of Under Utilization Non Transactional Time', {{costbuckets.COUTT}}],
+     ['Cost of Under Utilization Unavoidable Loss', {{costbuckets.COUUL}}],
+     ['Cost of Under Utilization Avoidable Loss', {{costbuckets.COUAL}}]
+   ]
+   var coq = [
+     ['Quality Appresial', {{costbuckets.QAPP}}],
+     ['Quality Prevention', {{costbuckets.QPR}}],
+     ['Quality Internal Failure', {{costbuckets.QIF}}],
+     ['Quality Internal Failure Process Quality', {{costbuckets.QIFPQ}}],
+     ['Quality Internal Failure Poor Input Quality', {{costbuckets.QIFPI}}],
+     ['Quality Internal Failure Rework Cost', {{costbuckets.QIFRC}}],
+     ['Quality External Failure', {{costbuckets.QEF}}],
+     ['Quality External Failure Query Resolution', {{costbuckets.QEFQR}}],
+     ['Quality External Failure External Rework', {{costbuckets.QEFER}}],
+     ['Quality External Failure Customer Escalations', {{costbuckets.QEFCE}}],
+   ]
+   var plot1 = gen_plot('cbb', cbb, "Cost Bucket Breakdown for {{ team }}");
+   var plot2 = gen_plot('cop', cop, "Cost of Processing for {{ team }}");
+   var plot2 = gen_plot('coq', couu, "Cost of Quality for {{ team }}");
+   var plot2 = gen_plot('couu', couu, "Cost of Under Utilization for {{ team }}");
+ });
+
+</script>
+{% endblock additional_javascript %}
