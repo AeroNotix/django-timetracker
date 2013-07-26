@@ -1,4 +1,5 @@
 from collections import defaultdict
+from datetime import datetime
 
 from django.db import models
 
@@ -98,10 +99,16 @@ class ActivityEntry(models.Model):
         return u'%s - %s - %d' % (self.user, self.activity, self.time())
 
     @staticmethod
-    def costbucket_count(teams):
+    def costbucket_count(teams, year=None, month=None):
+        if year is None:
+            year = datetime.today().year
+        if month is None:
+            month = datetime.today().month
         costbuckets = defaultdict(int)
         entries = ActivityEntry.objects.filter(
-            user__market__in=teams
+            user__market__in=teams,
+            creation_date__year=year,
+            creation_date__month=month
         ).select_related("activity")
         for entry in entries:
             costbuckets[entry.activity.costbucket] += 1
