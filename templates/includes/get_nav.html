@@ -1,9 +1,12 @@
 {% if is_admin %}
   {% include "includes/admin-nav.html" %}
-{% else %}
-  {% if is_team_leader %}
-    {% include "includes/teaml-nav.html" %}
-  {% else %}
-    {% include "includes/user-nav.html" %}
-  {% endif %}
+{% endif %}
+{% if is_team_leader %}
+  {% include "includes/teaml-nav.html" %}
+{% endif %}
+{% if user.is_indeng %}
+  {% include "includes/industrial_eng_nav.html" %}
+{% endif %}
+{% if user.is_user %}
+  {% include "includes/user-nav.html" %}
 {% endif %}
