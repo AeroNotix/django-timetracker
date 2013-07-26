@@ -8,6 +8,7 @@ from django.core.mail import send_mail
 
 from timetracker.tracker import models
 from timetracker.utils.error_codes import CONNECTION_REFUSED
+from timetracker.utils.datemaps import MARKET_CHOICES
 
 
 def send_password_reminder(modeladmin, request, queryset):
@@ -46,7 +47,7 @@ def create_100_random_users(modeladmin, request, queryset):
             lastname=randstr,
             password=randstr,
             user_type="RUSER",
-            market="BG",
+            market=random.choice([c[0] for c in MARKET_CHOICES]),
             process="AP",
             start_date=datetime.datetime.today(),
             breaklength="00:15:00",

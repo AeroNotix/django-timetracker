@@ -136,6 +136,12 @@ MARKET_CHOICES = (
     ('SA', 'Store Accounting'),
 )
 
+TEAM_GROUPING = {
+    "CZ": ["BK", "BG"],
+    "BK": ["BG", "CZ"],
+    "BG": ["BK", "CZ"]
+}
+
 PROCESS_CHOICES = (
     ('AD', 'Administration'),
     ('AO', 'Accounting Operations'),
@@ -152,6 +158,12 @@ PROCESS_CHOICES = (
     ('TE', 'Travel & Expenses'),
 )
 
+
+def group_for_team(team):
+    fullteam = TEAM_GROUPING.get(team)
+    if fullteam:
+        return fullteam
+    return [team]
 
 def generate_year_box(year, id=''):
     '''Generates a select box with years -/+ 2 of the year provided.

@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from django.db import models
 
 COSTBUCKETS = (
@@ -94,6 +96,16 @@ class ActivityEntry(models.Model):
 
     def __unicode__(self): # pragma: no cover
         return u'%s - %s - %d' % (self.user, self.activity, self.time())
+
+    @staticmethod
+    def costbucket_count(teams):
+        costbuckets = defaultdict(int)
+        entries = ActivityEntry.objects.filter(
+            user__market__in=teams
+        ).select_related("activity")
+        for entry in entries:
+            costbuckets[entry.activity.costbucket] += 1
+        return costbuckets
 
     class Meta:
         verbose_name_plural = "Activity Entries"
