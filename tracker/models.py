@@ -494,6 +494,10 @@ class Tbluser(models.Model):
         '''RUSER'''
         return self.user_type == "RUSER"
 
+    def is_indeng(self):
+        '''INENG'''
+        return self.user_type == "INENG"
+
     def get_holiday_balance(self, year):
         '''Calculates the holiday balance for the employee
 

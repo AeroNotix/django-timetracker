@@ -17,6 +17,8 @@ from django.template import Context
 from django.conf import settings
 from django.db.models import Q
 from django.views.decorators.csrf import csrf_protect
+from django.core.urlresolvers import reverse
+
 
 from timetracker.tracker.models import Tbluser, UserForm, TrackingEntry
 from timetracker.tracker.models import Tblauthorization as tblauth
@@ -87,8 +89,9 @@ def index(request):
         user = Tbluser.objects.get(id=request.session.get("user_id"))
     if user.sup_tl_or_admin():
         return HttpResponseRedirect("/overtime/")
-    else:
-        return HttpResponseRedirect("/calendar/")
+    if user.is_indeng():
+        return HttpResponseRedirect(reverse("timetracker.industrial_engineering.views.reporting"))
+    return HttpResponseRedirect("/calendar/")
 
 def login(request):
 
