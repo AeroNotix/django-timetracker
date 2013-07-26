@@ -49,7 +49,11 @@ HEADINGS = [
 WKDAY_MAP = {
     "BF": {
         "FA": "zzz-3660.R01.BFAA",
-        "ELSE": "zzz-3600.R01.BHOS"
+        "TE": "zzz-3660.R01.BFAA",
+        "SC": "zzz-3660.R01.BFAA",
+        "AP": "zzz-3660.R01.BFAA",
+        "AR": "zzz-3660.R01.BFAA",
+        "HR": "zzz-3600.R01.BHOS"        
     },
     "EN": {
         "FA": "zzz-2115.R01.BFAA",
@@ -66,7 +70,7 @@ WKDAY_MAP = {
     "CZ": {
         "FA": "zzz-3662.R01.BFAA",
         "ELSE": "zzz-3662.R01.BHOS"
-    }
+    }    
 }
 
 DAYTYPE_MAP = {
@@ -87,11 +91,17 @@ DAYTYPE_MAP = {
 def catw_code(user, daytype):
     '''Calculates the CATW Code for the employee using a specific
     daytype.'''
+
     if daytype == "WKDAY":
-        if user.process == "FA":
-            return WKDAY_MAP[user.market]["FA"]
+        '''exception for BPO Factory, where daytype is different
+        based on team'''
+        if user.market == "BF":
+            return WKDAY_MAP[user.market][user.process]
         else:
-            return WKDAY_MAP[user.market]["ELSE"]
+            if user.process == "FA":
+                return WKDAY_MAP[user.market]["FA"]
+            else:
+                return WKDAY_MAP[user.market]["ELSE"]
     return DAYTYPE_MAP[daytype]
 
 def blankrow(user, year, month, day):
