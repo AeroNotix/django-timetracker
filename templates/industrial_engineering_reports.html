@@ -113,5 +113,9 @@
    var plot2 = gen_plot('couu', couu, "Cost of Under Utilization for {{ team }}");
  });
 
+$(function() {
+    $("#month").val("{{ selected_month }}");
+    $("#team").val("{{ selected_team }}");
+})
 </script>
 {% endblock additional_javascript %}

@@ -26,8 +26,10 @@ def reporting(request):
         {
             "teams": MARKET_CHOICES,
             "team": team,
-            "year": datetime.now().year,
+            "year": year if year else datetime.now().year,
             "months": generate_month_box(id="month"),
+            "selected_month": month if month else datetime.today().month,
+            "selected_team": request.GET["team"] if request.GET.get("team") else "AD",
             "costbuckets": costbuckets,
             "current": "on %s/%s" % (year if year else datetime.today().year,
                                      month if month else datetime.today().month)
