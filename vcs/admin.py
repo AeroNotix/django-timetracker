@@ -15,12 +15,20 @@ def add_random_activity_entries(modeladmin, request, queryset):
     if len(users) == 0:
         return
     activity_entries = []
-    for _ in xrange(10000):
+    d1 = datetime.date(year=datetime.datetime.today().year,
+                       month=1,
+                       day=1)
+    d2 = datetime.date(year=datetime.datetime.today().year,
+                       month=12,
+                       day=31)
+    diff = d2 - d1
+    dates = [d1 + datetime.timedelta(days=i) for i in range(diff.days)]
+    for _ in xrange(30000):
         user = random.choice(users)
         activity = random.choice(activities)
         activity_entries.append(
             models.ActivityEntry(
-                creation_date=datetime.datetime.today(),
+                creation_date=random.choice(dates),
                 user=user,
                 activity=activity,
                 amount=random.choice(xrange(50))
