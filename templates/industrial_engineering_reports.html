@@ -51,12 +51,12 @@
      ele, [data],
      {
        title: {
-         text: title
+         text: title + " on {{ current }}"
        },
        seriesDefaults: {
          renderer: jQuery.jqplot.PieRenderer,
          rendererOptions: {
-           showDataLabels: true,
+           showDataLabels: true
          }
        },
        legend: { show:true, location: 'e' }
