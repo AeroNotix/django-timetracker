@@ -18,7 +18,8 @@
           <option value="{{ team.0 }}">{{ team.1 }}</option>
           {% endfor %}
         </select>
-        <input type="text" value="{{ year }}" />
+        <input id="year" type="text" value="{{ year }}" />
+        {{ months|safe }}
     </tr>
     <tr>
       <td>
