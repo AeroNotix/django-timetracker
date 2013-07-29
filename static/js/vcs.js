@@ -9,14 +9,19 @@ function detailselected(from, to) {
 	$(to).text(details[$(from).val()]);
 }
 
-function updateentry(which, ui) {
+function updateentry(which, value) {
     $.ajax({
         method: "POST",
         url: CONFIG.AJAX_UPDATE_URL,
         async: false, // to prevent multiple in-flight requests.
         data: {
-            volume: ui.value,
+            volume: value(),
             id: which.substring("entry_".length, which.length)
+        },
+        success: function() {
+            if (value() == 0) {
+                location.reload(false);
+            }
         }
     });
 }
@@ -68,12 +73,20 @@ function populatetable() {
                                       "\"/></td></tr>"].join(""));
             }
             $("#entries").find("input").each(function() {
-                $(this).spinner({spin:
+                var el = this;
+                $(el).spinner({spin:
                                  function (event, ui) {
-                                     updateentry($(this).attr("id"), ui);
+                                     updateentry($(el).attr("id"), function() {
+                                         return ui.value;
+                                     });
                                  },
                                  min: 0
                                 });
+                $(el).change(function () {
+                    updateentry($(el).attr("id"), function() {
+                        return $(el).val();
+                    });
+                });
             });
         },
         error: function (a,b,c) {
