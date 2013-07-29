@@ -163,7 +163,7 @@ class ActivityEntry(models.Model):
         losses = len(TrackingEntry.objects.filter(user__market__in=teams,
                                                   daytype=["PUABS", "DAYOD", "HOLIS"],
                                                   entry_date__year=year,
-                                                  entry_date__month=month)) * 460
+                                                  entry_date__month=month)) * 460 # A single industrial engineering FTE in Minutes.
         for entry in entries:
             if invalid(entry):
                 continue
