@@ -1,7 +1,10 @@
 from collections import defaultdict
 from datetime import datetime
+from decimal import Decimal
 
 from django.db import models
+
+from timetracker.utils.datemaps import ABSENT_CHOICES
 
 COSTBUCKETS = (
     ('PVA', 'Processing Value Add'),
@@ -80,7 +83,6 @@ class ActivityEntry(models.Model):
 
     Creation Date: The date that this ActivityEntry was created.
     """
-
     user = models.ForeignKey(
         'tracker.Tbluser',
         related_name="user_foreign"
@@ -98,21 +100,98 @@ class ActivityEntry(models.Model):
     def __unicode__(self): # pragma: no cover
         return u'%s - %s - %d' % (self.user, self.activity, self.time())
 
+    def is_invalid(self):
+        # to prevent circular imports
+        from timetracker.tracker.models import TrackingEntry
+
+        try:
+            TrackingEntry.objects.get(
+                user=self.user,
+                entry_date=self.creation_date,
+                daytype__in=["PUABS", "DAYOD"],
+            )
+        except TrackingEntry.DoesNotExist:
+            return False
+        return True
+
     @staticmethod
-    def costbucket_count(teams, year=None, month=None):
+    def filterforyearmonth(teams, year=None, month=None):
+        # to prevent circular imports
+        from timetracker.tracker.models import TrackingEntry
         if year is None:
             year = datetime.today().year
         if month is None:
             month = datetime.today().month
-        costbuckets = defaultdict(int)
-        entries = ActivityEntry.objects.filter(
+
+        invalidset = defaultdict(list)
+        [invalidset[entry.user.id].append(entry.id)
+         for entry in TrackingEntry.objects.filter(
+                 daytype__in=["PUABS", "DAYOD"]
+         ).select_related("user")]
+
+        def invalid(entry):
+            return entry.id in invalidset[entry.user.id]
+
+        return ActivityEntry.objects.filter(
             user__market__in=teams,
             creation_date__year=year,
             creation_date__month=month
-        ).select_related("activity")
+        ).select_related("activity", "user"), invalid
+
+    @staticmethod
+    def costbucket_count(teams, year=None, month=None):
+        entries, _ = ActivityEntry.filterforyearmonth(teams, year, month)
+        costbuckets = defaultdict(int)
         for entry in entries:
             costbuckets[entry.activity.costbucket] += 1
         return costbuckets
+
+    @staticmethod
+    def utilization_calculation(teams, year=None, month=None):
+        # prevent circular imports
+        from timetracker.utils.calendar_utils import working_days
+        from timetracker.tracker.models import Tbluser, TrackingEntry
+
+        if year is None:
+            year = datetime.today().year
+        if month is None:
+            month = datetime.today().month
+
+        entries, invalid = ActivityEntry.filterforyearmonth(teams, year, month)
+        util = 0
+        effi = 0
+        losses = len(TrackingEntry.objects.filter(user__market__in=teams,
+                                                  daytype=["PUABS", "DAYOD", "HOLIS"],
+                                                  entry_date__year=year,
+                                                  entry_date__month=month)) * 460
+        for entry in entries:
+            if invalid(entry):
+                continue
+            time = entry.amount * entry.activity.time
+            if entry.activity.group != "ALL":
+                util += time
+            else:
+                losses += time
+            effi += time
+        available_time = (Tbluser.available_minutes(teams) * len(working_days(year, month)))
+        utilization_percent = "%.2f%%" % (100 * (Decimal(util) / Decimal(available_time)))
+        efficiency_percent = "%.2f%%" % (100 * (Decimal(util) / (Decimal(available_time) - Decimal(losses))))
+        availability_percent = "%.2f%%" % (100 * (Decimal(available_time) - Decimal(losses)) / Decimal(available_time))
+
+        return {
+            "util": {
+                "percent": utilization_percent,
+                "target": "65%"
+            },
+            "effi": {
+                "percent": efficiency_percent,
+                "target": "85%"
+            },
+            "avai": {
+                "percent": availability_percent,
+                "target": "80%"
+            }
+        }
 
     class Meta:
         verbose_name_plural = "Activity Entries"

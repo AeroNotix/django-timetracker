@@ -38,7 +38,6 @@ import datetime
 
 from django.core.cache import cache
 
-
 WEEK_MAP_MID = {
     0: 'Mon',
     1: 'Tue',
@@ -136,10 +135,16 @@ MARKET_CHOICES = (
     ('SA', 'Store Accounting'),
 )
 
+MARKET_CHOICES_MAP = {
+    c[0]: c[1] for c in MARKET_CHOICES
+}
+
+MARKET_CHOICES_LIST = [c[0] for c in MARKET_CHOICES]
+
 TEAM_GROUPING = {
-    "CZ": ["BK", "BG"],
-    "BK": ["BG", "CZ"],
-    "BG": ["BK", "CZ"]
+    "CZ": ["CZ", "BK", "BG"],
+    "BK": ["CZ", "BK", "BG"],
+    "BG": ["CZ", "BK", "BG"],
 }
 
 PROCESS_CHOICES = (

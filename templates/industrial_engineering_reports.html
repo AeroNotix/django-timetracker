@@ -9,7 +9,7 @@
 
 {% block content %}
 <div class="container">
-  <h3>Industrial Engineering Reports</h3>
+  <h3>Industrial Engineering Reports: Cost Bucket Breakdown</h3>
   <table>
     <tr>
       <td>Team:
@@ -118,7 +118,7 @@ $(function() {
     $("#team").val("{{ selected_team }}");
 })
 var CONFIG = {
-   "INDENG_CBB_URL": "{% url 'timetracker.industrial_engineering.views.costbuckets' %}"
+   "REFRESH_URL": "{% url 'timetracker.industrial_engineering.views.costbuckets' %}"
 };
 </script>
 {% endblock additional_javascript %}

@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block header %}
+<link href="{{ STATIC_URL }}indeng.css" type="text/css" rel="stylesheet" />
+<link href="{{ STATIC_URL }}jquery.jqplot.min.css" type="text/css" rel="stylesheet" />
+{% endblock header %}
+{% block menubar %}
+{% include "includes/get_nav.html" %}
+{% endblock menubar %}
+
+{% block content %}
+<div class="container">
+  <h3>Industrial Engineering Reports: Utilization</h3>
+  <table>
+    <tr>
+      <td>Team:
+        <select id="team">
+          {% for team in teams %}
+          <option value="{{ team.0 }}">{{ team.1 }}</option>
+          {% endfor %}
+        </select>
+        <input id="year" type="text" value="{{ year }}" />
+        {{ months|safe }}
+    </tr>
+  </table>
+  <table>
+    <thead>
+      <tr>
+        <th>Category</th>
+        <th>Value</th>
+        <th>Target</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          Utilization
+        </td>
+        <td>
+          {{ utlztn.util.percent }}
+        </td>
+        <td>
+          {{ utlztn.util.target }}
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Efficiency
+        </td>
+        <td>
+          {{ utlztn.effi.percent }}
+        </td>
+        <td>
+          {{ utlztn.effi.target }}
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Availability
+        </td>
+        <td>
+          {{ utlztn.avai.percent }}
+        </td>
+        <td>
+          {{ utlztn.avai.target }}
+        </td>
+      </tr>
+  </table>
+</div>
+<div></div>
+{% endblock content %}
+{% block additional_javascript %}
+<script type="text/javascript" src="{{ STATIC_URL}}jquery/jquery.jqplot.min.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL}}jquery/jqplot.pieRenderer.min.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL}}js/indeng.js"></script>
+<script>
+$(function() {
+    $("#month").val("{{ selected_month }}");
+    $("#team").val("{{ selected_team }}");
+})
+var CONFIG = {
+   "REFRESH_URL": "{% url 'timetracker.industrial_engineering.views.utilization' %}"
+};
+</script>
+{% endblock additional_javascript %}

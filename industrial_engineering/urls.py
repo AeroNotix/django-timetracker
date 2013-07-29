@@ -7,4 +7,5 @@ from timetracker.industrial_engineering import views
 
 urlpatterns = patterns('',
                        (r'cb/?$', views.costbuckets),
+                       ('ut/?$', views.utilization),
 )

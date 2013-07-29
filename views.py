@@ -90,7 +90,7 @@ def index(request):
     if user.sup_tl_or_admin():
         return HttpResponseRedirect("/overtime/")
     if user.is_indeng():
-        return HttpResponseRedirect(reverse("timetracker.industrial_engineering.views.reporting"))
+        return HttpResponseRedirect(reverse("timetracker.industrial_engineering.views.costbuckets"))
     return HttpResponseRedirect("/calendar/")
 
 def login(request):

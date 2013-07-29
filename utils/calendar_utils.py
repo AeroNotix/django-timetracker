@@ -1557,6 +1557,9 @@ def gen_datetime_cal(year, month):
     days = filter((lambda x: x > 0), days)
     return [datetime.datetime(year=year, month=month, day=day) for day in days]
 
+def working_days(year, month):
+    return filter(lambda day: day.isoweekday() < 5, gen_datetime_cal(year, month))
+
 @admin_check
 @json_response
 def get_comments(request):

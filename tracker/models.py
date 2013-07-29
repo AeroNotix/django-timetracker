@@ -619,6 +619,11 @@ class Tbluser(models.Model):
         return self.get_thismonths_balance(ret=ret) if self.zeroing_hours() \
             else self.get_total_balance(ret=ret)
 
+    def fte(self):
+        # 8 hours in minutes
+        fullfte = 8.0
+        return fullfte / self.shiftlength_as_float() # back to hours
+
     def get_total_balance(self, ret='html', year=None, month=None,
                           from_=None, to_=None):
         '''Calculates the total balance for the user.
@@ -921,6 +926,14 @@ class Tbluser(models.Model):
 
     def vcsenabled(self):
         return self.market in settings.VCS_ENABLED
+
+    @staticmethod
+    def available_minutes(teams):
+        # 460 for VCS calculations and not 480, we just take the FTE
+        # figure and multiply that instead. The differences will be
+        # negligable since the calculation percentage will be
+        # near-enough the same.
+        return sum(map(lambda user: user.fte() * 460, Tbluser.objects.filter(market__in=teams)))
 
     @staticmethod
     def manager_emails_for_account(account):
