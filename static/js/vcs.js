@@ -73,15 +73,25 @@ function populatetable() {
                                       "\"/></td></tr>"].join(""));
             }
             $("#entries").find("input").each(function() {
+                // Store a reference to this so that future
+                // invocations of the dynamically created functions
+                // are able to use the old `this`.
                 var el = this;
-                $(el).spinner({spin:
-                                 function (event, ui) {
-                                     updateentry($(el).attr("id"), function() {
-                                         return ui.value;
-                                     });
-                                 },
-                                 min: 0
-                                });
+                $(el).spinner(
+                    {
+                        spin: function (event, ui) {
+                            updateentry($(el).attr("id"), function() {
+                                return ui.value;
+                            });
+                        },
+                        min: 0
+                    });
+                // We create a function which can be ran at
+                // the right time since there are many objects
+                // which can call the updateentry function and
+                // their bindings are generated dynamically so
+                // the objects which they reference need to be
+                // closed over in a closure.
                 $(el).change(function () {
                     updateentry($(el).attr("id"), function() {
                         return $(el).val();
