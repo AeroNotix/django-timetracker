@@ -70,7 +70,7 @@ WKDAY_MAP = {
     "CZ": {
         "FA": "zzz-3662.R01.BFAA",
         "ELSE": "zzz-3662.R01.BHOS"
-    }    
+    }
 }
 
 DAYTYPE_MAP = {
