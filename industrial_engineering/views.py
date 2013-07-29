@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 
@@ -11,8 +11,15 @@ from timetracker.vcs.models import ActivityEntry
 
 @permissions(["INENG"])
 def costbuckets(request):
-    year = request.GET.get("year")
-    month = request.GET.get("month")
+    try:
+        year = int(request.GET.get("year"))
+        month = int(request.GET.get("month"))
+    except ValueError:
+        raise Http404
+    except TypeError:
+        year = None
+        month = None
+
     kwargs = {"year": year if year else None,
             "month": month if month else None}
     if request.GET.get("team"):
