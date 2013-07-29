@@ -4,8 +4,7 @@ $("#team, #year, #month").change(function() {
         alert("Year value is not a number.");
         return;
     }
-    window.location.assign(window.location.origin
-                           + window.location.pathname
+    window.location.assign(CONFIG.INDENG_CBB_URL
                            + "?team="+$("#team").val()
                            + "&year="+$("#year").val()
                            + "&month="+$("#month").val());

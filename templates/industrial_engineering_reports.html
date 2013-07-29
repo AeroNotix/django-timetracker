@@ -117,5 +117,8 @@ $(function() {
     $("#month").val("{{ selected_month }}");
     $("#team").val("{{ selected_team }}");
 })
+var CONFIG = {
+   "INDENG_CBB_URL": "{% url 'timetracker.industrial_engineering.views.costbuckets' %}"
+};
 </script>
 {% endblock additional_javascript %}
