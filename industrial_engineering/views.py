@@ -38,8 +38,8 @@ def costbuckets(request):
             "selected_month": month if month else datetime.today().month,
             "selected_team": request.GET["team"] if request.GET.get("team") else "AD",
             "costbuckets": costbuckets,
-            "current": "on %s/%s" % (year if year else datetime.today().year,
-                                     month if month else datetime.today().month)
+            "current": " %s/%s" % (year if year else datetime.today().year,
+                                   month if month else datetime.today().month)
         },
         RequestContext(request)
     )
