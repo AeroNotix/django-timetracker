@@ -6,5 +6,5 @@ from django.conf.urls import patterns, include, url
 from timetracker.industrial_engineering import views
 
 urlpatterns = patterns('',
-                       (r'reports/?$', views.reporting),
+                       (r'cb/?$', views.costbuckets),
 )

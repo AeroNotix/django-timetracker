@@ -10,7 +10,7 @@ from timetracker.utils.datemaps import MARKET_CHOICES, group_for_team, generate_
 from timetracker.vcs.models import ActivityEntry
 
 @permissions(["INENG"])
-def reporting(request):
+def costbuckets(request):
     year = request.GET.get("year")
     month = request.GET.get("month")
     kwargs = {"year": year if year else None,
