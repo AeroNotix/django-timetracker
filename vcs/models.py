@@ -160,10 +160,13 @@ class ActivityEntry(models.Model):
         entries, invalid = ActivityEntry.filterforyearmonth(teams, year, month)
         util = 0
         effi = 0
-        losses = len(TrackingEntry.objects.filter(user__market__in=teams,
-                                                  daytype=["PUABS", "DAYOD", "HOLIS"],
-                                                  entry_date__year=year,
-                                                  entry_date__month=month)) * 460 # A single industrial engineering FTE in Minutes.
+        losses = TrackingEntry.objects.filter(user__market__in=teams,
+                                              daytype=["PUABS", "DAYOD", "HOLIS"],
+                                              entry_date__year=year,
+                                              # 460 is a single
+                                              # industrial engineering
+                                              # FTE in Minutes.
+                                              entry_date__month=month).count() * 460
         for entry in entries:
             if invalid(entry):
                 continue
