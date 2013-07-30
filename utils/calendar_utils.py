@@ -1560,6 +1560,22 @@ def gen_datetime_cal(year, month):
 def working_days(year, month):
     return filter(lambda day: day.isoweekday() < 5, gen_datetime_cal(year, month))
 
+def last12months(year, month):
+    d = datetime.datetime(year=year,month=month,day=1)
+    dates = []
+    rest = 0
+    for x in range(12):
+        try:
+            dates.append(
+                datetime.datetime(year=year,month=month-x,day=1)
+            )
+        except ValueError: # we've rolled over to the previous year
+            dates.append(
+                datetime.datetime(year=year-1,month=12-rest,day=1)
+            )
+            rest += 1
+    return list(reversed(dates))
+
 @admin_check
 @json_response
 def get_comments(request):
