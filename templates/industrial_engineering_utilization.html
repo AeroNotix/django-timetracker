@@ -133,30 +133,30 @@ $(document).ready(function(){
         }
     });
 
-    var plot2 = $.jqplot('chart2', [plotdata_util, plotdata_activity],
-                         {
-                             title: "Efficiency with volumes",
-                             series: [
-                                 {label: "Efficiency",
-                                  renderer: $.jqplot.BarRenderer},
-                                 {label: "Volume"}
-                             ],
-                             legend: {
-                                 show: true,
-                                 placement: 'outsideGrid'
-                             },
-                             axes: {
-                                 xaxis: {
-                                     renderer: $.jqplot.CategoryAxisRenderer,
-                                     ticks: ticks
-                                 },
-                                 yaxis: {
-                                     max: 100,
-                                     min: 0,
-                                     tickOptions: {formatString: '%d%'}
-                                 }
-                             }
-                         });
+    var plot2 = $.jqplot('chart2', [plotdata_util, plotdata_activity], {
+        title: "Efficiency with volumes",
+        series: [
+            {label: "Efficiency",
+             renderer: $.jqplot.BarRenderer},
+            {label: "Volume"}
+        ],
+        legend: {
+            show: true,
+            placement: 'outsideGrid'
+        },
+        axes: {
+            xaxis: {
+                renderer: $.jqplot.CategoryAxisRenderer,
+                ticks: ticks
+            },
+            yaxis: {
+                max: 100,
+                min: 0,
+                tickOptions: {formatString: '%d%'}
+            }
+        }
+    });
+
 });
 </script>
 {% endblock additional_javascript %}
