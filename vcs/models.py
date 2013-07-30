@@ -3,8 +3,9 @@ from datetime import datetime
 from decimal import Decimal
 
 from django.db import models
+from django.core.cache import cache
 
-from timetracker.utils.datemaps import ABSENT_CHOICES
+from timetracker.utils.datemaps import ABSENT_CHOICES, group_for_team
 
 COSTBUCKETS = (
     ('PVA', 'Processing Value Add'),
@@ -148,6 +149,10 @@ class ActivityEntry(models.Model):
 
     @staticmethod
     def utilization_calculation(teams, year=None, month=None):
+        cached_result = cache.get("utilization:%s%s%s" % (''.join(teams), year, month))
+        if cached_result:
+            return cached_result
+
         # prevent circular imports
         from timetracker.utils.calendar_utils import working_days
         from timetracker.tracker.models import Tbluser, TrackingEntry
@@ -180,8 +185,7 @@ class ActivityEntry(models.Model):
         utilization_percent = (100 * (Decimal(util) / Decimal(available_time)))
         efficiency_percent = (100 * (Decimal(util) / (Decimal(available_time) - Decimal(losses))))
         availability_percent = (100 * (Decimal(available_time) - Decimal(losses)) / Decimal(available_time))
-
-        return {
+        res = {
             "util": {
                 "percent": utilization_percent,
                 "target": 65
@@ -195,6 +199,8 @@ class ActivityEntry(models.Model):
                 "target": 80
             }
         }
+        cache.set("utilization:%s%s%s" % (''.join(teams), year, month), res)
+        return res
 
     @staticmethod
     def utilization_last_12_months(teams, year=None, month=None):
@@ -215,6 +221,10 @@ class ActivityEntry(models.Model):
 
     @staticmethod
     def activity_volumes(teams, year=None, month=None, activity=None):
+        cached_result = cache.get("activity_volumes:%s%s%s%s" % (''.join(teams), year, month, activity))
+        if cached_result:
+            return int(cached_result)
+
         if activity is None:
             return 0
 
@@ -223,12 +233,14 @@ class ActivityEntry(models.Model):
         if month is None:
             month = datetime.today().month
 
-        return sum(map(lambda e: e.amount, ActivityEntry.objects.filter(
+        res = sum(map(lambda e: e.amount, ActivityEntry.objects.filter(
             user__market__in=teams,
             activity=activity,
             creation_date__year=year,
             creation_date__month=month
         )))
+        cache.set("activity_volumes:%s%s%s%s" % (''.join(teams), year, month, activity), str(res))
+        return res
 
     @staticmethod
     def activity_volumes_last_12_months(teams, year=None, month=None, activity=None):
@@ -246,6 +258,20 @@ class ActivityEntry(models.Model):
             ActivityEntry.activity_volumes(teams, date.year, date.month, activity) \
             for date in dates
         )
+
+    def save(self, *args, **kwargs):
+        cache.delete(
+            "activity_volumes:%s%s%s%s" % (''.join(group_for_team(self.user.market)),
+                                           self.creation_date.year,
+                                           self.creation_date.month,
+                                           self.activity.id)
+        )
+        cache.delete(
+            "utilization:%s%s%s" % (''.join(group_for_team(self.user.market)),
+                                    self.creation_date.year,
+                                    self.creation_date.month)
+        )
+        super(ActivityEntry, self).save(*args, **kwargs)
 
     class Meta:
         verbose_name_plural = "Activity Entries"
