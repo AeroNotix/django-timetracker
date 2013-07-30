@@ -48,7 +48,7 @@ def costbuckets(request):
         RequestContext(request)
     )
 
-@permissions(["INENG"])
+@permissions(["INENG", "ADMIN", "SUPER"])
 def utilization(request):
     year, month = getmonthyear(request)
     kwargs = {"year": year,
