@@ -40,5 +40,56 @@ $(function() {
 var CONFIG = {
    "REFRESH_URL": "{% url 'timetracker.industrial_engineering.views.utilization' %}"
 };
+
+
+$(document).ready(function(){
+    var plotdata_util = [
+        {% for key, value in utlztn_all.items %}
+            {{ value.util.percent }},
+        {% endfor %}
+        ],
+        plotdata_effi = [
+        {% for key, value in utlztn_all.items %}
+            {{ value.effi.percent }},
+        {% endfor %}
+        ],
+        plotdata_avai = [
+        {% for key, value in utlztn_all.items %}
+            {{ value.avai.percent }},
+        {% endfor %}
+        ];
+
+    var ticks = [{% for item in dates %}
+                 "{{ item }}",
+                 {% endfor %}];
+
+    var plot1 = $.jqplot('chart1', [plotdata_util, plotdata_effi, plotdata_avai], {
+        seriesDefaults:{
+            renderer:$.jqplot.BarRenderer,
+            rendererOptions: {fillToZero: true}
+        },
+        series:[
+            {label:'Efficiency'},
+            {label:'Utilization'},
+            {label:'Availiability'}
+        ],
+        legend: {
+            show: true,
+            placement: 'outsideGrid'
+        },
+        axes: {
+            xaxis: {
+                renderer: $.jqplot.CategoryAxisRenderer,
+                ticks: ticks
+            },
+            yaxis: {
+                tickOptions: {formatString: '%d%'}
+            }
+        }
+    });
+});
 </script>
+
+
+
 {% endblock additional_javascript %}

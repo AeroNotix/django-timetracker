@@ -1,4 +1,4 @@
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 from datetime import datetime
 from decimal import Decimal
 
@@ -174,9 +174,9 @@ class ActivityEntry(models.Model):
                 losses += time
             effi += time
         available_time = (Tbluser.available_minutes(teams) * len(working_days(year, month)))
-        utilization_percent = "%.2f%%" % (100 * (Decimal(util) / Decimal(available_time)))
-        efficiency_percent = "%.2f%%" % (100 * (Decimal(util) / (Decimal(available_time) - Decimal(losses))))
-        availability_percent = "%.2f%%" % (100 * (Decimal(available_time) - Decimal(losses)) / Decimal(available_time))
+        utilization_percent = (100 * (Decimal(util) / Decimal(available_time)))
+        efficiency_percent = (100 * (Decimal(util) / (Decimal(available_time) - Decimal(losses))))
+        availability_percent = (100 * (Decimal(available_time) - Decimal(losses)) / Decimal(available_time))
 
         return {
             "util": {
@@ -192,6 +192,23 @@ class ActivityEntry(models.Model):
                 "target": "80%"
             }
         }
+
+    @staticmethod
+    def utilization_last_12_months(teams, year=None, month=None):
+        from timetracker.utils.calendar_utils import last12months
+
+        if year is None:
+            year = datetime.today().year
+        if month is None:
+            month = datetime.today().month
+
+        dates = last12months(year, month)
+        utilization = OrderedDict()
+        for date in dates:
+            utilization[date] = ActivityEntry.utilization_calculation(
+                teams, date.year, date.month
+            )
+        return utilization, dates
 
     class Meta:
         verbose_name_plural = "Activity Entries"

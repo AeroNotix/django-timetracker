@@ -51,29 +51,27 @@ def costbuckets(request):
 @permissions(["INENG"])
 def utilization(request):
     year, month = getmonthyear(request)
-    kwargs = {"year": year if year else None,
-              "month": month if month else None}
+    kwargs = {"year": year,
+              "month": month}
 
-    if request.GET.get("team"):
-        utlztn = ActivityEntry.utilization_calculation(group_for_team(request.GET["team"]), **kwargs)
-    else:
-        utlztn = ActivityEntry.utilization_calculation(MARKET_CHOICES_LIST, **kwargs)
-
+    theteam = request.GET.get("team")
+    teamselection = group_for_team(theteam) if theteam else MARKET_CHOICES_LIST
+    utlztn, dates = ActivityEntry.utilization_last_12_months(teamselection, **kwargs)
     team = MARKET_CHOICES_MAP[request.GET["team"]] \
            if request.GET.get("team") else "All teams"
-
     return render_to_response(
         "industrial_engineering_utilization.html",
         {
             "teams": MARKET_CHOICES,
             "team": team,
-            "year": year if year else datetime.now().year,
+            "year": year,
             "months": generate_month_box(id="month"),
-            "selected_month": month if month else datetime.today().month,
+            "selected_month": month,
             "selected_team": request.GET["team"] if request.GET.get("team") else "AD",
-            "current": " %s/%s" % (year if year else datetime.today().year,
-                                   month if month else datetime.today().month),
-            "utlztn": utlztn
+            "current": " %s/%s" % (year,month),
+            "utlztn": utlztn[datetime(year=year,month=month,day=1)],
+            "utlztn_all": utlztn,
+            "dates": [date.strftime("%B") for date in dates]
         },
         RequestContext(request)
     )
