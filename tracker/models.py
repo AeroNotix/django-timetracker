@@ -933,7 +933,7 @@ class Tbluser(models.Model):
         # figure and multiply that instead. The differences will be
         # negligable since the calculation percentage will be
         # near-enough the same.
-        return sum(map(lambda user: user.fte() * 460, Tbluser.objects.filter(market__in=teams)))
+        return sum(map(lambda user: user.fte() * 460, Tbluser.objects.filter(market__in=teams,disabled=False)))
 
     @staticmethod
     def manager_emails_for_account(account):
