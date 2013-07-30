@@ -184,15 +184,15 @@ class ActivityEntry(models.Model):
         return {
             "util": {
                 "percent": utilization_percent,
-                "target": "65%"
+                "target": 65
             },
             "effi": {
                 "percent": efficiency_percent,
-                "target": "85%"
+                "target": 85
             },
             "avai": {
                 "percent": availability_percent,
-                "target": "80%"
+                "target": 80
             }
         }
 
