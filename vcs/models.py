@@ -213,6 +213,40 @@ class ActivityEntry(models.Model):
             )
         return utilization, dates
 
+    @staticmethod
+    def activity_volumes(teams, year=None, month=None, activity=None):
+        if activity is None:
+            return 0
+
+        if year is None:
+            year = datetime.today().year
+        if month is None:
+            month = datetime.today().month
+
+        return sum(map(lambda e: e.amount, ActivityEntry.objects.filter(
+            user__market__in=teams,
+            activity=activity,
+            creation_date__year=year,
+            creation_date__month=month
+        )))
+
+    @staticmethod
+    def activity_volumes_last_12_months(teams, year=None, month=None, activity=None):
+        from timetracker.utils.calendar_utils import last12months
+        if activity is None:
+            return [0 for _ in range(12)]
+
+        if year is None:
+            year = datetime.today().year
+        if month is None:
+            month = datetime.today().month
+
+        dates = last12months(year, month)
+        return (
+            ActivityEntry.activity_volumes(teams, date.year, date.month, activity) \
+            for date in dates
+        )
+
     class Meta:
         verbose_name_plural = "Activity Entries"
 

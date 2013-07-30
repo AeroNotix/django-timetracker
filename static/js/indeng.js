@@ -1,4 +1,4 @@
-$("#team, #year, #month").change(function() {
+$("#team, #year, #month, #activity").change(function() {
     var pattern = new RegExp(/\d+/g);
     if (!pattern.test($("#year").val())) {
         alert("Year value is not a number.");
@@ -7,5 +7,6 @@ $("#team, #year, #month").change(function() {
     window.location.assign(CONFIG.REFRESH_URL
                            + "?team="+$("#team").val()
                            + "&year="+$("#year").val()
-                           + "&month="+$("#month").val());
+                           + "&month="+$("#month").val()
+                           + "&activity="+$("#activity").val());
 });

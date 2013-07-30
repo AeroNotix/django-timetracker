@@ -9,7 +9,7 @@ from timetracker.utils.datemaps import (MARKET_CHOICES, MARKET_CHOICES_MAP,
                                         MARKET_CHOICES_LIST, group_for_team,
                                         generate_month_box)
 
-from timetracker.vcs.models import ActivityEntry
+from timetracker.vcs.models import ActivityEntry, Activity
 
 def getmonthyear(request):
     try:
@@ -57,6 +57,7 @@ def utilization(request):
     theteam = request.GET.get("team")
     teamselection = group_for_team(theteam) if theteam else MARKET_CHOICES_LIST
     utlztn, dates = ActivityEntry.utilization_last_12_months(teamselection, **kwargs)
+    activity_data = ActivityEntry.activity_volumes_last_12_months(teamselection, activity=request.GET.get("activity"))
     team = MARKET_CHOICES_MAP[request.GET["team"]] \
            if request.GET.get("team") else "All teams"
     return render_to_response(
@@ -66,12 +67,15 @@ def utilization(request):
             "team": team,
             "year": year,
             "months": generate_month_box(id="month"),
+            "months2": generate_month_box(id="activity-month"),
             "selected_month": month,
             "selected_team": request.GET["team"] if request.GET.get("team") else "AD",
             "current": " %s/%s" % (year,month),
             "utlztn": utlztn[datetime(year=year,month=month,day=1)],
             "utlztn_all": utlztn,
-            "dates": [date.strftime("%B") for date in dates]
+            "dates": [date.strftime("%B") for date in dates],
+            "activities": Activity.objects.all(),
+            "activity_data": activity_data,
         },
         RequestContext(request)
     )

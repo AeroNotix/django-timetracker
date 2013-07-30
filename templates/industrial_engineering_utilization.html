@@ -22,8 +22,24 @@
         {{ months|safe }}
     </tr>
   </table>
+  <div id="chart1"></div>
+  <table>
+    <tr>
+      <td>Activity:</td>
+      <td>
+        <select id="activity">
+          {% for activity in activities %}
+          <option value="{{ activity.id }}">{{ activity.groupdetail }}</option>
+          {% endfor %}
+        </select>
+      </td>
+    </tr>
+  </table>
+  <div id="chart2"></div>
 </div>
-<div id="chart1"></div>
+<div id="screen">
+  <img style="display:none" hidden="hidden" id="pic" align="middle" src="{{ STATIC_URL }}images/base/loading.gif" />
+</div>
 <div></div>
 {% endblock content %}
 {% block additional_javascript %}
@@ -72,6 +88,11 @@ $(document).ready(function(){
         {% for key, value in utlztn_all.items %}
             {{ value.avai.target }},
         {% endfor %}
+        ],
+        plotdata_activity = [
+            {% for n in activity_data %}
+            {{ n }},
+            {% endfor %}
         ];
 
     var ticks = [{% for item in dates %}
@@ -81,10 +102,7 @@ $(document).ready(function(){
     var plot1 = $.jqplot('chart1', [plotdata_util, plotdata_effi,
                                     plotdata_avai, plotdata_util_target,
                                     plotdata_effi_target, plotdata_avai_target], {
-        seriesDefaults:{
-            rendererOptions: {fillToZero: true}
-        },
-        series:[
+        series: [
             {label: 'Efficiency',
              renderer:$.jqplot.BarRenderer},
             {label: 'Utilization',
@@ -108,13 +126,37 @@ $(document).ready(function(){
                 ticks: ticks
             },
             yaxis: {
+                max: 100,
+                min: 0,
                 tickOptions: {formatString: '%d%'}
             }
         }
     });
+
+    var plot2 = $.jqplot('chart2', [plotdata_util, plotdata_activity],
+                         {
+                             title: "Efficiency with volumes",
+                             series: [
+                                 {label: "Efficiency",
+                                  renderer: $.jqplot.BarRenderer},
+                                 {label: "Volume"}
+                             ],
+                             legend: {
+                                 show: true,
+                                 placement: 'outsideGrid'
+                             },
+                             axes: {
+                                 xaxis: {
+                                     renderer: $.jqplot.CategoryAxisRenderer,
+                                     ticks: ticks
+                                 },
+                                 yaxis: {
+                                     max: 100,
+                                     min: 0,
+                                     tickOptions: {formatString: '%d%'}
+                                 }
+                             }
+                         });
 });
 </script>
-
-
-
 {% endblock additional_javascript %}
