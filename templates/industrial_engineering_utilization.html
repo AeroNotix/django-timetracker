@@ -57,21 +57,46 @@ $(document).ready(function(){
         {% for key, value in utlztn_all.items %}
             {{ value.avai.percent }},
         {% endfor %}
+        ],
+        plotdata_util_target = [
+        {% for key, value in utlztn_all.items %}
+            {{ value.util.target }},
+        {% endfor %}
+        ],
+        plotdata_effi_target = [
+        {% for key, value in utlztn_all.items %}
+            {{ value.effi.target }},
+        {% endfor %}
+        ],
+        plotdata_avai_target = [
+        {% for key, value in utlztn_all.items %}
+            {{ value.avai.target }},
+        {% endfor %}
         ];
 
     var ticks = [{% for item in dates %}
                  "{{ item }}",
                  {% endfor %}];
 
-    var plot1 = $.jqplot('chart1', [plotdata_util, plotdata_effi, plotdata_avai], {
+    var plot1 = $.jqplot('chart1', [plotdata_util, plotdata_effi,
+                                    plotdata_avai, plotdata_util_target,
+                                    plotdata_effi_target, plotdata_avai_target], {
         seriesDefaults:{
-            renderer:$.jqplot.BarRenderer,
             rendererOptions: {fillToZero: true}
         },
         series:[
-            {label:'Efficiency'},
-            {label:'Utilization'},
-            {label:'Availiability'}
+            {label: 'Efficiency',
+             renderer:$.jqplot.BarRenderer},
+            {label: 'Utilization',
+             renderer:$.jqplot.BarRenderer},
+            {label: 'Availiability',
+             renderer:$.jqplot.BarRenderer},
+            {label: 'Efficiency Target',
+             showMarker: false},
+            {label: 'Utilization Target',
+             showMarker: false},
+            {label: 'Availability Target',
+             showMarker: false}
         ],
         legend: {
             show: true,
