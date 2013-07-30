@@ -126,7 +126,7 @@ class ActivityEntry(models.Model):
         invalidset = defaultdict(list)
         [invalidset[entry.user.id].append(entry.id)
          for entry in TrackingEntry.objects.filter(
-                 daytype__in=["PUABS", "DAYOD"]
+                daytype__in=["PUABS", "DAYOD"]
          ).select_related("user")]
 
         def invalid(entry):
