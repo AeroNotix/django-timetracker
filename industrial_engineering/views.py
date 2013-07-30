@@ -18,15 +18,15 @@ def getmonthyear(request):
     except ValueError:
         raise Http404
     except TypeError:
-        year = None
-        month = None
+        year = datetime.today().year
+        month = datetime.today().month
     return year, month
 
 @permissions(["INENG"])
 def costbuckets(request):
     year, month = getmonthyear(request)
-    kwargs = {"year": year if year else None,
-              "month": month if month else None}
+    kwargs = {"year": year,
+              "month": month}
     if request.GET.get("team"):
         cbb = ActivityEntry.costbucket_count(group_for_team(request.GET["team"]), **kwargs)
     else:
@@ -38,13 +38,12 @@ def costbuckets(request):
         {
             "teams": MARKET_CHOICES,
             "team": team,
-            "year": year if year else datetime.now().year,
+            "year": year,
             "months": generate_month_box(id="month"),
-            "selected_month": month if month else datetime.today().month,
+            "selected_month": month,
             "selected_team": request.GET["team"] if request.GET.get("team") else "AD",
             "costbuckets": cbb,
-            "current": " %s/%s" % (year if year else datetime.today().year,
-                                   month if month else datetime.today().month)
+            "current": " %s/%s" % (year, month)
         },
         RequestContext(request)
     )
