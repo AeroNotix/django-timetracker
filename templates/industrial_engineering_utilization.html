@@ -22,55 +22,15 @@
         {{ months|safe }}
     </tr>
   </table>
-  <table>
-    <thead>
-      <tr>
-        <th>Category</th>
-        <th>Value</th>
-        <th>Target</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>
-          Utilization
-        </td>
-        <td>
-          {{ utlztn.util.percent }}
-        </td>
-        <td>
-          {{ utlztn.util.target }}
-        </td>
-      </tr>
-      <tr>
-        <td>
-          Efficiency
-        </td>
-        <td>
-          {{ utlztn.effi.percent }}
-        </td>
-        <td>
-          {{ utlztn.effi.target }}
-        </td>
-      </tr>
-      <tr>
-        <td>
-          Availability
-        </td>
-        <td>
-          {{ utlztn.avai.percent }}
-        </td>
-        <td>
-          {{ utlztn.avai.target }}
-        </td>
-      </tr>
-  </table>
 </div>
+<div id="chart1"></div>
 <div></div>
 {% endblock content %}
 {% block additional_javascript %}
 <script type="text/javascript" src="{{ STATIC_URL}}jquery/jquery.jqplot.min.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL}}jquery/jqplot.pieRenderer.min.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL}}jquery/jqplot.categoryAxisRenderer.min.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL}}jquery/jqplot.pointLabels.min.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL}}jquery/jqplot.barRenderer.min.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL}}js/indeng.js"></script>
 <script>
 $(function() {
