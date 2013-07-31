@@ -261,6 +261,7 @@ class ActivityEntry(models.Model):
         )
 
     def save(self, *args, **kwargs):
+        self.full_clean()
         cache.delete(
             "activity_volumes:%s%s%s%s" % (''.join(group_for_team(self.user.market)),
                                            self.creation_date.year,
