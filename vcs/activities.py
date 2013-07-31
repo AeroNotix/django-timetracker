@@ -321,6 +321,6 @@ def createuseractivities():
         try:
             activity.save()
         except IntegrityError as e:
-            print e
+            pass
 
 
