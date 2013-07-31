@@ -163,8 +163,7 @@ class ActivityEntry(models.Model):
             month = datetime.today().month
 
         entries, invalid = ActivityEntry.filterforyearmonth(teams, year, month)
-        util = 0
-        effi = 0
+        effi, util = (0, 0)
         losses = TrackingEntry.objects.filter(user__market__in=teams,
                                               daytype=["PUABS", "DAYOD", "HOLIS"],
                                               entry_date__year=year,
