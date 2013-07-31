@@ -7,6 +7,7 @@ from django.core.cache import cache
 
 from timetracker.utils.datemaps import ABSENT_CHOICES, group_for_team
 
+
 COSTBUCKETS = (
     ('PVA', 'Processing Value Add'),
     ('PVE', 'Processing Value Enabling'),
