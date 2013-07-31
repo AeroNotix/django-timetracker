@@ -102,20 +102,6 @@ class ActivityEntry(models.Model):
     def __unicode__(self): # pragma: no cover
         return u'%s - %s - %d' % (self.user, self.activity, self.time())
 
-    def is_invalid(self):
-        # to prevent circular imports
-        from timetracker.tracker.models import TrackingEntry
-
-        try:
-            TrackingEntry.objects.get(
-                user=self.user,
-                entry_date=self.creation_date,
-                daytype__in=["PUABS", "DAYOD"],
-            )
-        except TrackingEntry.DoesNotExist:
-            return False
-        return True
-
     @staticmethod
     def filterforyearmonth(teams, year=None, month=None):
         # to prevent circular imports
