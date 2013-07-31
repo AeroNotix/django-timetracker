@@ -10,7 +10,9 @@
     {% block navelements %}
     {% endblock navelements %}
     {% if logged_in_user.vcsenabled %}
+    {% if logged_in_user.is_admin %}
     <li><a href="{% url 'timetracker.industrial_engineering.views.utilization' %}"><br/>VCS Reports</a></li>
+    {% endif %}
     <li><a href="/vcs/insert"><br/>VCS</a></li>
     {% endif %}
   </div>
