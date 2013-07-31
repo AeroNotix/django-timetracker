@@ -180,10 +180,12 @@ class ActivityEntry(models.Model):
             else:
                 losses += time
             effi += time
+
         available_time = (Tbluser.available_minutes(teams) * len(working_days(year, month)))
         utilization_percent = (100 * (Decimal(util) / Decimal(available_time)))
         efficiency_percent = (100 * (Decimal(util) / (Decimal(available_time) - Decimal(losses))))
         availability_percent = (100 * (Decimal(available_time) - Decimal(losses)) / Decimal(available_time))
+
         res = {
             "util": {
                 "percent": utilization_percent,
