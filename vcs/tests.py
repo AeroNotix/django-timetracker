@@ -74,6 +74,21 @@ class VCSUpdateTestCase(BaseVCS):
         update(self.req)
         self.assertEqual(ActivityEntry.objects.get(id=id).amount, 1)
 
+    def test_update_delete(self):
+        self.req.POST = {
+            "activity_key": str(Activity.objects.all()[0].id),
+            "amount": 100,
+            "date": "2012-01-01",
+        }
+        vcs_add(self.req)
+        self.req.POST = {
+            "id": str(ActivityEntry.objects.all()[0].id),
+            "volume": "0",
+        }
+        entry_id = ActivityEntry.objects.all()[0].id
+        update(self.req)
+        self.assertEqual(ActivityEntry.objects.filter(id=entry_id).count(), 0)
+
     def test_update_fail_no_volume(self):
         self.req.POST = {
             "activity_key": str(Activity.objects.all()[0].id),
