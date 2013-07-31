@@ -218,7 +218,7 @@ def user_view(request, year=None, month=None, day=None):
          'addform': AddForm(),
         },
         RequestContext(request)
-        )
+    )
 
 @csrf_protect
 def ajax(request):

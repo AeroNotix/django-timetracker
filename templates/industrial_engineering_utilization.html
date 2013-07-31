@@ -36,6 +36,8 @@
     </tr>
   </table>
   <div id="chart2"></div>
+  <div id="chart3"></div>
+  <div id="chart4"></div>
 </div>
 <div id="screen">
   <img style="display:none" hidden="hidden" id="pic" align="middle" src="{{ STATIC_URL }}images/base/loading.gif" />
@@ -95,9 +97,18 @@ $(document).ready(function(){
             {% endfor %}
         ];
 
-    var ticks = [{% for item in dates %}
+    var dates = [{% for item in dates %}
                  "{{ item }}",
                  {% endfor %}];
+
+    var FTEs = [{% for key, value in utlztn_all.items %}
+                {{ value.FTE }},
+                {% endfor %}];
+
+    var ticks = [];
+    for (var x = 0; x < dates.length; x++) {
+        ticks.push(dates[x] + " " + FTEs[x] + " HCs");
+    }
 
     var plot1 = $.jqplot('chart1', [plotdata_util, plotdata_effi,
                                     plotdata_avai, plotdata_util_target,
@@ -134,11 +145,57 @@ $(document).ready(function(){
     });
 
     var plot2 = $.jqplot('chart2', [plotdata_util, plotdata_activity], {
-        title: "Efficiency with volumes",
+        title: "Utilization with volumes",
         series: [
             {label: "Efficiency",
              renderer: $.jqplot.BarRenderer},
             {label: "Volume"}
+        ],
+        legend: {
+            show: true,
+            placement: 'outsideGrid'
+        },
+        axes: {
+            xaxis: {
+                renderer: $.jqplot.CategoryAxisRenderer,
+                ticks: ticks
+            },
+            yaxis: {
+                max: 100,
+                min: 0,
+                tickOptions: {formatString: '%d%'}
+            }
+        }
+    });
+
+    var plot3 = $.jqplot('chart3', [plotdata_effi], {
+        title: "Efficiency",
+        series: [
+            {label: "Efficiency",
+             renderer: $.jqplot.BarRenderer}
+        ],
+        legend: {
+            show: true,
+            placement: 'outsideGrid'
+        },
+        axes: {
+            xaxis: {
+                renderer: $.jqplot.CategoryAxisRenderer,
+                ticks: ticks
+            },
+            yaxis: {
+                max: 100,
+                min: 0,
+                tickOptions: {formatString: '%d%'}
+            }
+        }
+    });
+
+    var plot4 = $.jqplot('chart4', [plotdata_avai], {
+        title: "Availability",
+        series: [
+            {label: "Availability",
+             renderer: $.jqplot.BarRenderer}
         ],
         legend: {
             show: true,

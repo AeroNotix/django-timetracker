@@ -151,6 +151,7 @@ class ActivityEntry(models.Model):
 
         entries, invalid = ActivityEntry.filterforyearmonth(teams, year, month)
         effi, util = (0, 0)
+        users = set()
         losses = TrackingEntry.objects.filter(user__market__in=teams,
                                               daytype=["PUABS", "DAYOD", "HOLIS"],
                                               entry_date__year=year,
@@ -167,6 +168,9 @@ class ActivityEntry(models.Model):
             else:
                 losses += time
             effi += time
+
+            # so we can see how many FTE's we had during this month.
+            users.add(entry.user)
 
         available_time = (Tbluser.available_minutes(teams) * len(working_days(year, month)))
         utilization_percent = (100 * (Decimal(util) / Decimal(available_time)))
@@ -185,7 +189,8 @@ class ActivityEntry(models.Model):
             "avai": {
                 "percent": availability_percent,
                 "target": 80
-            }
+            },
+            "FTE": len(users)
         }
         cache.set("utilization:%s%s%s" % (''.join(teams), year, month), res)
         return res
