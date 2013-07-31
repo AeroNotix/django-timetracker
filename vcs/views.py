@@ -73,7 +73,11 @@ def update(request):
     entryid = request.POST.get("id")
     if not volume or not entryid:
         raise Http404
-    entry = ActivityEntry.objects.get(id=entryid)
+    try:
+        entry = ActivityEntry.objects.get(id=entryid)
+    except ActivityEntry.DoesNotExist:
+        return {"success": False}
+
     if int(volume) == 0:
         entry.delete()
     else:
