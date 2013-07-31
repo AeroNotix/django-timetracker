@@ -88,7 +88,7 @@ def index(request):
     if request.session.get("user_id"):
         user = Tbluser.objects.get(id=request.session.get("user_id"))
     if user.sup_tl_or_admin():
-        return HttpResponseRedirect("/overtime/")
+        return HttpResponseRedirect("/overtime/") # pragma: no cover
     if user.is_indeng():
         return HttpResponseRedirect(reverse("timetracker.industrial_engineering.views.costbuckets"))
     return HttpResponseRedirect("/calendar/")
@@ -113,7 +113,7 @@ def login(request):
     """
     user_id = request.POST.get('user_name')
     if not user_id:
-        return HttpResponseRedirect("/")
+        return HttpResponseRedirect("/") # pragma: no cover
     try:
         # pull out the user from the POST and
         # match it against our db
