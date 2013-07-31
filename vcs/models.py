@@ -149,6 +149,11 @@ class ActivityEntry(models.Model):
 
     @staticmethod
     def utilization_calculation(teams, year=None, month=None):
+        if year is None:
+            year = datetime.today().year
+        if month is None:
+            month = datetime.today().month
+
         cached_result = cache.get("utilization:%s%s%s" % (''.join(teams), year, month))
         if cached_result:
             return cached_result
@@ -156,11 +161,6 @@ class ActivityEntry(models.Model):
         # prevent circular imports
         from timetracker.utils.calendar_utils import working_days
         from timetracker.tracker.models import Tbluser, TrackingEntry
-
-        if year is None:
-            year = datetime.today().year
-        if month is None:
-            month = datetime.today().month
 
         entries, invalid = ActivityEntry.filterforyearmonth(teams, year, month)
         effi, util = (0, 0)
@@ -222,17 +222,17 @@ class ActivityEntry(models.Model):
 
     @staticmethod
     def activity_volumes(teams, year=None, month=None, activity=None):
+        if year is None:
+            year = datetime.today().year
+        if month is None:
+            month = datetime.today().month
+
         cached_result = cache.get("activity_volumes:%s%s%s%s" % (''.join(teams), year, month, activity))
         if cached_result:
             return int(cached_result)
 
         if activity is None:
             return 0
-
-        if year is None:
-            year = datetime.today().year
-        if month is None:
-            month = datetime.today().month
 
         res = sum(map(lambda e: e.amount, ActivityEntry.objects.filter(
             user__market__in=teams,
