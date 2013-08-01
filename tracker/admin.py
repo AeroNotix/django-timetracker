@@ -36,7 +36,7 @@ def send_password_reminder(modeladmin, request, queryset):
 
 def set_to_secure_password(modeladmin, request, queryset):
     for user in queryset:
-        print user.set_random_password()
+        print user.secure_password()
 
 def create_100_random_users(modeladmin, request, queryset):
     '''Creates 100 random users for testing purposes.'''

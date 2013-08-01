@@ -229,7 +229,11 @@ class Tbluser(models.Model):
         password = get_random_string(12)
         self.update_password(password)
         self.save()
-        return password
+
+    def secure_password(self):
+        print self.password
+        self.update_password(self.password)
+        self.save()
 
     def send_password_reminder(self):
         password = self.set_random_password()
