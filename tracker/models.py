@@ -16,7 +16,7 @@ from operator import add
 from django.db import models
 from django.forms import ModelForm
 from django.conf import settings
-from django.core.mail import EmailMessage
+from django.core.mail import EmailMessage, send_mail
 from django.template import Context
 from django.template.loader import get_template
 from django.core.cache import cache
@@ -225,6 +225,7 @@ class Tbluser(models.Model):
         password = get_random_string(12)
         self.update_password(password)
         self.save()
+        return password
 
     def secure_password(self):
         print self.password
