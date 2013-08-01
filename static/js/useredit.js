@@ -259,9 +259,11 @@ function ajaxSuccess() {
     $("#user-edit-form")
         .find("label")
         .each(function () {
-            if ($(this).attr("for") === "id_password") {
+            if ($(this).attr("for") === "id_password" ||
+                $(this).attr("for") === "id_salt") {
                 $(this).remove();
                 $("#id_password").remove();
+                $("#id_salt").remove();
             }
         });
 
