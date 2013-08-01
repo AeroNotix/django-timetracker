@@ -282,7 +282,7 @@ def gen_holiday_list(admin_user, year=None, month=None, process=None):
                 user.name(),
                 user.get_holiday_balance(year),
                 user.get_dod_balance(year),
-                user.get_job_code_display() if admin_user.super_or_admin() else ""
+                user.get_job_code_display() if admin_user.can_view_jobcodes() else ""
             )
             to_out(row)
             cache.set("holidaytablerow%s%s" % (user.id, year), row)
