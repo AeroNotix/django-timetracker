@@ -1535,7 +1535,10 @@ def profile_edit(request):
     # get the items from the form and save them onto the
     # user object
     for key, value in form_data.items():
-        setattr(user, key, value)
+        if key == "password":
+            user.update_password(value)
+        else:
+            setattr(user, key, value)
     user.save()
 
     json_data['success'] = True
