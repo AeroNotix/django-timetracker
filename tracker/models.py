@@ -932,7 +932,11 @@ class Tbluser(models.Model):
         return Activity.objects.filter(group__in=activities)
 
     def extra_activities(self):
-        return settings.EXTRA_ACTIVITIES.get(self.user_id)
+        extra1 = settings.EXTRA_ACTIVITIES_BY_PROCESS.get(
+                self.market+self.process
+            )
+        extra2 = settings.EXTRA_ACTIVITIES.get(self.user_id)
+        return (extra1 if extra1 else []) + (extra2 if extra2 else [])
 
     def vcsenabled(self):
         return self.market in settings.VCS_ENABLED
