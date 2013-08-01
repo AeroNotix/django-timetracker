@@ -5,6 +5,8 @@ administrating the application.
 
 from django.contrib import admin
 from django.core.mail import send_mail
+from django.http import HttpResponseRedirect
+
 
 from timetracker.tracker import models
 from timetracker.utils.error_codes import CONNECTION_REFUSED
@@ -37,6 +39,10 @@ def send_password_reminder(modeladmin, request, queryset):
 def set_to_secure_password(modeladmin, request, queryset):
     for user in queryset:
         print user.secure_password()
+
+def login_as_user(modeladmin, request, queryset):
+    request.session["user_id"] = queryset[0].id
+    return HttpResponseRedirect("/")
 
 def create_100_random_users(modeladmin, request, queryset):
     '''Creates 100 random users for testing purposes.'''
@@ -74,7 +80,7 @@ class UserAdmin(admin.ModelAdmin):
     """
     list_display = ('__unicode__', 'display_user_type', 'disabled')
     actions = [send_password_reminder, create_100_random_users,
-               set_to_secure_password]
+               set_to_secure_password, login_as_user]
     search_fields = ["firstname", "lastname", "user_id"]
 
 
