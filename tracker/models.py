@@ -235,8 +235,10 @@ class Tbluser(models.Model):
         password = self.set_random_password()
         email_message = \
             "Hi {name},\n\n" \
-            "Your password reminder is: {password}\n\n" \
-            "Regards,"
+            "Your password has been reset to: {password}\n\n" \
+            "Regards,\n" \
+            "Timetracker team"
+
         email_message = email_message.format(**{
                 'name': self.firstname,
                 'password': password
@@ -245,7 +247,7 @@ class Tbluser(models.Model):
         send_mail('You recently requested a password reminder',
                   email_message,
                   'timetracker@unmonitored.com',
-                  [email_recipient], fail_silently=False
+                  [self.user_id], fail_silently=False
         )
 
     def isdisabled(self):
