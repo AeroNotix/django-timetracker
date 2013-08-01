@@ -1,3 +1,5 @@
+import datetime
+
 from django.http import Http404, HttpResponseRedirect
 from django.test import TestCase
 
@@ -122,3 +124,67 @@ class VCSUpdateTestCase(BaseVCS):
         vcs_add(self.req)
         self.req.POST = {}
         self.assertRaises(Http404, update, self.req)
+
+
+class VCSActivityEntryTestCase(BaseVCS):
+
+    def test_filterforyearmonth(self):
+        td = datetime.timedelta(days=999)
+        ActivityEntry.objects.create(
+            user=self.linked_user,
+            activity=Activity.objects.all()[0],
+            amount=1,
+            creation_date=datetime.datetime.today() + td
+        ).save()
+        ActivityEntry.objects.create(
+            user=self.linked_user,
+            activity=Activity.objects.all()[0],
+            amount=1,
+            creation_date=datetime.datetime.today() + td
+        ).save()
+        ActivityEntry.objects.create(
+            user=self.linked_user,
+            activity=Activity.objects.all()[0],
+            amount=1,
+            creation_date=datetime.datetime.today() + td
+        ).save()
+        ActivityEntry.objects.create(
+            user=self.linked_user,
+            activity=Activity.objects.all()[0],
+            amount=1,
+            creation_date=datetime.datetime.today() + td
+        ).save()
+        entries, _ = ActivityEntry.filterforyearmonth(
+            [self.linked_user.market],
+            year=(datetime.datetime.today() + td).year,
+            month=(datetime.datetime.today() + td).month
+        )
+        self.assertEqual(4, entries.count())
+
+    def test_filternoyearmonth(self):
+        ActivityEntry.objects.create(
+            user=self.linked_user,
+            activity=Activity.objects.all()[0],
+            amount=1,
+            creation_date=datetime.datetime.today()
+        ).save()
+        ActivityEntry.objects.create(
+            user=self.linked_user,
+            activity=Activity.objects.all()[0],
+            amount=1,
+            creation_date=datetime.datetime.today()
+        ).save()
+        ActivityEntry.objects.create(
+            user=self.linked_user,
+            activity=Activity.objects.all()[0],
+            amount=1,
+            creation_date=datetime.datetime.today()
+        ).save()
+        ActivityEntry.objects.create(
+            user=self.linked_user,
+            activity=Activity.objects.all()[0],
+            amount=1,
+            creation_date=datetime.datetime.today()
+        ).save()
+        entries, _ = ActivityEntry.filterforyearmonth([self.linked_user.market])
+        self.assertEqual(4, entries.count())
