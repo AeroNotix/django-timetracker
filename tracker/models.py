@@ -386,7 +386,7 @@ class Tbluser(models.Model):
             out = []
         return final
 
-    def yearview(self, year):
+    def yearview(self, year): # pragma: no cover
         '''Generates the HTML table for the yearview page. It iterates
         through the entire set of tracking entries for a given year.
 
@@ -569,7 +569,7 @@ class Tbluser(models.Model):
         '''
         return self.get_num_daytype_in_year(year, "DAYOD")
 
-    def get_balances(self, year):
+    def get_balances(self, year): # pragma: no cover
         '''
         Get balances will return a dictionary of long daytype names
         against their balances.
@@ -593,7 +593,7 @@ class Tbluser(models.Model):
                                       year=dt.datetime.today().year,
                                       month=dt.datetime.today().month)
 
-    def get_last7days(self):
+    def get_last7days(self): # pragma: no cover
         '''get_last7days returns the users balance for the last seven days.
 
         :param ret: String indicating what return type is required.
@@ -619,13 +619,13 @@ class Tbluser(models.Model):
         return self.get_thismonths_balance(ret=ret) if self.zeroing_hours() \
             else self.get_total_balance(ret=ret)
 
-    def fte(self):
+    def fte(self): # pragma: no cover
         # 8 hours in minutes
         fullfte = 8.0
         return fullfte / self.shiftlength_as_float() # back to hours
 
     def get_total_balance(self, ret='html', year=None, month=None,
-                          from_=None, to_=None):
+                          from_=None, to_=None): # pragma: no cover
         '''Calculates the total balance for the user.
 
         This method iterates through every :class:`TrackingEntry`
@@ -741,7 +741,7 @@ class Tbluser(models.Model):
         (total_hours, total_mins,
          shift_hours, shift_minutes) = (0, 0, 0, 0)
 
-        for item in tracking_days:
+        for item in tracking_days: # pragma: no cover
             if item.is_linked():
                 continue
             shift_hours += self.shiftlength.hour
@@ -831,7 +831,7 @@ class Tbluser(models.Model):
     def get_manager_email(self):
         '''Returns a list of manager's e-mails for this particular user.'''
         overridden = settings.MANAGER_EMAILS_OVERRIDE.get(self.market)
-        if overridden:
+        if overridden: # pragma: no cover
             return overridden
         # list because the SMTP module takes lists of emails when
         # sending e-mails.
@@ -847,7 +847,7 @@ class Tbluser(models.Model):
     def get_manager_name(self):
         '''Gets the name(s) of the managers for this particular user.'''
         overridden = settings.MANAGER_NAMES_OVERRIDE.get(self.market)
-        if overridden:
+        if overridden: # pragma: no cover
             return ',\n'.join(overridden)
         return self.get_administrator().name()
 
@@ -918,7 +918,7 @@ class Tbluser(models.Model):
         '''Returns whether this user can fully close pending approvals.'''
         return self.super_or_admin() or self.user_id in settings.CAN_CLOSE_APPROVALS
 
-    def available_categories(self):
+    def available_categories(self): # pragma: no cover
         return self.available_activities().values('grouptype').distinct()
 
     def available_activities(self):
@@ -928,7 +928,7 @@ class Tbluser(models.Model):
         return self.market in settings.VCS_ENABLED
 
     @staticmethod
-    def available_minutes(teams):
+    def available_minutes(teams): # pragma: no cover
         # 460 for VCS calculations and not 480, we just take the FTE
         # figure and multiply that instead. The differences will be
         # negligable since the calculation percentage will be
@@ -936,7 +936,7 @@ class Tbluser(models.Model):
         return sum(map(lambda user: user.fte() * 460, Tbluser.objects.filter(market__in=teams,disabled=False)))
 
     @staticmethod
-    def manager_emails_for_account(account):
+    def manager_emails_for_account(account): # pragma: no cover
         '''Gets the e-mails for the managers for the whole account.'''
         admins = Tbluser.objects.filter(
             user_type__in=["ADMIN", "TEAML"],
@@ -945,7 +945,7 @@ class Tbluser(models.Model):
         return [admin.user_id for admin in admins]
 
     @staticmethod
-    def administrator_emails_for_account(account):
+    def administrator_emails_for_account(account): # pragma: no cover
         '''Gets the e-mails for the administrators for the whole account.'''
         admins = Tbluser.objects.filter(
             user_type="ADMIN",
@@ -995,7 +995,7 @@ class RelatedUsers(models.Model):
         verbose_name = "Related User"
         verbose_name_plural = "Related Users"
 
-    def __unicode__(self):
+    def __unicode__(self): # pragma: no cover
 
         '''
         Admin view uses this to display the entry
@@ -1094,7 +1094,7 @@ class Tblauthorization(models.Model):
         verbose_name = "Authorization Link"
         verbose_name_plural = "Authorization Links"
 
-    def __unicode__(self):
+    def __unicode__(self): # pragma: no cover
 
         '''
         Admin view uses this to display the entry

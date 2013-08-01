@@ -7,7 +7,7 @@ from timetracker.vcs import models
 from timetracker.tracker.models import Tbluser
 
 
-def add_random_activity_entries(modeladmin, request, queryset):
+def add_random_activity_entries(modeladmin, request, queryset): # pragma: no cover
     users = Tbluser.objects.all()
     if len(users) == 0:
         return

@@ -21,7 +21,7 @@ from timetracker.tracker.forms import TrackingEntryForm
 from timetracker.utils.decorators import admin_check, loggedin
 from timetracker.loggers import suspicious_log, email_log, error_log
 
-def overtimereqs(f):
+def overtimereqs(f): # pragma: no cover
     @wraps(f)
     def inner(request, *args, **kwargs):
         entry = kwargs.get("entry")
@@ -45,7 +45,7 @@ def overtimereqs(f):
 
 @overtimereqs
 @admin_check
-def accept_edit(request, entry=None):
+def accept_edit(request, entry=None): # pragma: no cover
     entry = PendingApproval.objects.get(entry_id=entry, closed=False)
     return render_to_response(
         "accept_edit.html",
@@ -57,7 +57,7 @@ def accept_edit(request, entry=None):
     )
 
 @admin_check
-def accepted(request):
+def accepted(request): # pragma: no cover
     status = request.POST["status"] == "approved"
     pending_id = request.POST.get("pending_id")
     auth_user = Tbluser.objects.get(id=request.session.get("user_id"))
@@ -74,7 +74,7 @@ def accepted(request):
     )
 
 @admin_check
-def approval_list(request):
+def approval_list(request): # pragma: no cover
     auth_user = Tbluser.objects.get(id=request.session.get("user_id"))
     approvals = PendingApproval.objects.filter(closed=False, approver=auth_user.get_administrator())
     return render_to_response(

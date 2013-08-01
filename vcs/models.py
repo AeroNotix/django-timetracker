@@ -106,9 +106,9 @@ class ActivityEntry(models.Model):
     def filterforyearmonth(teams, year=None, month=None):
         # to prevent circular imports
         from timetracker.tracker.models import TrackingEntry
-        if year is None:
+        if year is None: # pragma: no cover
             year = datetime.today().year
-        if month is None:
+        if month is None: # pragma: no cover
             month = datetime.today().month
 
         invalidset = defaultdict(list)
@@ -136,13 +136,13 @@ class ActivityEntry(models.Model):
 
     @staticmethod
     def utilization_calculation(teams, year=None, month=None):
-        if year is None:
+        if year is None: # pragma: no cover
             year = datetime.today().year
-        if month is None:
+        if month is None: # pragma: no cover
             month = datetime.today().month
 
         cached_result = cache.get("utilization:%s%s%s" % (''.join(teams), year, month))
-        if cached_result:
+        if cached_result: # pragma: no cover
             return cached_result
 
         # prevent circular imports
@@ -199,9 +199,9 @@ class ActivityEntry(models.Model):
     def utilization_last_12_months(teams, year=None, month=None):
         from timetracker.utils.calendar_utils import last12months
 
-        if year is None:
+        if year is None: # pragma: no cover
             year = datetime.today().year
-        if month is None:
+        if month is None: # pragma: no cover
             month = datetime.today().month
 
         dates = last12months(year, month)
@@ -214,9 +214,9 @@ class ActivityEntry(models.Model):
 
     @staticmethod
     def activity_volumes(teams, year=None, month=None, activity=None):
-        if year is None:
+        if year is None: # pragma: no cover
             year = datetime.today().year
-        if month is None:
+        if month is None: # pragma: no cover
             month = datetime.today().month
 
         cached_result = cache.get("activity_volumes:%s%s%s%s" % (''.join(teams), year, month, activity))
@@ -241,9 +241,9 @@ class ActivityEntry(models.Model):
         if activity is None:
             return [0 for _ in range(12)]
 
-        if year is None:
+        if year is None: # pragma: no cover
             year = datetime.today().year
-        if month is None:
+        if month is None: # pragma: no cover
             month = datetime.today().month
 
         dates = last12months(year, month)
