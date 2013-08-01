@@ -51,7 +51,7 @@ def create_100_random_users(modeladmin, request, queryset):
 
     for x in range(100):
         randstr = ''.join(chr(random.choice(range(65,91))) for x in range(5))
-        models.Tbluser.objects.create(
+        user = models.Tbluser.objects.create(
             user_id="%s@test.com" %  randstr,
             firstname=randstr,
             lastname=randstr,
@@ -65,6 +65,7 @@ def create_100_random_users(modeladmin, request, queryset):
             job_code="00F20G",
             holiday_balance=20
             )
+        user.secure_password()
 
 
 class UserAdmin(admin.ModelAdmin):
