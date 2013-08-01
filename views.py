@@ -66,7 +66,7 @@ def user_context_manager(request):
         "approval_notifications": user.approval_notifications()
         }
 
-def index(request):
+def index(request): # pragma: no cover
 
     """This function serves the base login page. This view detects if the
     user is logged in. If so, redirects, else, serves them the login
@@ -89,7 +89,7 @@ def index(request):
     if request.session.get("user_id"):
         user = Tbluser.objects.get(id=request.session.get("user_id"))
     if user.sup_tl_or_admin():
-        return HttpResponseRedirect("/overtime/") # pragma: no cover
+        return HttpResponseRedirect("/overtime/")
     if user.is_indeng():
         return HttpResponseRedirect(reverse("timetracker.industrial_engineering.views.costbuckets"))
     return HttpResponseRedirect("/calendar/")
@@ -120,7 +120,7 @@ def login(request):
         # match it against our db
         user = Tbluser.objects.get(user_id=user_id)
     # if the user doesn't match anything, notify
-    except Tbluser.DoesNotExist:
+    except Tbluser.DoesNotExist: # pragma: no cover
         return render_to_response(
             "fail.html",
             {
@@ -162,8 +162,7 @@ def login(request):
             },
             RequestContext(request))
 
-
-def logout(request):
+def logout(request): # pragma: no cover
 
     """Simple logout function
 
@@ -183,7 +182,7 @@ def logout(request):
     return HttpResponseRedirect("/")
 
 @loggedin
-def user_view(request, year=None, month=None, day=None):
+def user_view(request, year=None, month=None, day=None):  # pragma: no cover
     """Generates a calendar based on the URL it receives.  For example:
     domain.com/calendar/{year}/{month}/{day}, also takes a day just in
     case you want to add a particular view for a day, for
@@ -279,7 +278,7 @@ def ajax(request):
         form_type = request.GET.get('form_type', None)
 
     #if there isn't one, we'll send an error back
-    if not form_type:
+    if not form_type: # pragma: no cover
         return ajax_error("Missing Form")
 
     # this could be mutated with a @register_ajax
@@ -309,7 +308,7 @@ def ajax(request):
         raise
 
 @admin_check
-def view_with_employee_list(request, template=None, get_all=False):
+def view_with_employee_list(request, template=None, get_all=False): # pragma: no cover
     '''Some pages are generic HTML pages with only a select amount of
     differences on them. We use this to generate the employee select
     box and assign the regularly used template variables for these
