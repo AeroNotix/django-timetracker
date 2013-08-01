@@ -54,7 +54,7 @@ Add/Change your team - Timetracker
 </div>
 
 
-{% if is_team_leader %}
+{% if not can_view_jobcodes %}
    <div id="is_team_leader" hidden="hidden" value="true"></div>
 {% endif %}
 {% endblock %}

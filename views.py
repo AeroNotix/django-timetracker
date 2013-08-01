@@ -59,6 +59,7 @@ def user_context_manager(request):
         "welcome_name": user.firstname,
         "is_admin": user.super_or_admin(),
         "is_team_leader": user.is_tl(),
+        "can_view_jobcodes": user.can_view_jobcodes(),
         "is_super": user.is_super(),
         "balance": user.get_normalized_balance(),
         "doculink": settings.DOCUMENTATION_BASE_URL,

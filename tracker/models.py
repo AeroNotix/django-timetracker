@@ -918,6 +918,9 @@ class Tbluser(models.Model):
         '''Returns whether this user can fully close pending approvals.'''
         return self.super_or_admin() or self.user_id in settings.CAN_CLOSE_APPROVALS
 
+    def can_view_jobcodes(self):
+        return self.user_id in settings.CAN_VIEW_JOBCODES or self.super_or_admin()
+
     def available_categories(self): # pragma: no cover
         return self.available_activities().values('grouptype').distinct()
 
