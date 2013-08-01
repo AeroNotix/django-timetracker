@@ -55,7 +55,6 @@ from timetracker.utils.datemaps import (MONTH_MAP, WEEK_MAP_SHORT,
                                         round_down)
 from timetracker.utils.decorators import (admin_check, json_response,
                                           request_check)
-
 from timetracker.utils.error_codes import CONNECTION_REFUSED
 from timetracker.utils.crypto import get_random_string
 
