@@ -214,8 +214,6 @@ class Tbluser(models.Model):
 
         This method will hash the string for you so you can pass in the
         raw string to check our password against.'''
-        print hasher(self.salt + string)
-        print self.password
         return hasher(self.salt + string) == self.password
 
     def update_password(self, string):
