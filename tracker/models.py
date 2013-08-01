@@ -228,7 +228,6 @@ class Tbluser(models.Model):
         return password
 
     def secure_password(self):
-        print self.password
         self.update_password(self.password)
         self.save()
 
