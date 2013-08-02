@@ -56,7 +56,7 @@ def entries(request): # pragma: no cover
     date = request.GET.get("date")
     if not date:
         raise Http404
-    entries = ActivityEntry.objects.filter(creation_date=date)
+    entries = ActivityEntry.objects.filter(user=user, creation_date=date)
     if not len(entries):
         raise Http404
     return {"entries": map(serialize_activityentry, entries)}
