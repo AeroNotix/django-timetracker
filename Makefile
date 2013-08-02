@@ -7,3 +7,6 @@ install:
 
 doc:
 	cd docs && make -f ./Makefile html
+
+test:
+	python2 manage.py test
