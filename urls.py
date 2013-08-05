@@ -5,16 +5,30 @@ Module that maps incoming URL requests to functions which return responses
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 
+from tastypie.api import Api
+
 from timetracker import views
 from timetracker.tracker.models import Tbluser
+from timetracker.tracker.api import (TbluserResource, resources,
+                                     TrackingEntryResource)
+from timetracker.vcs.api import ActivityEntryResource
 from timetracker.utils.datemaps import gen_process_list
 
 admin.autodiscover()
+
+api = Api(api_name='v1')
+for resource in resources:
+    api.register(resource())
+
+api.register(TbluserResource())
+api.register(TrackingEntryResource())
+api.register(ActivityEntryResource())
 
 YEAR = '(?P<year>\d{4})'
 MONTH = '(?P<month>\d{1,2})'
 DAY = '(?P<day>\d{1,2})'
 PROCESS = '/?(?P<process>%s)?'
+
 
 PROCESS = PROCESS % gen_process_list()
 
@@ -66,4 +80,6 @@ urlpatterns = patterns('',
     (r'^ot/', include('timetracker.overtime.urls')),
     (r'^vcs/', include('timetracker.vcs.urls')),
     (r'^indeng/', include('timetracker.industrial_engineering.urls')),
+
+    (r'^api/', include(api.urls)),
 )
