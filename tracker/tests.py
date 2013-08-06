@@ -21,7 +21,7 @@ from django.http import HttpResponse, Http404
 from django.conf import settings
 from django.test.utils import override_settings
 
-from timetracker.views import user_view
+from timetracker.views import user_view, forgot_pass
 from timetracker.tracker.models import (Tbluser,
                                         TrackingEntry,
                                         Tblauthorization)
@@ -83,8 +83,8 @@ class BaseUserTest(TestCase):
             self.linked_user.id: list(),
             }
         for day in range(1, 32):
-            holidays[self.linked_manager.id].append(random.choice(ABSENT_CHOICES)[0])
-            holidays[self.linked_user.id].append(random.choice(ABSENT_CHOICES)[0])
+            holidays[self.linked_manager.id].append(random.choice(ABSENT_CHOICES + (("ROVER",),("ROVER",),("ROVER",)))[0])
+            holidays[self.linked_user.id].append(random.choice(ABSENT_CHOICES + (("ROVER",),("ROVER",),("ROVER",)))[0])
             holidays_empty[self.linked_manager.id].append("empty")
             holidays_empty[self.linked_user.id].append("empty")
         self.holiday_data = simplejson.dumps(holidays)
@@ -840,6 +840,19 @@ class AjaxTestCase(BaseUserTest):
         TrackingEntry.objects.get(entry_date="2012-01-02").unlink()
         self.assertEquals(len(TrackingEntry.objects.filter(entry_date="2012-01-04", daytype="LINKD")), 0)
 
+    def testAjaxAddEntryDateError(self):
+        self.linked_user_request.POST = {
+            'link': '2012-01-04',
+            'entry_date': '2012-01-02',
+            'start_time': 'th:is',
+            'end_time': 'su:ck',
+            'daytype': 'WKDAY',
+            'breaks': '00:15:00',
+            'hidden-id': self.linked_user.id
+        }
+        ret = simplejson.loads(ajax_add_entry(self.linked_user_request).content)
+        self.assertEqual(ret["error"], "Date Error")
+
     def testAjax404(self):
         class Req:
             session = {}
@@ -1154,3 +1167,35 @@ class EmailTest(BaseUserTest):
         users = Tbluser.objects.all()
         send_password_reminder(None, None, users)
         self.assertEquals(len(users), len(mail.outbox))
+
+    def test_send_password_reminder_frontend(self):
+        class C:
+            POST = {"email_input": self.linked_user.user_id}
+            session = {}
+            META = {}
+        forgot_pass(C())
+        self.assertEqual(1, len(mail.outbox))
+
+    def test_send_password_reminder_frontend_id(self):
+        class C:
+            POST = {"email_input": self.linked_user.id}
+            session = {}
+            META = {}
+        forgot_pass(C())
+        self.assertEqual(1, len(mail.outbox))
+
+    def test_send_password_reminder_frontend_no_data(self):
+        class C:
+            POST = {}
+            session = {}
+            META = {}
+        forgot_pass(C())
+        self.assertEqual(0, len(mail.outbox))
+
+    def test_send_password_reminder_frontend_no_user(self):
+        class C:
+            POST = {"email_input": "no_one@home.com"}
+            session = {}
+            META = {}
+        forgot_pass(C())
+        self.assertEqual(0, len(mail.outbox))

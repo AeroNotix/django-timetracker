@@ -388,7 +388,7 @@ def view_with_holiday_list(request,
         RequestContext(request))
 
 @admin_check
-def yearview(request, who=None, year=None):
+def yearview(request, who=None, year=None): # pragma: no cover
     '''Yearview generates the 'year at a glance' for both Administrators
     and regular users.
 
@@ -484,7 +484,7 @@ def edit_profile(request):
 
 
 @loggedin
-def explain(request):
+def explain(request): # pragma: no cover
     """Renders the Balance explanation page.
 
     This page renders a simple template to show the users how their

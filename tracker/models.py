@@ -759,7 +759,7 @@ class Tbluser(models.Model):
                 - item.breaks.minute
                 )
 
-        for item in return_days:
+        for item in return_days: # pragma: no cover
             shift_hours += self.shiftlength.hour + self.breaklength.hour
             shift_minutes += self.shiftlength.minute + self.breaklength.minute
 
@@ -924,14 +924,14 @@ class Tbluser(models.Model):
     def available_categories(self): # pragma: no cover
         return self.available_activities().values('grouptype').distinct()
 
-    def available_activities(self):
+    def available_activities(self): # pragma: no cover
         activities = [self.market+self.process, "ALL"]
         extra = self.extra_activities()
         if extra:
             activities.extend(extra)
         return Activity.objects.filter(group__in=activities)
 
-    def extra_activities(self):
+    def extra_activities(self): # pragma: no cover
         extra1 = settings.EXTRA_ACTIVITIES_BY_PROCESS.get(
                 self.market+self.process
             )
