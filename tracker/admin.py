@@ -24,18 +24,6 @@ def send_password_reminder(modeladmin, request, queryset):
     for user in queryset:
         user.send_password_reminder()
 
-        info = {
-            'name': user.firstname,
-            'password': user.password
-        }
-
-        send_mail(
-            "Password Reminder",
-            email_message.format(**info),
-            "timetracker@unmonitored.com",
-            [user.user_id]
-        )
-
 def set_to_secure_password(modeladmin, request, queryset):
     for user in queryset:
         print user.secure_password()
