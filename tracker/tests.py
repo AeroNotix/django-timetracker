@@ -1054,7 +1054,7 @@ class FrontEndTest(LiveServerTestCase):
         '''Helper method to log in a specific user.'''
         self.driver.get(self.live_server_url)
         self.driver.find_element_by_id("login-user").send_keys(who.user_id)
-        self.driver.find_element_by_id("login-password").send_keys(who.password)
+        self.driver.find_element_by_id("login-password").send_keys("password")
         self.driver.find_element_by_id("add_button").click()
 
     def user_login(self):

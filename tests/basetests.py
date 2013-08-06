@@ -11,6 +11,7 @@ def create_users(cls):
         firstname="test",
         lastname="case",
         password="password",
+        salt="nothing",
         user_type="SUPER",
         market="BG",
         process="AP",
@@ -27,6 +28,7 @@ def create_users(cls):
         firstname="test",
         lastname="case",
         password="password",
+        salt="nothing",
         user_type="ADMIN",
         market="BG",
         process="AP",
@@ -42,6 +44,7 @@ def create_users(cls):
         firstname="test",
         lastname="case",
         password="password",
+        salt="nothing",
         user_type="RUSER",
         market="BG",
         process="AP",
@@ -58,6 +61,7 @@ def create_users(cls):
             firstname="test",
             lastname="case",
             password="password",
+            salt="nothing",
             user_type="RUSER",
             market="BG",
             process="AP",
@@ -74,6 +78,7 @@ def create_users(cls):
             firstname="test",
             lastname="case",
             password="password",
+            salt="nothing",
             user_type="RUSER",
             market="BG",
             process="AO",
@@ -90,6 +95,7 @@ def create_users(cls):
         firstname="test",
         lastname="case",
         password="password",
+        salt="nothing",
         user_type="TEAML",
         market="BG",
         process="AP",
@@ -116,6 +122,7 @@ def create_users(cls):
         firstname="test",
         lastname="case",
         password="password",
+        salt="nothing",
         user_type="SUPER",
         market="BG",
         process="AP",
@@ -131,6 +138,7 @@ def create_users(cls):
         firstname="test",
         lastname="case",
         password="password",
+        salt="nothing",
         user_type="ADMIN",
         market="BG",
         process="AP",
@@ -146,6 +154,7 @@ def create_users(cls):
         firstname="test",
         lastname="case",
         password="password",
+        salt="nothing",
         user_type="RUSER",
         market="BG",
         process="AP",
@@ -161,6 +170,7 @@ def create_users(cls):
         firstname="test",
         lastname="case",
         password="password",
+        salt="nothing",
         user_type="TEAML",
         market="BG",
         process="AP",
@@ -170,7 +180,9 @@ def create_users(cls):
         job_code="00F20G",
         holiday_balance=20
         )
-    
+    for user in Tbluser.objects.all():
+        user.update_password(user.password)
+        user.save()
     # Do a full clean on all items that we can do one on.
     for attr in dir(cls):
         try:
