@@ -277,7 +277,7 @@ class Tbluser(models.Model):
         send_mail('You recently requested a password reminder',
                   email_message,
                   'timetracker@unmonitored.com',
-                  [email_recipient], fail_silently=False
+                  [self.user_id], fail_silently=False
         )
 
     def isdisabled(self):
