@@ -1046,6 +1046,7 @@ def get_user_data(request):
             )
     except Tbluser.DoesNotExist:
         json_data['error'] = "User does not exist"
+        return json_data
 
     if user:
         json_data = {
