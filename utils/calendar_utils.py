@@ -1048,24 +1048,21 @@ def get_user_data(request):
         json_data['error'] = "User does not exist"
         return json_data
 
-    if user:
-        json_data = {
-            'success': True,
-            'username': user.user_id,
-            'firstname': user.firstname,
-            'lastname': user.lastname,
-            'market': user.market,
-            'process': user.process,
-            'user_type': user.user_type,
-            'start_date': str(user.start_date),
-            'breaklength': str(user.breaklength),
-            'shiftlength': str(user.shiftlength),
-            'job_code': user.job_code,
-            'holiday_balance': user.holiday_balance,
-            'disabled': user.disabled
-        }
-        json_data['success'] = True
-
+    json_data = {
+        'success': True,
+        'username': user.user_id,
+        'firstname': user.firstname,
+        'lastname': user.lastname,
+        'market': user.market,
+        'process': user.process,
+        'user_type': user.user_type,
+        'start_date': str(user.start_date),
+        'breaklength': str(user.breaklength),
+        'shiftlength': str(user.shiftlength),
+        'job_code': user.job_code,
+        'holiday_balance': user.holiday_balance,
+        'disabled': user.disabled
+    }
     return json_data
 
 
