@@ -548,8 +548,20 @@ def forgot_pass(request):
 
     # We accept either the ID of the user or just the e-mail address
     try:
-        user = Tbluser.objects.get(id=email_recipient)
-    except ValueError:
-        user = Tbluser.objects.get(user_id=email_recipient)
+        try:
+            user = Tbluser.objects.get(id=email_recipient)
+        except ValueError:
+            user = Tbluser.objects.get(user_id=email_recipient)
+    except Tbluser.DoesNotExist:
+        return render_to_response(
+            "fail.html",
+            {
+                "fail": "Login failure",
+                "reason":"Non existent user.",
+                "helpfultext":"If you expect your account to be " + \
+                "active please contact your manager " + \
+                "or a site administrator."
+            },
+            RequestContext(request))
     password_reminder(user)
     return HttpResponseRedirect("/")
