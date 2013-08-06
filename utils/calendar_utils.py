@@ -687,14 +687,18 @@ def ajax_add_entry(request):
     if form['link'] == '':
         form.pop('link')
     else:
-        form['link'], _ = TrackingEntry.objects.get_or_create(
-            user_id=form['user_id'],
-            entry_date=form['link'],
-            start_time="00:00:00",
-            end_time="00:00:00",
-            breaks="00:00:00",
-            daytype="LINKD",
-        )
+        try:
+            form['link'], _ = TrackingEntry.objects.get_or_create(
+                user_id=form['user_id'],
+                entry_date=form['link'],
+                start_time="00:00:00",
+                end_time="00:00:00",
+                breaks="00:00:00",
+                daytype="LINKD",
+            )
+        except IntegrityError:
+            json_data = ["Duplicate entry"]
+            return json_data
         
 
     # create objects to put our data into
