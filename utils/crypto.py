@@ -7,7 +7,7 @@ from django.conf import settings
 
 def hasher(string):
     '''Helper method to hash a string to SHA512'''
-    h = hashlib.sha512(settings.SECRET_KEY + string).hexdigest()
+    h = hashlib.sha512(settings.SECRET_KEY + string.encode("utf-8")).hexdigest()
     for _ in range(settings.HASH_PASSES):
         h = hashlib.sha512(h).hexdigest()
     return h
