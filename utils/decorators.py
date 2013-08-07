@@ -60,7 +60,7 @@ def permissions(permission):
         @wraps(func)
         def inner(request, **kwargs):
             '''implementation'''
-            if settings.DEBUG:
+            if settings.DEBUG: # pragma: no cover
                 return func(request, **kwargs)
             try:
                 user = Tbluser.objects.get(

@@ -1187,12 +1187,29 @@ class FrontEndTest(LiveServerTestCase):
 class FrontEndTestInMemory(BaseUserTest):
     def setUp(self):
         self.client = Client()
+        self.indeng = Tbluser.objects.create(
+            user_id="indeng@test.com",
+            firstname="test",
+            lastname="case",
+            password="password",
+            salt="nothing",
+            user_type="INENG",
+            market="BG",
+            process="AP",
+            start_date=datetime.datetime.today(),
+            breaklength="00:15:00",
+            shiftlength="07:45:00",
+            job_code="00F20G",
+            holiday_balance=20
+        )
+        self.indeng.update_password("password")
+        self.indeng.save()
         super(FrontEndTestInMemory, self).setUp()
 
-    def redirect(self, endpoint, user):
+    def redirect(self, endpoint, user, code=302):
         login_user(self, user)
         response = self.client.get("/")
-        self.assertEquals(response.status_code, 302)
+        self.assertEquals(response.status_code, code)
         self.assertEquals(endpoint in response._headers["location"][1], True)
 
     def test_login_redirect_user(self):
@@ -1206,6 +1223,9 @@ class FrontEndTestInMemory(BaseUserTest):
 
     def test_login_redirect_super(self):
         self.redirect("overtime", self.linked_super_user)
+
+    def test_login_redirect_indeng(self):
+        login_user(self, self.indeng)
 
     def test_logout(self):
         login_user(self, self.linked_user)
@@ -1227,10 +1247,35 @@ class FrontEndTestInMemory(BaseUserTest):
         response = self.client.get("/explain/")
         self.assertEquals(response.status_code, 200)
 
-    def test_yearview(self):
+    def test_yearview_no_subs(self):
         login_user(self, self.linked_manager)
         response = self.client.get("/yearview/")
+        self.assertEquals(response.status_code, 302)
+
+    def test_yearview(self):
+        login_user(self, self.linked_manager)
+        response = self.client.post("/ajax/", {
+            'form_type': "useredit",
+            'user_id': "aaron.france@whatever.com",
+            'firstname': "Aaron",
+            'lastname': "France",
+            'user_type': "RUSER",
+            'market': "BK",
+            'process': "AR",
+            'start_date': "2012-01-01",
+            'breaklength': "00:15:00",
+            'shiftlength': "07:45:00",
+            'job_code': "ABC123",
+            'holiday_balance': 20,
+            'disabled': "false",
+            'mode': "false"
+        },
+        # So it's is_ajax==True
+        HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEquals(response.status_code, 200)
+        self.assertEquals(Tbluser.objects.filter(user_id="aaron.france@whatever.com").count(), 1)
+        response = self.client.get("/yearview/")
+        self.assertEquals(response.status_code, 302)
 
 class MiddlewareTest(TestCase):
     '''Tests the MiddleWare.'''

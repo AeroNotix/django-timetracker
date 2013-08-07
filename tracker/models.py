@@ -866,7 +866,7 @@ class Tbluser(models.Model):
                          + self.breaklength.minute) / 60.0
         return shift_hours + shift_minutes
 
-    def send_pending_overtime_notification(self, send=False):
+    def send_pending_overtime_notification(self, send=False): # pragma: no cover
         '''Determines whether an overtime notification is required and sends
         it.
 
@@ -920,7 +920,7 @@ class Tbluser(models.Model):
         '''Returns a list of Team Leader's e-mails for this particular user.'''
         try:
             return settings.TL_APPROVAL_CHAINS[self.market][self.process]
-        except KeyError:
+        except KeyError: # pragma: no cover
             return []
 
     def get_manager_name(self):
@@ -1047,7 +1047,7 @@ class Tbluser(models.Model):
         return [admin.user_id for admin in admins]
 
     @staticmethod
-    def all_emails_for_account(account):
+    def all_emails_for_account(account): # pragma: no cover
         '''Gets all e-mails for the whole account.'''
         users = Tbluser.objects.filter(
             market=account
