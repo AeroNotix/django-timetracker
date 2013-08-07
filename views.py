@@ -65,7 +65,7 @@ def user_context_manager(request):
         "approval_notifications": user.approval_notifications()
         }
 
-def index(request): # pragma: no cover
+def index(request):
 
     """This function serves the base login page. This view detects if the
     user is logged in. If so, redirects, else, serves them the login
@@ -161,7 +161,7 @@ def login(request):
             },
             RequestContext(request))
 
-def logout(request): # pragma: no cover
+def logout(request):
 
     """Simple logout function
 
@@ -181,7 +181,7 @@ def logout(request): # pragma: no cover
     return HttpResponseRedirect("/")
 
 @loggedin
-def user_view(request, year=None, month=None, day=None):  # pragma: no cover
+def user_view(request, year=None, month=None, day=None):
     """Generates a calendar based on the URL it receives.  For example:
     domain.com/calendar/{year}/{month}/{day}, also takes a day just in
     case you want to add a particular view for a day, for
@@ -484,7 +484,7 @@ def edit_profile(request):
 
 
 @loggedin
-def explain(request): # pragma: no cover
+def explain(request):
     """Renders the Balance explanation page.
 
     This page renders a simple template to show the users how their
