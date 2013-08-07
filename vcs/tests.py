@@ -1,7 +1,10 @@
 import datetime
+from decimal import Decimal
 
 from django.http import Http404, HttpResponseRedirect
 from django.test import TestCase
+
+from timetracker.utils.datemaps import MARKET_CHOICES_LIST
 
 from timetracker.tests.basetests import create_users, delete_users
 from timetracker.vcs.models import Activity, ActivityEntry
@@ -188,3 +191,72 @@ class VCSActivityEntryTestCase(BaseVCS):
         ).save()
         entries, _ = ActivityEntry.filterforyearmonth([self.linked_user.market])
         self.assertEqual(4, entries.count())
+
+    def test_costbucket_count(self):
+        ActivityEntry.objects.create(
+            user=self.linked_user,
+            activity=Activity.objects.all()[0],
+            amount=1,
+            creation_date=datetime.datetime.today()
+        ).save()
+        ActivityEntry.objects.create(
+            user=self.linked_user,
+            activity=Activity.objects.all()[0],
+            amount=1,
+            creation_date=datetime.datetime.today()
+        ).save()
+        ActivityEntry.objects.create(
+            user=self.linked_user,
+            activity=Activity.objects.all()[0],
+            amount=1,
+            creation_date=datetime.datetime.today()
+        ).save()
+        ActivityEntry.objects.create(
+            user=self.linked_user,
+            activity=Activity.objects.all()[0],
+            amount=1,
+            creation_date=datetime.datetime.today()
+        ).save()
+        self.assertEquals(ActivityEntry.costbucket_count(MARKET_CHOICES_LIST)[''], 4)
+
+    def test_utilization(self):
+        ActivityEntry.objects.create(
+            user=self.linked_user,
+            activity=Activity.objects.all()[0],
+            amount=1,
+            creation_date=datetime.datetime.today()
+        ).save()
+        ActivityEntry.objects.create(
+            user=self.linked_user,
+            activity=Activity.objects.all()[0],
+            amount=1,
+            creation_date=datetime.datetime.today()
+        ).save()
+        ActivityEntry.objects.create(
+            user=self.linked_user,
+            activity=Activity.objects.all()[0],
+            amount=1,
+            creation_date=datetime.datetime.today()
+        ).save()
+        ActivityEntry.objects.create(
+            user=self.linked_user,
+            activity=Activity.objects.all()[0],
+            amount=1,
+            creation_date=datetime.datetime.today()
+        ).save()
+        self.assertEquals(ActivityEntry.utilization_calculation(MARKET_CHOICES_LIST),
+                          {
+                              'util': {
+                                  'percent': Decimal('0.005553525758129338691998538546'),
+                                  'target': 65
+                              },
+                              'effi': {
+                                  'percent': Decimal('0.005553525758129338691998538546'),
+                                  'target': 85
+                              },
+                              'avai': {
+                                  'percent': Decimal('100'),
+                                  'target': 80
+                              },
+                              'FTE': 1
+                          })

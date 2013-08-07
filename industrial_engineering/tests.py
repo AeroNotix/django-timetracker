@@ -79,6 +79,9 @@ class TestQueryOptions(BaseIndustrialEngineeringTestCase):
     def test_yearmonth_cbb(self):
         cbt(self, self.indeng, 200, params={"year": "2012", "month": "7"})
 
+    def test_yearmonth_with_invalid_team_cbt(self):
+        cbt(self, self.indeng, 404, params={"year": "2012", "month": "7", "team": "banana"})
+
     def test_yearmonth_utt(self):
         utt(self, self.indeng, 200, params={"year": "2012", "month": "7"})
 
@@ -91,5 +94,5 @@ class TestQueryOptions(BaseIndustrialEngineeringTestCase):
     def test_utt_with_team(self):
         utt(self, self.indeng, 200, params={"year": "2012", "month": "7", "team": "CZ"})
 
-    def test_yearmonth_with_invalid_team(self):
+    def test_yearmonth_with_invalid_team_utt(self):
         utt(self, self.indeng, 404, params={"year": "2012", "month": "7", "team": "banana"})

@@ -545,7 +545,7 @@ class Tbluser(models.Model):
         entries = TrackingEntry.objects.filter(user_id=self.id,
                                                entry_date__year=year)
         basehtml = self.year_as_whole(year)
-        for entry in entries:
+        for entry in entries: # pragma: no cover
             basehtml[entry.entry_date.month-1][entry.entry_date.day] = \
                 basehtml[entry.entry_date.month-1][entry.entry_date.day].format(
                 c=entry.overtime_class(),

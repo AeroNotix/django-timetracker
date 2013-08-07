@@ -697,7 +697,7 @@ def ajax_add_entry(request):
                 breaks="00:00:00",
                 daytype="LINKD",
             )
-        except IntegrityError:
+        except IntegrityError: # pragma: no cover
             json_data = ["Duplicate entry"]
             return json_data
         

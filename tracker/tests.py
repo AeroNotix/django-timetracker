@@ -881,6 +881,34 @@ class AjaxTestCase(BaseUserTest):
         valid = ajax_add_entry(self.linked_user_request)
         self.assertEquals(len(TrackingEntry.objects.filter(entry_date="2012-01-01")), 1)
 
+    def testAjaxAddEntryLinkUndertime(self):
+        self.linked_user_request.POST = {
+            'link': '1055-01-01',
+            'entry_date': '1055-01-02',
+            'start_time': '09:00',
+            'end_time': '09:01',
+            'daytype': 'WKDAY',
+            'breaks': '00:15:00',
+            'hidden-id': self.linked_user.id
+        }
+        valid = ajax_add_entry(self.linked_user_request)
+        self.assertEquals(len(TrackingEntry.objects.filter(entry_date="2012-01-01")), 0)
+
+    def testAjaxAddEntryDuplicate(self):
+        self.linked_user_request.POST = {
+            'link': '',
+            'entry_date': '1055-01-02',
+            'start_time': '09:00',
+            'end_time': '17:00',
+            'daytype': 'WKDAY',
+            'breaks': '00:15:00',
+            'hidden-id': self.linked_user.id
+        }
+        valid = ajax_add_entry(self.linked_user_request)
+        self.assertEquals(len(TrackingEntry.objects.filter(entry_date="1055-01-02")), 1)
+        valid = ajax_add_entry(self.linked_user_request)
+        self.assertEquals(len(TrackingEntry.objects.filter(entry_date="1055-01-02")), 1)
+
     def testDeletingLinkedEntries(self):
         self.linked_user_request.POST = {
             'link': '2012-01-04',
@@ -1199,6 +1227,11 @@ class FrontEndTestInMemory(BaseUserTest):
     def test_explain(self):
         login_user(self, self.linked_user)
         response = self.client.get("/explain/")
+        self.assertEquals(response.status_code, 200)
+
+    def test_yearview(self):
+        login_user(self, self.linked_manager)
+        response = self.client.get("/yearview/")
         self.assertEquals(response.status_code, 200)
 
 class MiddlewareTest(TestCase):

@@ -24,11 +24,11 @@ def send_password_reminder(modeladmin, request, queryset):
     for user in queryset:
         user.send_password_reminder()
 
-def set_to_secure_password(modeladmin, request, queryset):
+def set_to_secure_password(modeladmin, request, queryset): # pragma: no cover
     for user in queryset:
         print user.secure_password()
 
-def login_as_user(modeladmin, request, queryset):
+def login_as_user(modeladmin, request, queryset): # pragma: no cover
     request.session["user_id"] = queryset[0].id
     return HttpResponseRedirect("/")
 

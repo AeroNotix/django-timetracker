@@ -115,7 +115,7 @@ class ApprovalTest(TestCase):
         pending.close(True)
         self.assertEqual(len(mail.outbox), 1)
 
-    def testDoubleClose(self):
+    def testDeniedClosedMail(self):
         entry = TrackingEntry(
             user=self.linked_user,
             entry_date=datetime.datetime.today() + datetime.timedelta(days=4),
