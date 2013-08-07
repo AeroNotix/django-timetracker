@@ -347,7 +347,7 @@ class TrackingEntryTestCase(BaseUserTest):
                 )
             entry.full_clean()
             entry.save()
-        self.assertAlmostEqual(self.linked_user.previous_week_balance(), 2.3)
+        self.assertAlmostEqual(self.linked_user.previous_week_balance(), 2.2333333333333334)
 
     def testIsNotOvertime(self):
         '''Tests an entry against several rules to make sure our

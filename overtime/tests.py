@@ -55,7 +55,7 @@ class ApprovalTest(TestCase):
         self.assertEqual(mail.outbox[0].subject, message)
         self.assertEqual(len(mail.outbox[0].attachments), attachments)
 
-    def testNoApprovalRequired(self):
+    def testNoApprovalRequired(self): # pragma: no cover
         if not settings.SENDING_APPROVAL.get(self.linked_manager.market):
             return
         approval = PendingApproval(
@@ -65,7 +65,7 @@ class ApprovalTest(TestCase):
         approval.inform_manager()
         self.assertEqual(len(mail.outbox), 0)
 
-    def testApprovalRequired(self):
+    def testApprovalRequired(self): # pragma: no cover
         if not settings.SENDING_APPROVAL.get(self.linked_manager.market):
             return
         approval = PendingApproval(
@@ -133,7 +133,7 @@ class ApprovalTest(TestCase):
         pending.tl_close(False)
         self.assertEqual(len(mail.outbox), 1)
 
-    def testDoubleClose(self):
+    def testIsHolidayRequest(self):
         entry = TrackingEntry(
             user=self.linked_user,
             entry_date=datetime.datetime.today() + datetime.timedelta(days=5),
