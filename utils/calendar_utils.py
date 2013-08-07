@@ -774,6 +774,9 @@ def ajax_add_holiday(form):
     except IntegrityError:
         json_data["error"] = "Duplicate holiday requests not allowed."
         return json_data
+    except ValidationError as error:
+        json_data["error"] = str(error)
+        return json_data
 
     holiday_req.create_approval_request()
     # if all went well
