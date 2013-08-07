@@ -84,6 +84,9 @@ class TestQueryOptions(BaseIndustrialEngineeringTestCase):
     def test_yearmonth_utt(self):
         utt(self, self.indeng, 200, params={"year": "2012", "month": "7"})
 
+    def test_cbt_with_team(self):
+        cbt(self, self.indeng, 200, params={"year": "2012", "month": "7", "team": "CZ"})
+
     def test_fail_utt(self):
         utt(self, self.indeng, 404, params={"year": "banana", "month": "banana"})
 

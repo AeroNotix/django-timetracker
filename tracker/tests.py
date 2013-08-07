@@ -33,7 +33,9 @@ from timetracker.utils.calendar_utils import (validate_time, parse_time,
                                               delete_user, useredit,
                                               mass_holidays, ajax_delete_entry,
                                               gen_calendar, ajax_change_entry,
-                                              ajax_error, ajax_add_entry)
+                                              ajax_error, ajax_add_entry,
+                                              ajax_add_holiday)
+
 from timetracker.utils.datemaps import (pad, float_to_time,
                                         generate_select, ABSENT_CHOICES,
                                         MARKET_CHOICES)
@@ -588,6 +590,45 @@ class TrackingEntryTestCase(BaseUserTest):
         entry.save()
         self.assertEquals(13.0, entry.round_down())
 
+    def test_ajax_add_holiday(self):
+        form = {
+            "user_id": self.linked_user.id,
+            "entry_date": "1066-01-01"
+        }
+        ajax_add_holiday(form)
+        entries = TrackingEntry.objects.filter(entry_date="1066-01-01")
+        self.assertEquals(entries.count(), 1)
+
+    def test_ajax_add_holiday_duplicate(self):
+        form = {
+            "user_id": self.linked_user.id,
+            "entry_date": "1066-01-01"
+        }
+        ajax_add_holiday(form)
+        ajax_add_holiday(form)
+        entries = TrackingEntry.objects.filter(entry_date="1066-01-01")
+        self.assertEquals(entries.count(), 1)
+
+    def test_ajax_add_holiday_integrity(self):
+        form = {
+            "user_id": self.linked_user.id,
+            "entry_date": "banana"
+        }
+        ajax_add_holiday(form)
+        ajax_add_holiday(form)
+        entries = TrackingEntry.objects.filter(entry_date="1066-01-01")
+        self.assertEquals(entries.count(), 0)
+
+    def test_ajax_add_holiday_approval(self):
+        from timetracker.overtime.models import PendingApproval
+        form = {
+            "user_id": self.linked_user.id,
+            "entry_date": "1055-01-01"
+        }
+        ajax_add_holiday(form)
+        entry = TrackingEntry.objects.get(entry_date="1055-01-01")
+        pending = PendingApproval.objects.filter(entry=entry)
+        self.assertEquals(pending.count(), 1)
 
 class DatabaseTestCase(BaseUserTest):
     '''
