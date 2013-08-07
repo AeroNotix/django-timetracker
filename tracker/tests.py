@@ -16,6 +16,7 @@ from unittest import skipUnless
 
 from django.db import IntegrityError
 from django.test import TestCase, LiveServerTestCase
+from django.test.client import Client
 from django.core import mail
 from django.http import HttpResponse, Http404
 from django.conf import settings
@@ -41,6 +42,7 @@ from timetracker.utils.datemaps import (pad, float_to_time,
                                         MARKET_CHOICES)
 from timetracker.utils.error_codes import DUPLICATE_ENTRY
 from timetracker.tests.basetests import create_users, delete_users
+from timetracker.tests.basetests import login as login_user
 from timetracker.overtime.models import PendingApproval
 
 try:
@@ -1155,6 +1157,49 @@ class FrontEndTest(LiveServerTestCase):
             if option.get_attribute("value") == num:
                 option.click()
                 break
+
+class FrontEndTestInMemory(BaseUserTest):
+    def setUp(self):
+        self.client = Client()
+        super(FrontEndTestInMemory, self).setUp()
+
+    def redirect(self, endpoint, user):
+        login_user(self, user)
+        response = self.client.get("/")
+        self.assertEquals(response.status_code, 302)
+        self.assertEquals(endpoint in response._headers["location"][1], True)
+
+    def test_login_redirect_user(self):
+        self.redirect("calendar", self.linked_user)
+
+    def test_login_redirect_teamleader(self):
+        self.redirect("overtime", self.linked_teamlead)
+
+    def test_login_redirect_admin(self):
+        self.redirect("overtime", self.linked_manager)
+
+    def test_login_redirect_super(self):
+        self.redirect("overtime", self.linked_super_user)
+
+    def test_logout(self):
+        login_user(self, self.linked_user)
+        response = self.client.get("/logout/")
+        self.assertEquals(response.status_code, 302)
+        self.assertEquals('http://testserver/', response._headers["location"][1])
+
+    def test_logout_no_session(self):
+        login_user(self, self.linked_user)
+        response = self.client.get("/logout/")
+        self.assertEquals(response.status_code, 302)
+        self.assertEquals('http://testserver/', response._headers["location"][1])
+        response = self.client.get("/logout/")
+        self.assertEquals(response.status_code, 302)
+        self.assertEquals('http://testserver/', response._headers["location"][1])
+
+    def test_explain(self):
+        login_user(self, self.linked_user)
+        response = self.client.get("/explain/")
+        self.assertEquals(response.status_code, 200)
 
 class MiddlewareTest(TestCase):
     '''Tests the MiddleWare.'''
