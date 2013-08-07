@@ -46,7 +46,7 @@ try:
     from selenium.common.exceptions import NoSuchElementException
     from selenium.webdriver.common.keys import Keys
     SELENIUM_AVAILABLE = True
-except ImportError:
+except ImportError: # pragma: no cover
     SELENIUM_AVAILABLE = False
 
 
@@ -1028,7 +1028,7 @@ class FrontEndTest(LiveServerTestCase):
                         break
         self.click_daytype("HOLIS")
         inputs = self.driver.find_elements_by_tag_name("input")
-        for input_ in inputs:
+        for input_ in inputs: # pragma: no cover
             if "button_2" in input_.get_attribute("id"):
                 input_.click()
                 time.sleep(2)
