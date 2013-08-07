@@ -74,3 +74,21 @@ class ApprovalTest(TestCase):
         )
         approval.inform_manager()
         self.assertEqual(len(mail.outbox), 1)
+
+    def testSoftClose(self):
+        entry = TrackingEntry(
+            user=self.linked_user,
+            entry_date=datetime.datetime.today() + datetime.timedelta(days=2),
+            start_time=datetime.time(9, 0, 0),
+            end_time=datetime.time(20, 45, 0),
+            breaks=datetime.time(0, 15, 0),
+            daytype="WKDAY",
+        )
+        entry.full_clean()
+        entry.save()
+        entry.create_approval_request()
+        pending = PendingApproval.objects.get(
+            entry=entry
+        )
+        pending.tl_close(True)
+        self.assertEqual(pending.tl_approved, True)
