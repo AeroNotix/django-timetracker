@@ -31,8 +31,10 @@ def costbuckets(request):
         cbb = ActivityEntry.costbucket_count(group_for_team(request.GET["team"]), **kwargs)
     else:
         cbb = ActivityEntry.costbucket_count(MARKET_CHOICES_LIST, **kwargs)
-    team = MARKET_CHOICES_MAP[request.GET["team"]] \
+    team = MARKET_CHOICES_MAP.get(request.GET["team"]) \
            if request.GET.get("team") else "All teams"
+    if not team:
+        raise Http404
     return render_to_response(
         "industrial_engineering_reports.html",
         {
@@ -58,8 +60,10 @@ def utilization(request):
     teamselection = group_for_team(theteam) if theteam else MARKET_CHOICES_LIST
     utlztn, dates = ActivityEntry.utilization_last_12_months(teamselection, **kwargs)
     activity_data = ActivityEntry.activity_volumes_last_12_months(teamselection, activity=request.GET.get("activity"))
-    team = MARKET_CHOICES_MAP[request.GET["team"]] \
+    team = MARKET_CHOICES_MAP.get(request.GET["team"]) \
            if request.GET.get("team") else "All teams"
+    if not team:
+        raise Http404
     return render_to_response(
         "industrial_engineering_utilization.html",
         {
