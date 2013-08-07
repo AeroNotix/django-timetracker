@@ -117,7 +117,7 @@ class ActivityEntry(models.Model):
                 daytype__in=["PUABS", "DAYOD"]
          ).select_related("user")]
 
-        def invalid(entry):
+        def invalid(entry): # pragma: no cover
             return entry.id in invalidset[entry.user.id]
 
         return ActivityEntry.objects.filter(
