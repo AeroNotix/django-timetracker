@@ -830,18 +830,13 @@ def ajax_delete_entry(request):
     }
 
     if form['hidden-id']:
-        try:
-            # get the user and make sure that the user
-            # assigned to the TrackingEntry is the same
-            # as what's requesting the deletion
-            user = Tbluser.objects.get(id__exact=form['user_id'])
-            entry = TrackingEntry(id=form['hidden-id'],
+        # get the user and make sure that the user
+        # assigned to the TrackingEntry is the same
+        # as what's requesting the deletion
+        user = Tbluser.objects.get(id__exact=form['user_id'])
+        entry = TrackingEntry(id=form['hidden-id'],
                                   user=user)
-            entry.delete()
-        except Exception as error:
-            error_log.error("Error deleting entry for %s: %s " % (user, str(error)))
-            json_data['error'] = str(error)
-            return json_data
+        entry.delete()
 
     year, month, day = map(int,
                            form['entry_date'].split("-")
