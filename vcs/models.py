@@ -150,6 +150,23 @@ class ActivityEntry(models.Model):
         from timetracker.tracker.models import Tbluser, TrackingEntry
 
         entries, invalid = ActivityEntry.filterforyearmonth(teams, year, month)
+        if len(entries) == 0:
+            return {
+                "util": {
+                    "percent": 0,
+                    "target": 65
+                },
+                "effi": {
+                    "percent": 0,
+                    "target": 85
+                },
+                "avai": {
+                    "percent": 0,
+                    "target": 80
+                },
+                "FTE": 0
+            }
+
         effi, util = (0, 0)
         users = set()
         losses = TrackingEntry.objects.filter(user__market__in=teams,
