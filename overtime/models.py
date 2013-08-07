@@ -83,7 +83,7 @@ class PendingApproval(models.Model):
         marking the tl_approved as True. This allows us to know that
         an entry can be approved by a one-up manager.
         '''
-        if self.closed: # pragma: no cover
+        if self.closed:
             return
         if status:
             self.tl_approved = True
@@ -112,7 +112,7 @@ class PendingApproval(models.Model):
         self.entry.delete()
         self.delete()
 
-    def __unicode__(self):
+    def __unicode__(self): # pragma: no cover
         return u'%s - %s' % (self.entry.entry_date, self.entry.user.name())
 
     def inform_manager(self):
@@ -129,7 +129,7 @@ class PendingApproval(models.Model):
         else:
             managers = []
 
-        if settings.SENDING_APPROVAL_TL.get(self.approver.market):
+        if settings.SENDING_APPROVAL_TL.get(self.approver.market): # pragma: no cover
             tls = self.entry.user.get_tl_email()
         else:
             tls = []

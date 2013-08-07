@@ -92,3 +92,60 @@ class ApprovalTest(TestCase):
         )
         pending.tl_close(True)
         self.assertEqual(pending.tl_approved, True)
+
+    def testDoubleClose(self):
+        entry = TrackingEntry(
+            user=self.linked_user,
+            entry_date=datetime.datetime.today() + datetime.timedelta(days=3),
+            start_time=datetime.time(9, 0, 0),
+            end_time=datetime.time(20, 45, 0),
+            breaks=datetime.time(0, 15, 0),
+            daytype="WKDAY",
+        )
+        entry.full_clean()
+        entry.save()
+        entry.create_approval_request()
+        pending = PendingApproval.objects.get(
+            entry=entry
+        )
+        pending.tl_close(True)
+        pending.close(True)
+        self.assertEqual(len(mail.outbox), 1)
+        pending.tl_close(True)
+        pending.close(True)
+        self.assertEqual(len(mail.outbox), 1)
+
+    def testDoubleClose(self):
+        entry = TrackingEntry(
+            user=self.linked_user,
+            entry_date=datetime.datetime.today() + datetime.timedelta(days=4),
+            start_time=datetime.time(9, 0, 0),
+            end_time=datetime.time(20, 45, 0),
+            breaks=datetime.time(0, 15, 0),
+            daytype="WKDAY",
+        )
+        entry.full_clean()
+        entry.save()
+        entry.create_approval_request()
+        pending = PendingApproval.objects.get(
+            entry=entry
+        )
+        pending.tl_close(False)
+        self.assertEqual(len(mail.outbox), 1)
+
+    def testDoubleClose(self):
+        entry = TrackingEntry(
+            user=self.linked_user,
+            entry_date=datetime.datetime.today() + datetime.timedelta(days=5),
+            start_time=datetime.time(9, 0, 0),
+            end_time=datetime.time(20, 45, 0),
+            breaks=datetime.time(0, 15, 0),
+            daytype="PENDI",
+        )
+        entry.full_clean()
+        entry.save()
+        entry.create_approval_request()
+        pending = PendingApproval.objects.get(
+            entry=entry
+        )
+        self.assertEqual(pending.is_holiday_request(), True)
