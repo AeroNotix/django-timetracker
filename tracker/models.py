@@ -57,7 +57,7 @@ try:
         send_overtime_notification, send_pending_overtime_notification,
         send_undertime_notification
         )
-except ImportError:
+except ImportError: # pragma: no cover
     send_overtime_notification = lambda x: x
     send_pending_overtime_notification = lambda x: x
     send_undertime_notification = lambda x: x
@@ -630,7 +630,7 @@ class Tbluser(models.Model):
         '''
         cachestr = "holidaybalance:%s%s" % (self.id, year)
         cache_result = cache.get(cachestr)
-        if cache_result:
+        if cache_result: # pragma: no cover
             return int(cache_result)
         tracking_days = TrackingEntry.objects.filter(user_id=self.id,
                                                      entry_date__year=year)
@@ -662,7 +662,7 @@ class Tbluser(models.Model):
                                           year,
                                           daytype)
         cached_result = cache.get(cachestr)
-        if cached_result:
+        if cached_result: # pragma: no cover
             return int(cached_result)
         result = len(TrackingEntry.objects.filter(user_id=self.id,
                                             entry_date__year=year,

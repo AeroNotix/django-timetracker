@@ -178,6 +178,12 @@ class UserTestCase(BaseUserTest):
         self.assertEquals(len(self.linked_teamlead.get_subordinates()), 9)
         self.assertEquals(len(self.linked_user.get_subordinates()), 7)
 
+    def test_can_close_approvals(self):
+        self.assertEquals(self.linked_super_user.can_close_approvals(), True)
+        self.assertEquals(self.linked_manager.can_close_approvals(), True)
+        self.assertEquals(self.linked_teamlead.can_close_approvals(), False)
+        self.assertEquals(self.linked_user.can_close_approvals(), False)
+
     def testName(self):
         '''
         Should return the full name
@@ -320,6 +326,29 @@ class UserTestCase(BaseUserTest):
 
 class TrackingEntryTestCase(BaseUserTest):
     '''TrackingEntryTestCase tests the TrackingEntry's functionality'''
+
+    def test_previous_week_balance(self):
+        for date, end in [
+                [datetime.datetime.today()-datetime.timedelta(days=7), "14:00"],
+                [datetime.datetime.today()-datetime.timedelta(days=6), "16:44"],
+                [datetime.datetime.today()-datetime.timedelta(days=5), "09:45"],
+                [datetime.datetime.today()-datetime.timedelta(days=4), "09:45"],
+                [datetime.datetime.today()-datetime.timedelta(days=3), "09:45"],
+                [datetime.datetime.today()-datetime.timedelta(days=2), "09:45"],
+                [datetime.datetime.today()-datetime.timedelta(days=1), "09:45"],
+            ]:
+            entry = TrackingEntry(
+                entry_date=date,
+                user_id=self.linked_user.id,
+                start_time="09:00",
+                end_time=end,
+                breaks="00:15:00",
+                daytype="WKDAY"
+                )
+            entry.full_clean()
+            entry.save()
+        self.assertAlmostEqual(self.linked_user.previous_week_balance(), 2.3)
+
     def testIsNotOvertime(self):
         '''Tests an entry against several rules to make sure our
         check for whether an entry is or is not overtime is correctly
