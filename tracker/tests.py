@@ -660,9 +660,7 @@ class DatabaseTestCase(BaseUserTest):
         # we're catching & ignoring duplicate entry
         # because that's what it's supposed to do
         except IntegrityError as error:
-            if error[0] == DUPLICATE_ENTRY:
-                pass
-            else:
+            if error[0] != DUPLICATE_ENTRY:
                 raise
 
 class AjaxTestCase(BaseUserTest):
