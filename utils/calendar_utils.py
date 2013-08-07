@@ -738,9 +738,6 @@ def ajax_add_entry(request):
                         (request.session.get('user_id'), str(error)))
         json_data['error'] = str(error)
         return json_data
-    except Exception as e:
-        error_log.critical("Unhandled exception when creating a new tracking entry: %s" % str(e))
-        raise
 
     entry.create_approval_request()
     year, month, day = map(int,
