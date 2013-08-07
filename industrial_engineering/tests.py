@@ -4,11 +4,9 @@ import datetime
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 from django.test.client import Client
-from timetracker.tests.basetests import create_users, delete_users
+from timetracker.tests.basetests import create_users, delete_users, login
 from timetracker.tracker.models import Tbluser
 
-def login(cls, who):
-    cls.client.post('/login/', {"user_name": who.user_id, "password": "password"})
 
 def cbt(cls, who, code, params={}):
     login(cls, who)

@@ -193,3 +193,6 @@ def create_users(cls):
 def delete_users(cls):
     '''Deletes all the users on a Tbluser instance.'''
     [user.delete() for user in Tbluser.objects.all()]
+
+def login(cls, who):
+    cls.client.post('/login/', {"user_name": who.user_id, "password": "password"})
