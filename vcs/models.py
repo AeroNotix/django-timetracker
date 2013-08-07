@@ -177,12 +177,12 @@ class ActivityEntry(models.Model):
                                               # FTE in Minutes.
                                               entry_date__month=month).count() * 460
         for entry in entries:
-            if invalid(entry):
+            if invalid(entry): # pragma: no cover
                 continue
             time = entry.amount * entry.activity.time
             if entry.activity.group != "ALL":
                 util += time
-            else:
+            else: # pragma: no cover
                 losses += time
             effi += time
 

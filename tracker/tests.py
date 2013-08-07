@@ -56,7 +56,8 @@ except ImportError: # pragma: no cover
 
 class BaseUserTest(TestCase):
 
-    def setUp(self):
+    @classmethod
+    def setUpClass(self):
         '''Sets up our BaseUserTest by creating users, linking them
         adding some holidays and creating fake Request objects'''
         create_users(self)
@@ -115,7 +116,8 @@ class BaseUserTest(TestCase):
         self.unlinked_teamlead_request = Request(self.unlinked_teamlead.id)
         self.unlinked_user_request = Request(self.unlinked_user.id)
 
-    def tearDown(self):
+    @classmethod
+    def tearDownClass(self):
         '''Deletes our class'''
         del(self.linked_manager_request)
         delete_users(self)

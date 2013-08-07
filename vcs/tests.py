@@ -17,14 +17,18 @@ class BaseVCS(TestCase):
     req = Req()
 
     def setUp(self):
-        create_users(self)
-        createuseractivities()
         self.req.session = {
             "user_id": self.linked_user.id
         }
 
-    def tearDown(self):
-        delete_users(self)
+    @classmethod
+    def setUpClass(cls):
+        create_users(cls)
+        createuseractivities()
+
+    @classmethod
+    def tearDownClass(cls):
+        delete_users(cls)
         Activity.objects.all().delete()
 
 

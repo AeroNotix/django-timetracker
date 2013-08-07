@@ -10,7 +10,8 @@ from timetracker.tests.basetests import create_users, delete_users
 
 class ApprovalTest(TestCase):
 
-    def setUp(self):
+    @classmethod
+    def setUpClass(self):
         create_users(self)
         self.ot_entry = TrackingEntry(
             user=self.linked_user,
@@ -35,7 +36,8 @@ class ApprovalTest(TestCase):
         self.entry.full_clean()
         self.entry.save()
 
-    def tearDown(self):
+    @classmethod
+    def tearDownClass(self):
         delete_users(self)
 
     def testPendingApprovalDenied(self):
