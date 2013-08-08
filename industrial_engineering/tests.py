@@ -19,7 +19,9 @@ def utt(cls, who, code, params={}):
     cls.assertEqual(response.status_code, code)
 
 class BaseIndustrialEngineeringTestCase(unittest.TestCase):
-    def setUp(self):
+
+    @classmethod
+    def setUpClass(self):
         self.client = Client()
         create_users(self)
         self.indeng = Tbluser.objects.create(
@@ -40,11 +42,10 @@ class BaseIndustrialEngineeringTestCase(unittest.TestCase):
         self.indeng.full_clean()
         self.indeng.update_password(self.indeng.password)
         self.indeng.save()
-        super(BaseIndustrialEngineeringTestCase, self).setUp()
 
-    def tearDown(self):
+    @classmethod
+    def tearDownClass(self):
         delete_users(self)
-        super(BaseIndustrialEngineeringTestCase, self).tearDown()
 
 
 class PermissionTest(BaseIndustrialEngineeringTestCase):
