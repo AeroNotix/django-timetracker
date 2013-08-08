@@ -153,7 +153,8 @@ INSTALLED_APPS = (
     'timetracker.reporting',
     'django_extensions',
     'debug_toolbar',
-    'south',
+    # 'south', enable when doing migrations, it gets in the way when
+    # testing/bootstrapping etc.
     'django_coverage',
     'django_nose',
     'tastypie',
@@ -206,7 +207,9 @@ OVERRIDE_CALCULATION = {}
 PLUGIN_DIRECTORY = "/path/to/plugins/"
 SENDING_APPROVAL_DIGESTS = {}
 SENDING_APPROVAL_MANAGERS = {}
-SENDING_APPROVAL_TL = {}
+SENDING_APPROVAL_TL = {
+    "BF": True
+}
 SENDING_APPROVAL = SENDING_APPROVAL_MANAGERS
 SUSPICIOUS_DATE_DIFF = 60
 TL_APPROVAL_CHAINS = {}
