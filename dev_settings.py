@@ -1,12 +1,12 @@
 """This is an example file for which you could use in your
 development environment."""
+import os
 
 # Django settings for timetracker project.
 SECRET_KEY = '<SECRET_KEY>'
 TEMPLATE_STRING_IF_INVALID = 'INCORRECT'
 ROOT_DIR = os.path.dirname(__file__)
 
-import os
 import logging
 from django.core.mail import send_mail
 from timetracker.utils.datemaps import hr_calculation
@@ -111,8 +111,7 @@ TEMPLATE_LOADERS = (
 )
 TEMPLATE_CONTEXT_PROCESSORS = (
     "django.contrib.auth.context_processors.auth",
-
-"django.core.context_processors.debug",
+    "django.core.context_processors.debug",
     "django.core.context_processors.i18n",
     "django.core.context_processors.media",
     "django.core.context_processors.static",
@@ -154,7 +153,7 @@ INSTALLED_APPS = (
     'timetracker.reporting',
     'django_extensions',
     'debug_toolbar',
-    'south'
+    'south',
     'django_coverage',
     'django_nose',
     'tastypie',
@@ -191,6 +190,10 @@ CAN_CLOSE_APPROVALS = []
 CAN_VIEW_JOBCODES = []
 DAY_ON_DEMAND_ALLOWANCE = 4
 DEFAULT_OT_THRESHOLD = 1.0
+if DEBUG:
+    DOMAIN_NAME = "http://localhost:8080/"
+else:
+    DOMAIN_NAME = "http://timetracker.com"
 DOCUMENTATION_BASE_URL = DOMAIN_NAME + '/docs/'
 EXTRA_ACTIVITIES = {}
 FONT_DIRECTORY = '/usr/share/fonts/TTF'
@@ -201,16 +204,12 @@ NUM_WORKING_DAYS = 5
 OT_THRESHOLDS = {}
 OVERRIDE_CALCULATION = {}
 PLUGIN_DIRECTORY = "/path/to/plugins/"
-SENDING_APPROVAL = SENDING_APPROVAL_MANAGERS
 SENDING_APPROVAL_DIGESTS = {}
 SENDING_APPROVAL_MANAGERS = {}
 SENDING_APPROVAL_TL = {}
+SENDING_APPROVAL = SENDING_APPROVAL_MANAGERS
 SUSPICIOUS_DATE_DIFF = 60
 TL_APPROVAL_CHAINS = {}
 UNDER_TIME_ENABLED = {}
 VCS_ENABLED = {"CZ", "BK", "BG"}
 ZEROING_HOURS = {}
-if DEBUG:
-    DOMAIN_NAME = "http://localhost:8080/"
-else:
-    DOMAIN_NAME = "http://timetracker.com"
