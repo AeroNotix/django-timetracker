@@ -1,15 +1,21 @@
 import datetime
+import simplejson
 from decimal import Decimal
 
 from django.http import Http404, HttpResponseRedirect
 from django.test import TestCase
+from django.test.client import Client
+from django.core.urlresolvers import reverse
 
 from timetracker.utils.datemaps import MARKET_CHOICES_LIST
 
-from timetracker.tests.basetests import create_users, delete_users
+from timetracker.tests.basetests import create_users, delete_users, login
 from timetracker.vcs.models import Activity, ActivityEntry
 from timetracker.vcs.activities import createuseractivities
 from timetracker.vcs.views import vcs_add, update
+
+from timetracker.tracker.models import Tbluser
+
 
 class BaseVCS(TestCase):
     class Req:
@@ -23,6 +29,7 @@ class BaseVCS(TestCase):
 
     @classmethod
     def setUpClass(cls):
+        cls.client = Client()
         create_users(cls)
         createuseractivities()
 
@@ -264,3 +271,11 @@ class VCSActivityEntryTestCase(BaseVCS):
                               },
                               'FTE': 1
                           })
+
+class VCSFrontEndTestCase(BaseVCS):
+      def test_activityfailure_noid(self):
+          user = Tbluser.objects.all()[0]
+          login(self, user)
+          response = self.client.post(reverse("timetracker.vcs.views.update"), {"volume": 1, "id": -1})
+          self.assertEquals(response.status_code, 200)
+          self.assertEquals(simplejson.loads(response.content), {"success": False})
