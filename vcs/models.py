@@ -237,7 +237,7 @@ class ActivityEntry(models.Model):
             month = datetime.today().month
 
         cached_result = cache.get("activity_volumes:%s%s%s%s" % (''.join(teams), year, month, activity))
-        if cached_result:
+        if cached_result: # pragma: no cover
             return int(cached_result)
 
         if activity is None:
