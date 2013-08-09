@@ -20,6 +20,7 @@ tracker/notifications.py
 vcs/plugins/*
 bin/
 lib/
+lib64*
 include/
 .coverage
 *.jar
