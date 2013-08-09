@@ -65,13 +65,13 @@ class PendingApproval(models.Model):
 
         :param status: Boolean indicating whether this entry was approved.
         '''
-        if self.closed: # pragma: no cover
+        if self.closed:
             return
         self.closed = True
         self.closed_on = datetime.datetime.now()
         self.save()
         if status:
-            if self.entry.daytype == "PENDI": # pragma: no cover
+            if self.entry.daytype == "PENDI":
                 self.entry.daytype = "HOLIS"
                 self.entry.save()
             self.approved()

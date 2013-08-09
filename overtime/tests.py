@@ -3,10 +3,13 @@ import datetime
 from django.test import TestCase
 from django.core import mail
 from django.conf import settings
+from django.test.utils import override_settings
 
 from timetracker.overtime.models import PendingApproval
 from timetracker.tracker.models import TrackingEntry
 from timetracker.tests.basetests import create_users, delete_users
+from timetracker.utils.datemaps import MARKET_CHOICES
+
 
 class ApprovalTest(TestCase):
 
@@ -44,8 +47,18 @@ class ApprovalTest(TestCase):
         self.doapprovaltest(False, "Request for Overtime: Denied.", 0)
 
     def testPendingApprovalApproved(self):
+        try:
+            # we may be running with a default implementation which
+            # doesn't sent e-mails.
+            from timetracker.tracker.notifications import (
+                send_overtime_notification, send_pending_overtime_notification,
+                send_undertime_notification
+            )
+        except:
+            return
         self.doapprovaltest(True, "Your recent timetracker actions.", 1)
 
+    @override_settings(UNDER_TIME_ENABLED={M: True for M in MARKET_CHOICES})
     def doapprovaltest(self, status, message, attachments):
         approval = PendingApproval(
             entry=self.ot_entry,
@@ -110,6 +123,15 @@ class ApprovalTest(TestCase):
         pending = PendingApproval.objects.get(
             entry=entry
         )
+        try:
+            # we may be running with a default implementation which
+            # doesn't sent e-mails.
+            from timetracker.tracker.notifications import (
+                send_overtime_notification, send_pending_overtime_notification,
+                send_undertime_notification
+            )
+        except:
+            return
         pending.tl_close(True)
         pending.close(True)
         self.assertEqual(len(mail.outbox), 1)
