@@ -240,9 +240,6 @@ class ActivityEntry(models.Model):
         if cached_result: # pragma: no cover
             return int(cached_result)
 
-        if activity is None:
-            return 0
-
         res = sum(map(lambda e: e.amount, ActivityEntry.objects.filter(
             user__market__in=teams,
             activity=activity,
