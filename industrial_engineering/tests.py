@@ -4,8 +4,11 @@ import datetime
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 from django.test.client import Client
+
 from timetracker.tests.basetests import create_users, delete_users, login
 from timetracker.tracker.models import Tbluser
+from timetracker.vcs.activities import createuseractivities
+from timetracker.vcs.models import Activity
 
 
 def cbt(cls, who, code, params={}):
@@ -24,6 +27,7 @@ class BaseIndustrialEngineeringTestCase(unittest.TestCase):
     def setUpClass(self):
         self.client = Client()
         create_users(self)
+        createuseractivities()
         self.indeng = Tbluser.objects.create(
             user_id="indeng@test.com",
             firstname="test",
@@ -46,6 +50,8 @@ class BaseIndustrialEngineeringTestCase(unittest.TestCase):
     @classmethod
     def tearDownClass(self):
         delete_users(self)
+        Activity.objects.all().delete
+        super(BaseIndustrialEngineeringTestCase, self).tearDown()
 
 
 class PermissionTest(BaseIndustrialEngineeringTestCase):
@@ -97,3 +103,6 @@ class TestQueryOptions(BaseIndustrialEngineeringTestCase):
 
     def test_yearmonth_with_invalid_team_utt(self):
         utt(self, self.indeng, 404, params={"year": "2012", "month": "7", "team": "banana"})
+
+    def test_utt_activity(self):
+      utt(self, self.indeng, 200, params={"activity": Activity.objects.all()[0].id})
