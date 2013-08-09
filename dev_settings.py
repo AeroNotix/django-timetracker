@@ -1,12 +1,12 @@
 """This is an example file for which you could use in your
 development environment."""
+import os
 
 # Django settings for timetracker project.
 SECRET_KEY = '<SECRET_KEY>'
 TEMPLATE_STRING_IF_INVALID = 'INCORRECT'
 ROOT_DIR = os.path.dirname(__file__)
 
-import os
 import logging
 from django.core.mail import send_mail
 from timetracker.utils.datemaps import hr_calculation
