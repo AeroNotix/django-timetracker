@@ -51,7 +51,6 @@ class BaseIndustrialEngineeringTestCase(unittest.TestCase):
     def tearDownClass(self):
         delete_users(self)
         Activity.objects.all().delete
-        super(BaseIndustrialEngineeringTestCase, self).tearDown()
 
 
 class PermissionTest(BaseIndustrialEngineeringTestCase):
