@@ -21,6 +21,7 @@ from django.core import mail
 from django.http import HttpResponse, Http404
 from django.conf import settings
 from django.test.utils import override_settings
+from django.core.urlresolvers import reverse
 
 from timetracker.views import user_view, forgot_pass
 from timetracker.tracker.models import (Tbluser,
@@ -1228,6 +1229,13 @@ class FrontEndTestInMemory(BaseUserTest):
 
     def test_login_redirect_indeng(self):
         login_user(self, self.indeng)
+        response = self.client.get("/")
+        self.assertEquals(response.status_code, 302)
+        self.assertEquals(
+	  'http://testserver' + \
+	    reverse("timetracker.industrial_engineering.views.costbuckets"),
+	  response._headers["location"][1]
+	  )
 
     def test_logout(self):
         login_user(self, self.linked_user)
