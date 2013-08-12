@@ -7,6 +7,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.conf import settings
 from django.core.urlresolvers import reverse
+from django.core.exceptions import ValidationError
 
 from timetracker.utils.decorators import loggedin, json_response
 from timetracker.vcs.models import ActivityEntry, Activity
@@ -56,7 +57,10 @@ def entries(request): # pragma: no cover
     date = request.GET.get("date")
     if not date:
         raise Http404
-    entries = ActivityEntry.objects.filter(user=user, creation_date=date)
+    try:
+        entries = ActivityEntry.objects.filter(user=user, creation_date=date)
+    except ValidationError:
+        return {"entries": []}
     if not len(entries):
         raise Http404
     return {"entries": map(serialize_activityentry, entries)}
