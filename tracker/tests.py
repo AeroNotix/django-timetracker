@@ -23,7 +23,7 @@ from django.conf import settings
 from django.test.utils import override_settings
 from django.core.urlresolvers import reverse
 
-from timetracker.views import user_view, forgot_pass
+from timetracker.views import user_view, forgot_pass, view_with_holiday_list
 from timetracker.tracker.models import (Tbluser,
                                         TrackingEntry,
                                         Tblauthorization)
@@ -1286,6 +1286,15 @@ class FrontEndTestInMemory(BaseUserTest):
         self.assertEquals(Tbluser.objects.filter(user_id="aaron.france@whatever.com").count(), 1)
         response = self.client.get("/yearview/")
         self.assertEquals(response.status_code, 302)
+        
+    def test_ajax_form_type(self):
+	response = self.client.get("/ajax/")
+	self.assertEquals(simplejson.loads(response.content), {"error": 'Missing Form', "success": False})
+
+    def test_holiday_tbluser_does_not_exist(self):
+	class Req:
+	    session = {"user_id": -1}
+	self.assertRaises(Http404, view_with_holiday_list, Req())
 
 class MiddlewareTest(TestCase):
     '''Tests the MiddleWare.'''
