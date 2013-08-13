@@ -277,7 +277,7 @@ def ajax(request):
         form_type = request.GET.get('form_type', None)
 
     #if there isn't one, we'll send an error back
-    if not form_type: # pragma: no cover
+    if not form_type:
         return ajax_error("Missing Form")
 
     # this could be mutated with a @register_ajax
@@ -302,7 +302,7 @@ def ajax(request):
         return ajax_funcs.get(
             form_type,ajax_error
             )(request)
-    except Exception as e:
+    except Exception as e: # pragma: no cover
         error_log.error(str(e))
         raise
 
