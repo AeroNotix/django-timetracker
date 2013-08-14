@@ -236,7 +236,7 @@ class Tbluser(models.Model):
     def send_password_reminder(self):
         password = self.set_random_password()
         email_message = \
-            "Hi {name},\n\n" \
+            u"Hi {name},\n\n" \
             "Your password has been reset to: {password}\n\n" \
             "Regards,\n" \
             "Timetracker team"
