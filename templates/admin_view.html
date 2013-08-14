@@ -42,7 +42,7 @@ Overview - Timetracker
               <p>{{ employee.name }}</p>
             </td>
             <td class="{{ rowcolour }}">
-              {{ employee.get_thismonths_balance | safe }}
+              {{ employee.get_normalized_balance | safe }}
             </td>
           </tr>
           {% endfor %}
