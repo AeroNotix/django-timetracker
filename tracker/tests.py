@@ -1287,7 +1287,7 @@ class FrontEndTestInMemory(BaseUserTest):
         response = self.client.get("/yearview/")
         self.assertEquals(response.status_code, 302)
 
-     def test_disableduser_redirect(self):
+    def test_disableduser_redirect(self):
         disabledusr =  Tbluser.objects.create(
             user_id="disabledusr@test.com",
             firstname="test",
