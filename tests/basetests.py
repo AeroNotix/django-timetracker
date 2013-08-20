@@ -195,4 +195,4 @@ def delete_users(cls):
     [user.delete() for user in Tbluser.objects.all()]
 
 def login(cls, who):
-    cls.client.post('/login/', {"user_name": who.user_id, "password": "password"})
+    return cls.client.post('/login/', {"user_name": who.user_id, "password": "password"})
