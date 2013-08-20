@@ -1286,6 +1286,28 @@ class FrontEndTestInMemory(BaseUserTest):
         self.assertEquals(Tbluser.objects.filter(user_id="aaron.france@whatever.com").count(), 1)
         response = self.client.get("/yearview/")
         self.assertEquals(response.status_code, 302)
+
+     def test_disableduser_redirect(self):
+        disabledusr =  Tbluser.objects.create(
+            user_id="disabledusr@test.com",
+            firstname="test",
+            lastname="case",
+            password="password",
+            salt="nothing",
+            user_type="INENG",
+            market="BG",
+            process="AP",
+            start_date=datetime.datetime.today(),
+            breaklength="00:15:00",
+            shiftlength="07:45:00",
+            job_code="00F20G",
+            holiday_balance=20,
+            disabled=True
+        )
+        disabledusr.update_password(disabledusr.password)
+        disabledusr.save()
+        response = login_user(self, disabledusr)
+        self.assertIn('Your account is disabled', response.content)    
         
     def test_ajax_form_type(self):
 	response = self.client.get("/ajax/")
