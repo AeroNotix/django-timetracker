@@ -1287,7 +1287,7 @@ class FrontEndTestInMemory(BaseUserTest):
         response = self.client.get("/yearview/")
         self.assertEquals(response.status_code, 302)
 
-     def test_disableduser_redirect(self):
+    def test_disableduser_redirect(self):
         disabledusr =  Tbluser.objects.create(
             user_id="disabledusr@test.com",
             firstname="test",
@@ -1303,11 +1303,40 @@ class FrontEndTestInMemory(BaseUserTest):
             job_code="00F20G",
             holiday_balance=20,
             disabled=True
-        )
+            )
         disabledusr.update_password(disabledusr.password)
         disabledusr.save()
         response = login_user(self, disabledusr)
-        self.assertIn('Your account is disabled', response.content)    
+        self.assertIn('Your account is disabled', response.content)
+
+    def test_get_subordinates_does_not_exist(self):
+        adminusr =  Tbluser.objects.create(
+            user_id="adminusr@test.com",
+            firstname="test",
+            lastname="case",
+            password="password",
+            salt="nothing",
+            user_type="ADMIN",
+            market="BG",
+            process="AP",
+            start_date=datetime.datetime.today(),
+            breaklength="00:15:00",
+            shiftlength="07:45:00",
+            job_code="00F20G",
+            holiday_balance=20,
+            disabled=False
+            )
+        adminusr.update_password(adminusr.password)
+        adminusr.save()
+        login_user(self, adminusr)
+        response = self.client.get("/overtime/")
+        self.assertIn('user_edit', response._headers["location"][1])
+        self.assertEqual(response.status_code, 302)
+
+    def test_unauth_access_to_overtime(self):
+        login_user(self, self.linked_manager)
+        response = self.client.get("/overtime/-1/")
+        self.assertEqual(response.status_code, 404)
         
     def test_ajax_form_type(self):
 	response = self.client.get("/ajax/")
