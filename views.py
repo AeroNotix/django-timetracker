@@ -350,12 +350,8 @@ def view_with_holiday_list(request,
     :return: HttpResponse object back to the browser.
     """
 
-    try:
-        user = Tbluser.objects.get(
-            id=request.session.get('user_id')
-        )
-    except Tbluser.DoesNotExist:
-        raise Http404
+
+    user = Tbluser.objects.get(id=request.session.get('user_id'))
 
     if admin_required and not user.sup_tl_or_admin():
         raise Http404

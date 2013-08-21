@@ -993,7 +993,7 @@ def ajax_change_entry(request):
 
 @admin_check
 @json_response
-def get_tracking_entry_data(request):
+def get_tracking_entry_data(request): # pragma: no cover
     '''Function returns the JSON representation of a single tracking entry.
     '''
     form = {
@@ -1026,7 +1026,7 @@ def get_tracking_entry_data(request):
 @request_check
 @admin_check
 @json_response
-def get_user_data(request):
+def get_user_data(request): # pragma: no cover
     """Returns a user as a json object.
 
     This is a very simple method. First, the :class:`HttpRequest` POST is
@@ -1336,10 +1336,6 @@ def useredit(request):
                         if Tbluser.USER_LEVELS[value] >= \
                                 Tbluser.USER_LEVELS[base_user.user_type]:
                             continue
-                if value == "false":
-                    value = False
-                if value == "true":
-                    value = True
                 if key != 'password':
                     setattr(user, key, value)
             user.save()
