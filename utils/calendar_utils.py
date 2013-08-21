@@ -834,8 +834,8 @@ def ajax_delete_entry(request):
         # assigned to the TrackingEntry is the same
         # as what's requesting the deletion
         user = Tbluser.objects.get(id__exact=form['user_id'])
-        entry = TrackingEntry(id=form['hidden-id'],
-                                  user=user)
+        entry = TrackingEntry.objects.get(id=form['hidden-id'],
+                                          user=user)
         entry.delete()
 
     year, month, day = map(int,
