@@ -857,6 +857,33 @@ class AjaxTestCase(BaseUserTest):
                 }),
                 valid.content)
 
+    def test_ajax_change_undertime(self):
+	te = TrackingEntry(
+            entry_date="2012-01-01",
+            start_time="09:00",
+            end_time="17:00",
+            breaks="00:15",
+            daytype="HOLIS",
+            user_id=self.linked_user.id
+        )
+	te.save()
+        # create the post
+        self.linked_user_request.POST = {
+            'entry_date': '2012-01-01',
+            'start_time': '09:00',
+            'end_time': '09:01',
+            'daytype': 'WKDAY',
+            'breaks': '00:15:00',
+            'hidden-id': te.id,
+            'link': '2012-01-30',
+        }
+	response=ajax_change_entry(self.linked_user_request)
+	self.assertEquals(simplejson.dumps({
+	    "success": False,
+	    "error": "You cannot link an undertime entry.",
+	    "calendar": gen_calendar(2012, 1, 1, user=self.linked_user.id)
+	    }),response.content)
+
     def testAjaxError(self):
         '''AjaxError is a helpful method to create a JSON message
         containing an error. We test that here.'''
