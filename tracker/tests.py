@@ -808,12 +808,17 @@ class AjaxTestCase(BaseUserTest):
         entry is working correctly.'''
 
         # create the entry we want to delete
-        TrackingEntry(entry_date="2012-01-01",
+        entry = TrackingEntry(entry_date="2012-01-01",
+                      start_time="09:00:00",
+                      end_time="17:00:00",
+                      daytype="WKDAY",
+                      breaks="00:15:00",
                       user_id=self.linked_user.id)
+        entry.save()
 
         # create the post
         self.linked_user_request.POST = {
-            'hidden-id': self.linked_user.id,
+            'hidden-id': entry.id,
             'entry_date': '2012-01-01'
             }
         valid = ajax_delete_entry(self.linked_user_request)
