@@ -635,6 +635,24 @@ class TrackingEntryTestCase(BaseUserTest):
         pending = PendingApproval.objects.filter(entry=entry)
         self.assertEquals(pending.count(), 1)
 
+    def test_ajax_change_entry(self):
+        class Req:
+            #session dictionary has to have any user id in order to
+            #pass request_check
+            session = {"user_id": "2243343"}
+            POST = {
+                "start_time": "20:00",
+                "end_time": "10:00"
+                }
+            def is_ajax(self):
+                return True
+
+        response = ajax_change_entry(Req())
+        print response.content
+        self.assertEquals(simplejson.dumps({"success": True,
+                                            "error":"Start time after end time"}),
+                          response.content)
+
 class DatabaseTestCase(BaseUserTest):
     '''
     Class which tests the database for improper settings
