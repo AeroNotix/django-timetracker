@@ -81,6 +81,11 @@ class TrackingEntry(models.Model):
             self.daytype = "SATUR"
             super(TrackingEntry, self).save(*args, **kwargs)
 
+    def delete(self, *args, **kwargs):
+        self.full_clean()
+        self.invalidate_caches()
+        super(TrackingEntry, self).delete(*args, **kwargs)
+
     def __unicode__(self): # pragma: no cover
 
         '''
