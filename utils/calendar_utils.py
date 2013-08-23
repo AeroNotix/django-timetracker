@@ -910,7 +910,7 @@ def ajax_change_entry(request):
         'error': ''
     }
 
-    if not all(form['start_time'], form['end_time']):
+    if not all([form['start_time'], form['end_time']]):
         json_data['error'] = "Invalid time formats"
         return json_data
 
