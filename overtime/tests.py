@@ -63,7 +63,7 @@ class ApprovalTest(TestCase):
                 send_overtime_notification, send_pending_overtime_notification,
                 send_undertime_notification
             )
-        except:
+        except: # pragma: no cover
             return
         self.doapprovaltest(True, "Your recent timetracker actions.", 1)
 
