@@ -32,8 +32,7 @@ from timetracker.utils.calendar_utils import (gen_calendar, gen_holiday_list,
                                               profile_edit, gen_datetime_cal,
                                               get_comments, add_comment,
                                               remove_comment,
-                                              get_tracking_entry_data,
-                                              password_reminder)
+                                              get_tracking_entry_data)
 
 from timetracker.utils.datemaps import (generate_select,
                                         generate_employee_box,
