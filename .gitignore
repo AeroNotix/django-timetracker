@@ -24,3 +24,4 @@ lib64*
 include/
 .coverage
 *.jar
+/settings.py~
