@@ -4,6 +4,7 @@ omit =
     *notifications*
     *settings*
     *writers*
+    *datemaps*
 
 [report]
 exclude_lines =

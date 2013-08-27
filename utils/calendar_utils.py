@@ -914,15 +914,9 @@ def ajax_change_entry(request):
         json_data['error'] = "Invalid time formats"
         return json_data
 
-    try:
-        # server-side time validation
-        if not validate_time(form['start_time'], form['end_time']):
-            json_data['error'] = "Start time after end time"
-            return json_data
-    except ValueError:
-        error_log.error("Date error got through - %s and %s" %
-                        (form['start_time'], form['end_time']))
-        json_data['error'] = "Date Error"
+    # server-side time validation
+    if not validate_time(form['start_time'], form['end_time']):
+        json_data['error'] = "Start time after end time"
         return json_data
 
     year, month, day = map(int,
