@@ -1340,7 +1340,85 @@ class FrontEndTestInMemory(BaseUserTest):
         disabledusr.save()
         response = login_user(self, disabledusr)
         self.assertIn('Your account is disabled', response.content)
+        
+    def test_ajax_useredit_change_disabled(self):
+        login_user(self, self.linked_manager)
+        response = self.client.post("/ajax/", {
+            'form_type': "useredit",
+            'user_id': "cippolippo@ciao.it",
+            'firstname': "Editman",
+            'lastname': "Yes",
+            'user_type': "RUSER",
+            'job_code': "ABC123",
+            'holiday_balance': 20,
+            'disabled': True,
+            'mode': self.linked_manager.id
+        },
+        # So it's is_ajax==True
+        HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        #print simplejson.loads(response)
+        self.assertEquals(
+            simplejson.loads(response.content),
+            {
+                'success': False,
+                'error': 'You cannot disable yourself.'
+                }
+            )
 
+    def test_ajax_useredit_duplicate_entry(self):
+        login_user(self, self.linked_manager)
+        response = self.client.post("/ajax/", {
+                'form_type': "useredit",
+                'user_id': "test.user@test.com",
+                'firstname': "test",
+                'lastname': "case",
+                'user_type': "RUSER",
+                'market': "BG",
+                'process': "AP",
+                'start_date': str(datetime.date.today()),
+                'breaklength': "00:15:00",
+                'shiftlength': "07:45:00",
+                'job_code': "00F20G",
+                'holiday_balance': 20,
+                'mode': "false"
+                },
+        # So it's is_ajax==True
+        HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEquals(
+            simplejson.loads(response.content),
+            {
+                'success': False,
+                'error': 'Duplicate entry'
+                }
+            )
+
+    def test_ajax_useredit_invalid_data(self):
+        login_user(self, self.linked_manager)
+        response = self.client.post("/ajax/", {
+                'form_type': "useredit",
+                'user_id': "fakeUser",
+                'firstname': "fake",
+                'lastname': "user",
+                'user_type': "RUSER",
+                'market': "500000",
+                'process': "AP",
+                'start_date': "now",
+                'breaklength': "00:15:00",
+                'shiftlength': "07:45:00",
+                'job_code': "ABC123",
+                'holiday_balance': 20,
+                'mode': "false"
+                },
+        # So it's is_ajax==True
+        HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEquals(
+            simplejson.loads(response.content),
+            {
+                'success': False,
+                'error': 'Invalid Data.'
+                }
+            )
+        
     def test_get_subordinates_does_not_exist(self):
         adminusr =  Tbluser.objects.create(
             user_id="adminusr@test.com",
