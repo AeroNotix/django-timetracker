@@ -1475,6 +1475,33 @@ class FrontEndTestInMemory(BaseUserTest):
 	    session = {"user_id": -1}
 	self.assertRaises(Http404, view_with_holiday_list, Req())
 
+    def test_add_comment_missing_form_data(self):
+        login_user(self, self.linked_manager)
+        reqdata = {
+            'user': self.linked_manager.id,
+            'form_type': 'add_comment',
+            'year': 2013,
+            'month': 1,
+            'day': 1,
+            }
+        response = self.client.post('/ajax/', reqdata)
+        json = simplejson.loads(response.content)
+        self.assertIn('Missing data:', json['error'])
+
+    def test_add_comment_entry_not_found(self):
+        login_user(self, self.linked_manager)
+        reqdata = {
+            'user': self.linked_manager.id,
+            'form_type': 'add_comment',
+            'year': 2013,
+            'month': 1,
+            'day': 1,
+            'comment': 'aaa'
+            }
+        response = self.client.post('/ajax/', reqdata)
+        json = simplejson.loads(response.content)
+        self.assertIn('No entry to add a comment to!', json['error'])
+
 class MiddlewareTest(TestCase):
     '''Tests the MiddleWare.'''
     def setUp(self):
