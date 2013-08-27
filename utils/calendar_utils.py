@@ -1351,10 +1351,6 @@ def useredit(request):
         error_log.error("Invalid data in creating a user")
         json_data['error'] = "Invalid Data."
         return json_data
-    except Exception as error:
-        error_log.critical(str(error))
-        json_data['error'] = str(error)
-        return json_data
     json_data['success'] = True
     return json_data
 
