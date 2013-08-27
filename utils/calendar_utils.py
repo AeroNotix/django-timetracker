@@ -228,18 +228,15 @@ def gen_holiday_list(admin_user, year=None, month=None, process=None):
     user_list = admin_user.get_subordinates().filter(process=process) \
         if process else admin_user.get_subordinates()
 
-    def isweekend(num):
-        '''Returns the CSS class for a given date whether it's on the weekend
-        or not.'''
-        return {
-            1: 'empty',
-            2: 'empty',
-            3: 'empty',
-            4: 'empty',
-            5: 'empty',
-            6: 'WKEND',
-            7: 'WKEND',
-            }[datetime.date(year=year,month=month,day=num).isoweekday()]
+    isweekend = lambda num: {
+        1: 'empty',
+        2: 'empty',
+        3: 'empty',
+        4: 'empty',
+        5: 'empty',
+        6: 'WKEND',
+        7: 'WKEND',
+    }[datetime.date(year=year,month=month,day=num).isoweekday()]
 
     comments_list = []
     js_calendar = ["{\n"]
