@@ -1524,7 +1524,6 @@ def profile_edit(request):
         else:
             setattr(user, key, value)
     user.save()
-
     json_data['success'] = True
     return json_data
 
