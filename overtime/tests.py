@@ -27,7 +27,7 @@ class ApprovalTest(TestCase):
 
 	self.pending_entry = TrackingEntry(
             user=self.linked_user,
-            entry_date=datetime.datetime.today(),
+            entry_date=datetime.datetime.today() + datetime.timedelta(days=123),
             start_time=datetime.time(9, 0, 0),
             end_time=datetime.time(17, 0, 0),
             breaks=datetime.time(0, 15, 0),
@@ -79,7 +79,8 @@ class ApprovalTest(TestCase):
         self.assertEqual(mail.outbox[0].subject, message)
         self.assertEqual(len(mail.outbox[0].attachments), attachments)
         
-    def doapprovalonpendingtest(self):
+    def test_approvalonpendingtest(self):
+        self.pending_entry.save()
         approval = PendingApproval(
             entry=self.pending_entry,
             approver=self.linked_manager

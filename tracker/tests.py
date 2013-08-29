@@ -1461,14 +1461,287 @@ class FrontEndTestInMemory(BaseUserTest):
         self.assertIn('user_edit', response._headers["location"][1])
         self.assertEqual(response.status_code, 302)
 
+    def test_changeentry_missing_times(self):
+        class Req:
+            POST = {
+                "start_time": None,
+                "end_time": None
+            }
+            session = {
+                "user_id": self.linked_manager.id
+            }
+            def is_ajax(self):
+                return True
+        resp = ajax_change_entry(Req())
+        self.assertEquals(
+            simplejson.loads(resp.content),
+            {
+                "error": "Invalid time formats",
+                "success": False
+            }
+        )
+
+    def test_changeentry_missing_times_start_time(self):
+        class Req:
+            POST = {
+                "start_time": None,
+                "end_time": "17:00"
+            }
+            session = {
+                "user_id": self.linked_manager.id
+            }
+            def is_ajax(self):
+                return True
+        resp = ajax_change_entry(Req())
+        self.assertEquals(
+            simplejson.loads(resp.content),
+            {
+                "error": "Invalid time formats",
+                "success": False
+            }
+        )
+
+    def test_changeentry_missing_times_end_time(self):
+        class Req:
+            POST = {
+                "start_time": "09:00",
+                "end_time": None
+            }
+            session = {
+                "user_id": self.linked_manager.id
+            }
+            def is_ajax(self):
+                return True
+        resp = ajax_change_entry(Req())
+        self.assertEquals(
+            simplejson.loads(resp.content),
+            {
+                "error": "Invalid time formats",
+                "success": False
+            }
+        )
+
+    def test_profile_edit(self):
+        login_user(self, self.linked_manager)
+        response = self.client.post(
+            "/ajax/",
+            {
+                "form": "profileedit",
+                "firstname": "Aaron",
+                "lastname": "France",
+            }
+        )
+        self.assertEquals(
+            simplejson.loads(resp.content),
+            {
+                "error": "",
+                "success": True
+            }
+        )
+
+    def test_profile_edit(self):
+        login_user(self, self.linked_manager)
+        resp = self.client.post(
+            "/ajax/",
+            {
+                "form_type": "profileedit",
+                "firstname": "Aaron",
+                "lastname": "France",
+                "password": "iquit"
+            },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEquals(
+            simplejson.loads(resp.content),
+            {
+                "error": "",
+                "success": True
+            }
+        )
+        user = Tbluser.objects.get(id=self.linked_manager.id)
+        self.assertTrue(user.validate_password("iquit"))
+
+        self.client.post(
+            "/ajax/",
+            {
+                "form_type": "profileedit",
+                "firstname": "Aaron",
+                "lastname": "France",
+                "password": "password"
+            },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        user = Tbluser.objects.get(id=self.linked_manager.id)
+        self.assertTrue(user.firstname, "Aaron")
+        self.assertTrue(user.lastname, "France")
+        self.assertTrue(user.validate_password("password"))
+
+    def test_getcomments_missing_data(self):
+        login_user(self, self.linked_manager)
+        resp = self.client.get(
+            "/ajax/",
+            {
+                "form_type": "get_comments",
+            },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        json_response = simplejson.loads(resp.content)
+        self.assertIn('Missing data', json_response['error'])
+
+    def test_getcomments_no_comments(self):
+        login_user(self, self.linked_manager)
+        resp = self.client.get(
+            "/ajax/",
+            {
+                "form_type": "get_comments",
+                "year": "2013",
+                "month": "10",
+                "day": "10",
+                "user": str(self.linked_manager.id)
+            },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(
+            simplejson.loads(resp.content),
+            {
+                "success": True,
+                "error": "",
+                "comment": ""
+            }
+        )
+
+    def test_getcomments_missing_days(self):
+        login_user(self, self.linked_manager)
+        resp = self.client.get(
+            "/ajax/",
+            {
+                "form_type": "get_comments",
+                "year": "1025",
+                "month": "10",
+                "day": "10",
+                "user": str(self.linked_manager.id)
+            },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(
+            simplejson.loads(resp.content),
+            {
+                "success": True,
+                "error": "",
+                "comment": ""
+            }
+        )
+
+    def test_getcomments_no_comments(self):
+        login_user(self, self.linked_manager)
+        entry = TrackingEntry.objects.create(
+            user=self.linked_manager,
+            entry_date="2013-10-10",
+            start_time="09:00",
+            end_time="17:00",
+            breaks="00:15:00",
+            daytype="WKDAY",
+            comments="I quit HP because of reasons."
+        )
+        entry.save()
+        resp = self.client.get(
+            "/ajax/",
+            {
+                "form_type": "get_comments",
+                "year": "2013",
+                "month": "10",
+                "day": "10",
+                "user": str(self.linked_manager.id)
+            },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(
+            simplejson.loads(resp.content),
+            {
+                "success": True,
+                "error": "",
+                "comment": "I quit HP because of reasons."
+            }
+        )
+        entry.delete()
+
+    def test_removecomments_missing_data(self):
+        login_user(self, self.linked_manager)
+        resp = self.client.get(
+            "/ajax/",
+            {
+                "form_type": "remove_comment",
+            },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        json_response = simplejson.loads(resp.content)
+        self.assertIn('Missing data', json_response['error'])
+
+    def test_removecomments_missing_days(self):
+        login_user(self, self.linked_manager)
+        resp = self.client.post(
+            "/ajax/",
+            {
+                "form_type": "remove_comment",
+                "year": "1025",
+                "month": "10",
+                "day": "10",
+                "user": str(self.linked_manager.id)
+            },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(
+            simplejson.loads(resp.content),
+            {
+                "success": True,
+                "error": "",
+            }
+        )
+
+    def test_remove_comments(self):
+        login_user(self, self.linked_manager)
+        entry = TrackingEntry.objects.create(
+            user=self.linked_manager,
+            entry_date="2013-10-10",
+            start_time="09:00",
+            end_time="17:00",
+            breaks="00:15:00",
+            daytype="WKDAY",
+        )
+        entry.save()
+        resp = self.client.post(
+            "/ajax/",
+            {
+                "form_type": "remove_comment",
+                "year": "2013",
+                "month": "10",
+                "day": "10",
+                "user": str(self.linked_manager.id)
+            },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(
+            simplejson.loads(resp.content),
+            {
+                "success": True,
+                "error": "",
+            }
+        )
+        entry.delete()
+            
     def test_unauth_access_to_overtime(self):
         login_user(self, self.linked_manager)
-        response = self.client.get("/overtime/-1/")
+        response = self.client.get("/overtime/99999/2013")
         self.assertEqual(response.status_code, 404)
         
     def test_ajax_form_type(self):
 	response = self.client.get("/ajax/")
-	self.assertEquals(simplejson.loads(response.content), {"error": 'Missing Form', "success": False})
+	self.assertEquals(
+            simplejson.loads(response.content),
+            {
+                "error": 'Missing Form', "success": False
+            }
+        )
 
     def test_holiday_tbluser_does_not_exist(self):
 	class Req:
