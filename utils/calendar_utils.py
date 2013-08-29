@@ -1675,6 +1675,8 @@ def remove_comment(request):
             form_data[key] = pad(request.POST[key])
         except KeyError:
             json_data['error'] = 'Missing data: %s' % str(key)
+            return json_data
+
     entry_date = "{year}-{month}-{day}".format(**form_data)
     try:
         entry = TrackingEntry.objects.get(entry_date=entry_date,
