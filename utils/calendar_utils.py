@@ -1498,13 +1498,8 @@ def profile_edit(request):
         "error": ''
     }
 
-    try:
-        # get the user object from the db
-        user = Tbluser.objects.get(id=request.session.get("user_id"))
-    except Tbluser.DoesNotExist:
-        error_log.error("Editing a non-existant user")
-        json_data['error'] = "User not found"
-        return json_data
+    # get the user object from the db
+    user = Tbluser.objects.get(id=request.session.get("user_id"))
 
     # pull the data out the form
     form_data = get_request_data({
