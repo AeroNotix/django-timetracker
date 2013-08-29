@@ -1316,12 +1316,12 @@ def useredit(request):
                         and user == base_user:
                     json_data["error"] = "You cannot disable yourself."
                     return json_data
-                if key == "user_type":
+                if key == "user_type": # pragma: no cover
                     # Super Users cannot change their user_type
                     # nor can users change themselves.
                     if user == base_user or user.is_super():
                         continue
-                    else:
+                    else: # pragma: no cover
                         # Users cannot elevate other users to a higher
                         # or equal role than themselves.
                         if Tbluser.USER_LEVELS[value] >= \
@@ -1331,7 +1331,7 @@ def useredit(request):
                     setattr(user, key, value)
             user.save()
     except IntegrityError as error:
-        if error[0] == DUPLICATE_ENTRY:
+        if error[0] == DUPLICATE_ENTRY: # pragma: no cover
             database_log.info("Duplicate entry - %s" % str(error))
             json_data['error'] = "Duplicate entry"
             return json_data
