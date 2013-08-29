@@ -1590,6 +1590,7 @@ def get_comments(request):
             form_data[key] = pad(request.GET[key])
         except KeyError:
             json_data['error'] = 'Missing data: %s' % str(key)
+            return json_data
 
     entry_date = "{year}-{month}-{day}".format(**form_data)
     try:
